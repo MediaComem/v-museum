@@ -71,6 +71,8 @@ export default {
   methods: {
     async initContent() {
       try {
+        // The parameter for the year search will come from the previous selection view.
+        // Currently, this value is hard-coded for testing purpose.
         const response = await axios.get(
           "http://localhost:3000/getInitContent/193",
           {
@@ -131,58 +133,53 @@ export default {
     rangeChange() {
       this.step = 3;
     },
+    getPreviousImages(nextIndex, sizeBeforeLoad, intervalTransitionTime) {
+      if (nextIndex < sizeBeforeLoad && !this.inLoading) {
+        this.inLoading = true;
+        this.loadPreviousContent();
+      }
+      setTimeout(() => this.carousel.prev(), intervalTransitionTime);
+    },
     // Vitesse Max = 1 image toutes les 20ms
+    getNextImages(nextIndex, sizeBeforeLoad, intervalTransitionTime) {
+      if (
+        nextIndex > this.maxCarouselSize - sizeBeforeLoad &&
+        !this.inLoading
+      ) {
+        this.inLoading = true;
+        this.loadNextContent();
+      }
+      setTimeout(() => this.carousel.next(), intervalTransitionTime);
+    },
     changeImage(nextIndex) {
       this.currentSlide = nextIndex;
       switch (this.step) {
         case 0:
-          if (nextIndex > this.maxCarouselSize - 80 && !this.inLoading) {
-            this.inLoading = true;
-            this.loadNextContent();
-          }
-          setTimeout(() => this.carousel.next(), 100);
+          this.getNextImages(nextIndex, 80, 100);
           break;
         case 1:
-          if (nextIndex > this.maxCarouselSize - 40 && !this.inLoading) {
-            this.inLoading = true;
-            this.loadNextContent();
-          }
-          setTimeout(() => this.carousel.next(), 500);
+          this.getNextImages(nextIndex, 40, 500);
           break;
         case 2:
-          if (nextIndex > this.maxCarouselSize - 20 && !this.inLoading) {
-            this.inLoading = true;
-            this.loadNextContent();
-          }
-          setTimeout(() => this.carousel.next(), 1000);
+          this.getNextImages(nextIndex, 20, 1000);
           break;
         case 3:
           break;
         case 4:
-          if (nextIndex < 20 && !this.inLoading) {
-            this.inLoading = true;
-            this.loadPreviousContent();
-          }
-          setTimeout(() => this.carousel.prev(), 1000);
+          this.getPreviousImages(nextIndex, 20, 1000);
           break;
         case 5:
-          if (nextIndex < 40 && !this.inLoading) {
-            this.inLoading = true;
-            this.loadPreviousContent();
-          }
-          setTimeout(() => this.carousel.prev(), 500);
+          this.getPreviousImages(nextIndex, 40, 500);
           break;
         case 6:
-          if (nextIndex < 80 && !this.inLoading) {
-            this.inLoading = true;
-            this.loadPreviousContent();
-          }
-          setTimeout(() => this.carousel.prev(), 100);
+          this.getPreviousImages(nextIndex, 80, 100);
           break;
       }
     },
   },
   mounted() {
+    // Due to the mandatory height for carousel element in vertical mode.
+    // This lib is used for reponsive purpose
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
@@ -193,53 +190,6 @@ export default {
 };
 </script>
 
-<style>
-.custom-image {
-  height: 100%;
-  width: 100%;
-}
-
-.custom-carousel {
-  margin-top: 0%;
-  margin-bottom: 0%;
-}
-
-.el-carousel__item {
-  overflow: hidden !important;
-}
-
-.el-carousel__item.is-animating {
-  -webkit-transition: -webkit-transform 0.1s ease-in-out;
-  transition: -webkit-transform 0.1s ease-in-out;
-  transition: transform 0.1s ease-in-out;
-  transition: transform 0.1s ease-in-out, -webkit-transform 0.1s ease-in-out;
-  transition: transform 0.1s ease-in-out, -webkit-transform 0.1s ease-in-out;
-}
-
-.el-carousel__indicators--vertical {
-  width: 0px;
-  height: 0px;
-}
-
-.el-slider__bar {
-  background-color: unset;
-}
-
-.el-slider__runway {
-  background-color: unset;
-}
-
-.el-slider__button {
-  -moz-border-radius: 30px;
-  -webkit-border-radius: 30px;
-  border-radius: 30px;
-
-  border-color: #c0c4cc;
-  border: 1px #c0c4cc;
-  height: 700%;
-  width: 100%;
-  background-color: inherit;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  cursor: pointer;
-}
+<style scoped>
+@import "./imageselector.css";
 </style>
