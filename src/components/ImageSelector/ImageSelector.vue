@@ -69,18 +69,19 @@ export default {
     };
   },
   methods: {
+    async fetchData(url) {
+      return axios.get(url, {
+        headers: {
+          withCredentials: true,
+        },
+      });
+    },
     async initContent() {
       try {
         // The parameter for the year search will come from the previous selection view.
         // Currently, this value is hard-coded for testing purpose.
-        const response = await axios.get(
-          "http://localhost:3000/getInitContent/193",
-          {
-            headers: {
-              withCredentials: true,
-            },
-          }
-        );
+        const response = await this.fetchData(
+          'http://localhost:3000/getInitContent/193');
         this.data = response.data;
         this.maxCarouselSize = this.data.length;
         this.$nextTick(() => {
@@ -93,14 +94,7 @@ export default {
     async loadPreviousContent() {
       try {
         this.shouldUpdateIndex = true;
-        const response = await axios.get(
-          "http://localhost:3000/getPreviousContent",
-          {
-            headers: {
-              withCredentials: true,
-            },
-          }
-        );
+        const response = await this.fetchData('http://localhost:3000/getPreviousContent');
         if (response.data.length > 0) {
           this.data = response.data.concat(this.data);
           this.retrieveLength = response.data.length;
@@ -113,14 +107,7 @@ export default {
     },
     async loadNextContent() {
       try {
-        const response = await axios.get(
-          "http://localhost:3000/getNextContent",
-          {
-            headers: {
-              withCredentials: true,
-            },
-          }
-        );
+        const response = await this.fetchData('http://localhost:3000/getNextContent');
         if (response.data.length > 0) {
           this.data = this.data.concat(response.data);
           this.maxCarouselSize = this.data.length;
