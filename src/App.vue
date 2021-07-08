@@ -4,18 +4,11 @@
 
 <script>
 import ImageSelection from "./components/ImageSelection.vue";
-//import SliderComponent from "./components/shared/SliderComponent.vue"
-//import ImageSelection from './components/TestNewIdea.vue';
-
-import "bootstrap";
-import "bootstrap/scss/bootstrap.scss";
 
 export default {
   name: "App",
   components: {
     ImageSelection,
-    //SliderComponent
-    //TestNewIdea
   },
 };
 </script>
