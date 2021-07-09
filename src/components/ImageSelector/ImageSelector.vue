@@ -14,6 +14,7 @@
       >
         <el-carousel-item v-for="(value, index) in data" :key="index">
           <img
+            ref="image"
             class="custom-image"
             v-bind:src="value.imagePaths.large"
             v-bind:alt="value.imagePaths.large"
@@ -81,7 +82,8 @@ export default {
         // The parameter for the year search will come from the previous selection view.
         // Currently, this value is hard-coded for testing purpose.
         const response = await this.fetchData(
-          'http://localhost:3000/getInitContent/193');
+          "http://localhost:3000/getInitContent/193"
+        );
         this.data = response.data;
         this.maxCarouselSize = this.data.length;
         this.$nextTick(() => {
@@ -94,7 +96,9 @@ export default {
     async loadPreviousContent() {
       try {
         this.shouldUpdateIndex = true;
-        const response = await this.fetchData('http://localhost:3000/getPreviousContent');
+        const response = await this.fetchData(
+          "http://localhost:3000/getPreviousContent"
+        );
         if (response.data.length > 0) {
           this.data = response.data.concat(this.data);
           this.retrieveLength = response.data.length;
@@ -107,7 +111,9 @@ export default {
     },
     async loadNextContent() {
       try {
-        const response = await this.fetchData('http://localhost:3000/getNextContent');
+        const response = await this.fetchData(
+          "http://localhost:3000/getNextContent"
+        );
         if (response.data.length > 0) {
           this.data = this.data.concat(response.data);
           this.maxCarouselSize = this.data.length;
@@ -125,9 +131,10 @@ export default {
         this.inLoading = true;
         this.loadPreviousContent();
       }
-      setTimeout(() => this.carousel.prev(), intervalTransitionTime);
+      setTimeout(() => {
+        this.carousel.prev()
+        }, intervalTransitionTime);
     },
-    // Vitesse Max = 1 image toutes les 20ms
     getNextImages(nextIndex, sizeBeforeLoad, intervalTransitionTime) {
       if (
         nextIndex > this.maxCarouselSize - sizeBeforeLoad &&
@@ -136,8 +143,11 @@ export default {
         this.inLoading = true;
         this.loadNextContent();
       }
-      setTimeout(() => this.carousel.next(), intervalTransitionTime);
+      setTimeout(() => {
+        this.carousel.next()
+      }, intervalTransitionTime);
     },
+    // Vitesse Max = 1 image toutes les 50ms
     changeImage(nextIndex) {
       this.currentSlide = nextIndex;
       switch (this.step) {
@@ -172,6 +182,7 @@ export default {
     this.windowWidth = width;
     axios.defaults.withCredentials = true;
     this.carousel = this.$refs.myCarousel;
+    console.log(this.carousel);
     this.initContent();
   },
 };

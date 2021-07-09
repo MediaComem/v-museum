@@ -1,48 +1,58 @@
 .custom-image {
-    height: 100%;
-    width: 100%;
-  }
-  
-  .custom-carousel {
-    margin-top: 0%;
-    margin-bottom: 0%;
-  }
-  
-  .el-carousel__item {
-    overflow: hidden !important;
-  }
-  
-  .el-carousel__item.is-animating {
-    -webkit-transition: -webkit-transform 0.1s ease-in-out;
-    transition: -webkit-transform 0.1s ease-in-out;
-    transition: transform 0.1s ease-in-out;
-    transition: transform 0.1s ease-in-out, -webkit-transform 0.1s ease-in-out;
-    transition: transform 0.1s ease-in-out, -webkit-transform 0.1s ease-in-out;
-  }
-  
-  .el-carousel__indicators--vertical {
-    width: 0px;
-    height: 0px;
-  }
-  
-  .el-slider__bar {
-    background-color: unset;
-  }
-  
-  .el-slider__runway {
-    background-color: unset;
-  }
-  
-  .el-slider__button {
-    -moz-border-radius: 30px;
-    -webkit-border-radius: 30px;
-    border-radius: 30px;
-  
-    border-color: #c0c4cc;
-    border: 1px #c0c4cc;
-    height: 700%;
-    width: 100%;
-    background-color: inherit;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    cursor: pointer;
-  }
+  height: 100%;
+  width: 100%;
+  transform: scale(4);
+}
+
+.custom-image .custom-carousel {
+  margin-top: 0%;
+  margin-bottom: 0%;
+}
+
+.el-carousel__item {
+  overflow: hidden !important;
+}
+
+.el-carousel__item.is-active img {
+  -webkit-transition: all 20s ease;
+  -moz-transition: all 20s ease;
+  -ms-transition: all 20s ease;
+  transition: all 20s ease;
+  transition-delay: 3s;
+  transform: scale(1);
+}
+
+.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 0.1s ease-in-out;
+  transition: -webkit-transform 0.1s ease-in-out;
+  transition: transform 0.1s ease-in-out;
+  transition: transform 0.1s ease-in-out, -webkit-transform 0.1s ease-in-out;
+  transition: transform 0.1s ease-in-out, -webkit-transform 0.1s ease-in-out;
+}
+
+.el-carousel__indicators--vertical {
+  width: 0px;
+  height: 0px;
+  pointer-events:none;
+}
+
+.el-slider__bar {
+  background-color: unset;
+}
+
+.el-slider__runway {
+  background-color: unset;
+}
+
+.el-slider__button {
+  -moz-border-radius: 30px;
+  -webkit-border-radius: 30px;
+  border-radius: 30px;
+
+  border-color: #c0c4cc;
+  border: 1px #c0c4cc;
+  height: 700%;
+  width: 100%;
+  background-color: inherit;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
