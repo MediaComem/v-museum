@@ -9,6 +9,14 @@
   margin-bottom: 0%;
 }
 
+.background {
+  background-color: black;
+}
+
+.customTransitionMask {
+  mask-image: radial-gradient(circle at 50% 50%, black 50%, rgba(0, 0, 0, 0.247) 50%);
+}
+
 .el-carousel__item {
   overflow: hidden !important;
 }
@@ -33,7 +41,7 @@
 .el-carousel__indicators--vertical {
   width: 0px;
   height: 0px;
-  pointer-events:none;
+  pointer-events: none;
 }
 
 .el-slider__bar {
