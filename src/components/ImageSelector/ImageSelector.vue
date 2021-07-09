@@ -1,43 +1,45 @@
 <template>
-  <el-row :gutter="10"> </el-row>
-  <el-row :gutter="10" :align="'middle'">
-    <el-col :xs="10" :sm="9" :md="8" :lg="8" :xl="8"> </el-col>
-    <el-col :xs="3" :sm="5" :md="7" :lg="8" :xl="8">
-      <el-carousel
-        v-bind:height="windowHeight + 'px'"
-        direction="vertical"
-        :loop="false"
-        :autoplay="false"
-        ref="myCarousel"
-        class="custom-carousel"
-        v-on:change="changeImage"
-      >
-        <el-carousel-item v-for="(value, index) in data" :key="index">
-          <img
-            ref="image"
-            class="custom-image"
-            v-bind:src="value.imagePaths.large"
-            v-bind:alt="value.imagePaths.large"
-          />
-        </el-carousel-item>
-      </el-carousel>
-    </el-col>
-    <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2">
-      <el-row :justify="'center'" :align="'bottom'">
-        <el-slider
-          vertical
-          v-model="step"
-          height="100px"
-          :max="6"
-          :show-tooltip="false"
-          v-on:change="rangeChange"
-          v-on:input="changeImage"
+  <div v-on:keyup="doSomething">
+    <el-row :gutter="10"> </el-row>
+    <el-row :gutter="10" :align="'middle'">
+      <el-col :xs="10" :sm="9" :md="8" :lg="8" :xl="8"> </el-col>
+      <el-col :xs="3" :sm="5" :md="7" :lg="8" :xl="8">
+        <el-carousel
+          v-bind:height="windowHeight + 'px'"
+          direction="vertical"
+          :loop="false"
+          :autoplay="false"
+          ref="myCarousel"
+          class="custom-carousel"
+          v-on:change="changeImage"
         >
-        </el-slider>
-      </el-row>
-    </el-col>
-    <el-col :xs="9" :sm="8" :md="7" :lg="6" :xl="6"> </el-col>
-  </el-row>
+          <el-carousel-item v-for="(value, index) in data" :key="index">
+            <img
+              ref="image"
+              class="custom-image"
+              v-bind:src="value.imagePaths.large"
+              v-bind:alt="value.imagePaths.large"
+            />
+          </el-carousel-item>
+        </el-carousel>
+      </el-col>
+      <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2">
+        <el-row :justify="'center'" :align="'bottom'">
+          <el-slider
+            vertical
+            v-model="step"
+            height="100px"
+            :max="6"
+            :show-tooltip="false"
+            v-on:change="rangeChange"
+            v-on:input="changeImage"
+          >
+          </el-slider>
+        </el-row>
+      </el-col>
+      <el-col :xs="9" :sm="8" :md="7" :lg="6" :xl="6"> </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
@@ -70,6 +72,16 @@ export default {
     };
   },
   methods: {
+    mouseWheelAction(event) {
+      if (event.deltaY < 0) {
+        this.getPreviousImages(this.currentSlide - 1, 80, 100);
+      } else if (event.deltaY > 0) {
+        this.getNextImages(this.currentSlide + 1, 80, 100);
+      }
+    },
+    keyEvent(event) {
+      console.log(event);
+    },
     async fetchData(url) {
       return axios.get(url, {
         headers: {
@@ -127,15 +139,17 @@ export default {
       this.step = 3;
     },
     getPreviousImages(nextIndex, sizeBeforeLoad, intervalTransitionTime) {
+      this.currentSlide = nextIndex;
       if (nextIndex < sizeBeforeLoad && !this.inLoading) {
         this.inLoading = true;
         this.loadPreviousContent();
       }
       setTimeout(() => {
-        this.carousel.prev()
-        }, intervalTransitionTime);
+        this.carousel.prev();
+      }, intervalTransitionTime);
     },
     getNextImages(nextIndex, sizeBeforeLoad, intervalTransitionTime) {
+      this.currentSlide = nextIndex;
       if (
         nextIndex > this.maxCarouselSize - sizeBeforeLoad &&
         !this.inLoading
@@ -144,12 +158,11 @@ export default {
         this.loadNextContent();
       }
       setTimeout(() => {
-        this.carousel.next()
+        this.carousel.next();
       }, intervalTransitionTime);
     },
     // Vitesse Max = 1 image toutes les 50ms
     changeImage(nextIndex) {
-      this.currentSlide = nextIndex;
       switch (this.step) {
         case 0:
           this.getNextImages(nextIndex, 80, 100);
@@ -182,8 +195,11 @@ export default {
     this.windowWidth = width;
     axios.defaults.withCredentials = true;
     this.carousel = this.$refs.myCarousel;
-    console.log(this.carousel);
+    this.carousel.$el.addEventListener("wheel", this.mouseWheelAction);
     this.initContent();
+  },
+  unmounted() {
+    this.carousel.$el.removeEventListener("wheel", this.keyEvent);
   },
 };
 </script>
