@@ -2,9 +2,16 @@
   <el-row :gutter="10"> </el-row>
   <el-row :gutter="10" :align="'middle'">
     <el-col :xs="10" :sm="9" :md="8" :lg="8" :xl="8"> </el-col>
-    <el-col :xs="3" :sm="5" :md="7" :lg="8" :xl="8" :class="{background: step !== 3}">
+    <el-col
+      :xs="3"
+      :sm="5"
+      :md="7"
+      :lg="8"
+      :xl="8"
+      :class="{ background: step !== 3 }"
+    >
       <el-carousel
-        :class="{customTransitionMask: step !== 3}"
+        :class="{ customTransitionMask: step !== 3 }"
         v-bind:height="windowHeight + 'px'"
         direction="vertical"
         :loop="false"
@@ -24,11 +31,11 @@
       </el-carousel>
     </el-col>
     <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2">
-      <el-row :justify="'center'" :align="'bottom'">
+      <el-row :justify="'center'" :align="'middle'">
         <el-slider
           vertical
           v-model="step"
-          height="100px"
+          v-bind:height="windowHeight / 5 + 'px'"
           :max="6"
           :show-tooltip="false"
           v-on:change="rangeChange"
@@ -45,6 +52,8 @@
 import axios from "axios";
 import { useWindowSize } from "vue-window-size";
 
+//import ImageRepositories from "../utils/ImageRepositories.vue"
+
 export default {
   name: "SliderComponent",
   watch: {
@@ -58,7 +67,7 @@ export default {
   },
   data() {
     return {
-      data: [],
+      data: undefined,
       step: 3,
       windowHeight: undefined,
       windowWidth: undefined,
@@ -89,11 +98,9 @@ export default {
       try {
         // The parameter for the year search will come from the previous selection view.
         // Currently, this value is hard-coded for testing purpose.
-        const response = await this.fetchData(
-          "http://localhost:3000/getInitContent/193"
-        );
-        this.data = response.data;
-        this.maxCarouselSize = this.data.length;
+        this.$store.dispatch('getInitState');
+        this.data = this.$store.getters.data;
+        this.maxCarouselSize = this.data.length; 
         this.$nextTick(() => {
           this.carousel.setActiveItem(this.maxCarouselSize / 2);
         });
@@ -195,7 +202,7 @@ export default {
     this.initContent();
   },
   unmounted() {
-    this.carousel.$el.removeEventListener("wheel", this.keyEvent);
+    //this.carousel.$el.removeEventListener("wheel", this.keyEvent);
   },
 };
 </script>
