@@ -51,12 +51,18 @@
 <script>
 import axios from "axios";
 import { useWindowSize } from "vue-window-size";
-
-//import ImageRepositories from "../utils/ImageRepositories.vue"
+import { mapState } from "vuex";
 
 export default {
   name: "SliderComponent",
   watch: {
+    images: function(newVal) {
+      this.data = newVal;
+      this.maxCarouselSize = this.data.length;
+    },
+    navPrevSize: function(newVal) {
+      this.carousel.setActiveItem(newVal);
+    },
     inLoading: function(state) {
       if (!state && this.shouldUpdateIndex) {
         this.currentSlide = this.currentSlide + this.retrieveLength;
@@ -96,13 +102,9 @@ export default {
     },
     async initContent() {
       try {
-        // The parameter for the year search will come from the previous selection view.
-        // Currently, this value is hard-coded for testing purpose.
-        this.$store.dispatch('getInitState');
-        this.data = this.$store.getters.data;
-        this.maxCarouselSize = this.data.length; 
-        this.$nextTick(() => {
-          this.carousel.setActiveItem(this.maxCarouselSize / 2);
+        this.shouldUpdateIndex = true;
+        this.$store.dispatch("getInitState", {
+          year: "193",
         });
       } catch (err) {
         console.log(err);
@@ -190,6 +192,7 @@ export default {
       }
     },
   },
+  computed: mapState(["images", "navPrevSize"]),
   mounted() {
     // Due to the mandatory height for carousel element in vertical mode.
     // This lib is used for reponsive purpose
