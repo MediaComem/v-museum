@@ -25,7 +25,7 @@
             ref="image"
             class="custom-image"
             v-bind:src="value.imagePaths.large"
-            v-bind:alt="value.imagePaths.large"
+            v-bind:alt="value.id"
           />
         </el-carousel-item>
       </el-carousel>
@@ -61,13 +61,9 @@ export default {
       this.maxCarouselSize = this.data.length;
     },
     navPrevSize: function(newVal) {
-      this.carousel.setActiveItem(newVal);
-    },
-    inLoading: function(state) {
-      if (!state && this.shouldUpdateIndex) {
-        this.currentSlide = this.currentSlide + this.retrieveLength;
-        this.carousel.setActiveItem(this.currentSlide);
-        this.shouldUpdateIndex = false;
+      console.log(newVal);
+      if (newVal !== 0) {
+        this.carousel.setActiveItem(this.currentSlide + newVal);
       }
     },
   },

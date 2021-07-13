@@ -18,9 +18,6 @@ const store = createStore({
       images: [],
     };
   },
-  getters: {
-    images: (state) => state.images,
-  },
   mutations: {
     setNavPrevSize(state, size) {
       state.navPrevSize = size;
@@ -113,12 +110,10 @@ const store = createStore({
       dataFetch
         .getImages(context.state.navNextYear, context.state.navNextOffset)
         .then((result) => {
-          console.log(result.data.length);
           if (result.data.length === 0) {
             dataFetch
               .getImages(+context.state.navNextYear + 1, 1)
               .then((result) => {
-                console.log(result);
                 dataFetch
                   .extractDataFromDb(result.data.flat())
                   .then((result) => {
