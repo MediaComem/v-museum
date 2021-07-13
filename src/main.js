@@ -37,16 +37,14 @@ const store = createStore({
     setNextOffset(state, offset) {
       state.navNextOffset = offset;
     },
-    setupPreviousNavigation(state, response) {
+    setPreviousNavigation(state, response) {
       state.images = response.concat(state.images);
     },
-    setupNextNavigation(state, response) {
+    setNextNavigation(state, response) {
       state.images = state.images.concat(response);
     },
   },
   actions: {
-    // The parameter for the year search will come from the previous selection view.
-    // Currently, this value is hard-coded for testing purpose.
     getInitState(context, { year }) {
       context.commit("setPreviousYear", +year - 1);
       context.commit("setNextYear", +year);
@@ -59,7 +57,7 @@ const store = createStore({
             .getImages(+year - 1, maxOffset)
             .then((result) => {
               dataFetch.extractDataFromDb(result.data.flat()).then((result) => {
-                context.commit("setupPreviousNavigation", result);
+                context.commit("setPreviousNavigation", result);
                 context.commit("setNavPrevSize", result.length);
               });
               context.commit("setPreviousOffset", maxOffset - 1);
@@ -72,13 +70,73 @@ const store = createStore({
         .getImages(year, context.state.navNextOffset)
         .then((result) => {
           dataFetch.extractDataFromDb(result.data.flat()).then((result) => {
-            context.commit("setupNextNavigation", result);
+            context.commit("setNextNavigation", result);
+            context.commit("setNextOffset", 2);
           });
         })
         .catch((err) => console.log(err));
     },
-    getNextContent(context) {
+    getPreviousContent(context) {
+      if (context.state.navPrevOffset === 0) {
+        dataFetch
+        .findMaxOffsetOfYear(+context.state.navPrevYear - 1)
+        .then((result) => {
+          let maxOffset = Math.ceil(result.data.length / 100);
+          context.commit("setPreviousOffset", maxOffset);
+          dataFetch
+            .getImages(+context.state.navPrevYear - 1, maxOffset)
+            .then((result) => {
+              dataFetch.extractDataFromDb(result.data.flat()).then((result) => {
+                context.commit("setPreviousNavigation", result);
+                context.commit("setNavPrevSize", result.length);
+                context.commit("setPreviousYear", +context.state.navPrevYear - 1)
+              });
+              context.commit("setPreviousOffset", maxOffset - 1);
+            })
+            .catch((err) => console.log(err));
+        })
+        .catch((err) => console.log(err));
 
+      } else {
+        dataFetch
+          .getImages(context.state.navPrevYear, context.state.navPrevOffset)
+          .then((result) => {
+            dataFetch.extractDataFromDb(result.data.flat()).then((result) => {
+              context.commit("setPreviousNavigation", result);
+              context.commit("setNavPrevSize", result.length);
+              context.commit("setPreviousOffset", context.state.navPrevOffset - 1);
+            });
+          });
+      }
+    },
+    getNextContent(context) {
+      dataFetch
+        .getImages(context.state.navNextYear, context.state.navNextOffset)
+        .then((result) => {
+          console.log(result.data.length);
+          if (result.data.length === 0) {
+            dataFetch
+              .getImages(+context.state.navNextYear + 1, 1)
+              .then((result) => {
+                console.log(result);
+                dataFetch
+                  .extractDataFromDb(result.data.flat())
+                  .then((result) => {
+                    context.commit("setNextNavigation", result);
+                    context.commit(
+                      "setNextYear",
+                      +context.state.navNextYear + 1
+                    );
+                    context.commit("setNextOffset", 2);
+                  });
+              });
+          } else {
+            dataFetch.extractDataFromDb(result.data.flat()).then((result) => {
+              context.commit("setNextNavigation", result);
+              context.commit("setNextOffset", context.state.navNextOffset + 1);
+            });
+          }
+        });
     },
   },
 });

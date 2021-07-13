@@ -103,8 +103,10 @@ export default {
     async initContent() {
       try {
         this.shouldUpdateIndex = true;
+        // The parameter for the year search will come from the previous selection view.
+        // Currently, this value is hard-coded for testing purpose.
         this.$store.dispatch("getInitState", {
-          year: "193",
+          year: "191",
         });
       } catch (err) {
         console.log(err);
@@ -113,14 +115,7 @@ export default {
     async loadPreviousContent() {
       try {
         this.shouldUpdateIndex = true;
-        const response = await this.fetchData(
-          "http://localhost:3000/getPreviousContent"
-        );
-        if (response.data.length > 0) {
-          this.data = response.data.concat(this.data);
-          this.retrieveLength = response.data.length;
-          this.maxCarouselSize = this.data.length;
-        }
+        this.$store.dispatch("getPreviousContent");
         this.inLoading = false;
       } catch (err) {
         console.log(err);
@@ -128,13 +123,7 @@ export default {
     },
     async loadNextContent() {
       try {
-        const response = await this.fetchData(
-          "http://localhost:3000/getNextContent"
-        );
-        if (response.data.length > 0) {
-          this.data = this.data.concat(response.data);
-          this.maxCarouselSize = this.data.length;
-        }
+        this.$store.dispatch("getNextContent");
         this.inLoading = false;
       } catch (err) {
         console.log(err);
