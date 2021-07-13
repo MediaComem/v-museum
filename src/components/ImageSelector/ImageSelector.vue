@@ -93,67 +93,8 @@ export default {
         this.getNextImages(this.currentSlide + 1, 80, 100);
       }
     },
-    async fetchData(url) {
-      return axios.get(url, {
-        headers: {
-          withCredentials: true,
-        },
-      });
-    },
-    async initContent() {
-      try {
-        this.shouldUpdateIndex = true;
-        // The parameter for the year search will come from the previous selection view.
-        // Currently, this value is hard-coded for testing purpose.
-        this.$store.dispatch("getInitState", {
-          year: "191",
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    async loadPreviousContent() {
-      try {
-        this.shouldUpdateIndex = true;
-        this.$store.dispatch("getPreviousContent");
-        this.inLoading = false;
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    async loadNextContent() {
-      try {
-        this.$store.dispatch("getNextContent");
-        this.inLoading = false;
-      } catch (err) {
-        console.log(err);
-      }
-    },
     rangeChange() {
       this.step = 3;
-    },
-    getPreviousImages(nextIndex, sizeBeforeLoad, intervalTransitionTime) {
-      this.currentSlide = nextIndex;
-      if (nextIndex < sizeBeforeLoad && !this.inLoading) {
-        this.inLoading = true;
-        this.loadPreviousContent();
-      }
-      setTimeout(() => {
-        this.carousel.prev();
-      }, intervalTransitionTime);
-    },
-    getNextImages(nextIndex, sizeBeforeLoad, intervalTransitionTime) {
-      this.currentSlide = nextIndex;
-      if (
-        nextIndex > this.maxCarouselSize - sizeBeforeLoad &&
-        !this.inLoading
-      ) {
-        this.inLoading = true;
-        this.loadNextContent();
-      }
-      setTimeout(() => {
-        this.carousel.next();
-      }, intervalTransitionTime);
     },
     // Vitesse Max = 1 image toutes les 50ms
     changeImage(nextIndex) {
@@ -179,6 +120,41 @@ export default {
           this.getPreviousImages(nextIndex, 80, 100);
           break;
       }
+    },
+
+    initContent() {
+      this.shouldUpdateIndex = true;
+      // The parameter for the year search will come from the previous selection view.
+      // Currently, this value is hard-coded for testing purpose.
+      this.$store.dispatch("getInitState", {
+        year: "191",
+      });
+    },
+    getPreviousImages(nextIndex, sizeBeforeLoad, intervalTransitionTime) {
+      this.currentSlide = nextIndex;
+      if (nextIndex < sizeBeforeLoad && !this.inLoading) {
+        this.inLoading = true;
+        this.shouldUpdateIndex = true;
+        this.$store.dispatch("getPreviousContent");
+        this.inLoading = false;
+      }
+      setTimeout(() => {
+        this.carousel.prev();
+      }, intervalTransitionTime);
+    },
+    getNextImages(nextIndex, sizeBeforeLoad, intervalTransitionTime) {
+      this.currentSlide = nextIndex;
+      if (
+        nextIndex > this.maxCarouselSize - sizeBeforeLoad &&
+        !this.inLoading
+      ) {
+        this.inLoading = true;
+        this.$store.dispatch("getNextContent");
+        this.inLoading = false;
+      }
+      setTimeout(() => {
+        this.carousel.next();
+      }, intervalTransitionTime);
     },
   },
   computed: mapState(["images", "navPrevSize"]),
