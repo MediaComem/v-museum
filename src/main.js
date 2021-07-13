@@ -5,7 +5,6 @@ import "element-plus/lib/theme-chalk/index.css";
 import App from "./App.vue";
 
 import dataFetch from "./api/dataFetching";
-//import store from "./store/index"
 
 const store = createStore({
   state() {
