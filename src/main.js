@@ -42,10 +42,8 @@ export const actions = {
         dataFetch
           .getImages(+decade - 1, maxOffset)
           .then((result) => {
-            dataFetch.extractDataFromDb(result.data.flat()).then((result) => {
-              context.commit("setPrevNavigation", result);
-              context.commit("setNavPrevSize", result.length);
-            });
+            context.commit("setPrevNavigation", result);
+            context.commit("setNavPrevSize", result.length);
             context.commit("setPreviousOffset", maxOffset - 1);
           })
           .catch((err) => console.log(err));
@@ -55,10 +53,8 @@ export const actions = {
     dataFetch
       .getImages(decade, context.state.navNextOffset)
       .then((result) => {
-        dataFetch.extractDataFromDb(result.data.flat()).then((result) => {
-          context.commit("setNextNavigation", result);
-          context.commit("setNextOffset", 2);
-        });
+        context.commit("setNextNavigation", result);
+        context.commit("setNextOffset", 2);
       })
       .catch((err) => console.log(err));
   },
@@ -72,14 +68,9 @@ export const actions = {
           dataFetch
             .getImages(+context.state.navPrevDecade - 1, maxOffset)
             .then((result) => {
-              dataFetch.extractDataFromDb(result.data.flat()).then((result) => {
-                context.commit("setPrevNavigation", result);
-                context.commit("setNavPrevSize", result.length);
-                context.commit(
-                  "setPrevDecade",
-                  +context.state.navPrevDecade - 1
-                );
-              });
+              context.commit("setPrevNavigation", result);
+              context.commit("setNavPrevSize", result.length);
+              context.commit("setPrevDecade", +context.state.navPrevDecade - 1);
               context.commit("setPreviousOffset", maxOffset - 1);
             })
             .catch((err) => console.log(err));
@@ -89,14 +80,9 @@ export const actions = {
       dataFetch
         .getImages(context.state.navPrevDecade, context.state.navPrevOffset)
         .then((result) => {
-          dataFetch.extractDataFromDb(result.data.flat()).then((result) => {
-            context.commit("setPrevNavigation", result);
-            context.commit("setNavPrevSize", result.length);
-            context.commit(
-              "setPreviousOffset",
-              context.state.navPrevOffset - 1
-            );
-          });
+          context.commit("setPrevNavigation", result);
+          context.commit("setNavPrevSize", result.length);
+          context.commit("setPreviousOffset", context.state.navPrevOffset - 1);
         });
     }
   },
@@ -104,21 +90,17 @@ export const actions = {
     dataFetch
       .getImages(context.state.navNextDecade, context.state.navNextOffset)
       .then((result) => {
-        if (result.data.length === 0) {
+        if (result.length === 0) {
           dataFetch
             .getImages(+context.state.navNextDecade + 1, 1)
             .then((result) => {
-              dataFetch.extractDataFromDb(result.data.flat()).then((result) => {
-                context.commit("setNextNavigation", result);
-                context.commit("setNextDecade", +context.state.navNextDecade + 1);
-                context.commit("setNextOffset", 2);
-              });
+              context.commit("setNextNavigation", result);
+              context.commit("setNextDecade", +context.state.navNextDecade + 1);
+              context.commit("setNextOffset", 2);
             });
         } else {
-          dataFetch.extractDataFromDb(result.data.flat()).then((result) => {
-            context.commit("setNextNavigation", result);
-            context.commit("setNextOffset", context.state.navNextOffset + 1);
-          });
+          context.commit("setNextNavigation", result);
+          context.commit("setNextOffset", context.state.navNextOffset + 1);
         }
       });
   },
