@@ -1,5 +1,5 @@
 <template>
-  <el-row :gutter="10"> </el-row>
+  <!--el-row :class="{ customTransitionMask: step !== 3 }" :gutter="10" :align="'middle'"-->
   <el-row :gutter="10" :align="'middle'">
     <el-col :xs="10" :sm="9" :md="8" :lg="8" :xl="8"> </el-col>
     <el-col
@@ -8,24 +8,26 @@
       :md="7"
       :lg="8"
       :xl="8"
-      :class="{ background: step !== 3 }"
+      :style="{
+        marginTop: windowHeight / 10 + 'px',
+        marginBottom: windowHeight / 10 + 'px',
+      }"
     >
       <el-carousel
-        :class="{ customTransitionMask: step !== 3 }"
-        v-bind:height="windowHeight + 'px'"
+        :height="(windowHeight / 5) * 4 + 'px'"
         direction="vertical"
         :loop="false"
         :autoplay="false"
         ref="myCarousel"
         class="custom-carousel"
-        v-on:change="changeImage"
+        @change="changeImage"
       >
         <el-carousel-item v-for="(value, index) in data" :key="index">
           <img
             ref="image"
             class="custom-image"
-            v-bind:src="value.imagePaths.large"
-            v-bind:alt="value.id"
+            :src="value.imagePaths.large"
+            :alt="value.id"
           />
         </el-carousel-item>
       </el-carousel>
@@ -35,11 +37,11 @@
         <el-slider
           vertical
           v-model="step"
-          v-bind:height="windowHeight / 5 + 'px'"
+          :height="windowHeight / 5 + 'px'"
           :max="6"
           :show-tooltip="false"
-          v-on:change="rangeChange"
-          v-on:input="changeImage"
+          @change="rangeChange"
+          @input="changeImage"
         >
         </el-slider>
       </el-row>
@@ -75,7 +77,7 @@ export default {
       windowWidth: undefined,
       carousel: undefined,
       maxCarouselSize: 0,
-      inLoading: false,
+      isLoading: false,
       currentSlide: 0,
       shouldUpdateIndex: false,
       retrieveLength: 0,
@@ -123,16 +125,16 @@ export default {
       // The parameter for the year search will come from the previous selection view.
       // Currently, this value is hard-coded for testing purpose.
       this.$store.dispatch("getInitState", {
-        year: "191",
+        decade: "191",
       });
     },
     getPreviousImages(nextIndex, sizeBeforeLoad, intervalTransitionTime) {
       this.currentSlide = nextIndex;
-      if (nextIndex < sizeBeforeLoad && !this.inLoading) {
-        this.inLoading = true;
+      if (nextIndex < sizeBeforeLoad && !this.isLoading) {
+        this.isLoading = true;
         this.shouldUpdateIndex = true;
         this.$store.dispatch("getPreviousContent");
-        this.inLoading = false;
+        this.isLoading = false;
       }
       setTimeout(() => {
         this.carousel.prev();
@@ -142,11 +144,11 @@ export default {
       this.currentSlide = nextIndex;
       if (
         nextIndex > this.maxCarouselSize - sizeBeforeLoad &&
-        !this.inLoading
+        !this.isLoading
       ) {
-        this.inLoading = true;
+        this.isLoading = true;
         this.$store.dispatch("getNextContent");
-        this.inLoading = false;
+        this.isLoading = false;
       }
       setTimeout(() => {
         this.carousel.next();

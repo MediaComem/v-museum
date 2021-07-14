@@ -1,4 +1,4 @@
-export default class Data {
+export default class ImageData {
   constructor(id, title, imagePaths, tags) {
     this.id = id;
     this.title = title;

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import Data from "../models/Data";
+import ImageData from "../models/ImageData";
 
 const request = async (url) => {
   return axios.get(url);
@@ -19,7 +19,7 @@ export default {
       let title = element["dcterms:title"];
       if (title) {
         images.push(
-          new Data(
+          new ImageData(
             element["o:id"],
             title[0]["@value"],
             element["thumbnail_display_urls"],
@@ -28,7 +28,7 @@ export default {
         );
       } else {
         images.push(
-          new Data(
+          new ImageData(
             element["o:id"],
             null,
             element["thumbnail_display_urls"],
