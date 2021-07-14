@@ -37,12 +37,13 @@ const parseImages = (data) => {
 export default {
   async findMaxOffsetOfYear(year) {
     const req = process.env.VUE_APP_FIND_OFFSET + year;
-    return request(req);
+    const { data } = await request(req);
+    return data;
   },
+
   async getImages(year, offset) {
     const req = process.env.VUE_APP_FETCH_BASE + year + "&page=";
-    return request(req + offset).then((result) => {
-      return parseImages(result.data);
-    });
+    const { data } = await request(req + offset);
+    return parseImages(data);
   },
 };

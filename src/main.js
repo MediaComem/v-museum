@@ -37,7 +37,7 @@ export const actions = {
     dataFetch
       .findMaxOffsetOfYear(+decade - 1)
       .then((result) => {
-        let maxOffset = Math.ceil(result.data.length / 100);
+        let maxOffset = Math.ceil(result.length / 100);
         context.commit("setPreviousOffset", maxOffset);
         dataFetch
           .getImages(+decade - 1, maxOffset)
@@ -63,7 +63,7 @@ export const actions = {
       dataFetch
         .findMaxOffsetOfYear(+context.state.navPrevDecade - 1)
         .then((result) => {
-          let maxOffset = Math.ceil(result.data.length / 100);
+          let maxOffset = Math.ceil(result.length / 100);
           context.commit("setPreviousOffset", maxOffset);
           dataFetch
             .getImages(+context.state.navPrevDecade - 1, maxOffset)
