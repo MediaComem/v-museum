@@ -119,15 +119,20 @@ export default {
       }
     },
     loadPreviousImages(nextImageIndex, indexOfLoading, intervalTransitionTime) {
+      this.currentSlide = nextImageIndex;
       if (nextImageIndex < indexOfLoading && !this.isLoadingImage) {
         this.$store.dispatch("loadPreviousContent");
       }
       this.timeout = setTimeout(() => {
-        this.currentSlide = nextImageIndex;
         this.carousel.prev();
       }, intervalTransitionTime);
     },
-    loadNextImages(nextImageIndex, diffMaxIndexBeforeLoad, intervalTransitionTime) {
+    loadNextImages(
+      nextImageIndex,
+      diffMaxIndexBeforeLoad,
+      intervalTransitionTime
+    ) {
+      this.currentSlide = nextImageIndex;
       if (
         nextImageIndex > this.totalCarouselIndex - diffMaxIndexBeforeLoad &&
         !this.isLoadingImage
@@ -135,7 +140,6 @@ export default {
         this.$store.dispatch("loadNextContent");
       }
       this.timeout = setTimeout(() => {
-        this.currentSlide = nextImageIndex;
         this.carousel.next();
       }, intervalTransitionTime);
     },
