@@ -8,7 +8,6 @@ const request = async (url) => {
 
 const parseImages = (data) => {
   const images = [];
-
   data.forEach((element) => {
     let title = element["dcterms:title"];
     if (title) {
@@ -35,15 +34,15 @@ const parseImages = (data) => {
 };
 
 export default {
-  async findMaxOffsetOfYear(year) {
-    const req = process.env.VUE_APP_FIND_OFFSET + year;
-    const { data } = await request(req);
-    return data;
+  async findNbItemsPerDecade(decade) {
+    const req = process.env.VUE_APP_FIND_OFFSET + decade;
+    const { headers } = await request(req);
+    return headers["omeka-s-total-results"];
   },
 
-  async getImages(year, offset) {
-    const req = process.env.VUE_APP_FETCH_BASE + year + "&page=";
-    const { data } = await request(req + offset);
+  async getImages(decade, offset) {
+    const req = process.env.VUE_APP_FETCH_BASE + decade + "&page=" + offset;
+    const { data } = await request(req);
     return parseImages(data);
   },
 };

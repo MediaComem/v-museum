@@ -1,14 +1,14 @@
 <template>
-  <image-selection/>
+  <image-selector/>
 </template>
 
 <script>
-import ImageSelection from "./components/ImageSelector/ImageSelector.vue";
+import ImageSelector from "./components/ImageSelector/ImageSelector.vue";
 
 export default {
   name: "App",
   components: {
-    ImageSelection,
+    ImageSelector,
   },
 };
 </script>

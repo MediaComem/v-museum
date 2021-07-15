@@ -18,7 +18,7 @@
         direction="vertical"
         :loop="false"
         :autoplay="false"
-        ref="myCarousel"
+        ref="carousel"
         class="custom-carousel"
         @change="changeImage"
       >
@@ -51,21 +51,19 @@
 </template>
 
 <script>
-import axios from "axios";
 import { useWindowSize } from "vue-window-size";
 import { mapState } from "vuex";
 
 export default {
-  name: "SliderComponent",
+  name: "ImageSelector",
   watch: {
-    images: function(newVal) {
-      this.data = newVal;
-      this.maxCarouselSize = this.data.length;
+    images: function(newImages) {
+      this.data = newImages;
+      this.totalCarouselIndex = this.data.length;
     },
-    navPrevSize: function(newVal) {
-      console.log(newVal);
-      if (newVal !== 0) {
-        this.carousel.setActiveItem(this.currentSlide + newVal);
+    nbItemsLoadInThePast: function(nbItemsLoad) {
+      if (nbItemsLoad !== 0) {
+        this.carousel.setActiveItem(this.currentSlide + nbItemsLoad);
       }
     },
   },
@@ -76,11 +74,10 @@ export default {
       windowHeight: undefined,
       windowWidth: undefined,
       carousel: undefined,
-      maxCarouselSize: 0,
+      totalCarouselIndex: 0,
       isLoading: false,
       currentSlide: 0,
-      shouldUpdateIndex: false,
-      retrieveLength: 0,
+      timeout: undefined,
     };
   },
   methods: {
@@ -93,79 +90,75 @@ export default {
     },
     rangeChange() {
       this.step = 3;
+      this.stopTimeout();
     },
-    // Vitesse Max = 1 image toutes les 50ms
-    changeImage(nextIndex) {
+    // Vitesse Max = 1 image toutes les 50ms: Devra être fait Peut-être avec un 4ème cran
+    changeImage(nextImageIndex) {
       switch (this.step) {
         case 0:
-          this.getNextImages(nextIndex, 80, 100);
+          this.loadNextImages(nextImageIndex, 80, 100);
           break;
         case 1:
-          this.getNextImages(nextIndex, 40, 500);
+          this.loadNextImages(nextImageIndex, 40, 500);
           break;
         case 2:
-          this.getNextImages(nextIndex, 20, 1000);
+          this.loadNextImages(nextImageIndex, 20, 1000);
           break;
         case 3:
+          this.stopTimeout();
           break;
         case 4:
-          this.getPreviousImages(nextIndex, 20, 1000);
+          this.loadPreviousImages(nextImageIndex, 20, 1000);
           break;
         case 5:
-          this.getPreviousImages(nextIndex, 40, 500);
+          this.loadPreviousImages(nextImageIndex, 40, 500);
           break;
         case 6:
-          this.getPreviousImages(nextIndex, 80, 100);
+          this.loadPreviousImages(nextImageIndex, 80, 100);
           break;
       }
     },
-
-    initContent() {
-      this.shouldUpdateIndex = true;
-      // The parameter for the year search will come from the previous selection view.
-      // Currently, this value is hard-coded for testing purpose.
-      this.$store.dispatch("getInitState", {
-        decade: "191",
-      });
-    },
-    getPreviousImages(nextIndex, sizeBeforeLoad, intervalTransitionTime) {
-      this.currentSlide = nextIndex;
-      if (nextIndex < sizeBeforeLoad && !this.isLoading) {
-        this.isLoading = true;
-        this.shouldUpdateIndex = true;
-        this.$store.dispatch("getPreviousContent");
-        this.isLoading = false;
+    loadPreviousImages(nextImageIndex, indexOfLoading, intervalTransitionTime) {
+      if (nextImageIndex < indexOfLoading && !this.isLoadingImage) {
+        this.$store.dispatch("loadPreviousContent");
       }
-      setTimeout(() => {
+      this.timeout = setTimeout(() => {
+        this.currentSlide = nextImageIndex;
         this.carousel.prev();
       }, intervalTransitionTime);
     },
-    getNextImages(nextIndex, sizeBeforeLoad, intervalTransitionTime) {
-      this.currentSlide = nextIndex;
+    loadNextImages(nextImageIndex, diffMaxIndexBeforeLoad, intervalTransitionTime) {
       if (
-        nextIndex > this.maxCarouselSize - sizeBeforeLoad &&
-        !this.isLoading
+        nextImageIndex > this.totalCarouselIndex - diffMaxIndexBeforeLoad &&
+        !this.isLoadingImage
       ) {
-        this.isLoading = true;
-        this.$store.dispatch("getNextContent");
-        this.isLoading = false;
+        this.$store.dispatch("loadNextContent");
       }
-      setTimeout(() => {
+      this.timeout = setTimeout(() => {
+        this.currentSlide = nextImageIndex;
         this.carousel.next();
       }, intervalTransitionTime);
     },
+    stopTimeout() {
+      clearTimeout(this.timeout);
+    },
   },
-  computed: mapState(["images", "navPrevSize"]),
+  computed: mapState(["images", "nbItemsLoadInThePast", "isLoadingImage"]),
   mounted() {
     // Due to the mandatory height for carousel element in vertical mode.
     // This lib is used for reponsive purpose
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
-    axios.defaults.withCredentials = true;
-    this.carousel = this.$refs.myCarousel;
+
+    this.carousel = this.$refs.carousel;
     //this.carousel.$el.addEventListener("wheel", this.mouseWheelAction);
-    this.initContent();
+
+    // The parameter for the year search will come from the previous selection view.
+    // Currently, this value is hard-coded for testing purpose.
+    this.$store.dispatch("initializeCarousel", {
+      decade: "191",
+    });
   },
   unmounted() {
     //this.carousel.$el.removeEventListener("wheel", this.keyEvent);
