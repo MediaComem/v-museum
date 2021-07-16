@@ -1,0 +1,13 @@
+.rectangle {
+    position: absolute;
+    
+    background: #000000;
+    mix-blend-mode: multiply;
+    opacity: 0.3;
+}
+
+.el-carousel__indicators--vertical {
+    width: 0px;
+    height: 0px;
+    pointer-events: none;
+  }

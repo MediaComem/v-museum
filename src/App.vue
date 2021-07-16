@@ -1,14 +1,16 @@
 <template>
-  <image-selector/>
+  <home/>
 </template>
 
 <script>
-import ImageSelector from "./components/ImageSelector/ImageSelector.vue";
+import Home from "./components/Home/Home.vue"
+//import ImageSelector from "./components/ImageSelector/ImageSelector.vue";
 
 export default {
   name: "App",
   components: {
-    ImageSelector,
+    Home
+    //ImageSelector,
   },
 };
 </script>
