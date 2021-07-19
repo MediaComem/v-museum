@@ -1,13 +1,69 @@
 .rectangle {
+  background: unset;
+  mix-blend-mode: multiply;
+  opacity: 0.3;
+  border: 3px solid #ffffff;
+  box-sizing: border-box;
+}
+
+.rectangle-text {
+  font-size: 96px;
+  color: white;
+}
+
+.unset-rectangle {
+  background: unset;
+}
+
+.top-display {
     position: absolute;
-    
-    background: #000000;
-    mix-blend-mode: multiply;
-    opacity: 0.3;
+    top: 0;
+    left: middle;
+    margin-left: 15%;
+  }
+
+.icon-infos {
+  color: white;
+  font-size: xx-large;
+  margin-left: 60%;
+  margin-top: 5%;
+}
+
+.text-font {
+  color: white;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  letter-spacing: -0.05em;
+}
+
+.scroll-button {
+  height: 60px;
+  width: 60px;
+  text-align: center;
+  background-color: unset;
+  border: 3px solid #ffffff;
+  box-sizing: border-box;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+  border-radius: 100%;
+  filter: drop-shadow(3px 4px 4px rgba(0, 0, 0, 0.7));
+}
+
+.icon-arrow {
+  font-size: xx-large;
+  margin-left: -9px;
+}
+
+.bottom-display {
+  position: absolute;
+  bottom: 0;
+  left: middle;
+  margin-left: 15%;
 }
 
 .el-carousel__indicators--vertical {
-    width: 0px;
-    height: 0px;
-    pointer-events: none;
-  }
+  width: 0px;
+  height: 0px;
+  pointer-events: none;
+}
