@@ -78,425 +78,14 @@
 
 .sliderMask {
   background-color: rgba(0, 0, 0, 1);
-  mask-image: url("../../assets/Vignette\ 1.png");
-  mask-position: center;
-  mask-size: 100%;
-  mask-repeat: no-repeat;
-  mask-position: center;
-  size: 100%;
 }
 
 .zoomTransitionImageSlow {
-  animation: maskTransitionImageSlow 1.5s linear 0s normal forwards;
-  animation-timing-function: ease;
-}
-
-@keyframes maskTransitionImageSlow {
-  0% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 100%
-    );
-  }
-  10% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 98%
-    );
-  }
-  20% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 96%
-    );
-  }
-  30% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 94%
-    );
-  }
-  40% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 92%
-    );
-  }
-  50% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 90%
-    );
-  }
-  60% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 88%
-    );
-  }
-  70% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 86%
-    );
-  }
-  80% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 84%
-    );
-  }
-  90% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 82%
-    );
-  }
-  100% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgb(0, 0, 0, 0) 80%
-    );
-  }
-}
-
-.unzoomTransitionImageSlow {
-  animation: unMaskTransitionImageSlow 1.5s linear 0s normal forwards;
-  animation-timing-function: ease;
-}
-
-@keyframes unMaskTransitionImageSlow {
-  0% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 80%
-    );
-  }
-  10% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 82%
-    );
-  }
-  20% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 84%
-    );
-  }
-  30% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 86%
-    );
-  }
-  40% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 88%
-    );
-  }
-  50% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 90%
-    );
-  }
-  60% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 92%
-    );
-  }
-  70% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 94%
-    );
-  }
-  80% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 96%
-    );
-  }
-  90% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 98%
-    );
-  }
-  100% {mask-image:unset}
+  opacity: 0.90;
 }
 
 .zoomTransitionImageMedium {
-  animation: maskTransitionImageMedium 1.5s linear 0s normal forwards;
-  animation-timing-function: ease;
-}
-
-@keyframes maskTransitionImageMedium {
-  0% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 80%
-    );
-  }
-  10% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 78%
-    );
-  }
-  20% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 76%
-    );
-  }
-  30% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 74%
-    );
-  }
-  40% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 72%
-    );
-  }
-  50% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 70%
-    );
-  }
-  60% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 68%
-    );
-  }
-  70% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 66%
-    );
-  }
-  80% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 64%
-    );
-  }
-  90% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 62%
-    );
-  }
-  100% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 60%
-    );
-  }
-}
-
-.unzoomTransitionImageMedium {
-  animation: unMaskTransitionImageMedium 1.5s linear 0s normal forwards;
-  animation-timing-function: ease;
-}
-
-@keyframes unMaskTransitionImageMedium {
-  0% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 60%
-    );
-  }
-  10% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 62%
-    );
-  }
-  20% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 64%
-    );
-  }
-  30% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 66%
-    );
-  }
-  40% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 68%
-    );
-  }
-  50% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 70%
-    );
-  }
-  60% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 72%
-    );
-  }
-  70% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 74%
-    );
-  }
-  80% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 76%
-    );
-  }
-  90% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 78%
-    );
-  }
-  100% {mask-image: radial-gradient(
-    circle at 50% 50%,
-    black 10%,
-    rgba(0, 0, 0, 0) 80%
-  );}
-}
-
-.unzoomTransitionImageMediumEnd {
-  animation: unMaskTransitionImageMediumEnd 1.5s linear 0s normal forwards;
-  animation-timing-function: ease;
-}
-
-@keyframes unMaskTransitionImageMediumEnd {
-  0% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 60%
-    );
-  }
-  10% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 64%
-    );
-  }
-  20% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 68%
-    );
-  }
-  30% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 72%
-    );
-  }
-  40% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 76%
-    );
-  }
-  50% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 80%
-    );
-  }
-  60% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 84%
-    );
-  }
-  70% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 88%
-    );
-  }
-  80% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 92%
-    );
-  }
-  90% {
-    mask-image: radial-gradient(
-      circle at 50% 50%,
-      black 10%,
-      rgba(0, 0, 0, 0) 96%
-    );
-  }
-  100% {
-    mask-image: unset;
-  }
+  opacity: 0.80;
 }
 
 .zoomTransitionImageFast {
@@ -509,70 +98,70 @@
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 60%
+      rgba(0, 0, 0, 0) 80%
     );
   }
   10% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 58%
+      rgba(0, 0, 0, 0) 76%
     );
   }
   20% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 56%
+      rgba(0, 0, 0, 0) 74%
     );
   }
   30% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 54%
+      rgba(0, 0, 0, 0) 68%
     );
   }
   40% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 52%
+      rgba(0, 0, 0, 0) 64%
     );
   }
   50% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 50%
+      rgba(0, 0, 0, 0) 60%
     );
   }
   60% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 48%
+      rgba(0, 0, 0, 0) 56%
     );
   }
   70% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 46%
+      rgba(0, 0, 0, 0) 52%
     );
   }
   80% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 44%
+      rgba(0, 0, 0, 0) 48%
     );
   }
   90% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 42%
+      rgba(0, 0, 0, 0) 44%
     );
   }
   100% {
@@ -601,72 +190,69 @@
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 42%
+      rgba(0, 0, 0, 0) 46%
     );
   }
   20% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 44%
+      rgba(0, 0, 0, 0) 52%
     );
   }
   30% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 46%
+      rgba(0, 0, 0, 0) 58%
     );
   }
   40% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 48%
+      rgba(0, 0, 0, 0) 64%
     );
   }
   50% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 50%
+      rgba(0, 0, 0, 0) 70%
     );
   }
   60% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 52%
+      rgba(0, 0, 0, 0) 76%
     );
   }
   70% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 54%
+      rgba(0, 0, 0, 0) 82%
     );
   }
   80% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 56%
+      rgba(0, 0, 0, 0) 88%
     );
   }
   90% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 58%
+      rgba(0, 0, 0, 0) 94%
     );
   }
-  100% {mask-image: radial-gradient(
-    circle at 50% 50%,
-    black 10%,
-    rgba(0, 0, 0, 0) 60%
-  );}
+  100% {
+    opacity: 0.80;
+  }
 }
-
 
 .unzoomTransitionImageFastEnd {
   animation: unMaskTransitionImageFastEnd 1.5s linear 0s normal forwards;
