@@ -25,34 +25,40 @@
         marginBottom: windowHeight / 10 + 'px',
       }"
     >
-      <el-carousel
-        :height="(windowHeight / 5) * 4 + 'px'"
-        direction="vertical"
-        :loop="false"
-        :autoplay="false"
-        ref="carousel"
-        class="custom-carousel"
-        :class="{
-          zoomTransitionImageFast: (step === 0 || step === 6) && zoomingStep === 3,
-          zoomTransitionImageMedium: (step === 1 || step === 5) && zoomingStep === 3,
-          zoomTransitionImageSlow: (step === 2 || step === 4) && zoomingStep === 3,
-          unzoomTransitionImageSlow: step === 3 && ((releaseStep === 2 || releaseStep == 4) || (step === 3 && zoomingStep === 0)),
-          unzoomTransitionImageMedium: (step === 2 || step === 4) && zoomingStep === 1,
-          unzoomTransitionImageMediumEnd: step === 3 && zoomingStep === 3 && (releaseStep === 1 || releaseStep === 5),
-          unzoomTransitionImageFast: (step === 1 || step === 5) && zoomingStep === 2,
-          unzoomTransitionImageFastEnd: step === 3 && zoomingStep === 3 && (releaseStep === 0 || releaseStep === 6)
-        }"
-        @change="changeImage"
-      >
-        <el-carousel-item v-for="(value, index) in data" :key="index">
-          <img
-            ref="image"
-            class="custom-image"
-            :src="value.imagePaths.large"
-            :alt="value.id"
-          />
-        </el-carousel-item>
-      </el-carousel>
+      <div class="sliderMask">
+        <el-carousel
+          :height="(windowHeight / 5) * 4 + 'px'"
+          direction="vertical"
+          :loop="false"
+          :autoplay="false"
+          ref="carousel"
+          class="custom-carousel"
+          :class="{
+            zoomTransitionImageFast:
+              (step === 0 || step === 6) && zoomingStep === 3,
+            zoomTransitionImageMedium:
+              (step === 1 || step === 5) && zoomingStep === 3,
+            zoomTransitionImageSlow:
+              (step === 2 || step === 4) && zoomingStep === 3,
+            unzoomTransitionImageFastEnd:
+              step === 3 &&
+              zoomingStep === 3 &&
+              (releaseStep === 0 || releaseStep === 6),
+            unzoomTransitionImageFast:
+              (step === 1 || step === 5) && zoomingStep === 2,
+          }"
+          @change="changeImage"
+        >
+          <el-carousel-item v-for="(value, index) in data" :key="index">
+            <img
+              ref="image"
+              class="custom-image"
+              :src="value.imagePaths.large"
+              :alt="value.id"
+            />
+          </el-carousel-item>
+        </el-carousel>
+      </div>
     </el-col>
     <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2">
       <el-row :justify="'center'" :align="'middle'">
