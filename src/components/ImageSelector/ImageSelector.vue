@@ -97,13 +97,13 @@ export default {
     changeImage(nextImageIndex) {
       switch (this.step) {
         case 0:
-          this.navigateNextImag(nextImageIndex, 80, 100);
+          this.navigateNextImage(nextImageIndex, 80, 100);
           break;
         case 1:
-          this.navigateNextImag(nextImageIndex, 40, 500);
+          this.navigateNextImage(nextImageIndex, 40, 500);
           break;
         case 2:
-          this.navigateNextImag(nextImageIndex, 20, 1000);
+          this.navigateNextImage(nextImageIndex, 20, 1000);
           break;
         case 3:
           this.stopTimeout();
@@ -124,7 +124,7 @@ export default {
         this.carousel.prev();
       }, intervalTransitionTime);
     },
-    navigateNextImag(
+    navigateNextImage(
       nextImageIndex,
       diffMaxIndexBeforeLoad,
       intervalTransitionTime
