@@ -1,18 +1,5 @@
 <template>
-  <el-row
-    :gutter="10"
-    :align="'middle'"
-    :class="{
-      globalMaskFast: (step === 0 || step === 6) && zoomingStep === 3,
-      globalMaskMedium: (step === 1 || step === 2 || step === 4 || step === 5) && zoomingStep === 3,
-      removeGlobalMaskFastEnd: step === 3 && zoomingStep === 3 && (releaseStep === 0 || releaseStep === 6),
-      removeGlobalMaskFastToMedium: zoomingStep === 2 || zoomingStep === 1,
-      removeGlobalMaskMediumToNone: step === 3 && zoomingStep === 0,
-      removeGlobalMaskMediumEnd:
-        step === 3 && zoomingStep === 3 &&
-        (releaseStep === 1 || releaseStep === 2 || releaseStep === 4 || releaseStep === 5),
-    }"
-  >
+  <el-row :gutter="10" :align="'middle'">
     <el-col :xs="10" :sm="9" :md="8" :lg="8" :xl="8"> </el-col>
     <el-col
       :xs="3"
@@ -33,14 +20,29 @@
         ref="carousel"
         class="custom-carousel"
         :class="{
-          zoomTransitionImageFast: (step === 0 || step === 6) && zoomingStep === 3,
-          zoomTransitionImageMedium: (step === 1 || step === 5) && zoomingStep === 3,
-          zoomTransitionImageSlow: (step === 2 || step === 4) && zoomingStep === 3,
-          unzoomTransitionImageSlow: step === 3 && ((releaseStep === 2 || releaseStep == 4) || (step === 3 && zoomingStep === 0)),
-          unzoomTransitionImageMedium: (step === 2 || step === 4) && zoomingStep === 1,
-          unzoomTransitionImageMediumEnd: step === 3 && zoomingStep === 3 && (releaseStep === 1 || releaseStep === 5),
-          unzoomTransitionImageFast: (step === 1 || step === 5) && zoomingStep === 2,
-          unzoomTransitionImageFastEnd: step === 3 && zoomingStep === 3 && (releaseStep === 0 || releaseStep === 6)
+          zoomTransitionImageFast, sliderMask:
+            (step === 0 || step === 6) && zoomingStep === 3,
+          zoomTransitionImageMedium:
+            (step === 1 || step === 5) && zoomingStep === 3,
+          zoomTransitionImageSlow:
+            (step === 2 || step === 4) && zoomingStep === 3,
+          unzoomTransitionImageSlow:
+            step === 3 &&
+            (releaseStep === 2 ||
+              releaseStep == 4 ||
+              (step === 3 && zoomingStep === 0)),
+          unzoomTransitionImageMedium:
+            (step === 2 || step === 4) && zoomingStep === 1,
+          unzoomTransitionImageMediumEnd:
+            step === 3 &&
+            zoomingStep === 3 &&
+            (releaseStep === 1 || releaseStep === 5),
+          unzoomTransitionImageFast:
+            (step === 1 || step === 5) && zoomingStep === 2,
+          unzoomTransitionImageFastEnd:
+            step === 3 &&
+            zoomingStep === 3 &&
+            (releaseStep === 0 || releaseStep === 6),
         }"
         @change="changeImage"
       >
@@ -83,15 +85,17 @@ export default {
     images: function(newImages) {
       this.data = newImages;
       this.totalCarouselIndex = this.data.length;
-    },
-    nbItemsLoadInThePast: function(nbItemsLoad) {
-      if (nbItemsLoad !== 0) {
-        this.carousel.setActiveItem(this.currentSlide + nbItemsLoad);
+      if (this.isInitialLoad) {
+        this.$nextTick(() => {
+          this.carousel.setActiveItem(0);
+          this.isInitialLoad = false;
+        });
       }
     },
   },
   data() {
     return {
+      isInitialLoad: true,
       data: undefined,
       releaseStep: -1,
       previousStep: 3,
@@ -101,7 +105,6 @@ export default {
       windowWidth: undefined,
       carousel: undefined,
       totalCarouselIndex: 0,
-      isLoading: false,
       currentSlide: 0,
       timeout: undefined,
     };
@@ -124,28 +127,28 @@ export default {
     changeImage(nextImageIndex) {
       switch (this.step) {
         case 0:
-          if (this.previousStep === 1){
+          if (this.previousStep === 1) {
             this.zoomingStep = 3;
           }
-          this.loadNextImages(nextImageIndex, 80, 100);
+          this.navigateNextImage(nextImageIndex, 80, 100);
           break;
         case 1:
-          if (this.previousStep === 2){
+          if (this.previousStep === 2) {
             this.zoomingStep = 3;
           }
           if (this.previousStep === 0) {
             this.zoomingStep = 2;
           }
-          this.loadNextImages(nextImageIndex, 40, 500);
+          this.navigateNextImage(nextImageIndex, 40, 500);
           break;
         case 2:
-          if (this.previousStep === 3){
+          if (this.previousStep === 3) {
             this.zoomingStep = 3;
           }
           if (this.previousStep === 1) {
             this.zoomingStep = 1;
           }
-          this.loadNextImages(nextImageIndex, 20, 1000);
+          this.navigateNextImage(nextImageIndex, 20, 1000);
           break;
         case 3:
           if (this.previousStep === 4 || this.previousStep === 2) {
@@ -154,43 +157,39 @@ export default {
           this.stopTimeout();
           break;
         case 4:
-          if (this.previousStep === 3){
+          if (this.previousStep === 3) {
             this.zoomingStep = 3;
           }
           if (this.previousStep === 5) {
             this.zoomingStep = 1;
           }
-          this.loadPreviousImages(nextImageIndex, 20, 1000);
+          this.navigatePreviousImage(1000);
           break;
         case 5:
-          if (this.previousStep === 4){
+          if (this.previousStep === 4) {
             this.zoomingStep = 3;
           }
           if (this.previousStep === 6) {
             this.zoomingStep = 2;
           }
-          this.loadPreviousImages(nextImageIndex, 40, 500);
+          this.navigatePreviousImage(500);
           break;
         case 6:
-          if (this.previousStep === 5){
+          if (this.previousStep === 5) {
             this.zoomingStep = 3;
           }
-          this.loadPreviousImages(nextImageIndex, 80, 100);
+          this.navigatePreviousImage(100);
           break;
       }
       this.previousStep = this.step;
     },
-    loadPreviousImages(nextImageIndex, indexOfLoading, intervalTransitionTime) {
-      this.currentSlide = nextImageIndex;
-      if (nextImageIndex < indexOfLoading && !this.isLoadingImage) {
-        this.$store.dispatch("loadPreviousContent");
-      }
-      this.carousel.prev();
+
+    navigatePreviousImage(intervalTransitionTime) {
       this.timeout = setTimeout(() => {
         this.carousel.prev();
       }, intervalTransitionTime);
     },
-    loadNextImages(
+    navigateNextImage(
       nextImageIndex,
       diffMaxIndexBeforeLoad,
       intervalTransitionTime
@@ -210,7 +209,7 @@ export default {
       clearTimeout(this.timeout);
     },
   },
-  computed: mapState(["images", "nbItemsLoadInThePast", "isLoadingImage"]),
+  computed: mapState(["images", "isLoadingImage"]),
   mounted() {
     // Due to the mandatory height for carousel element in vertical mode.
     // This lib is used for reponsive purpose
@@ -220,7 +219,7 @@ export default {
 
     this.carousel = this.$refs.carousel;
     //this.carousel.$el.addEventListener("wheel", this.mouseWheelAction);
-    
+
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
     this.$store.dispatch("initializeCarousel", {

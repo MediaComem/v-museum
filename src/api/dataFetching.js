@@ -34,12 +34,6 @@ const parseImages = (data) => {
 };
 
 export default {
-  async findNbItemsPerDecade(decade) {
-    const req = process.env.VUE_APP_FIND_OFFSET + decade;
-    const { headers } = await request(req);
-    return headers["omeka-s-total-results"];
-  },
-
   async getImages(decade, offset) {
     const req = process.env.VUE_APP_FETCH_BASE + decade + "&page=" + offset;
     const { data } = await request(req);

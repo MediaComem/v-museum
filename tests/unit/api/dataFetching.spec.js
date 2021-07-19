@@ -12,21 +12,6 @@ describe("Test API that retrieve the data", () => {
     sandbox.restore();
   });
 
-  it("Test findNbItemsPerDecade method", () => {
-    sandbox.stub(axios, "get").callsFake(
-      () =>
-        new Promise((success) => {
-          success({ headers: {
-            "omeka-s-total-results": 250
-          }});
-        })
-    );
-    const result = dataFetching.findNbItemsPerDecade("191");
-    return result.then((val) => {
-      expect(val).to.equals(250);
-    });
-  });
-
   it("Test getImages method without data", () => {
     sandbox.stub(axios, "get").callsFake(
       () =>
