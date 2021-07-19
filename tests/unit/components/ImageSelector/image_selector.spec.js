@@ -8,9 +8,6 @@ describe("Test ImageSelector component", () => {
   const sandbox = sinon.createSandbox();
   const $store = {
     state: {
-      navPrevSize: 0,
-      navPrevDecade: String,
-      navPrevOffset: 1,
       navNextDecade: String,
       navNextOffset: 1,
       images: [],

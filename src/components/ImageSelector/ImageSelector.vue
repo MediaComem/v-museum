@@ -60,22 +60,23 @@ export default {
     images: function(newImages) {
       this.data = newImages;
       this.totalCarouselIndex = this.data.length;
-    },
-    nbItemsLoadInThePast: function(nbItemsLoad) {
-      if (nbItemsLoad !== 0) {
-        this.carousel.setActiveItem(this.currentSlide + nbItemsLoad);
+      if (this.isInitialLoad) {
+        this.$nextTick(() => {
+          this.carousel.setActiveItem(0);
+          this.isInitialLoad = false;
+        })
       }
     },
   },
   data() {
     return {
+      isInitialLoad: true,
       data: undefined,
       step: 3,
       windowHeight: undefined,
       windowWidth: undefined,
       carousel: undefined,
       totalCarouselIndex: 0,
-      isLoading: false,
       currentSlide: 0,
       timeout: undefined,
     };
@@ -96,38 +97,34 @@ export default {
     changeImage(nextImageIndex) {
       switch (this.step) {
         case 0:
-          this.loadNextImages(nextImageIndex, 80, 100);
+          this.navigateNextImag(nextImageIndex, 80, 100);
           break;
         case 1:
-          this.loadNextImages(nextImageIndex, 40, 500);
+          this.navigateNextImag(nextImageIndex, 40, 500);
           break;
         case 2:
-          this.loadNextImages(nextImageIndex, 20, 1000);
+          this.navigateNextImag(nextImageIndex, 20, 1000);
           break;
         case 3:
           this.stopTimeout();
           break;
         case 4:
-          this.loadPreviousImages(nextImageIndex, 20, 1000);
+          this.navigatePreviousImage(1000);
           break;
         case 5:
-          this.loadPreviousImages(nextImageIndex, 40, 500);
+          this.navigatePreviousImage(500);
           break;
         case 6:
-          this.loadPreviousImages(nextImageIndex, 80, 100);
+          this.navigatePreviousImage(100);
           break;
       }
     },
-    loadPreviousImages(nextImageIndex, indexOfLoading, intervalTransitionTime) {
-      this.currentSlide = nextImageIndex;
-      if (nextImageIndex < indexOfLoading && !this.isLoadingImage) {
-        this.$store.dispatch("loadPreviousContent");
-      }
+    navigatePreviousImage(intervalTransitionTime) {
       this.timeout = setTimeout(() => {
         this.carousel.prev();
       }, intervalTransitionTime);
     },
-    loadNextImages(
+    navigateNextImag(
       nextImageIndex,
       diffMaxIndexBeforeLoad,
       intervalTransitionTime
@@ -147,7 +144,7 @@ export default {
       clearTimeout(this.timeout);
     },
   },
-  computed: mapState(["images", "nbItemsLoadInThePast", "isLoadingImage"]),
+  computed: mapState(["images", "isLoadingImage"]),
   mounted() {
     // Due to the mandatory height for carousel element in vertical mode.
     // This lib is used for reponsive purpose
