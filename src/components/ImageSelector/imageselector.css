@@ -22,12 +22,13 @@
   transform: scale(1.5);
 }
 
+
 .el-carousel__item.is-animating {
-  -webkit-transition: -webkit-transform 0.1s ease-in-out;
+  -webkit-transition: -webkit-transform 0.05s ease-in-out;
   transition: -webkit-transform 0.1s ease-in-out;
-  transition: transform 0.1s ease-in-out;
-  transition: transform 0.1s ease-in-out, -webkit-transform 0.1s ease-in-out;
-  transition: transform 0.1s ease-in-out, -webkit-transform 0.1s ease-in-out;
+  transition: transform 0.05s ease-in-out;
+  transition: transform 0.05s ease-in-out, -webkit-transform 0.05s ease-in-out;
+  transition: transform 0.05s ease-in-out, -webkit-transform 0.05s ease-in-out;
 }
 
 .el-carousel__indicators--vertical {

@@ -118,7 +118,7 @@ export default {
           if (this.previousStep === 1) {
             this.zoomingStep = 3;
           }
-          this.navigateNextImage(nextImageIndex, 80, 100);
+          this.navigateNextImage(nextImageIndex, 80, 50);
           break;
         case 1:
           if (this.previousStep === 2) {
@@ -127,7 +127,7 @@ export default {
           if (this.previousStep === 0) {
             this.zoomingStep = 2;
           }
-          this.navigateNextImage(nextImageIndex, 40, 500);
+          this.navigateNextImage(nextImageIndex, 40, 250);
           break;
         case 2:
           if (this.previousStep === 3) {
@@ -160,19 +160,20 @@ export default {
           if (this.previousStep === 6) {
             this.zoomingStep = 2;
           }
-          this.navigatePreviousImage(500);
+          this.navigatePreviousImage(250);
           break;
         case 6:
           if (this.previousStep === 5) {
             this.zoomingStep = 3;
           }
-          this.navigatePreviousImage(100);
+          this.navigatePreviousImage(50);
           break;
       }
       this.previousStep = this.step;
     },
 
     navigatePreviousImage(intervalTransitionTime) {
+      this.stopTimeout();
       this.timeout = setTimeout(() => {
         this.carousel.prev();
       }, intervalTransitionTime);
@@ -189,6 +190,7 @@ export default {
       ) {
         this.$store.dispatch("loadNextContent");
       }
+      this.stopTimeout();
       this.timeout = setTimeout(() => {
         this.carousel.next();
       }, intervalTransitionTime);
