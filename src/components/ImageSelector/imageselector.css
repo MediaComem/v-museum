@@ -1,7 +1,7 @@
 .custom-image {
   height: 100%;
   width: 100%;
-  transform: scale(4);
+  transform: scale(2);
 }
 
 .custom-image .custom-carousel {
@@ -19,7 +19,7 @@
   -ms-transition: transform 20s ease;
   transition: transform 20s ease;
   transition-delay: 3s;
-  transform: scale(1);
+  transform: scale(1.5);
 }
 
 .el-carousel__item.is-animating {
