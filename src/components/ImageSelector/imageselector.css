@@ -22,7 +22,6 @@
   transform: scale(1.5);
 }
 
-
 .el-carousel__item.is-animating {
   -webkit-transition: -webkit-transform 0.05s ease-in-out;
   transition: -webkit-transform 0.1s ease-in-out;
@@ -49,6 +48,12 @@
   -moz-border-radius: 30px;
   -webkit-border-radius: 30px;
   border-radius: 30px;
+
+  background: url('../../assets/chevron_up.png') , url('../../assets/chevron_down.png');
+  background-position-x: -1px, 1px;
+  background-position-y: 5%, 95%;
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100%, 100%;
 
   border-color: #c0c4cc;
   border: 1px #c0c4cc;
