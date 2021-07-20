@@ -1,12 +1,8 @@
 <template>
   <el-row :gutter="10" :align="'middle'">
-    <el-col :xs="10" :sm="9" :md="8" :lg="8" :xl="8"> </el-col>
+    <el-col :span="9"> </el-col>
     <el-col
-      :xs="3"
-      :sm="5"
-      :md="7"
-      :lg="8"
-      :xl="8"
+      :span="6"
       :style="{
         marginTop: windowHeight / 10 + 'px',
         marginBottom: windowHeight / 10 + 'px',
@@ -14,12 +10,13 @@
     >
       <div class="sliderMask">
         <el-carousel
-          :height="(windowHeight / 5) * 4 + 'px'"
+          :height="(windowHeight / 6) * 4 + 'px'"
           direction="vertical"
           :loop="false"
           :autoplay="false"
           ref="carousel"
           class="custom-carousel"
+          :style="{marginTop: windowHeight / 14 + 'px'}"
           :class="{
             zoomTransitionImageFast:
               (step === 0 || step === 6) && zoomingStep === 3,
@@ -47,7 +44,7 @@
         </el-carousel>
       </div>
     </el-col>
-    <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2">
+    <el-col :span="2">
       <el-row :justify="'center'" :align="'middle'">
         <el-slider
           ref="slider"
@@ -62,7 +59,7 @@
         </el-slider>
       </el-row>
     </el-col>
-    <el-col :xs="9" :sm="8" :md="7" :lg="6" :xl="6"> </el-col>
+    <el-col :span="7"> </el-col>
   </el-row>
 </template>
 
