@@ -134,13 +134,13 @@ describe("Test ImageSelector component", () => {
     expect(wrapper.vm.$data.zoomingStep).to.equals(1);
   });
 
-  it("Test rangeChange method", () => {
+  it("Test releaseSlider method", () => {
     wrapper.vm.$data.zoomingStep = 6;
     wrapper.vm.$data.step = 6;
     expect(wrapper.vm.$data.releaseStep).to.equal(-1);
     expect(wrapper.vm.$data.step).to.equals(6);
     expect(wrapper.vm.$data.zoomingStep).to.equals(6);
-    wrapper.vm.rangeChange(2);
+    wrapper.vm.releaseSlider(2);
     expect(wrapper.vm.$data.step).to.equals(3);
     expect(wrapper.vm.$data.zoomingStep).to.equals(2);
     expect(wrapper.vm.$data.releaseStep).to.equal(2);

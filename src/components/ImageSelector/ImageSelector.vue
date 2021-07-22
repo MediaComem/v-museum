@@ -40,7 +40,7 @@
           :height="windowHeight / 5 + 'px'"
           :max="6"
           :show-tooltip="false"
-          @change="rangeChange"
+          @change="releaseSlider"
           @input="changeImage"
         >
         </el-slider>
@@ -92,7 +92,8 @@ export default {
         this.getNextImages(this.currentSlide + 1, 80, 100);
       }
     },
-    rangeChange(releaseStep) {
+    // This method reset some properties in case of the user release the slider
+    releaseSlider(releaseStep) {
       this.zoomingStep = 2;
       this.releaseStep = releaseStep;
       this.step = 3;
