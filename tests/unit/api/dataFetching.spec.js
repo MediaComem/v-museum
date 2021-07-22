@@ -7,7 +7,15 @@ import ImageData from "../../../src/models/ImageData";
 
 const elements = [
   {
-    "o:id": 1,
+    "dcterms:identifier": [
+      {
+        type: "literal",
+        property_id: 10,
+        property_label: "Identifier",
+        is_public: true,
+        "@value": "1",
+      },
+    ],
     "dcterms:title": [
       {
         type: "literal",
@@ -39,7 +47,15 @@ const elements = [
     "dcterms:subject": "Subject 1",
   },
   {
-    "o:id": 2,
+    "dcterms:identifier": [
+      {
+        type: "literal",
+        property_id: 10,
+        property_label: "Identifier",
+        is_public: true,
+        "@value": "2",
+      },
+    ],
     thumbnail_display_urls: "Link 2",
     "dcterms:creator": [
       {
@@ -74,7 +90,10 @@ describe("Test API that retrieve the data", () => {
     sandbox.stub(axios, "get").callsFake(
       () =>
         new Promise((success) => {
-          success({ data: [] });
+          success({
+            headers: { "omeka-s-total-results": "" },
+            data: [],
+          });
         })
     );
     const result = dataFetching.getRelatedImages("test");
@@ -87,12 +106,15 @@ describe("Test API that retrieve the data", () => {
     sandbox.stub(axios, "get").callsFake(
       () =>
         new Promise((success) => {
-          success({ data: elements });
+          success({
+            headers: { "omeka-s-total-results": "2" },
+            data: elements,
+          });
         })
     );
     const result = dataFetching.getRelatedImages("test");
     return result.then((val) => {
-      expect(val.id).to.be.oneOf([1, 2]);
+      expect(val.id).to.be.oneOf(["1", "2"]);
     });
   });
 
@@ -114,17 +136,24 @@ describe("Test API that retrieve the data", () => {
       () =>
         new Promise((success) => {
           success({
-            data: elements
+            data: elements,
           });
         })
     );
     const response = dataFetching.getImages("191");
     const expectedResult = [];
     expectedResult.push(
-      new ImageData(1, "Title 1", "Author 1", "Medium 1", "Link 1", "Subject 1")
+      new ImageData(
+        "1",
+        "Title 1",
+        "Author 1",
+        "Medium 1",
+        "Link 1",
+        "Subject 1"
+      )
     );
     expectedResult.push(
-      new ImageData(2, null, "Author 2", "Medium 2", "Link 2", "Subject 2")
+      new ImageData("2", null, "Author 2", "Medium 2", "Link 2", "Subject 2")
     );
     return response.then((val) => {
       expect(val).to.eql(expectedResult);

@@ -6,11 +6,21 @@
 
 .index-font {
   size: 38px;
+  font-weight: bold;
+}
+
+.text-left-part {
+  font-weight: bold;
+  text-align: end;
 }
 
 .data-information {
   text-align: start;
   font-weight: bold;
+}
+
+.relatedImageEffect {
+  height: 50%;
 }
 
 .el-carousel__item {

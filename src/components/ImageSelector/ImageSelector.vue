@@ -1,15 +1,32 @@
 <template>
   <el-row>
-    <el-col :span="9" :justify="'start'">
-      <div>
-        <img
-          class="relatedImageBase"
-          v-if="firstImage && displayFirstImage"
-          :src="firstImage.imagePaths.large"
-          :alt="firstImage.id"
-        />
+    <el-col :span="7">
+      <related-image
+        :image="firstImage"
+        :display="displayFirstImage"
+        :imageHeight="(windowHeight / 6) * 4"
+        :align="'bottom'"
+        :justify="'end'"
+      />
+    </el-col>
+    <el-col :span="2"> </el-col>
+    <el-col :span="6"> </el-col>
+    <el-col :span="2"> </el-col>
+    <el-col :span="7">
+      <div ref="position 2">
+      <!--related-image
+        :image="firstImage"
+        :display="displayFirstImage"
+        :imageHeight="(windowHeight / 6) * 4"
+        :align="'bottom'"
+        :justify="'start'"
+      /-->
       </div>
     </el-col>
+  </el-row>
+  <el-row>
+    <el-col :span="7"> </el-col>
+    <el-col :span="2"> </el-col>
     <el-col
       :span="6"
       :style="{ marginTop: windowHeight / 14 + 'px' }"
@@ -28,7 +45,30 @@
         </el-col>
         <el-col :span="12">
           <el-row :justify="'end'">
-            <p class="index-font">{{ currentIndex + 1 }}</p>
+            <p
+              v-if="firstImage && step === 3"
+              class="index-font data-information"
+              :class="{ removeRelatedImageBaseText: displayFirstImage }"
+            >
+              {{ firstImage.tag["@value"] }} &nbsp;
+            </p>
+            <p
+              v-if="secondImage && step === 3"
+              class="index-font data-information"
+              :class="{ removeRelatedImageBaseText: displaySecondImage }"
+            >
+              {{ secondImage.tag["@value"] }} &nbsp;
+            </p>
+            <p
+              v-if="thirdImage && step === 3"
+              class="index-font data-information"
+              :class="{ removeRelatedImageBaseText: displayThirdImage }"
+            >
+              {{ thirdImage.tag["@value"] }} &nbsp;
+            </p>
+            <p class="index-font data-information">
+              {{ currentIndex + 1 }}
+            </p>
           </el-row>
         </el-col>
       </el-row>
@@ -37,10 +77,22 @@
     <el-col :span="7"> </el-col>
   </el-row>
   <el-row :gutter="10" :align="'middle'">
-    <el-col :span="9"> </el-col>
+    <el-col :span="7">
+      <!--div>
+        <related-image
+          :image="secondImage"
+          :display="displaySecondImage"
+          :imageHeight="(windowHeight / 6) * 4"
+          :align="'top'"
+          :justify="'end'"
+        />
+      </div-->
+    </el-col>
+    <el-col :span="2"> </el-col>
     <el-col :span="6">
       <div class="sliderMask">
         <el-carousel
+          :indicator-position="'none'"
           :height="(windowHeight / 6) * 4 + 'px'"
           direction="vertical"
           :loop="false"
@@ -90,28 +142,19 @@
     </el-col>
     <el-col :span="7">
       <div :style="{ marginLeft: windowWidth / 6 + 'px' }">
-        <img
-          class="relatedImageBase"
-          v-if="secondImage && displaySecondImage"
-          :src="secondImage.imagePaths.large"
-          :alt="secondImage.id"
-          style=""
+        <related-image
+          :image="secondImage"
+          :display="displaySecondImage"
+          :imageHeight="(windowHeight / 6) * 4"
+          :align="'top'"
+          :justify="'start'"
         />
       </div>
     </el-col>
   </el-row>
   <el-row>
-    <el-col :span="9">
-      <div>
-        <img
-          class="relatedImageBase"
-          v-if="thirdImage && displayThirdImage"
-          :src="thirdImage.imagePaths.large"
-          :alt="thirdImage.id"
-          style=""
-        />
-      </div>
-    </el-col>
+    <el-col :span="7"> </el-col>
+    <el-col :span="2"> </el-col>
     <el-col :span="6">
       <el-row>
         <p v-if="data" class="data-information">
@@ -120,17 +163,42 @@
         </p>
       </el-row>
     </el-col>
+    <el-col :span="2"> </el-col>
+    <el-col :span="7"> </el-col>
+  </el-row>
+  <el-row>
+    <el-col :span="7">
+      <related-image
+        :image="thirdImage"
+        :display="displayThirdImage"
+        :imageHeight="(windowHeight / 6) * 4"
+        :align="'top'"
+        :justify="'end'"
+      />
+    </el-col>
+    <el-col :span="2"> </el-col>
+    <el-col :span="6"> </el-col>
     <el-col :span="2"></el-col>
-    <el-col :span="7"></el-col>
+    <el-col :span="7">
+      <!--related-image
+        :image="thirdImage"
+        :display="displayThirdImage"
+        :imageHeight="(windowHeight / 6) * 4"
+        :align="'top'"
+        :justify="'start'"
+      /-->
+    </el-col>
   </el-row>
 </template>
 
 <script>
 import { useWindowSize } from "vue-window-size";
 import { mapState } from "vuex";
+import RelatedImage from "./RelatedImage.vue";
 
 export default {
   name: "ImageSelector",
+  components: { RelatedImage },
   watch: {
     images: function(newImages) {
       this.data = newImages;
@@ -140,7 +208,8 @@ export default {
           this.carousel.setActiveItem(0);
           this.isInitialLoad = false;
           this.$store.dispatch("loadRelatedImages", {
-            tags: this.data[0].tags,
+            tags: this.data[this.currentIndex].tags,
+            id: this.data[this.currentIndex].id,
           });
         });
       }
@@ -157,6 +226,8 @@ export default {
       displaySecondImage: false,
       thirdImage: undefined,
       displayThirdImage: false,
+      displayRelatedImageTimeout: [],
+
       isInitialLoad: true,
       data: undefined,
       currentIndex: 0,
@@ -164,12 +235,14 @@ export default {
       previousStep: 3,
       zoomingStep: 3,
       step: 3,
+
       windowHeight: undefined,
       windowWidth: undefined,
       carousel: undefined,
       totalCarouselIndex: 0,
       currentSlide: 0,
-      timeout: undefined,
+      
+      changeImageTimeout: undefined,
     };
   },
   methods: {
@@ -184,13 +257,15 @@ export default {
       this.zoomingStep = 3;
       this.releaseStep = releaseStep;
       this.step = 3;
-      this.stopTimeout();
+      this.stopChangeImageTimeout();
+      this.$store.dispatch("loadRelatedImages", {
+        tags: this.data[this.currentIndex].tags,
+        id: this.data[this.currentIndex].id,
+      });
     },
     // Vitesse Max = 1 image toutes les 50ms: Devra être fait Peut-être avec un 4ème cran
     changeImage(nextImageIndex) {
-      this.displayFirstImage = false;
-      this.displaySecondImage = false;
-      this.displayThirdImage = false;
+      this.stopDisplayRelatedImages();
       switch (this.step) {
         case 0:
           if (this.previousStep === 1) {
@@ -220,7 +295,7 @@ export default {
           if (this.previousStep === 4 || this.previousStep === 2) {
             this.zoomingStep = 0;
           }
-          this.stopTimeout();
+          this.stopChangeImageTimeout();
           break;
         case 4:
           if (this.previousStep === 3) {
@@ -252,8 +327,8 @@ export default {
 
     navigatePreviousImage(intervalTransitionTime) {
       if (this.currentIndex > 0) {
-        this.stopTimeout();
-        this.timeout = setTimeout(() => {
+        this.stopChangeImageTimeout();
+        this.changeImageTimeout = setTimeout(() => {
           this.carousel.prev();
           this.currentIndex = this.currentIndex - 1;
         }, intervalTransitionTime);
@@ -271,29 +346,42 @@ export default {
       ) {
         this.$store.dispatch("loadNextContent");
       }
-      this.stopTimeout();
-      this.timeout = setTimeout(() => {
-        this.carousel.next();
-        this.currentIndex = this.currentIndex + 1;
-      }, intervalTransitionTime);
+      if (this.currentIndex < this.totalCarouselIndex - 1) {
+        this.stopChangeImageTimeout();
+        this.changeImageTimeout = setTimeout(() => {
+          this.carousel.next();
+          this.currentIndex = this.currentIndex + 1;
+        }, intervalTransitionTime);
+      }
     },
-    stopTimeout() {
-      clearTimeout(this.timeout);
+    stopChangeImageTimeout() {
+      clearTimeout(this.changeImageTimeout);
+    },
+    stopDisplayRelatedImages() {
+      this.displayFirstImage = false;
+      this.displaySecondImage = false;
+      this.displayThirdImage = false;
+      this.firstImage = undefined;
+      this.secondImage = undefined;
+      this.thirdImage = undefined;
+      this.displayRelatedImageTimeout.forEach(clearTimeout);
+      this.displayRelatedImageTimeout = [];
     },
     displayRelatedImages(images) {
       this.firstImage = images[0];
       this.secondImage = images[1];
       this.thirdImage = images[2];
+      console.log(this.$refs);
       this.$nextTick(() => {
-        setTimeout(() => {
-          this.displayFirstImage = true;
-        }, 1000);
-        setTimeout(() => {
-          this.displaySecondImage = true;
-        }, 3000);
-        setTimeout(() => {
-          this.displayThirdImage = true;
-        }, 5000);
+        this.displayRelatedImageTimeout.push(
+          setTimeout(() => (this.displayFirstImage = true), 1000)
+        );
+        this.displayRelatedImageTimeout.push(
+          setTimeout(() => (this.displaySecondImage = true), 3000)
+        );
+        this.displayRelatedImageTimeout.push(
+          setTimeout(() => (this.displayThirdImage = true), 5000)
+        );
       });
     },
   },

@@ -10,7 +10,7 @@ const parseElement = (element) => {
   let title = element["dcterms:title"];
   if (title) {
     return new ImageData(
-      element["o:id"],
+      element["dcterms:identifier"][0]["@value"],
       title[0]["@value"],
       element["dcterms:creator"][0]["@value"],
       element["dcterms:medium"][0]["@value"],
@@ -19,7 +19,7 @@ const parseElement = (element) => {
     );
   } else {
     return new ImageData(
-      element["o:id"],
+      element["dcterms:identifier"][0]["@value"],
       null,
       element["dcterms:creator"][0]["@value"],
       element["dcterms:medium"][0]["@value"],
@@ -44,8 +44,10 @@ export default {
     return parseImages(data);
   },
 
-  async getRelatedImages(tag) {
-    const req = process.env.VUE_APP_SEARCH_BY_TAG + tag["@value"];
+  async getRelatedImages(tag, id) {
+    const searchNbItems = process.env.VUE_APP_SEARCH_BY_TAG + tag["@value"] + process.env.VUE_APP_REMOVE_ID_FROM_SEARCH + id;
+    const { headers } = await request(searchNbItems);
+    const req = process.env.VUE_APP_SEARCH_BY_TAG + tag["@value"] + process.env.VUE_APP_REMOVE_ID_FROM_SEARCH + id + "&per_page=" + headers["omeka-s-total-results"];
     const { data } = await request(req);
     if (data.length > 0) {
       return parseElement(data[Math.floor(Math.random() * data.length)]);
