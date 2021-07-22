@@ -49,14 +49,14 @@ export const actions = {
         }
       });
   },
-  loadRelatedImages(context, { tags }) {
+  loadRelatedImages(context, { tags, id }) {
     const relatedImages = [];
     const promises = [];
     tags.forEach((tag) => {
       promises.push(
-        dataFetch.getRelatedImages(tag).then((result) => {
+        dataFetch.getRelatedImages(tag, id).then((result) => {
           if (result) {
-            relatedImages.push(result);
+            relatedImages.push({tag: tag, result: result});
           }
         })
       );

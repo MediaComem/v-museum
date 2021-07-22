@@ -3,6 +3,7 @@ import { expect } from "chai";
 import sinon from "sinon";
 
 import ImageSelector from "../../../../src/components/ImageSelector/ImageSelector.vue";
+import ImageData from "../../../../src/models/ImageData";
 
 describe("Test ImageSelector component", () => {
   const sandbox = sinon.createSandbox();
@@ -150,59 +151,71 @@ describe("Test ImageSelector component", () => {
     sandbox.stub(wrapper.vm, "navigateNextImage").callsFake(() => {
       return;
     });
-    sandbox.stub(wrapper.vm, "stopTimeout").callsFake(() => {
+    sandbox.stub(wrapper.vm, "stopChangeImageTimeout").callsFake(() => {
       return;
     });
     sandbox.stub(wrapper.vm, "navigatePreviousImage").callsFake(() => {
       return;
     });
+    sandbox.stub(wrapper.vm, "stopDisplayRelatedImages").callsFake(() => {
+      return;
+    })
     sandbox.spy(wrapper.vm.navigateNextImage);
     sandbox.spy(wrapper.vm.stopTimeout);
     sandbox.spy(wrapper.vm.navigatePreviousImage);
     wrapper.vm.$data.step = -1;
     wrapper.vm.changeImage(4);
     expect(wrapper.vm.navigateNextImage.callCount).to.equal(0);
-    expect(wrapper.vm.stopTimeout.callCount).to.equal(0);
+    expect(wrapper.vm.stopChangeImageTimeout.callCount).to.equal(0);
+    expect(wrapper.vm.stopDisplayRelatedImages.callCount).to.equal(1);
     expect(wrapper.vm.navigatePreviousImage.callCount).to.equal(0);
     wrapper.vm.$data.step = 0;
     wrapper.vm.changeImage(4);
     expect(wrapper.vm.navigateNextImage.callCount).to.equal(1);
-    expect(wrapper.vm.stopTimeout.callCount).to.equal(0);
+    expect(wrapper.vm.stopChangeImageTimeout.callCount).to.equal(0);
+    expect(wrapper.vm.stopDisplayRelatedImages.callCount).to.equal(2);
     expect(wrapper.vm.navigatePreviousImage.callCount).to.equal(0);
     wrapper.vm.$data.step = 1;
     wrapper.vm.changeImage(4);
     expect(wrapper.vm.navigateNextImage.callCount).to.equal(2);
-    expect(wrapper.vm.stopTimeout.callCount).to.equal(0);
+    expect(wrapper.vm.stopChangeImageTimeout.callCount).to.equal(0);
+    expect(wrapper.vm.stopDisplayRelatedImages.callCount).to.equal(3);
     expect(wrapper.vm.navigatePreviousImage.callCount).to.equal(0);
     wrapper.vm.$data.step = 2;
     wrapper.vm.changeImage(4);
     expect(wrapper.vm.navigateNextImage.callCount).to.equal(3);
-    expect(wrapper.vm.stopTimeout.callCount).to.equal(0);
+    expect(wrapper.vm.stopChangeImageTimeout.callCount).to.equal(0);
+    expect(wrapper.vm.stopDisplayRelatedImages.callCount).to.equal(4);
     expect(wrapper.vm.navigatePreviousImage.callCount).to.equal(0);
     wrapper.vm.$data.step = 3;
     wrapper.vm.changeImage(4);
     expect(wrapper.vm.navigateNextImage.callCount).to.equal(3);
-    expect(wrapper.vm.stopTimeout.callCount).to.equal(1);
+    expect(wrapper.vm.stopChangeImageTimeout.callCount).to.equal(1);
+    expect(wrapper.vm.stopDisplayRelatedImages.callCount).to.equal(5);
     expect(wrapper.vm.navigatePreviousImage.callCount).to.equal(0);
     wrapper.vm.$data.step = 4;
     wrapper.vm.changeImage(4);
     expect(wrapper.vm.navigateNextImage.callCount).to.equal(3);
-    expect(wrapper.vm.stopTimeout.callCount).to.equal(1);
+    expect(wrapper.vm.stopChangeImageTimeout.callCount).to.equal(1);
+    expect(wrapper.vm.stopDisplayRelatedImages.callCount).to.equal(6);
     expect(wrapper.vm.navigatePreviousImage.callCount).to.equal(1);
     wrapper.vm.$data.step = 5;
     wrapper.vm.changeImage(4);
     expect(wrapper.vm.navigateNextImage.callCount).to.equal(3);
-    expect(wrapper.vm.stopTimeout.callCount).to.equal(1);
+    expect(wrapper.vm.stopChangeImageTimeout.callCount).to.equal(1);
+    expect(wrapper.vm.stopDisplayRelatedImages.callCount).to.equal(7);
     expect(wrapper.vm.navigatePreviousImage.callCount).to.equal(2);
     wrapper.vm.$data.step = 6;
     wrapper.vm.changeImage(4);
     expect(wrapper.vm.navigateNextImage.callCount).to.equal(3);
-    expect(wrapper.vm.stopTimeout.callCount).to.equal(1);
+    expect(wrapper.vm.stopChangeImageTimeout.callCount).to.equal(1);
+    expect(wrapper.vm.stopDisplayRelatedImages.callCount).to.equal(8);
     expect(wrapper.vm.navigatePreviousImage.callCount).to.equal(3);
     wrapper.vm.$data.step = 7;
     wrapper.vm.changeImage(4);
     expect(wrapper.vm.navigateNextImage.callCount).to.equal(3);
-    expect(wrapper.vm.stopTimeout.callCount).to.equal(1);
+    expect(wrapper.vm.stopChangeImageTimeout.callCount).to.equal(1);
+    expect(wrapper.vm.stopDisplayRelatedImages.callCount).to.equal(9);
     expect(wrapper.vm.navigatePreviousImage.callCount).to.equal(3);
   });
 
@@ -210,7 +223,7 @@ describe("Test ImageSelector component", () => {
     sandbox.stub(wrapper.vm, "navigateNextImage").callsFake(() => {
       return;
     });
-    sandbox.stub(wrapper.vm, "stopTimeout").callsFake(() => {
+    sandbox.stub(wrapper.vm, "stopChangeImageTimeout").callsFake(() => {
       return;
     });
     sandbox.stub(wrapper.vm, "navigatePreviousImage").callsFake(() => {
