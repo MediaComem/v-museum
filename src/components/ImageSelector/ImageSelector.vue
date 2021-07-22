@@ -1,18 +1,5 @@
 <template>
-  <el-row
-    :gutter="10"
-    :align="'middle'"
-    :class="{
-      globalMaskFast: (step === 0 || step === 6) && zoomingStep === 3,
-      globalMaskMedium: (step === 1 || step === 2 || step === 4 || step === 5) && zoomingStep === 3,
-      removeGlobalMaskFastEnd: step === 3 && zoomingStep === 3 && (releaseStep === 0 || releaseStep === 6),
-      removeGlobalMaskFastToMedium: zoomingStep === 2 || zoomingStep === 1,
-      removeGlobalMaskMediumToNone: step === 3 && zoomingStep === 0,
-      removeGlobalMaskMediumEnd:
-        step === 3 && zoomingStep === 3 &&
-        (releaseStep === 1 || releaseStep === 2 || releaseStep === 4 || releaseStep === 5),
-    }"
-  >
+  <el-row :gutter="10" :align="'middle'">
     <el-col :xs="10" :sm="9" :md="8" :lg="8" :xl="8"> </el-col>
     <el-col
       :xs="3"
@@ -93,7 +80,7 @@ export default {
         this.$nextTick(() => {
           this.carousel.setActiveItem(0);
           this.isInitialLoad = false;
-        })
+        });
       }
     },
   },
@@ -161,8 +148,7 @@ export default {
           this.stopTimeout();
           break;
         case 4:
-          this.navigatePreviousImage(100);
-          if (this.previousStep === 3){
+          if (this.previousStep === 3) {
             this.zoomingStep = 3;
           }
           if (this.previousStep === 5) {
@@ -188,6 +174,7 @@ export default {
       }
       this.previousStep = this.step;
     },
+
     navigatePreviousImage(intervalTransitionTime) {
       this.timeout = setTimeout(() => {
         this.carousel.prev();
