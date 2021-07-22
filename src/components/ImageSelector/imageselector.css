@@ -1,3 +1,13 @@
+.rectangle {
+  background:black;
+  width:100px;
+  height:80px;
+}
+
+.year-font {
+  font-weight: bold;
+}
+
 .custom-image {
   height: 100%;
   width: 100%;
