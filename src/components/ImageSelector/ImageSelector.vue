@@ -98,7 +98,7 @@ export default {
       this.step = 3;
       this.stopTimeout();
     },
-    animationStepAnalyzis(move, faster, slower) {
+    animationStepAnalysis(move, faster, slower) {
       if (move) {
         if (faster) {
           this.releaseStep = -1;
@@ -113,13 +113,13 @@ export default {
       const forward = this.step < 3;
       let slower = this.step - this.previousStep >= 1;
       let faster = this.step - this.previousStep <= -1;
-      this.animationStepAnalyzis(forward, faster, slower);
+      this.animationStepAnalysis(forward, faster, slower);
 
       // In case of we move to bottom for animation analysis purpose
       const backward = this.step > 3;
       faster = this.step - this.previousStep >= 1;
       slower = this.step - this.previousStep <= -1;
-      this.animationStepAnalyzis(backward, faster, slower);
+      this.animationStepAnalysis(backward, faster, slower);
 
       // Moving carousel part
       switch (this.step) {

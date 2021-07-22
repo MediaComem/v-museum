@@ -118,18 +118,18 @@ describe("Test ImageSelector component", () => {
   it("Test movement analyzer", () => {
     wrapper.vm.$data.releaseStep = 0;
     wrapper.vm.$data.zoomingStep = -1;
-    wrapper.vm.animationStepAnalyzis(false, true, false);
+    wrapper.vm.animationStepAnalysis(false, true, false);
     expect(wrapper.vm.$data.releaseStep).to.equals(0);
     expect(wrapper.vm.$data.zoomingStep).to.equals(-1);
-    wrapper.vm.animationStepAnalyzis(true, false, false);
+    wrapper.vm.animationStepAnalysis(true, false, false);
     expect(wrapper.vm.$data.releaseStep).to.equals(0);
     expect(wrapper.vm.$data.zoomingStep).to.equals(-1);
-    wrapper.vm.animationStepAnalyzis(true, true, false);
+    wrapper.vm.animationStepAnalysis(true, true, false);
     expect(wrapper.vm.$data.releaseStep).to.equals(-1);
     expect(wrapper.vm.$data.zoomingStep).to.equals(2);
     wrapper.vm.$data.releaseStep = 0;
     wrapper.vm.$data.zoomingStep = -1;
-    wrapper.vm.animationStepAnalyzis(true, false, true);
+    wrapper.vm.animationStepAnalysis(true, false, true);
     expect(wrapper.vm.$data.releaseStep).to.equals(0);
     expect(wrapper.vm.$data.zoomingStep).to.equals(1);
   });
