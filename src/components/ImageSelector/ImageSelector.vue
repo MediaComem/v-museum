@@ -6,6 +6,7 @@
           :image="firstImage"
           :display="displayFirstImage"
           :imageHeight="(windowHeight / 6) * 4"
+          :imageWidth="(windowWidth / 24) * 6"
           :align="'bottom'"
           :justify="'end'"
         />
@@ -20,6 +21,7 @@
           :image="secondImage"
           :display="displaySecondImage"
           :imageHeight="(windowHeight / 6) * 4"
+          :imageWidth="(windowWidth / 24) * 6"
           :align="'bottom'"
           :justify="'start'"
         />
@@ -35,36 +37,42 @@
       :align="'bottom'"
     >
       <el-row>
-        <el-col :span="12">
+        <el-col :span="10">
           <el-row>
-            <el-col :span="6">
+            <el-col :span="5">
               <p>333</p>
             </el-col>
-            <el-col :span="6">
-              <p>1910's</p>
+            <el-col :span="5">
+              <p class="year-font">1910's</p>
             </el-col>
           </el-row>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="14">
           <el-row :justify="'end'">
             <p
               v-if="displayImageOrder.length >= 1 && step === 3"
               class="index-font data-information"
-              :class="{ removeRelatedImageBaseText: loadImageOrder.length >= 1 }"
+              :class="{
+                removeRelatedImageBaseText: loadImageOrder.length >= 1,
+              }"
             >
               {{ loadImages[0].tag["@value"] }} &nbsp;
             </p>
             <p
-              v-if="displayImageOrder.length >=2 && step === 3"
+              v-if="displayImageOrder.length >= 2 && step === 3"
               class="index-font data-information"
-              :class="{ removeRelatedImageBaseText: loadImageOrder.length >= 2 }"
+              :class="{
+                removeRelatedImageBaseText: loadImageOrder.length >= 2,
+              }"
             >
               {{ loadImages[1].tag["@value"] }} &nbsp;
             </p>
             <p
               v-if="displayImageOrder.length >= 3 && step === 3"
               class="index-font data-information"
-              :class="{ removeRelatedImageBaseText: loadImageOrder.length >= 3 }"
+              :class="{
+                removeRelatedImageBaseText: loadImageOrder.length >= 3,
+              }"
             >
               {{ loadImages[2].tag["@value"] }} &nbsp;
             </p>
@@ -85,6 +93,7 @@
           :image="thirdImage"
           :display="displayThirdImage"
           :imageHeight="(windowHeight / 6) * 4"
+          :imageWidth="(windowWidth / 24) * 6"
           :align="'top'"
           :justify="'end'"
         />
@@ -137,7 +146,8 @@
           :image="fourthImage"
           :display="displayFourthImage"
           :imageHeight="(windowHeight / 6) * 4"
-          :align="'top'"
+          :imageWidth="(windowWidth / 24) * 6"
+          :align="'middle'"
           :justify="'start'"
         />
       </div>
@@ -164,6 +174,7 @@
           :image="fifthImage"
           :display="displayFifthImage"
           :imageHeight="(windowHeight / 6) * 4"
+          :imageWidth="(windowWidth / 24) * 6"
           :align="'top'"
           :justify="'end'"
         />
@@ -178,6 +189,7 @@
           :image="sixthImage"
           :display="displaySixthImage"
           :imageHeight="(windowHeight / 6) * 4"
+          :imageWidth="(windowWidth / 24) * 6"
           :align="'top'"
           :justify="'start'"
         />
