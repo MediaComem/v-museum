@@ -31,9 +31,107 @@ describe("Test ImageSelector component", () => {
     sandbox.restore();
   });
 
+  it("Animation class computed testing", () => {
+    wrapper.vm.$data.zoomingStep = 2;
+    wrapper.vm.$data.step = 0;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageFast).to.be.true;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageMedium).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageSlow).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFastEnd).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFast).to.be.false;
+    wrapper.vm.$data.step = 6;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageFast).to.be.true;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageMedium).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageSlow).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFastEnd).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFast).to.be.false;
+    wrapper.vm.$data.step = 1;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageFast).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageMedium).to.be.true;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageSlow).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFastEnd).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFast).to.be.false;
+    wrapper.vm.$data.step = 5;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageFast).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageMedium).to.be.true;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageSlow).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFastEnd).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFast).to.be.false;
+    wrapper.vm.$data.step = 2;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageFast).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageMedium).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageSlow).to.be.true;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFastEnd).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFast).to.be.false;
+    wrapper.vm.$data.step = 4;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageFast).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageMedium).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageSlow).to.be.true;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFastEnd).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFast).to.be.false;
+    wrapper.vm.$data.step = 2;
+    wrapper.vm.$data.zoomingStep = 1;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageFast).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageMedium).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageSlow).to.be.true;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFastEnd).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFast).to.be.false;
+    wrapper.vm.$data.step = 4;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageFast).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageMedium).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageSlow).to.be.true;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFastEnd).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFast).to.be.false;
+    wrapper.vm.$data.step = 3;
+    wrapper.vm.$data.releaseStep = 0;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageFast).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageMedium).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageSlow).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFastEnd).to.be.true;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFast).to.be.false;
+    wrapper.vm.$data.releaseStep = 6;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageFast).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageMedium).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageSlow).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFastEnd).to.be.true;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFast).to.be.false;
+    wrapper.vm.$data.step = 1;
+    wrapper.vm.$data.zoomingStep = 1;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageFast).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageMedium).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageSlow).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFastEnd).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFast).to.be.true;
+    wrapper.vm.$data.step = 5;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageFast).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageMedium).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.zoomTransitionImageSlow).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFastEnd).to.be.false;
+    expect(wrapper.vm.selectZoomAnimation.unzoomTransitionImageFast).to.be.true;
+  });
+
   it("Test component initialisation", () => {
     expect(wrapper.vm.$data.step).to.equals(3);
     expect($store.dispatch.callCount).to.equals(1);
+  });
+
+  it("Test movement analyzer", () => {
+    wrapper.vm.$data.releaseStep = 0;
+    wrapper.vm.$data.zoomingStep = -1;
+    wrapper.vm.animationStepAnalyzis(false, true, false);
+    expect(wrapper.vm.$data.releaseStep).to.equals(0);
+    expect(wrapper.vm.$data.zoomingStep).to.equals(-1);
+    wrapper.vm.animationStepAnalyzis(true, false, false);
+    expect(wrapper.vm.$data.releaseStep).to.equals(0);
+    expect(wrapper.vm.$data.zoomingStep).to.equals(-1);
+    wrapper.vm.animationStepAnalyzis(true, true, false);
+    expect(wrapper.vm.$data.releaseStep).to.equals(-1);
+    expect(wrapper.vm.$data.zoomingStep).to.equals(2);
+    wrapper.vm.$data.releaseStep = 0;
+    wrapper.vm.$data.zoomingStep = -1;
+    wrapper.vm.animationStepAnalyzis(true, false, true);
+    expect(wrapper.vm.$data.releaseStep).to.equals(0);
+    expect(wrapper.vm.$data.zoomingStep).to.equals(1);
   });
 
   it("Test rangeChange method", () => {
@@ -44,7 +142,7 @@ describe("Test ImageSelector component", () => {
     expect(wrapper.vm.$data.zoomingStep).to.equals(6);
     wrapper.vm.rangeChange(2);
     expect(wrapper.vm.$data.step).to.equals(3);
-    expect(wrapper.vm.$data.zoomingStep).to.equals(3);
+    expect(wrapper.vm.$data.zoomingStep).to.equals(2);
     expect(wrapper.vm.$data.releaseStep).to.equal(2);
   });
 
@@ -123,7 +221,7 @@ describe("Test ImageSelector component", () => {
     wrapper.vm.$data.step = 0;
     wrapper.vm.$data.previousStep = 1;
     wrapper.vm.changeImage(4);
-    expect(wrapper.vm.$data.zoomingStep).to.equal(3);
+    expect(wrapper.vm.$data.zoomingStep).to.equal(2);
     expect(wrapper.vm.$data.previousStep).to.equal(0);
     wrapper.vm.$data.zoomingStep = -1;
     wrapper.vm.$data.previousStep = 0;
@@ -134,12 +232,12 @@ describe("Test ImageSelector component", () => {
     wrapper.vm.$data.previousStep = 0;
     wrapper.vm.$data.zoomingStep = -1;
     wrapper.vm.changeImage(4);
-    expect(wrapper.vm.$data.zoomingStep).to.equal(2);
+    expect(wrapper.vm.$data.zoomingStep).to.equal(1);
     expect(wrapper.vm.$data.previousStep).to.equal(1);
     wrapper.vm.$data.previousStep = 2;
     wrapper.vm.$data.zoomingStep = -1;
     wrapper.vm.changeImage(4);
-    expect(wrapper.vm.$data.zoomingStep).to.equal(3);
+    expect(wrapper.vm.$data.zoomingStep).to.equal(2);
     expect(wrapper.vm.$data.previousStep).to.equal(1);
     wrapper.vm.$data.previousStep = 1;
     wrapper.vm.$data.zoomingStep = -1;
@@ -160,7 +258,7 @@ describe("Test ImageSelector component", () => {
     wrapper.vm.$data.previousStep = 3;
     wrapper.vm.$data.zoomingStep = -1;
     wrapper.vm.changeImage(4);
-    expect(wrapper.vm.$data.zoomingStep).to.equal(3);
+    expect(wrapper.vm.$data.zoomingStep).to.equal(2);
     expect(wrapper.vm.$data.previousStep).to.equal(2);
     wrapper.vm.$data.step = 3;
     wrapper.vm.$data.previousStep = 3;
@@ -171,12 +269,12 @@ describe("Test ImageSelector component", () => {
     wrapper.vm.$data.previousStep = 2;
     wrapper.vm.$data.zoomingStep = -1;
     wrapper.vm.changeImage(4);
-    expect(wrapper.vm.$data.zoomingStep).to.equal(0);
+    expect(wrapper.vm.$data.zoomingStep).to.equal(-1);
     expect(wrapper.vm.$data.previousStep).to.equal(3);
     wrapper.vm.$data.previousStep = 4;
     wrapper.vm.$data.zoomingStep = -1;
     wrapper.vm.changeImage(4);
-    expect(wrapper.vm.$data.zoomingStep).to.equal(0);
+    expect(wrapper.vm.$data.zoomingStep).to.equal(-1);
     expect(wrapper.vm.$data.previousStep).to.equal(3);
     wrapper.vm.$data.step = 4;
     wrapper.vm.$data.previousStep = 4;
@@ -187,7 +285,7 @@ describe("Test ImageSelector component", () => {
     wrapper.vm.$data.previousStep = 3;
     wrapper.vm.$data.zoomingStep = -1;
     wrapper.vm.changeImage(4);
-    expect(wrapper.vm.$data.zoomingStep).to.equal(3);
+    expect(wrapper.vm.$data.zoomingStep).to.equal(2);
     expect(wrapper.vm.$data.previousStep).to.equal(4);
     wrapper.vm.$data.previousStep = 5;
     wrapper.vm.$data.zoomingStep = -1;
@@ -203,12 +301,12 @@ describe("Test ImageSelector component", () => {
     wrapper.vm.$data.previousStep = 4;
     wrapper.vm.$data.zoomingStep = -1;
     wrapper.vm.changeImage(4);
-    expect(wrapper.vm.$data.zoomingStep).to.equal(3);
+    expect(wrapper.vm.$data.zoomingStep).to.equal(2);
     expect(wrapper.vm.$data.previousStep).to.equal(5);
     wrapper.vm.$data.previousStep = 6;
     wrapper.vm.$data.zoomingStep = -1;
     wrapper.vm.changeImage(4);
-    expect(wrapper.vm.$data.zoomingStep).to.equal(2);
+    expect(wrapper.vm.$data.zoomingStep).to.equal(1);
     expect(wrapper.vm.$data.previousStep).to.equal(5);
     wrapper.vm.$data.step = 6;
     wrapper.vm.$data.previousStep = 6;
@@ -219,7 +317,7 @@ describe("Test ImageSelector component", () => {
     wrapper.vm.$data.previousStep = 5;
     wrapper.vm.$data.zoomingStep = -1;
     wrapper.vm.changeImage(4);
-    expect(wrapper.vm.$data.zoomingStep).to.equal(3);
+    expect(wrapper.vm.$data.zoomingStep).to.equal(2);
     expect(wrapper.vm.$data.previousStep).to.equal(6);
   });
 

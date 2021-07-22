@@ -16,21 +16,8 @@
           :autoplay="false"
           ref="carousel"
           class="custom-carousel"
-          :style="{marginTop: windowHeight / 14 + 'px'}"
-          :class="{
-            zoomTransitionImageFast:
-              (step === 0 || step === 6) && zoomingStep === 3,
-            zoomTransitionImageMedium:
-              (step === 1 || step === 5) && zoomingStep === 3,
-            zoomTransitionImageSlow:
-              (step === 2 || step === 4) && zoomingStep === 3,
-            unzoomTransitionImageFastEnd:
-              step === 3 &&
-              zoomingStep === 3 &&
-              (releaseStep === 0 || releaseStep === 6),
-            unzoomTransitionImageFast:
-              (step === 1 || step === 5) && zoomingStep === 2,
-          }"
+          :style="marginCarourel"
+          :class="selectZoomAnimation"
           @change="changeImage"
         >
           <el-carousel-item v-for="(value, index) in data" :key="index">
@@ -106,72 +93,61 @@ export default {
       }
     },
     rangeChange(releaseStep) {
-      this.zoomingStep = 3;
+      this.zoomingStep = 2;
       this.releaseStep = releaseStep;
       this.step = 3;
       this.stopTimeout();
     },
-    // Vitesse Max = 1 image toutes les 50ms: Devra être fait Peut-être avec un 4ème cran
+    animationStepAnalyzis(move, faster, slower) {
+      if (move) {
+        if (faster) {
+          this.releaseStep = -1;
+          this.zoomingStep = 2;
+        } else if (slower) {
+          this.zoomingStep = 1;
+        }
+      }
+    },
     changeImage(nextImageIndex) {
+      // In case of we move to top for animation analysis purpose
+      const forward = this.step < 3;
+      let slower = this.step - this.previousStep >= 1;
+      let faster = this.step - this.previousStep <= -1;
+      this.animationStepAnalyzis(forward, faster, slower);
+
+      // In case of we move to bottom for animation analysis purpose
+      const backward = this.step > 3;
+      faster = this.step - this.previousStep >= 1;
+      slower = this.step - this.previousStep <= -1;
+      this.animationStepAnalyzis(backward, faster, slower);
+
+      // Moving carousel part
       switch (this.step) {
         case 0:
-          if (this.previousStep === 1){
-            this.zoomingStep = 3;
-          }
           this.navigateNextImage(nextImageIndex, 80, 50);
           break;
         case 1:
-          if (this.previousStep === 2){
-            this.zoomingStep = 3;
-          }
-          if (this.previousStep === 0) {
-            this.zoomingStep = 2;
-          }
           this.navigateNextImage(nextImageIndex, 40, 250);
           break;
         case 2:
-          if (this.previousStep === 3){
-            this.zoomingStep = 3;
-          }
-          if (this.previousStep === 1) {
-            this.zoomingStep = 1;
-          }
           this.navigateNextImage(nextImageIndex, 20, 1000);
           break;
         case 3:
-          if (this.previousStep === 4 || this.previousStep === 2) {
-            this.zoomingStep = 0;
-          }
           this.stopTimeout();
           break;
         case 4:
-          if (this.previousStep === 3) {
-            this.zoomingStep = 3;
-          }
-          if (this.previousStep === 5) {
-            this.zoomingStep = 1;
-          }
           this.navigatePreviousImage(1000);
           break;
         case 5:
-          if (this.previousStep === 4){
-            this.zoomingStep = 3;
-          }
-          if (this.previousStep === 6) {
-            this.zoomingStep = 2;
-          }
           this.navigatePreviousImage(250);
           break;
         case 6:
-          if (this.previousStep === 5){
-            this.zoomingStep = 3;
-          }
           this.navigatePreviousImage(50);
           break;
       }
+      // Keep track of this step for animation analysis purpose
       this.previousStep = this.step;
     },
-
     navigatePreviousImage(intervalTransitionTime) {
       this.stopTimeout();
       this.timeout = setTimeout(() => {
@@ -199,7 +175,27 @@ export default {
       clearTimeout(this.timeout);
     },
   },
-  computed: mapState(["images", "isLoadingImage"]),
+  computed: {
+    selectZoomAnimation() {
+      return {
+        zoomTransitionImageFast:
+          (this.step === 0 || this.step === 6) && this.zoomingStep === 2,
+        zoomTransitionImageMedium:
+          (this.step === 1 || this.step === 5) && this.zoomingStep === 2,
+        zoomTransitionImageSlow:
+          (this.step === 2 || this.step === 4) &&
+          (this.zoomingStep === 2 || this.zoomingStep === 1),
+        unzoomTransitionImageFastEnd:
+          this.step === 3 && (this.releaseStep === 0 || this.releaseStep === 6),
+        unzoomTransitionImageFast:
+          (this.step === 1 || this.step === 5) && this.zoomingStep === 1,
+      };
+    },
+    marginCarourel() {
+      return { marginTop: this.windowHeight / 14 + "px" };
+    },
+    ...mapState(["images", "isLoadingImage"]),
+  },
   mounted() {
     // Due to the mandatory height for carousel element in vertical mode.
     // This lib is used for reponsive purpose
@@ -209,7 +205,7 @@ export default {
 
     this.carousel = this.$refs.carousel;
     //this.carousel.$el.addEventListener("wheel", this.mouseWheelAction);
-    
+
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
     this.$store.dispatch("initializeCarousel", {
