@@ -1,26 +1,28 @@
 <template>
   <el-row>
     <el-col :span="7">
-      <related-image
-        :image="firstImage"
-        :display="displayFirstImage"
-        :imageHeight="(windowHeight / 6) * 4"
-        :align="'bottom'"
-        :justify="'end'"
-      />
+      <div ref="position1">
+        <related-image
+          :image="firstImage"
+          :display="displayFirstImage"
+          :imageHeight="(windowHeight / 6) * 4"
+          :align="'bottom'"
+          :justify="'end'"
+        />
+      </div>
     </el-col>
     <el-col :span="2"> </el-col>
     <el-col :span="6"> </el-col>
     <el-col :span="2"> </el-col>
     <el-col :span="7">
-      <div ref="position 2">
-      <!--related-image
-        :image="firstImage"
-        :display="displayFirstImage"
-        :imageHeight="(windowHeight / 6) * 4"
-        :align="'bottom'"
-        :justify="'start'"
-      /-->
+      <div ref="position2">
+        <related-image
+          :image="secondImage"
+          :display="displaySecondImage"
+          :imageHeight="(windowHeight / 6) * 4"
+          :align="'bottom'"
+          :justify="'start'"
+        />
       </div>
     </el-col>
   </el-row>
@@ -46,25 +48,25 @@
         <el-col :span="12">
           <el-row :justify="'end'">
             <p
-              v-if="firstImage && step === 3"
+              v-if="displayImageOrder.length >= 1 && step === 3"
               class="index-font data-information"
-              :class="{ removeRelatedImageBaseText: displayFirstImage }"
+              :class="{ removeRelatedImageBaseText: loadImageOrder.length >= 1 }"
             >
-              {{ firstImage.tag["@value"] }} &nbsp;
+              {{ loadImages[0].tag["@value"] }} &nbsp;
             </p>
             <p
-              v-if="secondImage && step === 3"
+              v-if="displayImageOrder.length >=2 && step === 3"
               class="index-font data-information"
-              :class="{ removeRelatedImageBaseText: displaySecondImage }"
+              :class="{ removeRelatedImageBaseText: loadImageOrder.length >= 2 }"
             >
-              {{ secondImage.tag["@value"] }} &nbsp;
+              {{ loadImages[1].tag["@value"] }} &nbsp;
             </p>
             <p
-              v-if="thirdImage && step === 3"
+              v-if="displayImageOrder.length >= 3 && step === 3"
               class="index-font data-information"
-              :class="{ removeRelatedImageBaseText: displayThirdImage }"
+              :class="{ removeRelatedImageBaseText: loadImageOrder.length >= 3 }"
             >
-              {{ thirdImage.tag["@value"] }} &nbsp;
+              {{ loadImages[2].tag["@value"] }} &nbsp;
             </p>
             <p class="index-font data-information">
               {{ currentIndex + 1 }}
@@ -78,15 +80,15 @@
   </el-row>
   <el-row :gutter="10" :align="'middle'">
     <el-col :span="7">
-      <!--div>
+      <div ref="position3">
         <related-image
-          :image="secondImage"
-          :display="displaySecondImage"
+          :image="thirdImage"
+          :display="displayThirdImage"
           :imageHeight="(windowHeight / 6) * 4"
           :align="'top'"
           :justify="'end'"
         />
-      </div-->
+      </div>
     </el-col>
     <el-col :span="2"> </el-col>
     <el-col :span="6">
@@ -130,10 +132,10 @@
       </el-row>
     </el-col>
     <el-col :span="7">
-      <div :style="{ marginLeft: windowWidth / 6 + 'px' }">
+      <div :style="{ marginLeft: windowWidth / 6 + 'px' }" ref="position4">
         <related-image
-          :image="secondImage"
-          :display="displaySecondImage"
+          :image="fourthImage"
+          :display="displayFourthImage"
           :imageHeight="(windowHeight / 6) * 4"
           :align="'top'"
           :justify="'start'"
@@ -157,25 +159,29 @@
   </el-row>
   <el-row>
     <el-col :span="7">
-      <related-image
-        :image="thirdImage"
-        :display="displayThirdImage"
-        :imageHeight="(windowHeight / 6) * 4"
-        :align="'top'"
-        :justify="'end'"
-      />
+      <div ref="position5">
+        <related-image
+          :image="fifthImage"
+          :display="displayFifthImage"
+          :imageHeight="(windowHeight / 6) * 4"
+          :align="'top'"
+          :justify="'end'"
+        />
+      </div>
     </el-col>
     <el-col :span="2"> </el-col>
     <el-col :span="6"> </el-col>
     <el-col :span="2"></el-col>
     <el-col :span="7">
-      <!--related-image
-        :image="thirdImage"
-        :display="displayThirdImage"
-        :imageHeight="(windowHeight / 6) * 4"
-        :align="'top'"
-        :justify="'start'"
-      /-->
+      <div ref="position6">
+        <related-image
+          :image="sixthImage"
+          :display="displaySixthImage"
+          :imageHeight="(windowHeight / 6) * 4"
+          :align="'top'"
+          :justify="'start'"
+        />
+      </div>
     </el-col>
   </el-row>
 </template>
@@ -183,7 +189,7 @@
 <script>
 import { useWindowSize } from "vue-window-size";
 import { mapState } from "vuex";
-import RelatedImage from "./RelatedImage.vue";
+import RelatedImage from "./RelatedImage/RelatedImage.vue";
 
 export default {
   name: "ImageSelector",
@@ -215,6 +221,15 @@ export default {
       displaySecondImage: false,
       thirdImage: undefined,
       displayThirdImage: false,
+      fourthImage: undefined,
+      displayFourthImage: false,
+      fifthImage: undefined,
+      displayFifthImage: false,
+      sixthImage: undefined,
+      displaySixthImage: false,
+      displayImageOrder: [],
+      loadImageOrder: [],
+      loadImages: [],
       displayRelatedImageTimeout: [],
 
       isInitialLoad: true,
@@ -230,7 +245,7 @@ export default {
       carousel: undefined,
       totalCarouselIndex: 0,
       currentSlide: 0,
-      
+
       changeImageTimeout: undefined,
     };
   },
@@ -341,26 +356,98 @@ export default {
       this.displayFirstImage = false;
       this.displaySecondImage = false;
       this.displayThirdImage = false;
+      this.displayFourthImage = false;
+      this.displayFifthImage = false;
+      this.displaySixthImage = false;
       this.firstImage = undefined;
       this.secondImage = undefined;
       this.thirdImage = undefined;
+      this.fourthImage = undefined;
+      this.fifthImage = undefined;
+      this.sixthImage = undefined;
+      this.displayImageOrder = [];
+      this.loadImageOrder = [];
+      this.loadImages = [];
+      this.loadImages = [];
       this.displayRelatedImageTimeout.forEach(clearTimeout);
       this.displayRelatedImageTimeout = [];
     },
+    setupDisplayRelatedImage(id) {
+      switch (id) {
+        case 1:
+          this.displayFirstImage = true;
+          break;
+        case 2:
+          this.displaySecondImage = true;
+          break;
+        case 3:
+          this.displayThirdImage = true;
+          break;
+        case 4:
+          this.displayFourthImage = true;
+          break;
+        case 5:
+          this.displayFifthImage = true;
+          break;
+        case 6:
+          this.displaySixthImage = true;
+          break;
+      }
+      this.loadImageOrder.push(1);
+    },
     displayRelatedImages(images) {
-      this.firstImage = images[0];
-      this.secondImage = images[1];
-      this.thirdImage = images[2];
-      console.log(this.$refs);
+      let counter = 0;
+      let positions = [1, 2, 3, 4, 5, 6]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+      positions.forEach((position) => {
+        switch (position) {
+          case 1:
+            this.firstImage = images[counter];
+            this.displayImageOrder.push(1);
+            break;
+          case 2:
+            this.secondImage = images[counter];
+            this.displayImageOrder.push(2);
+            break;
+          case 3:
+            this.thirdImage = images[counter];
+            this.displayImageOrder.push(3);
+            break;
+          case 4:
+            this.fourthImage = images[counter];
+            this.displayImageOrder.push(4);
+            break;
+          case 5:
+            this.fifthImage = images[counter];
+            this.displayImageOrder.push(5);
+            break;
+          case 6:
+            this.sixthImage = images[counter];
+            this.displayImageOrder.push(6);
+            break;
+        }
+        this.loadImages.push(images[counter]);
+        counter++;
+      });
       this.$nextTick(() => {
         this.displayRelatedImageTimeout.push(
-          setTimeout(() => (this.displayFirstImage = true), 1000)
+          setTimeout(
+            () => this.setupDisplayRelatedImage(this.displayImageOrder[0]),
+            1000
+          )
         );
         this.displayRelatedImageTimeout.push(
-          setTimeout(() => (this.displaySecondImage = true), 3000)
+          setTimeout(
+            () => this.setupDisplayRelatedImage(this.displayImageOrder[1]),
+            3000
+          )
         );
         this.displayRelatedImageTimeout.push(
-          setTimeout(() => (this.displayThirdImage = true), 5000)
+          setTimeout(
+            () => this.setupDisplayRelatedImage(this.displayImageOrder[2]),
+            5000
+          )
         );
       });
     },

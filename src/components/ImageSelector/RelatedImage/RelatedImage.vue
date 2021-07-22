@@ -34,8 +34,8 @@ export default {
 </script>
 
 <style>
-@import "./imageselector.css";
-@import "./relatedImageAnimation.css";
+@import "../imageselector.css";
+@import "../relatedImageAnimation.css";
 
 .start-text-align {
     text-align: start;
