@@ -1,29 +1,29 @@
 <template>
-  <div v-if="image && display" :style="{ height: imageHeight + 'px' }">
+  <div v-if="image && image.length > 0 && image[0].display" :style="{ height: imageHeight + 'px' }">
     <p
       v-if="align === 'top' && justify === 'start'"
       class="relatedImageBase index-font start-text-align"
       :style="componentWidthStart"
     >
-      {{ image.tag["@value"] }}
+      {{ image[0].image.tag["@value"] }}
     </p>
     <p
       v-if="align === 'middle' && justify === 'start'"
       class="relatedImageBase index-font start-text-align"
     >
-      {{ image.tag["@value"] }}
+      {{ image[0].image.tag["@value"] }}
     </p>
     <p
       v-if="align === 'top' && justify === 'end'"
       class="relatedImageBase index-font end-text-align"
       :style="componentWidthEnd"
     >
-      {{ image.tag["@value"] }}
+      {{ image[0].image.tag["@value"] }}
     </p>
     <img
       class="relatedImageBase"
-      :src="image.result.imagePaths.large"
-      :alt="image.result.id"
+      :src="image[0].image.result.imagePaths.large"
+      :alt="image[0].image.result.id"
       :style="{ height: (imageHeight / 10) * 9 + 'px', componentWidthEnd }"
     />
     <p
@@ -31,14 +31,14 @@
       class="relatedImageBase index-font start-text-align"
       :style="componentWidthStart"
     >
-      {{ image.tag["@value"] }}
+      {{ image[0].image.tag["@value"] }}
     </p>
     <p
       v-if="align === 'bottom' && justify === 'end'"
       class="relatedImageBase index-font end-text-align"
       :style="componentWidthEnd"
     >
-      {{ image.tag["@value"] }}
+      {{ image[0].image.tag["@value"] }}
     </p>
   </div>
 </template>
@@ -47,7 +47,6 @@
 export default {
   props: {
     image: Object,
-    display: Boolean,
     imageHeight: Number,
     imageWidth: Number,
     align: String,

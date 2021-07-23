@@ -49,6 +49,7 @@ export const actions = {
         }
       });
   },
+  // TODO: Optimize the time consuming of this part!!!
   loadRelatedImages(context, { tags, id }) {
     const relatedImages = [];
     const promises = [];

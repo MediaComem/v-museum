@@ -3,8 +3,7 @@
     <el-col :span="7">
       <div ref="position1">
         <related-image
-          :image="firstImage"
-          :display="displayFirstImage"
+          :image="getRelatedPositionItem(1)"
           :imageHeight="(windowHeight / 6) * 4"
           :imageWidth="(windowWidth / 24) * 6"
           :align="'bottom'"
@@ -18,8 +17,7 @@
     <el-col :span="7">
       <div ref="position2">
         <related-image
-          :image="secondImage"
-          :display="displaySecondImage"
+          :image="getRelatedPositionItem(2)"
           :imageHeight="(windowHeight / 6) * 4"
           :imageWidth="(windowWidth / 24) * 6"
           :align="'bottom'"
@@ -30,7 +28,8 @@
   </el-row>
   <el-row>
     <el-col :span="7"> </el-col>
-    <el-col :span="2"> </el-col>
+    <el-col :span="2">
+    </el-col>
     <el-col
       :span="6"
       :style="{ marginTop: windowHeight / 14 + 'px' }"
@@ -50,31 +49,31 @@
         <el-col :span="14">
           <el-row :justify="'end'">
             <p
-              v-if="displayImageOrder.length >= 1 && step === 3"
+              v-if="relatedImagesPosition.length >= 1 && step === 3"
               class="index-font data-information"
               :class="{
-                removeRelatedImageBaseText: loadImageOrder.length >= 1,
+                removeRelatedImageBaseText: relatedImagesPosition[0].display,
               }"
             >
-              {{ loadImages[0].tag["@value"] }} &nbsp;
+              {{ relatedImagesPosition[0].image.tag["@value"] }} &nbsp;
             </p>
             <p
-              v-if="displayImageOrder.length >= 2 && step === 3"
+              v-if="relatedImagesPosition.length >= 2 && step === 3"
               class="index-font data-information"
               :class="{
-                removeRelatedImageBaseText: loadImageOrder.length >= 2,
+                removeRelatedImageBaseText: relatedImagesPosition[1].display,
               }"
             >
-              {{ loadImages[1].tag["@value"] }} &nbsp;
+              {{ relatedImagesPosition[1].image.tag["@value"] }} &nbsp;
             </p>
             <p
-              v-if="displayImageOrder.length >= 3 && step === 3"
+              v-if="relatedImagesPosition.length >= 3 && step === 3"
               class="index-font data-information"
               :class="{
-                removeRelatedImageBaseText: loadImageOrder.length >= 3,
+                removeRelatedImageBaseText: relatedImagesPosition[2].display,
               }"
             >
-              {{ loadImages[2].tag["@value"] }} &nbsp;
+              {{ relatedImagesPosition[2].image.tag["@value"] }} &nbsp;
             </p>
             <p class="index-font data-information">
               {{ currentIndex + 1 }}
@@ -90,8 +89,7 @@
     <el-col :span="7">
       <div ref="position3">
         <related-image
-          :image="thirdImage"
-          :display="displayThirdImage"
+          :image="getRelatedPositionItem(3)"
           :imageHeight="(windowHeight / 6) * 4"
           :imageWidth="(windowWidth / 24) * 6"
           :align="'top'"
@@ -143,8 +141,7 @@
     <el-col :span="7">
       <div :style="{ marginLeft: windowWidth / 6 + 'px' }" ref="position4">
         <related-image
-          :image="fourthImage"
-          :display="displayFourthImage"
+          :image="getRelatedPositionItem(4)"
           :imageHeight="(windowHeight / 6) * 4"
           :imageWidth="(windowWidth / 24) * 6"
           :align="'middle'"
@@ -171,8 +168,7 @@
     <el-col :span="7">
       <div ref="position5">
         <related-image
-          :image="fifthImage"
-          :display="displayFifthImage"
+          :image="getRelatedPositionItem(5)"
           :imageHeight="(windowHeight / 6) * 4"
           :imageWidth="(windowWidth / 24) * 6"
           :align="'top'"
@@ -186,8 +182,7 @@
     <el-col :span="7">
       <div ref="position6">
         <related-image
-          :image="sixthImage"
-          :display="displaySixthImage"
+          :image="getRelatedPositionItem(6)"
           :imageHeight="(windowHeight / 6) * 4"
           :imageWidth="(windowWidth / 24) * 6"
           :align="'top'"
@@ -227,21 +222,7 @@ export default {
   },
   data() {
     return {
-      firstImage: undefined,
-      displayFirstImage: false,
-      secondImage: undefined,
-      displaySecondImage: false,
-      thirdImage: undefined,
-      displayThirdImage: false,
-      fourthImage: undefined,
-      displayFourthImage: false,
-      fifthImage: undefined,
-      displayFifthImage: false,
-      sixthImage: undefined,
-      displaySixthImage: false,
-      displayImageOrder: [],
-      loadImageOrder: [],
-      loadImages: [],
+      relatedImagesPosition: [],
       displayRelatedImageTimeout: [],
 
       isInitialLoad: true,
@@ -365,101 +346,38 @@ export default {
       clearTimeout(this.changeImageTimeout);
     },
     stopDisplayRelatedImages() {
-      this.displayFirstImage = false;
-      this.displaySecondImage = false;
-      this.displayThirdImage = false;
-      this.displayFourthImage = false;
-      this.displayFifthImage = false;
-      this.displaySixthImage = false;
-      this.firstImage = undefined;
-      this.secondImage = undefined;
-      this.thirdImage = undefined;
-      this.fourthImage = undefined;
-      this.fifthImage = undefined;
-      this.sixthImage = undefined;
-      this.displayImageOrder = [];
-      this.loadImageOrder = [];
-      this.loadImages = [];
-      this.loadImages = [];
+      this.relatedImagesPosition = [];
       this.displayRelatedImageTimeout.forEach(clearTimeout);
       this.displayRelatedImageTimeout = [];
     },
-    setupDisplayRelatedImage(id) {
-      switch (id) {
-        case 1:
-          this.displayFirstImage = true;
-          break;
-        case 2:
-          this.displaySecondImage = true;
-          break;
-        case 3:
-          this.displayThirdImage = true;
-          break;
-        case 4:
-          this.displayFourthImage = true;
-          break;
-        case 5:
-          this.displayFifthImage = true;
-          break;
-        case 6:
-          this.displaySixthImage = true;
-          break;
-      }
-      this.loadImageOrder.push(1);
+    getRelatedPositionItem(position) {
+      return this.relatedImagesPosition.filter((e) => e.position === position);
     },
     displayRelatedImages(images) {
-      let counter = 0;
-      let positions = [1, 2, 3, 4, 5, 6]
+      // Select randomly 3 display positions
+      const positions = [1, 2, 3, 4, 5, 6]
         .sort(() => Math.random() - 0.5)
         .slice(0, 3);
+      const counter = 0;
       positions.forEach((position) => {
-        switch (position) {
-          case 1:
-            this.firstImage = images[counter];
-            this.displayImageOrder.push(1);
-            break;
-          case 2:
-            this.secondImage = images[counter];
-            this.displayImageOrder.push(2);
-            break;
-          case 3:
-            this.thirdImage = images[counter];
-            this.displayImageOrder.push(3);
-            break;
-          case 4:
-            this.fourthImage = images[counter];
-            this.displayImageOrder.push(4);
-            break;
-          case 5:
-            this.fifthImage = images[counter];
-            this.displayImageOrder.push(5);
-            break;
-          case 6:
-            this.sixthImage = images[counter];
-            this.displayImageOrder.push(6);
-            break;
-        }
-        this.loadImages.push(images[counter]);
+        this.relatedImagesPosition.push({
+          position: position,
+          image: images[counter],
+          display: false,
+        });
         counter++;
       });
+
+      // Setup the display animation
       this.$nextTick(() => {
         this.displayRelatedImageTimeout.push(
-          setTimeout(
-            () => this.setupDisplayRelatedImage(this.displayImageOrder[0]),
-            1000
-          )
+          setTimeout(() => (this.relatedImagesPosition[0].display = true), 1000)
         );
         this.displayRelatedImageTimeout.push(
-          setTimeout(
-            () => this.setupDisplayRelatedImage(this.displayImageOrder[1]),
-            3000
-          )
+          setTimeout(() => (this.relatedImagesPosition[1].display = true), 3000)
         );
         this.displayRelatedImageTimeout.push(
-          setTimeout(
-            () => this.setupDisplayRelatedImage(this.displayImageOrder[2]),
-            5000
-          )
+          setTimeout(() => (this.relatedImagesPosition[2].display = true), 5000)
         );
       });
     },
