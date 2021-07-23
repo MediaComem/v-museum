@@ -28,8 +28,7 @@
   </el-row>
   <el-row>
     <el-col :span="7"> </el-col>
-    <el-col :span="2">
-    </el-col>
+    <el-col :span="2"> </el-col>
     <el-col
       :span="6"
       :style="{ marginTop: windowHeight / 14 + 'px' }"
@@ -356,30 +355,28 @@ export default {
     },
     displayRelatedImages(images) {
       // Select randomly 3 display positions
-      const positions = this.potentialPosition
+      this.potentialPosition
         .sort(() => Math.random() - 0.5)
-        .slice(0, 3);
-      let counter = 0;
-      positions.forEach((position) => {
-        this.relatedImagesPosition.push({
-          position: position,
-          image: images[counter],
-          display: false,
+        .slice(0, images.length)
+        .forEach((position, index) => {
+          this.relatedImagesPosition.push({
+            position: position,
+            image: images[index],
+            display: false,
+          });
         });
-        counter++;
-      });
 
       // Setup the display animation
       this.$nextTick(() => {
-        this.displayRelatedImageTimeout.push(
-          setTimeout(() => (this.relatedImagesPosition[0].display = true), 1000)
-        );
-        this.displayRelatedImageTimeout.push(
-          setTimeout(() => (this.relatedImagesPosition[1].display = true), 3000)
-        );
-        this.displayRelatedImageTimeout.push(
-          setTimeout(() => (this.relatedImagesPosition[2].display = true), 5000)
-        );
+        this.relatedImagesPosition.forEach((element, index) => {
+          const animationDelay = 1000 + 2000 * index;
+          this.displayRelatedImageTimeout.push(
+            setTimeout(
+              () => (this.relatedImagesPosition[index].display = true),
+              animationDelay
+            )
+          );
+        });
       });
     },
   },
