@@ -67,12 +67,5 @@ export default {
 <style>
 @import "../imageselector.css";
 @import "../relatedImageAnimation.css";
-
-.start-text-align {
-  text-align: start;
-}
-
-.end-text-align {
-  text-align: end;
-}
+@import "./relatedimage.css";
 </style>
