@@ -233,6 +233,7 @@ export default {
   },
   data() {
     return {
+      potentialPosition: [1, 2, 3, 4, 5, 6],
       relatedImagesPosition: [],
       displayRelatedImageTimeout: [],
 
@@ -375,10 +376,10 @@ export default {
     },
     displayRelatedImages(images) {
       // Select randomly 3 display positions
-      const positions = [1, 2, 3, 4, 5, 6]
+      const positions = this.potentialPosition
         .sort(() => Math.random() - 0.5)
         .slice(0, 3);
-      const counter = 0;
+      let counter = 0;
       positions.forEach((position) => {
         this.relatedImagesPosition.push({
           position: position,
