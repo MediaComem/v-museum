@@ -24,6 +24,21 @@ describe("Test ImageSelector component", () => {
         mocks: {
           $store,
         },
+        // Remove warning and error due to element plus component not found
+        config: {
+          warnHandler: function(err, vm, info) {
+            err = undefined;
+            vm =undefined;
+            info = undefined;
+            return info;
+          },
+          errorHandler: function(err, vm, info) {
+            err = undefined;
+            vm =undefined;
+            info = undefined;
+            return info;
+          }
+        }
       },
     });
   });
@@ -334,17 +349,49 @@ describe("Test ImageSelector component", () => {
     expect(wrapper.vm.$data.previousStep).to.equal(6);
   });
 
-  
-/* TODO: FIX TEST
-  it("Test loadPreviousImages method", () => {
+it("Test getRelatedPositionItem method", () => {
+  wrapper.vm.$data.relatedImagesPosition = [
+    {
+      position: 28,
+      name: "test",
+    },
+    {
+      position: 22,
+      name: "Test 2",
+    },
+  ]
+  expect(wrapper.vm.getRelatedPositionItem(22)).to.eql([{ position: 22, name: "Test 2"}]);
+  expect(wrapper.vm.getRelatedPositionItem(99)).to.be.empty;
+});
+/*
+  it("Test stopDisplayRelatedImages method", (done) => {
+    wrapper.vm.$data.relatedImagesPosition = [1,2,3];
+    wrapper.vm.$data.displayRelatedImageTimeout.push(setTimeout(() => null, 10000))
+    wrapper.vm.$data.displayRelatedImageTimeout.push(setTimeout(() => null, 10000))
+    wrapper.vm.stopDisplayRelatedImages().then(done);
+    expect(wrapper.vm.$data.relatedImagesPosition).to.be.empty;
+    expect(wrapper.vm.$data.displayRelatedImageTimeout).to.be.empty;
+  });
+
+
+  it("Test loadPreviousImages method", (done) => {
+    sandbox.stub(wrapper.vm, "stopChangeImageTimeout").callsFake(() => {
+      return;
+    });
     let carousel = {
-      prev: function() {},
+      prev: function() {
+        console.log('TEST');
+      },
     };
     wrapper.vm.$data.carousel = carousel;
     sandbox.spy(wrapper.vm.$data.carousel);
-    wrapper.vm.$data.currentSlide = 0;
-    wrapper.vm.$data.isLoadingImage = true;
+    wrapper.vm.$data.currentIndex = 0;
     wrapper.vm.navigatePreviousImage(0);
+    expect(wrapper.vm.$data.carousel.prev.callCount).to.equal(0);
+    wrapper.vm.$data.currentIndex = 1;
+    wrapper.vm.navigatePreviousImage(0).then(done);
+    expect(wrapper.vm.$data.carousel.prev.callCount).to.equal(1);
+    wrapper.vm.navigatePreviousImage(0).then(done);
     expect(wrapper.vm.$data.carousel.prev.callCount).to.equal(1);
   });
 
