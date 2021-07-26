@@ -1,10 +1,11 @@
 module.exports = {
-    devServer: {
-        proxy: {
-            "^/api/items": {
-                target: 'https://v-museum.heig-vd.ch/',
-            }
-            
-        }
-    }
-}
+  publicPath: process.env.NODE_ENV === "production" ? "/v-museum" : "/",
+
+  devServer: {
+    proxy: {
+      "^/api/items": {
+        target: "https://v-museum.heig-vd.ch/",
+      },
+    },
+  },
+};
