@@ -1,52 +1,52 @@
 <template>
-  <!--el-row :class="{ customTransitionMask: step !== 3 }" :gutter="10" :align="'middle'"-->
   <el-row :gutter="10" :align="'middle'">
-    <el-col :xs="10" :sm="9" :md="8" :lg="8" :xl="8"> </el-col>
+    <el-col :span="9"> </el-col>
     <el-col
-      :xs="3"
-      :sm="5"
-      :md="7"
-      :lg="8"
-      :xl="8"
+      :span="6"
       :style="{
         marginTop: windowHeight / 10 + 'px',
         marginBottom: windowHeight / 10 + 'px',
       }"
     >
-      <el-carousel
-        :height="(windowHeight / 5) * 4 + 'px'"
-        direction="vertical"
-        :loop="false"
-        :autoplay="false"
-        ref="carousel"
-        class="custom-carousel"
-        @change="changeImage"
-      >
-        <el-carousel-item v-for="(value, index) in data" :key="index">
-          <img
-            ref="image"
-            class="custom-image"
-            :src="value.imagePaths.large"
-            :alt="value.id"
-          />
-        </el-carousel-item>
-      </el-carousel>
+      <div class="sliderMask">
+        <el-carousel
+          :height="(windowHeight / 6) * 4 + 'px'"
+          direction="vertical"
+          :loop="false"
+          :autoplay="false"
+          ref="carousel"
+          class="custom-carousel"
+          :style="marginCarourel"
+          :class="selectZoomAnimation"
+          @change="changeImage"
+        >
+          <el-carousel-item v-for="(value, index) in data" :key="index">
+            <img
+              ref="image"
+              class="custom-image"
+              :src="value.imagePaths.large"
+              :alt="value.id"
+            />
+          </el-carousel-item>
+        </el-carousel>
+      </div>
     </el-col>
-    <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2">
+    <el-col :span="2">
       <el-row :justify="'center'" :align="'middle'">
         <el-slider
+          ref="slider"
           vertical
           v-model="step"
           :height="windowHeight / 5 + 'px'"
           :max="6"
           :show-tooltip="false"
-          @change="rangeChange"
+          @change="releaseSlider"
           @input="changeImage"
         >
         </el-slider>
       </el-row>
     </el-col>
-    <el-col :xs="9" :sm="8" :md="7" :lg="6" :xl="6"> </el-col>
+    <el-col :span="7"> </el-col>
   </el-row>
 </template>
 
@@ -64,7 +64,7 @@ export default {
         this.$nextTick(() => {
           this.carousel.setActiveItem(0);
           this.isInitialLoad = false;
-        })
+        });
       }
     },
   },
@@ -72,6 +72,9 @@ export default {
     return {
       isInitialLoad: true,
       data: undefined,
+      releaseStep: -1,
+      previousStep: 3,
+      zoomingStep: 3,
       step: 3,
       windowHeight: undefined,
       windowWidth: undefined,
@@ -89,18 +92,43 @@ export default {
         this.getNextImages(this.currentSlide + 1, 80, 100);
       }
     },
-    rangeChange() {
+    // This method reset some properties in case of the user release the slider
+    releaseSlider(releaseStep) {
+      this.zoomingStep = 2;
+      this.releaseStep = releaseStep;
       this.step = 3;
       this.stopTimeout();
     },
-    // Vitesse Max = 1 image toutes les 50ms: Devra être fait Peut-être avec un 4ème cran
+    animationStepAnalysis(move, faster, slower) {
+      if (move) {
+        if (faster) {
+          this.releaseStep = -1;
+          this.zoomingStep = 2;
+        } else if (slower) {
+          this.zoomingStep = 1;
+        }
+      }
+    },
     changeImage(nextImageIndex) {
+      // In case of we move to top for animation analysis purpose
+      const forward = this.step < 3;
+      let slower = this.step - this.previousStep >= 1;
+      let faster = this.step - this.previousStep <= -1;
+      this.animationStepAnalysis(forward, faster, slower);
+
+      // In case of we move to bottom for animation analysis purpose
+      const backward = this.step > 3;
+      faster = this.step - this.previousStep >= 1;
+      slower = this.step - this.previousStep <= -1;
+      this.animationStepAnalysis(backward, faster, slower);
+
+      // Moving carousel part
       switch (this.step) {
         case 0:
-          this.navigateNextImage(nextImageIndex, 80, 100);
+          this.navigateNextImage(nextImageIndex, 80, 50);
           break;
         case 1:
-          this.navigateNextImage(nextImageIndex, 40, 500);
+          this.navigateNextImage(nextImageIndex, 40, 250);
           break;
         case 2:
           this.navigateNextImage(nextImageIndex, 20, 1000);
@@ -112,14 +140,17 @@ export default {
           this.navigatePreviousImage(1000);
           break;
         case 5:
-          this.navigatePreviousImage(500);
+          this.navigatePreviousImage(250);
           break;
         case 6:
-          this.navigatePreviousImage(100);
+          this.navigatePreviousImage(50);
           break;
       }
+      // Keep track of this step for animation analysis purpose
+      this.previousStep = this.step;
     },
     navigatePreviousImage(intervalTransitionTime) {
+      this.stopTimeout();
       this.timeout = setTimeout(() => {
         this.carousel.prev();
       }, intervalTransitionTime);
@@ -136,6 +167,7 @@ export default {
       ) {
         this.$store.dispatch("loadNextContent");
       }
+      this.stopTimeout();
       this.timeout = setTimeout(() => {
         this.carousel.next();
       }, intervalTransitionTime);
@@ -144,7 +176,27 @@ export default {
       clearTimeout(this.timeout);
     },
   },
-  computed: mapState(["images", "isLoadingImage"]),
+  computed: {
+    selectZoomAnimation() {
+      return {
+        zoomTransitionImageFast:
+          (this.step === 0 || this.step === 6) && this.zoomingStep === 2,
+        zoomTransitionImageMedium:
+          (this.step === 1 || this.step === 5) && this.zoomingStep === 2,
+        zoomTransitionImageSlow:
+          (this.step === 2 || this.step === 4) &&
+          (this.zoomingStep === 2 || this.zoomingStep === 1),
+        unzoomTransitionImageFastEnd:
+          this.step === 3 && (this.releaseStep === 0 || this.releaseStep === 6),
+        unzoomTransitionImageFast:
+          (this.step === 1 || this.step === 5) && this.zoomingStep === 1,
+      };
+    },
+    marginCarourel() {
+      return { marginTop: this.windowHeight / 14 + "px" };
+    },
+    ...mapState(["images", "isLoadingImage"]),
+  },
   mounted() {
     // Due to the mandatory height for carousel element in vertical mode.
     // This lib is used for reponsive purpose
