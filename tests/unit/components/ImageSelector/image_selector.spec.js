@@ -151,6 +151,8 @@ describe("Test ImageSelector component", () => {
   });
 
   it("Test releaseSlider method", () => {
+    wrapper.vm.$data.data = [];
+    wrapper.vm.$data.data.push(new ImageData("1", "Title 1", "Author 1", "Medium 1", "Link 1", "Subject 1"))
     wrapper.vm.$data.zoomingStep = 6;
     wrapper.vm.$data.step = 6;
     expect(wrapper.vm.$data.releaseStep).to.equal(-1);
