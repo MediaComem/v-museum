@@ -45,7 +45,7 @@
           :max="60"
           :show-tooltip="false"
           @change="releaseSlider"
-          @input="changeImage"
+          @input="sliderMove"
         >
         </el-slider>
       </el-row>
@@ -115,6 +115,16 @@ export default {
         }
       }
     },
+    isFirstMove(move) {
+      return move && this.previousStep === 3;
+    },
+    // Use to see if the speed step has changed to remove stopping effect in the transition
+    sliderMove(newVal) {
+      const newStep = this.step > 30 ? Math.ceil(this.step / 10) : Math.floor(this.step / 10);
+      if (newStep !== this.modifiedStep) {
+        this.changeImage(newVal);
+      }
+    },
     changeImage(nextImageIndex) {
       this.modifiedStep =
         this.step > 30 ? Math.ceil(this.step / 10) : Math.floor(this.step / 10);
@@ -124,11 +134,19 @@ export default {
       let faster = this.modifiedStep - this.previousStep <= -1;
       this.animationStepAnalysis(forward, faster, slower);
 
+      if (this.isFirstMove(forward)){
+        this.carousel.next();
+      }
+
       // In case of we move to bottom for animation analysis purpose
       const backward = this.modifiedStep > 3;
       faster = this.modifiedStep - this.previousStep >= 1;
       slower = this.modifiedStep - this.previousStep <= -1;
       this.animationStepAnalysis(backward, faster, slower);
+
+      if (this.isFirstMove(backward)) {
+        this.carousel.prev();
+      }
 
       // Moving carousel part
       switch (this.modifiedStep) {
@@ -157,7 +175,7 @@ export default {
       // Keep track of this step for animation analysis purpose
       this.previousStep = this.modifiedStep;
     },
-    navigatePreviousImage(intervalTransitionTime) {
+    navigatePreviousImage(intervalTransitionTime) {    
       this.stopTimeout();
       this.timeout = setTimeout(() => {
         this.carousel.prev();
