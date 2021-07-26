@@ -22,12 +22,28 @@
   transform: scale(1.5);
 }
 
-.el-carousel__item.is-animating {
-  -webkit-transition: -webkit-transform 0.05s ease-in-out;
-  transition: -webkit-transform 0.1s ease-in-out;
-  transition: transform 0.05s ease-in-out;
-  transition: transform 0.05s ease-in-out, -webkit-transform 0.05s ease-in-out;
-  transition: transform 0.05s ease-in-out, -webkit-transform 0.05s ease-in-out;
+.v-museum-slow.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 1s linear;
+  transition: -webkit-transform 1s linear;
+  transition: transform 1s linear;
+  transition: transform 1s linear, -webkit-transform 1s linear;
+  transition: transform 1s linear, -webkit-transform 1s linear;
+}
+
+.v-museum-medium.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 0.25s linear;
+  transition: -webkit-transform 1s linear;
+  transition: transform 0.25s linear;
+  transition: transform 0.25s linear, -webkit-transform 0.25s linear;
+  transition: transform 0.25s linear, -webkit-transform 0.25s linear;
+}
+
+.v-museum-fast.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 0.05s linear;
+  transition: -webkit-transform 0.1s linear;
+  transition: transform 0.05s linear;
+  transition: transform 0.05s linear, -webkit-transform 0.05s linear;
+  transition: transform 0.05s linear, -webkit-transform 0.05s linear;
 }
 
 .el-carousel__indicators--vertical {
@@ -96,7 +112,6 @@
 
 .zoomTransitionImageFast {
   animation: maskTransitionImageFast 1.5s linear 0s normal forwards;
-  animation-timing-function: ease;
 }
 
 @keyframes maskTransitionImageFast {
@@ -181,7 +196,6 @@
 
 .unzoomTransitionImageFast {
   animation: unMaskTransitionImageFast 1.5s linear 0s normal forwards;
-  animation-timing-function: ease;
 }
 
 @keyframes unMaskTransitionImageFast {

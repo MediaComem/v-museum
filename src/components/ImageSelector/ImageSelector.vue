@@ -12,7 +12,7 @@
         <el-carousel
           :height="(windowHeight / 6) * 4 + 'px'"
           direction="vertical"
-          :loop="false"
+          :loop="true"
           :autoplay="false"
           ref="carousel"
           class="custom-carousel"
@@ -20,7 +20,7 @@
           :class="selectZoomAnimation"
           @change="changeImage"
         >
-          <el-carousel-item v-for="(value, index) in data" :key="index">
+          <el-carousel-item v-for="(value, index) in data" :key="index" :class="selectSliderTransitionSpeed">
             <img
               ref="image"
               class="custom-image"
@@ -191,6 +191,13 @@ export default {
         unzoomTransitionImageFast:
           (this.step === 1 || this.step === 5) && this.zoomingStep === 1,
       };
+    },
+    selectSliderTransitionSpeed() {
+      return {
+        'v-museum-slow': this.step === 2 || this.step === 4,
+        'v-museum-medium': this.step === 1 || this.step === 5,
+        'v-museum-fast': this.step === 0 || this.step === 6,
+      }
     },
     marginCarourel() {
       return { marginTop: this.windowHeight / 14 + "px" };
