@@ -20,7 +20,11 @@
           :class="selectZoomAnimation"
           @change="changeImage"
         >
-          <el-carousel-item v-for="(value, index) in data" :key="index" :class="selectSliderTransitionSpeed">
+          <el-carousel-item
+            v-for="(value, index) in data"
+            :key="index"
+            :class="selectSliderTransitionSpeed"
+          >
             <img
               ref="image"
               class="custom-image"
@@ -38,7 +42,7 @@
           vertical
           v-model="step"
           :height="windowHeight / 5 + 'px'"
-          :max="6"
+          :max="60"
           :show-tooltip="false"
           @change="releaseSlider"
           @input="changeImage"
@@ -76,7 +80,8 @@ export default {
       releaseStep: -1,
       previousStep: 3,
       zoomingStep: 3,
-      step: 3,
+      step: 30,
+      modifiedStep: 3,
       windowHeight: undefined,
       windowWidth: undefined,
       carousel: undefined,
@@ -97,7 +102,7 @@ export default {
     releaseSlider(releaseStep) {
       this.zoomingStep = 2;
       this.releaseStep = releaseStep;
-      this.step = 3;
+      this.step = 30;
       this.stopTimeout();
     },
     animationStepAnalysis(move, faster, slower) {
@@ -111,20 +116,22 @@ export default {
       }
     },
     changeImage(nextImageIndex) {
+      this.modifiedStep =
+        this.step > 30 ? Math.ceil(this.step / 10) : Math.floor(this.step / 10);
       // In case of we move to top for animation analysis purpose
-      const forward = this.step < 3;
-      let slower = this.step - this.previousStep >= 1;
-      let faster = this.step - this.previousStep <= -1;
+      const forward = this.modifiedStep < 3;
+      let slower = this.modifiedStep - this.previousStep >= 1;
+      let faster = this.modifiedStep - this.previousStep <= -1;
       this.animationStepAnalysis(forward, faster, slower);
 
       // In case of we move to bottom for animation analysis purpose
-      const backward = this.step > 3;
-      faster = this.step - this.previousStep >= 1;
-      slower = this.step - this.previousStep <= -1;
+      const backward = this.modifiedStep > 3;
+      faster = this.modifiedStep - this.previousStep >= 1;
+      slower = this.modifiedStep - this.previousStep <= -1;
       this.animationStepAnalysis(backward, faster, slower);
 
       // Moving carousel part
-      switch (this.step) {
+      switch (this.modifiedStep) {
         case 0:
           this.navigateNextImage(nextImageIndex, 80, 50);
           break;
@@ -148,7 +155,7 @@ export default {
           break;
       }
       // Keep track of this step for animation analysis purpose
-      this.previousStep = this.step;
+      this.previousStep = this.modifiedStep;
     },
     navigatePreviousImage(intervalTransitionTime) {
       this.stopTimeout();
@@ -181,24 +188,28 @@ export default {
     selectZoomAnimation() {
       return {
         zoomTransitionImageFast:
-          (this.step === 0 || this.step === 6) && this.zoomingStep === 2,
+          (this.modifiedStep === 0 || this.modifiedStep === 6) &&
+          this.zoomingStep === 2,
         zoomTransitionImageMedium:
-          (this.step === 1 || this.step === 5) && this.zoomingStep === 2,
+          (this.modifiedStep === 1 || this.modifiedStep === 5) &&
+          this.zoomingStep === 2,
         zoomTransitionImageSlow:
-          (this.step === 2 || this.step === 4) &&
+          (this.modifiedStep === 2 || this.modifiedStep === 4) &&
           (this.zoomingStep === 2 || this.zoomingStep === 1),
         unzoomTransitionImageFastEnd:
-          this.step === 3 && (this.releaseStep === 0 || this.releaseStep === 6),
+          this.modifiedStep === 3 &&
+          (this.releaseStep === 0 || this.releaseStep === 6),
         unzoomTransitionImageFast:
-          (this.step === 1 || this.step === 5) && this.zoomingStep === 1,
+          (this.modifiedStep === 1 || this.modifiedStep === 5) &&
+          this.zoomingStep === 1,
       };
     },
     selectSliderTransitionSpeed() {
       return {
-        'v-museum-slow': this.step === 2 || this.step === 4,
-        'v-museum-medium': this.step === 1 || this.step === 5,
-        'v-museum-fast': this.step === 0 || this.step === 6,
-      }
+        "v-museum-slow": this.modifiedStep === 2 || this.modifiedStep === 4,
+        "v-museum-medium": this.modifiedStep === 1 || this.modifiedStep === 5,
+        "v-museum-fast": this.modifiedStep === 0 || this.modifiedStep === 6,
+      };
     },
     marginCarourel() {
       return { marginTop: this.windowHeight / 14 + "px" };
@@ -218,7 +229,7 @@ export default {
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
     this.$store.dispatch("initializeCarousel", {
-      decade: "191",
+      decade: "193",
     });
   },
   unmounted() {

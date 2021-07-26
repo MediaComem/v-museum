@@ -288,8 +288,7 @@
 }
 
 .unzoomTransitionImageFastEnd {
-  animation: unMaskTransitionImageFastEnd 1.5s linear 0s normal forwards;
-  animation-timing-function: ease;
+  animation: unMaskTransitionImageFastEnd 1s linear 0s normal forwards;
 }
 
 @keyframes unMaskTransitionImageFastEnd {
