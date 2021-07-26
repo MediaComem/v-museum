@@ -284,6 +284,7 @@ export default {
       slower = this.step - this.previousStep <= -1;
       this.animationStepAnalysis(backward, faster, slower);
 
+      // Stop loading of related images
       this.stopDisplayRelatedImages();
       
       // Moving carousel part
@@ -298,7 +299,7 @@ export default {
           this.navigateNextImage(nextImageIndex, 20, 1000);
           break;
         case 3:
-          this.stopTimeout();
+          this.stopChangeImageTimeout();
           break;
         case 4:
           this.navigatePreviousImage(1000);
@@ -399,7 +400,7 @@ export default {
     marginCarourel() {
       return { marginTop: this.windowHeight / 14 + "px" };
     },
-    ...mapState(["images", "isLoadingImage"]),
+    ...mapState(["images", "isLoadingImage", "relatedImages"]),
   },
   mounted() {
     // Due to the mandatory height for carousel element in vertical mode.
