@@ -131,6 +131,7 @@ describe("Test ImageSelector component", () => {
     expect($store.dispatch.callCount).to.equals(1);
   });
 
+<<<<<<< HEAD
   it("Test movement analyzer", () => {
     wrapper.vm.$data.releaseStep = 0;
     wrapper.vm.$data.zoomingStep = -1;
@@ -151,6 +152,11 @@ describe("Test ImageSelector component", () => {
   });
 
   it("Test releaseSlider method", () => {
+=======
+  it("Test rangeChange method", () => {
+    wrapper.vm.$data.data = [];
+    wrapper.vm.$data.data.push(new ImageData("1", "Title 1", "Author 1", "Medium 1", "Link 1", "Subject 1"))
+>>>>>>> ef7d54ae76569000e3d1889fd78dc95461dcc7b7
     wrapper.vm.$data.zoomingStep = 6;
     wrapper.vm.$data.step = 6;
     expect(wrapper.vm.$data.releaseStep).to.equal(-1);
