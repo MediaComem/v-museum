@@ -97,6 +97,7 @@
   -moz-border-radius: 30px;
   -webkit-border-radius: 30px;
   border-radius: 30px;
+  width: 55px;
 }
 
 .el-slider {
@@ -104,6 +105,10 @@
   -moz-border-radius: 30px;
   -webkit-border-radius: 30px;
   border-radius: 30px;
+}
+
+.el-slider.is-vertical {
+  width: 55px;;
 }
 
 .sliderMask {
@@ -119,7 +124,7 @@
 }
 
 .zoomTransitionImageFast {
-  animation: maskTransitionImageFast 1.5s linear 0s normal forwards;
+  animation: maskTransitionImageFast 1s linear 0s normal forwards;
 }
 
 @keyframes maskTransitionImageFast {
@@ -203,7 +208,7 @@
 }
 
 .unzoomTransitionImageFast {
-  animation: unMaskTransitionImageFast 1.5s linear 0s normal forwards;
+  animation: unMaskTransitionImageFast 1s linear 0s normal forwards;
 }
 
 @keyframes unMaskTransitionImageFast {

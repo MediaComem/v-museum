@@ -70,6 +70,7 @@ export default {
   },
   data() {
     return {
+      currentIndex: 0,
       isInitialLoad: true,
       data: undefined,
       releaseStep: -1,
