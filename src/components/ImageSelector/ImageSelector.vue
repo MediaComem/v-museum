@@ -1,5 +1,5 @@
 <template>
-  <el-row>
+  <el-row :align="'bottom'">
     <el-col :span="7">
       <div ref="position1">
         <related-image

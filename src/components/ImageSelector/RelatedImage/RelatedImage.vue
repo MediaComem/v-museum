@@ -1,42 +1,31 @@
 <template>
-  <div v-if="image && image.length > 0 && image[0].display" :style="{ height: imageHeight + 'px' }">
+  <div
+    v-if="image && image.length > 0 && image[0].display"
+    :style="{ height: imageHeight + 'px' }"
+    @mouseover="hover = true"
+    @mouseleave="hover = false"
+  >
     <p
-      v-if="align === 'top' && justify === 'start'"
-      class="relatedImageBase index-font start-text-align"
-      :style="componentWidthStart"
-    >
-      {{ image[0].image.tag["@value"] }}
-    </p>
-    <p
-      v-if="align === 'middle' && justify === 'start'"
-      class="relatedImageBase index-font start-text-align"
-    >
-      {{ image[0].image.tag["@value"] }}
-    </p>
-    <p
-      v-if="align === 'top' && justify === 'end'"
-      class="relatedImageBase index-font end-text-align"
-      :style="componentWidthEnd"
+      v-if="align === 'top' || align === 'middle'"
+      class="relatedImageBase index-font"
+      :class="textComponentClass"
     >
       {{ image[0].image.tag["@value"] }}
     </p>
     <img
       class="relatedImageBase"
-      :src="image[0].image.result.imagePaths.large"
+      :src="image[0].image.result.imagePaths.square"
       :alt="image[0].image.result.id"
-      :style="{ height: (imageHeight / 10) * 9 + 'px', componentWidthEnd }"
+      :style="{
+        height: (imageHeight / 20) * 9 + 'px',
+        componentWidthEnd,
+        marginTop: (imageHeight / 20) * 9 + 'px',
+      }"
     />
     <p
-      v-if="align === 'bottom' && justify === 'start'"
-      class="relatedImageBase index-font start-text-align"
-      :style="componentWidthStart"
-    >
-      {{ image[0].image.tag["@value"] }}
-    </p>
-    <p
-      v-if="align === 'bottom' && justify === 'end'"
-      class="relatedImageBase index-font end-text-align"
-      :style="componentWidthEnd"
+      v-if="align === 'bottom'"
+      class="relatedImageBase index-font"
+      :class="textComponentClass"
     >
       {{ image[0].image.tag["@value"] }}
     </p>
@@ -52,12 +41,17 @@ export default {
     align: String,
     justify: String,
   },
+  data() {
+    return {
+      hover: false,
+    };
+  },
   computed: {
-    componentWidthStart() {
-      return { paddingLeft: this.imageWidth / 6 + "px" };
-    },
-    componentWidthEnd() {
-      return { width: this.imageWidth + "px" };
+    textComponentClass() {
+      return {
+        startTextAlign: this.justify === "start",
+        endTextAlign: this.justify === "end",
+      };
     },
   },
 };
