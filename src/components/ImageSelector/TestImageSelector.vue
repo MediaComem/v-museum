@@ -146,7 +146,7 @@ export default {
       if (this.step > 290 && this.step < 310) {
         setTimeout(() => {
           if (this.step > 290 && this.step < 310) {
-            this.releaseSlider();
+            this.releaseSlider(600);
           }
         }, 200);
       } else {
