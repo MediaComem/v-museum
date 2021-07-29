@@ -13,10 +13,7 @@
           :class="selectZoomAnimation"
           class="infinite-list slider-mask"
           style="overflow: hidden; padding: 0"
-          :style="{
-            height: (windowHeight / 6) * 4 + 'px',
-            width: (windowWidth / 24) * 6 + 'px',
-          }"
+          :style="componentSize"
         >
           <li
             :class="selectSliderTransitionSpeed"
@@ -26,10 +23,7 @@
             class="infinite-list-item"
           >
             <div
-              :style="{
-                height: (windowHeight / 6) * 4 + 'px',
-                width: (windowWidth / 24) * 6 + 'px',
-              }"
+              :style="componentSize"
             >
               <img
                 :style="{
@@ -76,18 +70,18 @@ export default {
       this.totalCarouselIndex = this.data.length;
     },
     currentIndex: function(newVal) {
-        console.log(newVal);
-        if (this.isLooped && (newVal === 1 || newVal === this.totalCarouselIndex - 2 )){
-            this.isLooped = false;
-            if (newVal === 1){
-                console.log("Start");
-                this.currentIndex = this.currentIndex + 1;
-            }
-            else {
-                console.log("END");
-                this.currentIndex = this.currentIndex - 1;
-            }
+      // This part analyse if the loop transition is necessary and reset it after.
+      if (
+        this.isLooped &&
+        (newVal === 1 || newVal === this.totalCarouselIndex - 2)
+      ) {
+        this.isLooped = false;
+        if (newVal === 1) {
+          this.currentIndex = this.currentIndex + 1;
+        } else {
+          this.currentIndex = this.currentIndex - 1;
         }
+      }
     },
   },
   data() {
@@ -108,24 +102,41 @@ export default {
       windowWidth: undefined,
       totalCarouselIndex: 0,
       interval: [],
-      globalTimeout: undefined,
+      timeout: undefined,
     };
   },
   methods: {
     movingAnalysis(forward) {
+      // Loading more content if necessary
+      if (
+        this.currentIndex > this.totalCarouselIndex - 80 &&
+        !this.isLoadingImage
+      ) {
+        this.$store.dispatch("loadNextContent");
+      }
+
       // Movement part
       if (forward) {
+        // Loop the scroll
         if (this.currentIndex === this.totalCarouselIndex - 1) {
           this.isLooped = true;
           this.currentIndex = 0;
-          setTimeout(() => this.currentIndex = this.currentIndex + 1, 50)
+          this.timeout = setTimeout(
+            () => (this.currentIndex = this.currentIndex + 1),
+            100
+          );
         } else {
           this.currentIndex = this.currentIndex + 1;
         }
-      } else if (this.currentIndex === 0) {
+      }
+      // Loop the scroll
+      else if (this.currentIndex === 0) {
         this.isLooped = true;
         this.currentIndex = this.totalCarouselIndex - 1;
-        setTimeout(() => this.currentIndex = this.currentIndex - 1, 50)
+        this.timeout = setTimeout(
+          () => (this.currentIndex = this.currentIndex - 1),
+          100
+        );
       } else {
         this.currentIndex = this.currentIndex - 1;
       }
@@ -184,6 +195,8 @@ export default {
       }
     },
     releaseSlider(releaseStep) {
+      // Start reset parameters part
+      clearTimeout(this.timeout);
       this.releaseStep =
         this.step > 30
           ? Math.ceil(releaseStep / 10)
@@ -194,7 +207,6 @@ export default {
       this.interval = [];
 
       // This part analyze where we are in the sliding process to get back to the previous image in case we stop the slider.
-
       const transitionPosition = this.$refs[
         "image-" + this.currentIndex
       ].getBoundingClientRect().y;
@@ -213,6 +225,7 @@ export default {
         this.currentIndex = this.currentIndex + 1;
       }
 
+      // End of reset parameters part
       this.speed = 6000;
       this.previousSpeed = 6000;
       this.previousDirection = undefined;
@@ -227,13 +240,8 @@ export default {
         }
       }
     },
-    translate() {
-      return (
-        "translateY(-" + (this.windowHeight / 6) * 4 * this.currentIndex + "px)"
-      );
-    },
     speedSelection() {
-      // Moving carousel part
+      // Find the transition speed
       switch (true) {
         case this.step <= 2:
           return 50;
@@ -277,12 +285,23 @@ export default {
     },
   },
   computed: {
+    componentSize() {
+      return {
+        height: (this.windowHeight / 6) * 4 + "px",
+        width: (this.windowWidth / 24) * 6 + "px",
+      };
+    },
+    // Setup image display and translation for the scrolling
     imageStyle() {
       return {
-        transform: this.translate(),
+        transform:
+          "translateY(-" +
+          (this.windowHeight / 6) * 4 * this.currentIndex +
+          "px)",
         height: (this.windowHeight / 6) * 4 + "px",
       };
     },
+    // Base on the movement step and speed, select the right animation
     selectZoomAnimation() {
       return {
         zoomTransitionImageFast:
@@ -320,23 +339,16 @@ export default {
     ...mapState(["images", "isLoadingImage"]),
   },
   mounted() {
-    // Due to the mandatory height for carousel element in vertical mode.
-    // This lib is used for reponsive purpose
+    // Use to find the ratio and to add the content correctly in the scroll and to know the translation size
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
 
-    this.carousel = this.$refs.carousel;
-    //this.carousel.$el.addEventListener("wheel", this.mouseWheelAction);
-
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
     this.$store.dispatch("initializeCarousel", {
-      decade: "191",
+      decade: "193",
     });
-  },
-  unmounted() {
-    //this.carousel.$el.removeEventListener("wheel", this.keyEvent);
   },
 };
 </script>
