@@ -46,11 +46,10 @@
           vertical
           v-model="step"
           :height="windowHeight / 5 + 'px'"
-          :max="60"
+          :max="600"
           :show-tooltip="false"
           @input="sliderChange"
-          @change="releaseSlider"
-        >
+          @change="releaseSlider"        >
         </el-slider>
       </el-row>
     </el-col>
@@ -96,7 +95,7 @@ export default {
       releaseStep: -1,
       previousStep: 3,
       zoomingStep: 3,
-      step: 30,
+      step: 300,
       modifiedStep: 3,
       windowHeight: undefined,
       windowWidth: undefined,
@@ -143,10 +142,10 @@ export default {
     },
     sliderChange() {
       this.modifiedStep =
-        this.step > 30 ? Math.ceil(this.step / 10) : Math.floor(this.step / 10);
-      if (this.step === 30) {
+        this.step > 300 ? Math.ceil(this.step / 100) : Math.floor(this.step / 100);
+      if (this.step > 290 && this.step < 310) {
         setTimeout(() => {
-          if (this.step === 30) {
+          if (this.step > 290 && this.step < 310) {
             this.releaseSlider();
           }
         }, 200);
@@ -198,10 +197,10 @@ export default {
       // Start reset parameters part
       clearTimeout(this.timeout);
       this.releaseStep =
-        this.step > 30
-          ? Math.ceil(releaseStep / 10)
-          : Math.floor(releaseStep / 10);
-      this.step = 30;
+        this.step > 300
+          ? Math.ceil(releaseStep / 100)
+          : Math.floor(releaseStep / 100);
+      this.step = 300;
       this.zoomingStep = 2;
       this.interval.forEach(clearInterval);
       this.interval = [];
@@ -243,43 +242,43 @@ export default {
     speedSelection() {
       // Find the transition speed
       switch (true) {
-        case this.step <= 2:
-          return 50;
-        case this.step <= 6:
-          return 62;
-        case this.step <= 10:
-          return 125;
-        case this.step <= 14:
-          return 250;
-        case this.step <= 17:
-          return 500;
         case this.step <= 20:
-          return 1000;
-        case this.step <= 23:
-          return 1500;
-        case this.step <= 26:
-          return 2000;
-        case this.step <= 29:
-          return 4000;
-        case this.step === 30:
-          return 6000;
-        case this.step <= 33:
-          return 4000;
-        case this.step <= 36:
-          return 2000;
-        case this.step <= 39:
-          return 1500;
-        case this.step <= 43:
-          return 1000;
-        case this.step <= 47:
-          return 500;
-        case this.step <= 50:
-          return 250;
-        case this.step <= 53:
-          return 125;
-        case this.step <= 57:
-          return 62;
+          return 50;
         case this.step <= 60:
+          return 62;
+        case this.step <= 100:
+          return 125;
+        case this.step <= 140:
+          return 250;
+        case this.step <= 170:
+          return 500;
+        case this.step <= 200:
+          return 1000;
+        case this.step <= 230:
+          return 1500;
+        case this.step <= 260:
+          return 2000;
+        case this.step <= 290:
+          return 4000;
+        case (this.step > 290 && this.step < 310):
+          return 6000;
+        case this.step <= 330:
+          return 4000;
+        case this.step <= 360:
+          return 2000;
+        case this.step <= 390:
+          return 1500;
+        case this.step <= 430:
+          return 1000;
+        case this.step <= 470:
+          return 500;
+        case this.step <= 500:
+          return 250;
+        case this.step <= 530:
+          return 125;
+        case this.step <= 570:
+          return 62;
+        case this.step <= 600:
           return 50;
       }
     },
