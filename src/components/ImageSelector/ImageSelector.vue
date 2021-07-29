@@ -15,7 +15,6 @@
           :loop="true"
           :autoplay="false"
           ref="carousel"
-          class="custom-carousel"
           :style="marginCarourel"
           :class="selectZoomAnimation"
           @change="changeImage"
@@ -26,7 +25,7 @@
             :class="selectSliderTransitionSpeed"
           >
             <img
-              ref="image"
+              :ref="'image-' + index"
               class="custom-image"
               :src="value.imagePaths.large"
               :alt="value.id"
@@ -45,7 +44,7 @@
           :max="60"
           :show-tooltip="false"
           @change="releaseSlider"
-          @input="sliderMove"
+          @input="sliderChange"
         >
         </el-slider>
       </el-row>
@@ -74,6 +73,8 @@ export default {
   },
   data() {
     return {
+      autoplay: false,
+      previousSpeed: 0,
       currentIndex: 0,
       isInitialLoad: true,
       data: undefined,
@@ -100,6 +101,7 @@ export default {
     },
     // This method reset some properties in case of the user release the slider
     releaseSlider(releaseStep) {
+      this.previousStepElement = 30;
       this.zoomingStep = 2;
       this.releaseStep = releaseStep;
       this.step = 30;
@@ -118,14 +120,56 @@ export default {
     isFirstMove(move) {
       return move && this.previousStep === 3;
     },
-    // Use to see if the speed step has changed to remove stopping effect in the transition
-    sliderMove(newVal) {
-      const newStep = this.step > 30 ? Math.ceil(this.step / 10) : Math.floor(this.step / 10);
-      if (newStep !== this.modifiedStep) {
-        this.changeImage(newVal);
+    speedSelection() {
+      // Moving carousel part
+      switch (true) {
+        case this.step <= 2:
+          return 50;
+        case this.step <= 6:
+          return 62;
+        case this.step <= 10:
+          return 125;
+        case this.step <= 14:
+          return 250;
+        case this.step <= 17:
+          return 500;
+        case this.step <= 20:
+          return 1000;
+        case this.step <= 23:
+          return 1500;
+        case this.step <= 26:
+          return 2000;
+        case this.step <= 29:
+          return 4000;
+        case this.step === 30:
+          return 0;
+        case this.step <= 33:
+          return 4000;
+        case this.step <= 36:
+          return 2000;
+        case this.step <= 39:
+          return 1500;
+        case this.step <= 43:
+          return 1000;
+        case this.step <= 47:
+          return 500;
+        case this.step <= 50:
+          return 250;
+        case this.step <= 53:
+          return 125;
+        case this.step <= 57:
+          return 62;
+        case this.step <= 60:
+          return 50;
       }
     },
+    sliderChange() {
+      this.changeImage(undefined);
+    },
     changeImage(nextImageIndex) {
+      if (nextImageIndex) {
+        this.currentIndex = nextImageIndex;
+      }
       this.modifiedStep =
         this.step > 30 ? Math.ceil(this.step / 10) : Math.floor(this.step / 10);
       // In case of we move to top for animation analysis purpose
@@ -134,69 +178,79 @@ export default {
       let faster = this.modifiedStep - this.previousStep <= -1;
       this.animationStepAnalysis(forward, faster, slower);
 
-      if (this.isFirstMove(forward)){
-        this.carousel.next();
-      }
-
       // In case of we move to bottom for animation analysis purpose
       const backward = this.modifiedStep > 3;
       faster = this.modifiedStep - this.previousStep >= 1;
       slower = this.modifiedStep - this.previousStep <= -1;
       this.animationStepAnalysis(backward, faster, slower);
 
-      if (this.isFirstMove(backward)) {
-        this.carousel.prev();
+      const newSpeed = this.speedSelection();
+
+      if (forward) {
+        this.navigateNextImage(
+          nextImageIndex,
+          80,
+          newSpeed,
+          newSpeed !== this.previousSpeed
+        );
       }
 
-      // Moving carousel part
-      switch (this.modifiedStep) {
-        case 0:
-          this.navigateNextImage(nextImageIndex, 80, 50);
-          break;
-        case 1:
-          this.navigateNextImage(nextImageIndex, 40, 250);
-          break;
-        case 2:
-          this.navigateNextImage(nextImageIndex, 20, 1000);
-          break;
-        case 3:
-          this.stopTimeout();
-          break;
-        case 4:
-          this.navigatePreviousImage(1000);
-          break;
-        case 5:
-          this.navigatePreviousImage(250);
-          break;
-        case 6:
-          this.navigatePreviousImage(50);
-          break;
+      if (backward) {
+        this.navigatePreviousImage(
+          nextImageIndex,
+          newSpeed,
+          newSpeed !== this.previousSpeed
+        );
       }
+
+      this.previousSpeed = newSpeed;
       // Keep track of this step for animation analysis purpose
       this.previousStep = this.modifiedStep;
     },
-    navigatePreviousImage(intervalTransitionTime) {    
-      this.stopTimeout();
-      this.timeout = setTimeout(() => {
+    navigatePreviousImage(nextImageIndex, intervalTransitionTime, speedChange) {
+      if (speedChange) {
+        this.stopTimeout();
         this.carousel.prev();
-      }, intervalTransitionTime);
+      }
+      if (nextImageIndex) {
+        this.stopTimeout();
+      }
+      this.timeout = setTimeout(
+        () => this.carousel.prev(),
+        intervalTransitionTime
+      );
     },
     navigateNextImage(
       nextImageIndex,
       diffMaxIndexBeforeLoad,
-      intervalTransitionTime
+      intervalTransitionTime,
+      speedChange
     ) {
-      this.currentSlide = nextImageIndex;
       if (
         nextImageIndex > this.totalCarouselIndex - diffMaxIndexBeforeLoad &&
         !this.isLoadingImage
       ) {
         this.$store.dispatch("loadNextContent");
       }
-      this.stopTimeout();
-      this.timeout = setTimeout(() => {
+      if (speedChange) {
+        this.stopTimeout();
+        let image;
+        if (this.carousel.activeIndex === this.totalCarouselIndex) {
+          image = "image-" + 0;
+        } else {
+          image = "image-" + (this.carousel.data.activeIndex + 1);
+        }
+        console.log(this.$refs[image].getBoundingClientRect().y);
         this.carousel.next();
-      }, intervalTransitionTime);
+      }
+      if (nextImageIndex) {
+        this.stopTimeout();
+
+        this.timeout = setTimeout(
+          () => this.carousel.next(),
+          intervalTransitionTime
+        );
+      }
     },
     stopTimeout() {
       clearTimeout(this.timeout);
@@ -224,9 +278,31 @@ export default {
     },
     selectSliderTransitionSpeed() {
       return {
-        "v-museum-slow": this.modifiedStep === 2 || this.modifiedStep === 4,
-        "v-museum-medium": this.modifiedStep === 1 || this.modifiedStep === 5,
-        "v-museum-fast": this.modifiedStep === 0 || this.modifiedStep === 6,
+        "v-museum-025":
+          (this.step > 26 && this.step <= 29) ||
+          (this.step < 34 && this.step >= 31),
+        "v-museum-05":
+          (this.step > 23 && this.step <= 26) ||
+          (this.step < 37 && this.step >= 34),
+        "v-museum-075":
+          (this.step > 20 && this.step <= 23) ||
+          (this.step < 40 && this.step >= 37),
+        "v-museum-1":
+          (this.step > 17 && this.step <= 20) ||
+          (this.step < 44 && this.step >= 40),
+        "v-museum-2":
+          (this.step > 14 && this.step <= 17) ||
+          (this.step < 48 && this.step >= 44),
+        "v-museum-4":
+          (this.step > 10 && this.step <= 14) ||
+          (this.step < 51 && this.step >= 48),
+        "v-museum-8":
+          (this.step > 6 && this.step <= 10) ||
+          (this.step < 54 && this.step >= 51),
+        "v-museum-16":
+          (this.step > 2 && this.step <= 6) ||
+          (this.step < 58 && this.step >= 54),
+        "v-museum-20": this.step <= 2 || this.step >= 58,
       };
     },
     marginCarourel() {
@@ -247,7 +323,7 @@ export default {
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
     this.$store.dispatch("initializeCarousel", {
-      decade: "193",
+      decade: "191",
     });
   },
   unmounted() {
@@ -258,4 +334,5 @@ export default {
 
 <style scoped>
 @import "./imageselector.css";
+@import "./sliderspeed.css";
 </style>

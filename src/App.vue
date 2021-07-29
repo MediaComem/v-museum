@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import ImageSelector from "./components/ImageSelector/ImageSelector.vue";
+import ImageSelector from "./components/ImageSelector/TestImageSelector.vue";
 
 export default {
   name: "App",

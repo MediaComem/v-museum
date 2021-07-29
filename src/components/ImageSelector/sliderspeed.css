@@ -1,0 +1,74 @@
+.v-museum-none.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform none !important;
+  transition: -webkit-transform none !important;
+  transition: transform none !important;
+  transition: transform none !important; 
+  transition: transform none !important; 
+}
+.v-museum-025.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 4s linear;
+  transition: -webkit-transform 4s linear;
+  transition: transform 4s linear;
+  transition: transform 4s linear, -webkit-transform 4s linear;
+  transition: transform 4s linear, -webkit-transform 4s linear;
+}
+.v-museum-05.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 2s linear;
+  transition: -webkit-transform 2s linear;
+  transition: transform 2s linear;
+  transition: transform 2s linear, -webkit-transform 2s linear;
+  transition: transform 2s linear, -webkit-transform21s linear;
+}
+.v-museum-075.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 1.5s linear;
+  transition: -webkit-transform 1.5s linear;
+  transition: transform 1.5s linear;
+  transition: transform 1.5s linear, -webkit-transform 1.5s linear;
+  transition: transform 1.5s linear, -webkit-transform 1.5s linear;
+}
+.v-museum-1.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 1s linear;
+  transition: -webkit-transform 1s linear;
+  transition: transform 1s linear;
+  transition: transform 1s linear, -webkit-transform 1s linear;
+  transition: transform 1s linear, -webkit-transform 1s linear;
+}
+.v-museum-2.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 0.5s linear;
+  transition: -webkit-transform 0.5s linear;
+  transition: transform 0.5s linear;
+  transition: transform 0.5s linear, -webkit-transform 0.5s linear;
+  transition: transform 0.5s linear, -webkit-transform 0.5s linear;
+}
+
+.v-museum-4.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 0.25s linear;
+  transition: -webkit-transform 0.25s linear;
+  transition: transform 0.25s linear;
+  transition: transform 0.25s linear, -webkit-transform 0.25s linear;
+  transition: transform 0.25s linear, -webkit-transform 0.25s linear;
+}
+
+.v-museum-8.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 0.125s linear;
+  transition: -webkit-transform 0.125s linear;
+  transition: transform 0.125s linear;
+  transition: transform 0.125s linear, -webkit-transform 0.125s linear;
+  transition: transform 0.125s linear, -webkit-transform 0.125s linear;
+}
+
+.v-museum-16.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 0.062s linear;
+  transition: -webkit-transform 0.062s linear;
+  transition: transform 0.062s linear;
+  transition: transform 0.062s linear, -webkit-transform 0.062s linear;
+  transition: transform 0.062s linear, -webkit-transform 0.062s linear;
+}
+
+.v-museum-20.el-carousel__item.is-animating {
+  -webkit-transition: -webkit-transform 0.05s linear;
+  transition: -webkit-transform 0.05s linear;
+  transition: transform 0.05s linear;
+  transition: transform 0.05s linear, -webkit-transform 0.05s linear;
+  transition: transform 0.05s linear, -webkit-transform 0.05s linear;
+}
