@@ -22,9 +22,7 @@
             :key="index"
             class="infinite-list-item"
           >
-            <div
-              :style="componentSize"
-            >
+            <div :style="componentSize">
               <img
                 :style="{
                   height: (windowHeight / 6) * 4 + 'px',
@@ -49,7 +47,8 @@
           :max="600"
           :show-tooltip="false"
           @input="sliderChange"
-          @change="releaseSlider"        >
+          @change="releaseSlider"
+        >
         </el-slider>
       </el-row>
     </el-col>
@@ -66,13 +65,12 @@ export default {
   watch: {
     images: function(newImages) {
       this.data = newImages;
-      this.totalCarouselIndex = this.data.length;
     },
     currentIndex: function(newVal) {
       // This part analyse if the loop transition is necessary and reset it after.
       if (
         this.isLooped &&
-        (newVal === 1 || newVal === this.totalCarouselIndex - 2)
+        (newVal === 1 || newVal === this.data.length - 2)
       ) {
         this.isLooped = false;
         if (newVal === 1) {
@@ -85,21 +83,24 @@ export default {
   },
   data() {
     return {
+      data: undefined,
+      // Use to know if we are in the loop process
       isLooped: false,
-      nbData: 2,
+      // Information uses to manage the movement
+      step: 300,
       speed: 6000,
       previousSpeed: 0,
+      previousStep: 3,
       previousDirection: undefined,
       currentIndex: 0,
-      data: undefined,
+      // Information uses to manage the animations
       releaseStep: -1,
-      previousStep: 3,
-      zoomingStep: 3,
-      step: 300,
       modifiedStep: 3,
+      zoomingStep: 3,
+      // Information uses to manage the display
       windowHeight: undefined,
       windowWidth: undefined,
-      totalCarouselIndex: 0,
+      // Management of the interval and timeout process
       interval: [],
       timeout: undefined,
     };
@@ -108,7 +109,7 @@ export default {
     movingAnalysis(forward) {
       // Loading more content if necessary
       if (
-        this.currentIndex > this.totalCarouselIndex - 80 &&
+        this.currentIndex > this.data.length - 80 &&
         !this.isLoadingImage
       ) {
         this.$store.dispatch("loadNextContent");
@@ -117,7 +118,7 @@ export default {
       // Movement part
       if (forward) {
         // Loop the scroll
-        if (this.currentIndex === this.totalCarouselIndex - 1) {
+        if (this.currentIndex === this.data.length - 1) {
           this.isLooped = true;
           this.currentIndex = 0;
           this.timeout = setTimeout(
@@ -125,31 +126,36 @@ export default {
             100
           );
         } else {
+          // Move the scroll
           this.currentIndex = this.currentIndex + 1;
         }
       }
       // Loop the scroll
       else if (this.currentIndex === 0) {
         this.isLooped = true;
-        this.currentIndex = this.totalCarouselIndex - 1;
+        this.currentIndex = this.data.length - 1;
         this.timeout = setTimeout(
           () => (this.currentIndex = this.currentIndex - 1),
           100
         );
       } else {
+        // Move the scroll
         this.currentIndex = this.currentIndex - 1;
       }
     },
     sliderChange() {
-      this.modifiedStep =
-        this.step > 300 ? Math.ceil(this.step / 100) : Math.floor(this.step / 100);
       if (this.step > 290 && this.step < 310) {
         setTimeout(() => {
           if (this.step > 290 && this.step < 310) {
-            this.releaseSlider(600);
+            this.releaseSlider(300);
           }
         }, 200);
       } else {
+        // Calculate the attribute uses to define the right animation
+        this.modifiedStep =
+        this.step > 300
+          ? Math.ceil(this.step / 100)
+          : Math.floor(this.step / 100);
         // In case of we move to top for animation analysis purpose
         const forward = this.modifiedStep < 3;
         let slower = this.modifiedStep - this.previousStep >= 1;
@@ -196,10 +202,9 @@ export default {
     releaseSlider(releaseStep) {
       // Start reset parameters part
       clearTimeout(this.timeout);
-      this.releaseStep =
-        this.step > 300
-          ? Math.ceil(releaseStep / 100)
-          : Math.floor(releaseStep / 100);
+      if (releaseStep < 100 || releaseStep > 500) {
+        this.releaseStep = 0;
+      }
       this.step = 300;
       this.zoomingStep = 2;
       this.interval.forEach(clearInterval);
@@ -226,7 +231,7 @@ export default {
 
       // End of reset parameters part
       this.speed = 6000;
-      this.previousSpeed = 6000;
+      this.previousSpeed = 0;
       this.previousDirection = undefined;
     },
     animationStepAnalysis(move, faster, slower) {
@@ -260,7 +265,7 @@ export default {
           return 2000;
         case this.step <= 290:
           return 4000;
-        case (this.step > 290 && this.step < 310):
+        case this.step > 290 && this.step < 310:
           return 6000;
         case this.step <= 330:
           return 4000;
