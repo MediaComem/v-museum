@@ -1,4 +1,4 @@
-import { shallowMount } from "@vue/test-utils";
+/* import { shallowMount } from "@vue/test-utils";
 import { expect } from "chai";
 import sinon from "sinon";
 
@@ -361,5 +361,6 @@ describe("Test ImageSelector component", () => {
     expect(wrapper.vm.$data.carousel.next.callCount).to.equal(3);
     expect($store.dispatch.callCount).to.equals(2);
   });
-  */
+
 });
+ */

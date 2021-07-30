@@ -155,7 +155,7 @@ export default {
       if (this.isStop()) {
         clearTimeout(this.timeout);
         // Wait to ensure that we are stopped in the stopping step and not change the direction
-        setTimeout(() => {
+        this.timeout = setTimeout(() => {
           if (this.isStop()) {
             this.releaseSlider(300);
           }
