@@ -93,7 +93,7 @@ export default {
   },
   methods: {
     heightValue() {
-      return ((this.windowHeight / 6) * 4);
+      return (this.windowHeight / 6) * 4;
     },
     isStop() {
       return this.step > 290 && this.step < 310;
@@ -135,8 +135,25 @@ export default {
         this.currentIndex = this.currentIndex - 1;
       }
     },
+    movementAnalysis(newSpeed, direction) {
+      if (
+        newSpeed !== this.previousSpeed ||
+        this.previousDirection !== direction
+      ) {
+        this.stopInterval();
+        clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => this.move(direction), 50);
+        this.speed = newSpeed;
+        this.interval.push(
+          setInterval(() => {
+            this.move(direction);
+          }, this.speed)
+        );
+      }
+    },
     sliderChange() {
       if (this.isStop()) {
+        clearTimeout(this.timeout);
         // Wait to ensure that we are stopped in the stopping step and not change the direction
         setTimeout(() => {
           if (this.isStop()) {
@@ -147,34 +164,31 @@ export default {
         const newSpeed = this.speedSelection();
         this.animationStepAnalysis(newSpeed);
 
-        // Manage the movement
         const direction = this.step <= 290;
-        if (
-          newSpeed !== this.previousSpeed ||
-          this.previousDirection !== direction
-        ) {
-          this.stopInterval();
-          if (this.previousDirection && this.previousDirection !== direction) {
-            this.move(direction);
-          }
-          if (
-            this.speed > newSpeed ||
-            !this.previousDirection ||
-            this.previousDirection !== direction
-          ) {
-            this.move(direction);
-          }
-          this.speed = newSpeed;
-          this.interval.push(
-            setInterval(() => {
-              this.move(direction);
-            }, this.speed)
-          );
-        }
+        this.movementAnalysis(newSpeed, direction);
 
         // Keep track of the state for next step of the slider change
         this.previousSpeed = newSpeed;
         this.previousDirection = direction;
+      }
+    },
+    getBackPreviousPosition() {
+      const transitionPosition = this.$refs[
+        "image-" + this.currentIndex
+      ].getBoundingClientRect().y;
+      if (
+        this.previousDirection &&
+        transitionPosition > 0 &&
+        transitionPosition > this.heightValue() / 2 &&
+        this.currentIndex !== 0
+      ) {
+        this.currentIndex = this.currentIndex - 1;
+      } else if (
+        !this.previousDirection &&
+        transitionPosition < 0 &&
+        transitionPosition < -(this.heightValue() / 2)
+      ) {
+        this.currentIndex = this.currentIndex + 1;
       }
     },
     releaseSlider(releaseStep) {
@@ -183,30 +197,14 @@ export default {
       this.stopInterval();
 
       // This part analyze where we are in the sliding process to get back to the previous image in case we stop the slider.
-      const transitionPosition = this.$refs[
-        "image-" + this.currentIndex
-      ].getBoundingClientRect().y;
-      if (
-        this.previousDirection &&
-        transitionPosition > 0 &&
-        transitionPosition > (this.heightValue() / 2) &&
-        this.currentIndex !== 0
-      ) {
-        this.currentIndex = this.currentIndex - 1;
-      } else if (
-        !this.previousDirection &&
-        transitionPosition < 0 &&
-        transitionPosition < -(this.heightValue() /2)
-      ) {
-        this.currentIndex = this.currentIndex + 1;
-      }
+      this.getBackPreviousPosition();
 
       // Reset movement and animation parameters
       if (releaseStep < 100 || releaseStep > 500) {
         this.releaseStep = 0;
       }
       this.step = 300;
-      this.zoomingStep = 2;
+      this.zoomingStep = -1;
       this.speed = 6000;
       this.previousSpeed = 0;
       this.previousDirection = undefined;
@@ -215,8 +213,10 @@ export default {
       if (this.previousSpeed > speed) {
         this.releaseStep = -1;
         this.zoomingStep = 2;
-      } else if (this.previousSpeed < speed && speed > 125) {
+      } else if (this.previousSpeed <= 125 && this.previousSpeed !== 0) {
         this.zoomingStep = 1;
+      } else if (this.previousSpeed < speed && this.speed > 1000) {
+        this.zoomingStep = 2;
       }
     },
     stopInterval() {
@@ -296,26 +296,23 @@ export default {
     scrollingMovement() {
       return {
         transform:
-          "translateY(-" +
-          this.heightValue() * this.currentIndex +
-          "px)",
+          "translateY(-" + this.heightValue() * this.currentIndex + "px)",
         height: this.heightValue() + "px",
       };
     },
     // Base on the movement step and speed, select the right animation
     selectZoomAnimation() {
       return {
-        zoomTransitionImageFast: this.speed <= 125 && this.zoomingStep === 2,
+        zoomTransitionImageFast:
+          this.speed <= 125 &&
+          (this.zoomingStep === 1 || this.zoomingStep === 2),
         zoomTransitionImageMedium:
           this.speed > 125 && this.speed <= 1000 && this.zoomingStep === 2,
         zoomTransitionImageSlow:
-          this.speed > 1000 &&
-          this.speed < 6000 &&
-          (this.zoomingStep === 2 || this.zoomingStep === 1),
+          this.speed > 1000 && this.speed < 6000 && this.zoomingStep === 2,
         unzoomTransitionImageFastEnd:
           this.speed === 6000 && this.releaseStep === 0,
-        unzoomTransitionImageFast:
-          this.speed > 125 && this.speed <= 1000 && this.zoomingStep === 1,
+        unzoomTransitionImageFast: this.speed > 125 && this.zoomingStep === 1,
       };
     },
     selectSliderTransitionSpeed() {
