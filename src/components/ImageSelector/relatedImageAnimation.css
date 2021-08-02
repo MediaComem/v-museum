@@ -1,6 +1,5 @@
 .relatedImageBase {
     animation: relatedImageBaseAnimation 3s linear 0s normal forwards;
-    animation-timing-function: ease;
 }
 
 @keyframes relatedImageBaseAnimation {
@@ -41,7 +40,6 @@
 
 .removeRelatedImageBaseText {
   animation: removeRelatedImageBaseAnimation 3s linear 0s normal forwards;
-  animation-timing-function: ease;
 }
 
 @keyframes removeRelatedImageBaseAnimation {

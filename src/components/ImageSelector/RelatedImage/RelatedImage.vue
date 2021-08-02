@@ -12,19 +12,21 @@
     >
       {{ image[0].image.tag["@value"] }}
     </p>
-    <img
-      class="relatedImageBase"
-      :src="image[0].image.result.imagePaths.square"
-      :alt="image[0].image.result.id"
-      :style="{
-        height: (imageHeight / 20) * 9 + 'px',
-        componentWidthEnd,
-        marginTop: (imageHeight / 20) * 9 + 'px',
-      }"
-    />
+      <img
+        v-if="align === 'bottom'"
+        class="relatedImageBase image-custom-bottom"
+        :src="getImage()"
+        :alt="image[0].image.result.id"
+      />
+      <img
+        v-if="align !== 'bottom'"
+        class="relatedImageBase image-custom"
+        :src="getImage()"
+        :alt="image[0].image.result.id"
+      />
     <p
       v-if="align === 'bottom'"
-      class="relatedImageBase index-font"
+      class="relatedImageBase index-font "
       :class="textComponentClass"
     >
       {{ image[0].image.tag["@value"] }}
@@ -46,12 +48,30 @@ export default {
       hover: false,
     };
   },
+  methods: {
+    getImage() {
+      return this.hover ? this.image[0].image.result.imagePaths.large : this.image[0].image.result.imagePaths.square;
+    },
+    getMargin() {
+      if (this.align === 'bottom'){
+        return 350;
+      }
+      else {
+        return 0;
+      }
+    }
+  },
   computed: {
     textComponentClass() {
       return {
         startTextAlign: this.justify === "start",
         endTextAlign: this.justify === "end",
       };
+    },
+    displayImage() {
+      return {
+        'margin-top': this.getMargin() + 'px',
+      }
     },
   },
 };

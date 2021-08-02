@@ -31,7 +31,6 @@
     <el-col :span="2"> </el-col>
     <el-col
       :span="6"
-      :style="{ marginTop: windowHeight / 14 + 'px' }"
       :align="'bottom'"
     >
       <el-row>
@@ -101,13 +100,12 @@
       <div class="sliderMask">
         <el-carousel
           :indicator-position="'none'"
-          :height="(windowHeight / 6) * 4 + 'px'"
+          :height="'800px'"
           direction="vertical"
           :loop="false"
           :autoplay="false"
           ref="carousel"
           class="custom-carousel"
-          :style="marginCarourel"
           :class="selectZoomAnimation"
           @change="changeImage"
         >
@@ -396,9 +394,6 @@ export default {
         unzoomTransitionImageFast:
           (this.step === 1 || this.step === 5) && this.zoomingStep === 1,
       };
-    },
-    marginCarourel() {
-      return { marginTop: this.windowHeight / 14 + "px" };
     },
     ...mapState(["images", "isLoadingImage", "relatedImages"]),
   },

@@ -5,3 +5,31 @@
 .endTextAlign {
   text-align: end;
 }
+
+.image-custom {
+  transition: height 0.3s, margin-top 0.3s;
+  height: 400px;
+  width: 500px;
+  margin-top: 0px;
+}
+
+.image-custom:hover {
+  transition: height 0.3s, margin-top 0.3s;
+  height: 800px;
+  width: 500px;
+  margin-top: -100px;
+}
+
+.image-custom-bottom {
+  transition: height 0.3s, margin-top 0.3s;
+  height: 400px;
+  width: 500px;
+  margin-top: 400px;
+}
+
+.image-custom-bottom:hover {
+  transition: height 0.3s, margin-top 0.3s;
+  height: 800px;
+  width: 500px;
+  margin-top: 500px;
+}
