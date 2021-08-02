@@ -2,30 +2,33 @@
   <el-row :gutter="10" :align="'middle'">
     <el-col :span="9"> </el-col>
     <el-col :span="6" :style="sliderPosition">
-      <div class="sliderMask">
-        <ul
-          :class="selectZoomAnimation"
-          class="infinite-list slider-mask"
-          style=""
-          :style="[componentSize, scrollingDisplay]"
-        >
-          <li
+      <h3>{{ currentIndex + 1 }}</h3>
+      <div
+        :class="[sliderPosition, componentSize]"
+        style="overflow:hidden"
+        class="sliderMask"
+      >
+        <div :style="componentSize" :class="selectZoomAnimation">
+          <ul
             :class="selectSliderTransitionSpeed"
-            :style="scrollingMovement"
-            v-for="(value, index) in data"
-            :key="index"
-            class="infinite-list-item"
+            :style="[scrollingDisplay, scrollingMovement]"
           >
-            <div :style="componentSize">
-              <img
-                :style="imageDisplay"
-                :ref="'image-' + index"
-                :src="value.imagePaths.square"
-                :alt="value.id"
-              />
-            </div>
-          </li>
-        </ul>
+            <li
+              v-for="(value, index) in data"
+              :key="index"
+              :style="componentSize"
+            >
+              <div>
+                <img
+                  :style="componentSize"
+                  :ref="'image-' + index"
+                  :src="value.imagePaths.square"
+                  :alt="value.id"
+                />
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </el-col>
     <el-col :span="2">
@@ -71,6 +74,7 @@ export default {
   },
   data() {
     return {
+      shouldLoop: true,
       data: undefined,
       // Use to know if we are in the loop process
       isLooped: false,
@@ -121,7 +125,9 @@ export default {
       if (forward) {
         // Loop the scroll
         if (this.currentIndex === this.data.length - 1) {
-          this.loop(1, 0);
+          if (this.shouldLoop) {
+            this.loop(1, 0);
+          }
         } else {
           // Move the scroll
           this.currentIndex = this.currentIndex + 1;
@@ -129,7 +135,9 @@ export default {
       }
       // Loop the scroll
       else if (this.currentIndex === 0) {
-        this.loop(-1, this.data.length - 1);
+        if (this.shouldLoop) {
+          this.loop(-1, this.data.length - 1);
+        }
       } else {
         // Move the scroll
         this.currentIndex = this.currentIndex - 1;
@@ -274,15 +282,10 @@ export default {
         marginBottom: this.windowHeight / 10 + "px",
       };
     },
-    imageDisplay() {
-      return {
-        height: this.heightValue() + "px",
-        transform: "translateX(-" + (this.windowWidth / 24) * 1.5 + "px)",
-      };
-    },
     scrollingDisplay() {
       return {
         overflow: "hidden",
+        margin: 0,
         padding: 0,
       };
     },
@@ -295,9 +298,12 @@ export default {
     // Setup image display and translation for the scrolling
     scrollingMovement() {
       return {
+        "-webkit-transform":
+          "translateY(-" + this.heightValue() * this.currentIndex + "px)",
+        "-moz-transform":
+          "translateY(-" + this.heightValue() * this.currentIndex + "px)",
         transform:
           "translateY(-" + this.heightValue() * this.currentIndex + "px)",
-        height: this.heightValue() + "px",
       };
     },
     // Base on the movement step and speed, select the right animation

@@ -267,6 +267,7 @@ describe("Test ImageSelector component", () => {
   });
 
   it("Test animationStepAnalysis method", () => {
+    wrapper.vm.$data.data = [];
     wrapper.vm.$data.previousSpeed = 3000;
     wrapper.vm.$data.speed = 1500;
     wrapper.vm.$data.releaseStep = 5;
