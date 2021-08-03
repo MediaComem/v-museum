@@ -4,7 +4,6 @@
     @mousedown="startPosition"
     @mouseup="endPosition"
     @mousemove="mouseMove"
-    :style="[testTranslate]"
     ref="display"
   >
     <!--div style="cursor: grab;" @click="startPosition" @mousemove="startPosition"-->
@@ -260,8 +259,7 @@ export default {
     },
     mouseMove(event) {
       if (this.isDrag) {
-        this.x = event.x;
-        this.y = event.y;
+        window.scrollTo(event.x, event.y);
       }
     },
     getTranslate() {
