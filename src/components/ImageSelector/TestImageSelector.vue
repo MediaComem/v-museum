@@ -177,7 +177,6 @@ export default {
         this.interval.push(
           setInterval(() => {
             this.move(direction);
-            this.animationStepAnalysis(newSpeed);
           }, this.speed)
         );
       }
@@ -193,6 +192,7 @@ export default {
         }, 200);
       } else {
         const newSpeed = this.speedSelection();
+        this.animationStepAnalysis(newSpeed);
 
         const direction = this.step <= 290;
         this.movementAnalysis(newSpeed, direction);
@@ -230,7 +230,7 @@ export default {
       this.getBackPreviousPosition();
 
       // Reset movement and animation parameters
-      if (releaseStep < 100 || releaseStep > 500) {
+      if (releaseStep < 100 || releaseStep > 530) {
         this.releaseStep = 0;
       }
       this.step = 300;
