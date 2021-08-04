@@ -1,38 +1,53 @@
 <template>
-  <el-row :gutter="10" :align="'middle'">
-    <el-col :span="9"> </el-col>
-    <el-col :span="6" :style="sliderPosition">
-      <h3>{{ currentIndex + 1 }}</h3>
-      <div
-        :class="[sliderPosition, componentSize]"
-        style="overflow:hidden"
-        class="sliderMask"
-      >
-        <div :style="componentSize" :class="selectZoomAnimation">
-          <ul
-            :class="selectSliderTransitionSpeed"
-            :style="[scrollingDisplay, scrollingMovement]"
-          >
-            <li
-              v-for="(value, index) in data"
-              :key="index"
-              :style="componentSize"
+  <el-row :gutter="10">
+    <el-col
+      :xs="windowHeight > windowWidth ? 8 : 10"
+      :sm="windowHeight > windowWidth ? 8 : 9"
+      :md="windowHeight > windowWidth ? 8 : 8"
+      :lg="windowHeight > windowWidth ? 8 : 10"
+      :xl="10"
+    >
+    </el-col>
+    <el-col
+      :xs="windowHeight > windowWidth ? 9 : 5"
+      :sm="windowHeight > windowWidth ? 8 : 6"
+      :md="windowHeight > windowWidth ? 9 : 8"
+      :lg="windowHeight > windowWidth ? 7 : 5"
+      :xl="4"
+    >
+      <div :style="sliderPosition">
+        <h3 style="margin: 0; height: 30px;">{{ currentIndex + 1 }}</h3>
+        <div
+          :style="[componentSize]"
+          style="overflow:hidden"
+          class="sliderMask"
+        >
+          <div :style="componentSize" :class="selectZoomAnimation">
+            <ul
+              :class="selectSliderTransitionSpeed"
+              :style="[scrollingDisplay, scrollingMovement]"
             >
-              <div>
-                <img
-                  :style="componentSize"
-                  :ref="'image-' + index"
-                  :src="value.imagePaths.square"
-                  :alt="value.id"
-                />
-              </div>
-            </li>
-          </ul>
+              <li
+                v-for="(value, index) in data"
+                :key="index"
+                :style="componentSize"
+              >
+                <div>
+                  <img
+                    :style="componentSize"
+                    :ref="'image-' + index"
+                    :src="value.imagePaths.square"
+                    :alt="value.id"
+                  />
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </el-col>
-    <el-col :span="2">
-      <el-row :justify="'center'" :align="'middle'">
+    <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="1">
+      <div :style="sliderMargin">
         <el-slider
           ref="slider"
           vertical
@@ -44,9 +59,16 @@
           @change="releaseSlider"
         >
         </el-slider>
-      </el-row>
+      </div>
     </el-col>
-    <el-col :span="7"> </el-col>
+    <el-col
+      :xs="windowHeight > windowWidth ? 3 : 5"
+      :sm="windowHeight > windowWidth ? 4 : 5"
+      :md="windowHeight > windowWidth ? 2 : 3"
+      :lg="5"
+      :xl="8"
+    >
+    </el-col>
   </el-row>
 </template>
 
@@ -97,7 +119,7 @@ export default {
   },
   methods: {
     heightValue() {
-      return (this.windowHeight / 6) * 4;
+      return 17 * 4 * this.defineReponsiveFactor();
     },
     isStop() {
       return this.step > 290 && this.step < 310;
@@ -155,6 +177,7 @@ export default {
         this.interval.push(
           setInterval(() => {
             this.move(direction);
+            this.animationStepAnalysis(newSpeed);
           }, this.speed)
         );
       }
@@ -170,7 +193,6 @@ export default {
         }, 200);
       } else {
         const newSpeed = this.speedSelection();
-        this.animationStepAnalysis(newSpeed);
 
         const direction = this.step <= 290;
         this.movementAnalysis(newSpeed, direction);
@@ -274,12 +296,37 @@ export default {
           return 50;
       }
     },
+    defineReponsiveFactor() {
+      switch (true) {
+        case this.windowWidth >= 1000 && this.windowHeight >= 920:
+          return 10;
+        case this.windowWidth >= 700 && this.windowHeight >= 716:
+          return 7;
+        case this.windowWidth >= 550 && this.windowHeight >= 615:
+          return 5.5;
+        case this.windowWidth >= 450 && this.windowHeight >= 548:
+          return 4.5;
+        case this.windowWidth >= 400 && this.windowHeight >= 514:
+          return 4;
+        case this.windowWidth >= 350 && this.windowHeight >= 480:
+          return 3.5;
+        default:
+          return 3;
+      }
+    },
+    defineTopMargin() {
+      return (this.windowHeight - this.heightValue()) / 2;
+    },
   },
   computed: {
     sliderPosition() {
       return {
-        marginTop: this.windowHeight / 10 + "px",
-        marginBottom: this.windowHeight / 10 + "px",
+        marginTop: this.defineTopMargin() - 30 + "px",
+      };
+    },
+    sliderMargin() {
+      return {
+        marginTop: (this.windowHeight - this.windowHeight / 5) / 2 + "px",
       };
     },
     scrollingDisplay() {
@@ -292,7 +339,7 @@ export default {
     componentSize() {
       return {
         height: this.heightValue() + "px",
-        width: (this.windowWidth / 24) * 6 + "px",
+        width: 9 * 4 * this.defineReponsiveFactor() + "px",
       };
     },
     // Setup image display and translation for the scrolling
