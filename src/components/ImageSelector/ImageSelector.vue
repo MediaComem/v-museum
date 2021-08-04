@@ -1,12 +1,19 @@
 <template>
+  <rectangle
+    :x="x"
+    :y="y"
+    :width="rectangleWidth"
+    :height="rectangleHeight"
+    :offsetX="rectangleXPosition"
+    :offsetY="rectangleYPosition"
+  />
   <div
-    style="cursor: grab;"
+    style="cursor: grab"
     @mousedown="startPosition"
     @mouseup="endPosition"
     @mousemove="mouseMove"
     ref="display"
   >
-    <!--div style="cursor: grab;" @click="startPosition" @mousemove="startPosition"-->
     <el-row :align="'bottom'">
       <el-col :span="7">
         <div ref="position1">
@@ -102,7 +109,7 @@
       </el-col>
       <el-col :span="2"> </el-col>
       <el-col :span="6">
-        <div class="sliderMask">
+        <div class="sliderMask" ref="divCar">
           <el-carousel
             :indicator-position="'none'"
             :height="'800px'"
@@ -201,10 +208,11 @@
 import { useWindowSize } from "vue-window-size";
 import { mapState } from "vuex";
 import RelatedImage from "./RelatedImage/RelatedImage.vue";
+import Rectangle from "./Rectangle.vue";
 
 export default {
   name: "ImageSelector",
-  components: { RelatedImage },
+  components: { RelatedImage, Rectangle },
   watch: {
     images: function(newImages) {
       this.data = newImages;
@@ -245,9 +253,21 @@ export default {
       currentSlide: 0,
 
       changeImageTimeout: undefined,
+
       isDrag: false,
-      x: 0,
-      y: 0,
+      blockDrag: false,
+
+      x: 200,
+      y: 200,
+      rectangleWidth: 0,
+      rectangleHeight: 0,
+      shouldUpdateDisplay: false,
+
+      currentXPosition: 0,
+      currentYPosition: 0,
+
+      rectangleXPosition: 10,
+      rectangleYPosition: 10,
     };
   },
   methods: {
@@ -258,26 +278,26 @@ export default {
       this.isDrag = false;
     },
     mouseMove(event) {
-      if (this.isDrag) {
-        window.scrollTo(event.x, event.y);
-      }
-    },
-    getTranslate() {
-      if (this.isDrag) {
-        return "translate(" + this.x + "," + this.y + ")";
-      } else {
-        return;
-      }
-    },
-    mouseWheelAction(event) {
-      if (event.deltaY < 0) {
-        this.getPreviousImages(this.currentSlide - 1, 80, 100);
-      } else if (event.deltaY > 0) {
-        this.getNextImages(this.currentSlide + 1, 80, 100);
+      if (this.isDrag && !this.blockDrag) {
+        console.log(this.$refs.display.getBoundingClientRect());
+        console.log(this.$refs.divCar.getBoundingClientRect());
+        const xMovement = this.currentXPosition - event.movementX;
+        if (xMovement > 0 || xMovement < event.pageWidth) {
+          this.rectangleXPosition = this.$refs.divCar.getBoundingClientRect().left + 10;
+          this.currentXPosition = xMovement
+        }
+        
+        const yMovement = this.currentYPosition - event.movementY;
+        if (yMovement > 0 || yMovement < event.pageHeight) {
+          this.rectangleYPosition = this.$refs.divCar.getBoundingClientRect().top + 10;
+          this.currentYPosition = yMovement;
+        }
+        window.scrollTo(this.currentXPosition, this.currentYPosition);
       }
     },
     // This method reset some properties in case of the user release the slider
     releaseSlider(releaseStep) {
+      this.blockDrag = false;
       this.zoomingStep = 2;
       this.releaseStep = releaseStep;
       this.step = 3;
@@ -298,6 +318,7 @@ export default {
       }
     },
     changeImage(nextImageIndex) {
+      this.blockDrag = true;
       // In case of we move to top for animation analysis purpose
       const forward = this.step < 3;
       let slower = this.step - this.previousStep >= 1;
@@ -381,6 +402,7 @@ export default {
       return this.relatedImagesPosition.filter((e) => e.position === position);
     },
     displayRelatedImages(images) {
+      this.shouldUpdateDisplay = true;
       // Select randomly 3 display positions
       this.potentialPosition
         .sort(() => Math.random() - 0.5)
@@ -409,10 +431,13 @@ export default {
       });
     },
     setupSize(position) {
-      console.log(position);
-      if (position === 1 || position === 2) {
-        console.log("RESIZE");
+      if ((position === 1 || position === 2) && this.shouldUpdateDisplay) {
+        this.x = this.$refs.divCar.getBoundingClientRect().left;
+        this.y = this.$refs.divCar.getBoundingClientRect().top;
+        this.currentXPosition = this.$refs.divCar.getBoundingClientRect().left;
+        this.currentYPosition = this.$refs.divCar.getBoundingClientRect().top;
         window.scrollTo(0, (this.windowHeight / 6) * 4);
+        this.shouldUpdateDisplay = false;
       }
     },
   },
@@ -432,11 +457,6 @@ export default {
           (this.step === 1 || this.step === 5) && this.zoomingStep === 1,
       };
     },
-    testTranslate() {
-      return {
-        transform: this.getTranslate(),
-      };
-    },
     ...mapState(["images", "isLoadingImage", "relatedImages"]),
   },
   mounted() {
@@ -447,16 +467,19 @@ export default {
     this.windowWidth = width;
 
     this.carousel = this.$refs.carousel;
-    //this.carousel.$el.addEventListener("wheel", this.mouseWheelAction);
+
+    this.x = this.$refs.divCar.getBoundingClientRect().left;
+    this.y = this.$refs.divCar.getBoundingClientRect().top;
+    this.currentXPosition = this.$refs.divCar.getBoundingClientRect().left;
+    this.currentYPosition = this.$refs.divCar.getBoundingClientRect().top;
+    this.rectangleHeight = this.$refs.divCar.clientHeight + 20;
+    this.rectangleWidth = this.$refs.divCar.clientWidth + 20;
 
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
     this.$store.dispatch("initializeCarousel", {
       decade: "191",
     });
-  },
-  unmounted() {
-    //this.carousel.$el.removeEventListener("wheel", this.keyEvent);
   },
 };
 </script>
