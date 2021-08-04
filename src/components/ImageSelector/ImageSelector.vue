@@ -13,6 +13,7 @@
     @mousedown="startPosition"
     @mouseup="endPosition"
     @mousemove="mouseMove"
+    @scroll="testScroll"
     ref="display"
   >
     <el-row :align="'bottom'">
@@ -274,6 +275,7 @@ export default {
   methods: {
     startPosition() {
       this.isDrag = true;
+      console.log(this.$refs.display.getBoundingClientRect());
     },
     endPosition() {
       this.isDrag = false;
@@ -281,11 +283,19 @@ export default {
     mouseMove(event) {
       if (this.isDrag && !this.blockDrag) {
         const xMovement = this.currentXPosition - event.movementX;
+        this.rectangleXPosition =
+          -this.$refs.display.getBoundingClientRect().left +
+          this.windowWidth / 2 -
+          this.rectangleWidth / 2;
         if (xMovement > 0 || xMovement < event.pageWidth) {
           this.currentXPosition = xMovement;
         }
 
         const yMovement = this.currentYPosition - event.movementY;
+        this.rectangleYPosition =
+          -this.$refs.display.getBoundingClientRect().top +
+          this.windowHeight / 2 -
+          this.rectangleHeight / 2;
         if (yMovement > 0 || yMovement < event.pageHeight) {
           this.currentYPosition = yMovement;
         }
@@ -456,9 +466,9 @@ export default {
     },
     testMovement() {
       return {
-        left: this.currentXPosition + 'px',
-        top: this.currentYPosition + 'px',
-      }
+        left: this.currentXPosition + "px",
+        top: this.currentYPosition + "px",
+      };
     },
     ...mapState(["images", "isLoadingImage", "relatedImages"]),
   },
@@ -478,6 +488,15 @@ export default {
     this.rectangleHeight = this.$refs.divCar.clientHeight + 20;
     this.rectangleWidth = this.$refs.divCar.clientWidth + 20;
 
+    this.rectangleXPosition =
+      -this.$refs.display.getBoundingClientRect().left +
+      this.windowWidth / 2 -
+      this.rectangleWidth / 2;
+
+    this.rectangleYPosition =
+      -this.$refs.display.getBoundingClientRect().top +
+      this.windowHeight / 2 -
+      this.rectangleHeight / 2;
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
     this.$store.dispatch("initializeCarousel", {

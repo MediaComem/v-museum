@@ -28,8 +28,8 @@ export default {
   computed: {
       setPosition() {
           return{
-              left: this.x - this.offsetX,
-              top: this.y - this.offsetY,
+              left: this.offsetX,
+              top: this.offsetY,
           }
       }
   }
