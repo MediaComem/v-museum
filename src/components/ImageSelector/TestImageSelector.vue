@@ -19,7 +19,7 @@
         <h3 style="margin: 0; height: 30px;">{{ currentIndex + 1 }}</h3>
         <div
           :style="[componentSize]"
-          style="overflow:hidden"
+          style="overflow:hidden;"
           class="sliderMask"
         >
           <div :style="componentSize" :class="selectZoomAnimation">
