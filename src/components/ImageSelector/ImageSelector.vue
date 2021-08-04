@@ -8,7 +8,8 @@
     :offsetY="rectangleYPosition"
   />
   <div
-    style="cursor: grab"
+    style="cursor: grab; user-select:none;"
+    :style="testMovement"
     @mousedown="startPosition"
     @mouseup="endPosition"
     @mousemove="mouseMove"
@@ -279,17 +280,13 @@ export default {
     },
     mouseMove(event) {
       if (this.isDrag && !this.blockDrag) {
-        console.log(this.$refs.display.getBoundingClientRect());
-        console.log(this.$refs.divCar.getBoundingClientRect());
         const xMovement = this.currentXPosition - event.movementX;
         if (xMovement > 0 || xMovement < event.pageWidth) {
-          this.rectangleXPosition = this.$refs.divCar.getBoundingClientRect().left + 10;
-          this.currentXPosition = xMovement
+          this.currentXPosition = xMovement;
         }
-        
+
         const yMovement = this.currentYPosition - event.movementY;
         if (yMovement > 0 || yMovement < event.pageHeight) {
-          this.rectangleYPosition = this.$refs.divCar.getBoundingClientRect().top + 10;
           this.currentYPosition = yMovement;
         }
         window.scrollTo(this.currentXPosition, this.currentYPosition);
@@ -456,6 +453,12 @@ export default {
         unzoomTransitionImageFast:
           (this.step === 1 || this.step === 5) && this.zoomingStep === 1,
       };
+    },
+    testMovement() {
+      return {
+        left: this.currentXPosition + 'px',
+        top: this.currentYPosition + 'px',
+      }
     },
     ...mapState(["images", "isLoadingImage", "relatedImages"]),
   },
