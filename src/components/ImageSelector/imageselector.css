@@ -105,7 +105,7 @@
 }
 
 .zoomTransitionImageFast {
-  animation: maskTransitionImageFast 1s linear 0s normal forwards;
+  animation: maskTransitionImageFast 5s linear 0s normal forwards;
 }
 
 @keyframes maskTransitionImageFast {
@@ -113,21 +113,21 @@
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 97%
+      rgba(0, 0, 0, 0.5) 97%
     );
   }
   5% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 94%
+      rgba(0, 0, 0, 0.3) 94%
     );
   }
   10% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 91%
+      rgba(0, 0, 0, 0.1) 91%
     );
   }
   15% {
@@ -259,7 +259,7 @@
 }
 
 .unzoomTransitionImageFast {
-  animation: unMaskTransitionImageFast 1s linear 0s normal forwards;
+  animation: unMaskTransitionImageFast 1.5s linear 0s normal forwards;
 }
 
 @keyframes unMaskTransitionImageFast {
@@ -386,21 +386,21 @@
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 91%
+      rgba(0, 0, 0, 0.1) 91%
     );
   }
   90% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 94%
+      rgba(0, 0, 0, 0.3) 94%
     );
   }
   95% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 97%
+      rgba(0, 0, 0, 0.5) 97%
     );
   }
   100% {
@@ -536,21 +536,21 @@
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 91%
+      rgba(0, 0, 0, 0.1) 91%
     );
   }
   90% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 94%
+      rgba(0, 0, 0, 0.3) 94%
     );
   }
   95% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 97%
+      rgba(0, 0, 0, 0.5) 97%
     );
   }
   100% {

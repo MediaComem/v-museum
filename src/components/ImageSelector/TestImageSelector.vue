@@ -13,7 +13,7 @@
       :sm="windowHeight > windowWidth ? 8 : 6"
       :md="windowHeight > windowWidth ? 9 : 8"
       :lg="windowHeight > windowWidth ? 7 : 5"
-      :xl="4"
+      :xl="5"
     >
       <div :style="sliderPosition">
         <h3 style="margin: 0; height: 30px;">{{ currentIndex + 1 }}</h3>
@@ -31,12 +31,12 @@
                 v-for="(value, index) in data"
                 :key="index"
                 :style="componentSize"
+                :ref="'li-' + index"
               >
                 <div>
                   <img
-                    :style="componentSize"
                     :ref="'image-' + index"
-                    :src="value.imagePaths.square"
+                    :src="value.imagePaths.large"
                     :alt="value.id"
                   />
                 </div>
@@ -66,7 +66,7 @@
       :sm="windowHeight > windowWidth ? 4 : 5"
       :md="windowHeight > windowWidth ? 2 : 3"
       :lg="5"
-      :xl="8"
+      :xl="7"
     >
     </el-col>
   </el-row>
@@ -96,7 +96,8 @@ export default {
   },
   data() {
     return {
-      shouldLoop: true,
+      nbImageMove: 0,
+      shouldLoop: false,
       data: undefined,
       // Use to know if we are in the loop process
       isLooped: false,
@@ -164,24 +165,32 @@ export default {
         // Move the scroll
         this.currentIndex = this.currentIndex - 1;
       }
+      this.nbImageMove = this.nbImageMove + 1;
     },
     movementAnalysis(newSpeed, direction) {
       if (
         newSpeed !== this.previousSpeed ||
         this.previousDirection !== direction
       ) {
-        this.stopInterval();
         clearTimeout(this.timeout);
-        this.timeout = setTimeout(() => this.move(direction), 50);
-        this.speed = newSpeed;
-        this.interval.push(
-          setInterval(() => {
-            this.move(direction);
-          }, this.speed)
-        );
+        this.timeout = undefined;
+        this.stopInterval();
+        this.timeout = setTimeout(() => {
+          this.move(direction);
+          this.speed = newSpeed;
+          this.interval.push(
+            setInterval(() => {
+              this.move(direction);
+            }, this.speed)
+          );
+        }, 300);
       }
     },
     sliderChange() {
+      if (this.previousSpeed === 0 && this.releaseStep === 0 && this.step !== 300) {
+        this.releaseStep = -1;
+        this.nbImageMove = 0;
+      }
       if (this.isStop()) {
         clearTimeout(this.timeout);
         // Wait to ensure that we are stopped in the stopping step and not change the direction
@@ -203,21 +212,16 @@ export default {
       }
     },
     getBackPreviousPosition() {
-      const transitionPosition = this.$refs[
+      const imagePosition = this.$refs[
         "image-" + this.currentIndex
-      ].getBoundingClientRect().y;
+      ].getBoundingClientRect();
       if (
         this.previousDirection &&
-        transitionPosition > 0 &&
-        transitionPosition > this.heightValue() / 2 &&
+        imagePosition.y > imagePosition.height / 2 &&
         this.currentIndex !== 0
       ) {
         this.currentIndex = this.currentIndex - 1;
-      } else if (
-        !this.previousDirection &&
-        transitionPosition < 0 &&
-        transitionPosition < -(this.heightValue() / 2)
-      ) {
+      } else if (!this.previousDirection && imagePosition.y < 0) {
         this.currentIndex = this.currentIndex + 1;
       }
     },
@@ -226,22 +230,23 @@ export default {
       clearTimeout(this.timeout);
       this.stopInterval();
 
-      // This part analyze where we are in the sliding process to get back to the previous image in case we stop the slider.
-      this.getBackPreviousPosition();
-
       // Reset movement and animation parameters
       if (releaseStep < 100 || releaseStep > 530) {
         this.releaseStep = 0;
       }
       this.step = 300;
-      this.zoomingStep = -1;
-      this.speed = 6000;
-      this.previousSpeed = 0;
-      this.previousDirection = undefined;
+      // This part analyze where we are in the sliding process to get back to the previous image in case we stop the slider.
+      if (releaseStep === 300) {
+        this.getBackPreviousPosition();
+        this.zoomingStep = -1;
+        this.speed = 6000;
+        this.previousSpeed = 0;
+        this.previousDirection = undefined;
+        
+      }
     },
     animationStepAnalysis(speed) {
       if (this.previousSpeed > speed) {
-        this.releaseStep = -1;
         this.zoomingStep = 2;
       } else if (this.previousSpeed <= 125 && this.previousSpeed !== 0) {
         this.zoomingStep = 1;
@@ -317,6 +322,11 @@ export default {
     defineTopMargin() {
       return (this.windowHeight - this.heightValue()) / 2;
     },
+    leftImageRendering() {
+      const image = this.$refs["image-" + this.currentIndex];
+      const layout = 9 * 4 * this.defineReponsiveFactor();
+      return image ? -((image.width - layout) / 2) : 0;
+    },
   },
   computed: {
     sliderPosition() {
@@ -334,6 +344,12 @@ export default {
         overflow: "hidden",
         margin: 0,
         padding: 0,
+      };
+    },
+    displayImage() {
+      return {
+        position: "relative",
+        left: this.leftImageRendering() + "px",
       };
     },
     componentSize() {
@@ -364,7 +380,7 @@ export default {
         zoomTransitionImageSlow:
           this.speed > 1000 && this.speed < 6000 && this.zoomingStep === 2,
         unzoomTransitionImageFastEnd:
-          this.speed === 6000 && this.releaseStep === 0,
+          this.speed === 6000 && this.releaseStep === 0 && this.nbImageMove >= 3,
         unzoomTransitionImageFast: this.speed > 125 && this.zoomingStep === 1,
       };
     },
