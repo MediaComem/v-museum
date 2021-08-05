@@ -30,11 +30,13 @@
               <li
                 v-for="(value, index) in data"
                 :key="index"
-                :style="componentSize"
+                :style="[componentSize]"
                 :ref="'li-' + index"
               >
-                <div>
+                <div :style="componentSize">
                   <img
+                    style="object-fit: none"
+                    :style="[componentSize]"
                     :ref="'image-' + index"
                     :src="value.imagePaths.large"
                     :alt="value.id"
@@ -183,11 +185,15 @@ export default {
               this.move(direction);
             }, this.speed)
           );
-        }, 300);
+        }, 200);
       }
     },
     sliderChange() {
-      if (this.previousSpeed === 0 && this.releaseStep === 0 && this.step !== 300) {
+      if (
+        this.previousSpeed === 0 &&
+        this.releaseStep === 0 &&
+        this.step !== 300
+      ) {
         this.releaseStep = -1;
         this.nbImageMove = 0;
       }
@@ -230,19 +236,20 @@ export default {
       clearTimeout(this.timeout);
       this.stopInterval();
 
+      this.previousSpeed = 0;
+      this.step = 300;
+
       // Reset movement and animation parameters
       if (releaseStep < 100 || releaseStep > 530) {
         this.releaseStep = 0;
       }
-      this.step = 300;
+      
       // This part analyze where we are in the sliding process to get back to the previous image in case we stop the slider.
       if (releaseStep === 300) {
         this.getBackPreviousPosition();
         this.zoomingStep = -1;
         this.speed = 6000;
-        this.previousSpeed = 0;
         this.previousDirection = undefined;
-        
       }
     },
     animationStepAnalysis(speed) {
@@ -327,6 +334,10 @@ export default {
       const layout = 9 * 4 * this.defineReponsiveFactor();
       return image ? -((image.width - layout) / 2) : 0;
     },
+    bottomImageRendering() {
+      const image = this.$refs["image-" + this.currentIndex];
+      return image && this.step === 300 ? this.heightValue() / 2 : 0;
+    },
   },
   computed: {
     sliderPosition() {
@@ -350,6 +361,7 @@ export default {
       return {
         position: "relative",
         left: this.leftImageRendering() + "px",
+        bottom: this.bottomImageRendering() + "px",
       };
     },
     componentSize() {
@@ -380,7 +392,9 @@ export default {
         zoomTransitionImageSlow:
           this.speed > 1000 && this.speed < 6000 && this.zoomingStep === 2,
         unzoomTransitionImageFastEnd:
-          this.speed === 6000 && this.releaseStep === 0 && this.nbImageMove >= 3,
+          this.speed === 6000 &&
+          this.releaseStep === 0 &&
+          this.nbImageMove >= 3 && this.step === 300,
         unzoomTransitionImageFast: this.speed > 125 && this.zoomingStep === 1,
       };
     },
@@ -419,4 +433,8 @@ export default {
 <style scoped>
 @import "./imageselector.css";
 @import "./sliderspeedTest.css";
+
+.active {
+  bottom: 0px !important;
+}
 </style>
