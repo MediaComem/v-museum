@@ -98,7 +98,6 @@ export default {
   },
   data() {
     return {
-      nbImageMove: 0,
       shouldLoop: false,
       data: undefined,
       // Use to know if we are in the loop process
@@ -112,6 +111,7 @@ export default {
       // Information uses to manage the animations
       releaseStep: -1,
       zoomingStep: 3,
+      nbImageMove: 0,
       // Information uses to manage the display
       windowHeight: undefined,
       windowWidth: undefined,
@@ -167,7 +167,17 @@ export default {
         // Move the scroll
         this.currentIndex = this.currentIndex - 1;
       }
+      // This incrementation is to manage the animation
       this.nbImageMove = this.nbImageMove + 1;
+    },
+    launchMovement(newSpeed, direction) {
+      this.move(direction);
+      this.speed = newSpeed;
+      this.interval.push(
+        setInterval(() => {
+          this.move(direction);
+        }, this.speed)
+      );
     },
     movementAnalysis(newSpeed, direction) {
       if (
@@ -177,28 +187,18 @@ export default {
         clearTimeout(this.timeout);
         this.timeout = undefined;
         this.stopInterval();
+        // Ensure that the scroller has a define speed before launch movement in slow speed.
         if (newSpeed < 200) {
-          this.move(direction);
-          this.speed = newSpeed;
-          this.interval.push(
-            setInterval(() => {
-              this.move(direction);
-            }, this.speed)
-          );
+          this.launchMovement(newSpeed, direction);
         } else {
           this.timeout = setTimeout(() => {
-            this.move(direction);
-            this.speed = newSpeed;
-            this.interval.push(
-              setInterval(() => {
-                this.move(direction);
-              }, this.speed)
-            );
+            this.launchMovement(newSpeed, direction);
           }, 200);
         }
       }
     },
     sliderChange() {
+      // Release animation
       if (
         this.previousSpeed === 0 &&
         this.releaseStep === 0 &&
@@ -254,8 +254,8 @@ export default {
         this.releaseStep = 0;
       }
 
-      // This part analyze where we are in the sliding process to get back to the previous image in case we stop the slider.
       if (releaseStep === 300) {
+        // This part analyze where we are in the sliding process to get back to the previous image in case we stop the slider.
         this.getBackPreviousPosition();
         this.zoomingStep = -1;
         this.speed = 6000;
@@ -339,15 +339,6 @@ export default {
     defineTopMargin() {
       return (this.windowHeight - this.heightValue()) / 2;
     },
-    leftImageRendering() {
-      const image = this.$refs["image-" + this.currentIndex];
-      const layout = 9 * 4 * this.defineReponsiveFactor();
-      return image ? -((image.width - layout) / 2) : 0;
-    },
-    bottomImageRendering() {
-      const image = this.$refs["image-" + this.currentIndex];
-      return image && this.step === 300 ? this.heightValue() / 2 : 0;
-    },
   },
   computed: {
     sliderPosition() {
@@ -365,13 +356,6 @@ export default {
         overflow: "hidden",
         margin: 0,
         padding: 0,
-      };
-    },
-    displayImage() {
-      return {
-        position: "relative",
-        left: this.leftImageRendering() + "px",
-        bottom: this.bottomImageRendering() + "px",
       };
     },
     componentSize() {
@@ -444,8 +428,4 @@ export default {
 <style scoped>
 @import "./imageselector.css";
 @import "./sliderspeedTest.css";
-
-.active {
-  bottom: 0px !important;
-}
 </style>
