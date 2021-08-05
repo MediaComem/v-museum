@@ -6,6 +6,10 @@
     :height="rectangleHeight"
     :offsetX="rectangleXPosition"
     :offsetY="rectangleYPosition"
+    @mousedown="startPosition"
+    @mouseup="endPosition"
+    @mousemove="mouseMove"
+    style="cursor: grab; user-select:none;"
   />
   <div
     style="cursor: grab; user-select:none;"
@@ -275,7 +279,6 @@ export default {
   methods: {
     startPosition() {
       this.isDrag = true;
-      console.log(this.$refs.display.getBoundingClientRect());
     },
     endPosition() {
       this.isDrag = false;
