@@ -177,7 +177,7 @@ export default {
         clearTimeout(this.timeout);
         this.timeout = undefined;
         this.stopInterval();
-        this.timeout = setTimeout(() => {
+        if (newSpeed < 200) {
           this.move(direction);
           this.speed = newSpeed;
           this.interval.push(
@@ -185,7 +185,17 @@ export default {
               this.move(direction);
             }, this.speed)
           );
-        }, 200);
+        } else {
+          this.timeout = setTimeout(() => {
+            this.move(direction);
+            this.speed = newSpeed;
+            this.interval.push(
+              setInterval(() => {
+                this.move(direction);
+              }, this.speed)
+            );
+          }, 200);
+        }
       }
     },
     sliderChange() {
@@ -243,7 +253,7 @@ export default {
       if (releaseStep < 100 || releaseStep > 530) {
         this.releaseStep = 0;
       }
-      
+
       // This part analyze where we are in the sliding process to get back to the previous image in case we stop the slider.
       if (releaseStep === 300) {
         this.getBackPreviousPosition();
@@ -394,7 +404,8 @@ export default {
         unzoomTransitionImageFastEnd:
           this.speed === 6000 &&
           this.releaseStep === 0 &&
-          this.nbImageMove >= 3 && this.step === 300,
+          this.nbImageMove >= 3 &&
+          this.step === 300,
         unzoomTransitionImageFast: this.speed > 125 && this.zoomingStep === 1,
       };
     },
