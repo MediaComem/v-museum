@@ -6,46 +6,57 @@
     :height="rectangleHeight"
     :offsetX="rectangleXPosition"
     :offsetY="rectangleYPosition"
-    @mousedown="startPosition"
-    @mouseup="endPosition"
+    @mousedown.left="startPosition"
+    @mouseup.left="endPosition"
     @mousemove="mouseMove"
-    style="cursor: grab; user-select:none;"
+    @mousewheel="wheelMove"
+    style="cursor: pointer; user-select:none;"
+    ref="rectangle"
   />
   <div
-    style="cursor: grab; user-select:none;"
+    style="cursor: grab; user-select:none; width: 4000px; height: 4000px"
     :style="testMovement"
-    @mousedown="startPosition"
-    @mouseup="endPosition"
+    @mousedown.left="startPosition"
+    @mouseup.left="endPosition"
     @mousemove="mouseMove"
-    @scroll="testScroll"
+    @mousewheel="wheelMove"
     ref="display"
   >
+    <el-row :gutter="10">
+      <el-col :span="24">
+        <span style="height: 500px; display: block"/>
+      </el-col>
+    </el-row>
     <el-row :align="'bottom'">
-      <el-col :span="7">
+      <el-col :span="5"> </el-col>
+      <el-col :span="2">
         <div ref="position1">
           <related-image
+            ref="rectangle1"
             :image="getRelatedPositionItem(1)"
-            :imageHeight="(windowHeight / 6) * 4"
-            :imageWidth="(windowWidth / 24) * 6"
+            :imageHeight="200"
+            :imageWidth="300"
             :align="'bottom'"
             :justify="'end'"
           />
         </div>
       </el-col>
       <el-col :span="2"> </el-col>
-      <el-col :span="6"> </el-col>
       <el-col :span="2"> </el-col>
-      <el-col :span="7">
+      <el-col :span="2"> </el-col>
+      <el-col :span="2">
         <div ref="position2">
           <related-image
+            ref="rectangle2"
             :image="getRelatedPositionItem(2)"
-            :imageHeight="(windowHeight / 6) * 4"
-            :imageWidth="(windowWidth / 24) * 6"
+            :imageHeight="200"
+            :imageWidth="300"
             :align="'bottom'"
             :justify="'start'"
           />
         </div>
       </el-col>
+      <el-col :span="5"> </el-col>
     </el-row>
     <el-row>
       <el-col :span="7"> </el-col>
@@ -62,7 +73,7 @@
               </el-col>
             </el-row>
           </el-col>
-          <el-col :span="14">
+          <el-col :span="2">
             <el-row :justify="'end'">
               <p
                 v-if="relatedImagesPosition.length >= 1 && step === 3"
@@ -96,29 +107,32 @@
               </p>
             </el-row>
           </el-col>
+          <el-col :span="11"> </el-col>
         </el-row>
       </el-col>
       <el-col :span="2"> </el-col>
       <el-col :span="7"> </el-col>
     </el-row>
     <el-row :gutter="10" :align="'middle'">
-      <el-col :span="7">
+      <el-col :span="5"> </el-col>
+      <el-col :span="2">
         <div ref="position3">
           <related-image
+            ref="rectangle3"
             :image="getRelatedPositionItem(3)"
-            :imageHeight="(windowHeight / 6) * 4"
-            :imageWidth="(windowWidth / 24) * 6"
+            :imageHeight="200"
+            :imageWidth="300"
             :align="'top'"
             :justify="'end'"
           />
         </div>
       </el-col>
       <el-col :span="2"> </el-col>
-      <el-col :span="6">
+      <el-col :span="2">
         <div class="sliderMask" ref="divCar">
           <el-carousel
             :indicator-position="'none'"
-            :height="'800px'"
+            :height="'400px'"
             direction="vertical"
             :loop="false"
             :autoplay="false"
@@ -154,17 +168,19 @@
           </el-slider>
         </el-row>
       </el-col>
-      <el-col :span="7">
-        <div :style="{ marginLeft: windowWidth / 6 + 'px' }" ref="position4">
+      <el-col :span="2">
+        <div ref="position4">
           <related-image
+            ref="rectangle4"
             :image="getRelatedPositionItem(4)"
-            :imageHeight="(windowHeight / 6) * 4"
-            :imageWidth="(windowWidth / 24) * 6"
+            :imageHeight="200"
+            :imageWidth="300"
             :align="'middle'"
             :justify="'start'"
           />
         </div>
       </el-col>
+      <el-col :span="5"> </el-col>
     </el-row>
     <el-row>
       <el-col :span="7"> </el-col>
@@ -181,31 +197,35 @@
       <el-col :span="7"> </el-col>
     </el-row>
     <el-row>
-      <el-col :span="7">
+      <el-col :span="5"> </el-col>
+      <el-col :span="2">
         <div ref="position5">
           <related-image
+            ref="rectangle5"
             :image="getRelatedPositionItem(5)"
-            :imageHeight="(windowHeight / 6) * 4"
-            :imageWidth="(windowWidth / 24) * 6"
+            :imageHeight="200"
+            :imageWidth="300"
             :align="'top'"
             :justify="'end'"
           />
         </div>
       </el-col>
       <el-col :span="2"> </el-col>
-      <el-col :span="6"> </el-col>
+      <el-col :span="2"> </el-col>
       <el-col :span="2"></el-col>
-      <el-col :span="7">
+      <el-col :span="2">
         <div ref="position6">
           <related-image
+            ref="rectangle6"
             :image="getRelatedPositionItem(6)"
-            :imageHeight="(windowHeight / 6) * 4"
-            :imageWidth="(windowWidth / 24) * 6"
+            :imageHeight="200"
+            :imageWidth="300"
             :align="'top'"
             :justify="'start'"
           />
         </div>
       </el-col>
+      <el-col :span="5"> </el-col>
     </el-row>
   </div>
 </template>
@@ -274,14 +294,73 @@ export default {
 
       rectangleXPosition: 10,
       rectangleYPosition: 10,
+
+      moveToImageTimeout: [],
     };
   },
   methods: {
+    checkPosition(x, y, rectangle) {
+      if (
+        x < rectangle.x + rectangle.width &&
+        x + this.rectangleWidth > rectangle.x &&
+        y < rectangle.y + rectangle.height &&
+        this.rectangleHeight + y > rectangle.y
+      ) {
+        this.moveToImageTimeout.push(
+          setTimeout(() => {
+            const newX =
+              this.$refs.display.getBoundingClientRect().x -
+              (rectangle.x - (this.windowWidth - rectangle.width) / 2);
+            const newY =
+              this.$refs.display.getBoundingClientRect().y -
+              (rectangle.y - (this.windowHeight - rectangle.height) / 2);
+            window.scrollTo({ left: -newX, top: -newY, behavior: "smooth" });
+            this.rectangleXPosition =
+              -newX + (this.windowWidth - rectangle.width) / 2;
+            this.rectangleYPosition =
+              -newY + (this.windowHeight - rectangle.height) / 2;
+          }, 200)
+        );
+        return true;
+      }
+    },
+    checkCollision() {
+      this.moveToImageTimeout.forEach(clearTimeout);
+      this.moveToImageTimeout = [];
+      const rectangle = this.$refs.divCar.getBoundingClientRect();
+      const x = (this.windowWidth - this.$refs.divCar.clientWidth + 20) / 2;
+      const y = (this.windowHeight - this.$refs.divCar.clientHeight + 20) / 2;
+      this.checkPosition(x, y, rectangle);
+      this.relatedImagesPosition.forEach((rectangle) => {
+        this.checkPosition(
+          x,
+          y,
+          this.$refs["position" + rectangle.position].getBoundingClientRect()
+        ) ? rectangle.hover = true : rectangle.hover = false;
+      });
+      if (this.moveToImageTimeout.length === 0) {
+        this.rectangleHeight = (this.$refs.divCar.clientHeight + 20) / 2;
+      } else {
+        this.rectangleHeight = this.$refs.divCar.clientHeight + 20;
+      }
+    },
     startPosition() {
       this.isDrag = true;
     },
     endPosition() {
       this.isDrag = false;
+    },
+    wheelMove() {
+      this.rectangleXPosition =
+        -this.$refs.display.getBoundingClientRect().left +
+        this.windowWidth / 2 -
+        this.rectangleWidth / 2;
+      this.rectangleYPosition =
+        -this.$refs.display.getBoundingClientRect().top +
+        this.windowHeight / 2 -
+        this.rectangleHeight / 2;
+
+      this.checkCollision();
     },
     mouseMove(event) {
       if (this.isDrag && !this.blockDrag) {
@@ -303,6 +382,7 @@ export default {
           this.currentYPosition = yMovement;
         }
         window.scrollTo(this.currentXPosition, this.currentYPosition);
+        this.checkCollision();
       }
     },
     // This method reset some properties in case of the user release the slider
@@ -422,6 +502,7 @@ export default {
             position: position,
             image: images[index],
             display: false,
+            hover: false,
           });
         });
 

@@ -1,77 +1,62 @@
 <template>
   <div
     v-if="image && image.length > 0 && image[0].display"
-    :style="{ height: imageHeight + 'px' }"
-    @mouseover="hover = true"
-    @mouseleave="hover = false"
+    :style="getImage"
   >
-    <p
+    <!--p
       v-if="align === 'top' || align === 'middle'"
       class="relatedImageBase index-font"
       :class="textComponentClass"
     >
       {{ image[0].image.tag["@value"] }}
-    </p>
-      <img
-        v-if="align === 'bottom'"
-        class="relatedImageBase image-custom-bottom"
-        :src="getImage()"
-        :alt="image[0].image.result.id"
-      />
-      <img
-        v-if="align !== 'bottom'"
-        class="relatedImageBase image-custom"
-        :src="getImage()"
-        :alt="image[0].image.result.id"
-      />
-    <p
+    </p-->
+    <img
+      style="object-fit: none"
+      :style="getImage"
+      class="relatedImageBase"
+      :src="this.image[0].image.result.imagePaths.large"
+      :alt="image[0].image.result.id"
+    />
+    <!--p
       v-if="align === 'bottom'"
       class="relatedImageBase index-font "
       :class="textComponentClass"
     >
       {{ image[0].image.tag["@value"] }}
-    </p>
+    </p-->
   </div>
 </template>
 
 <script>
 export default {
+  methods: {
+    getHeight() {
+      console.log(this.imageHeight);
+      return this.image[0].hover
+        ? this.imageHeight * 2
+        : this.imageHeight;
+    }
+  },
   props: {
     image: Object,
     imageHeight: Number,
     imageWidth: Number,
     align: String,
     justify: String,
-  },
-  data() {
-    return {
-      hover: false,
-    };
-  },
-  methods: {
-    getImage() {
-      return this.hover ? this.image[0].image.result.imagePaths.large : this.image[0].image.result.imagePaths.square;
-    },
-    getMargin() {
-      if (this.align === 'bottom'){
-        return 350;
-      }
-      else {
-        return 0;
-      }
-    }
+    hover: Boolean,
   },
   computed: {
+    getImage() {
+      return {
+        height: this.getHeight() + 'px',
+        width: this.imageWidth + 'px',
+      }
+    },
     textComponentClass() {
       return {
         startTextAlign: this.justify === "start",
         endTextAlign: this.justify === "end",
       };
-    },
-    displayImage() {
-      return {
-        'margin-top': this.getMargin() + 'px',
-      }
     },
   },
 };
