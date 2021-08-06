@@ -24,7 +24,7 @@
   >
     <el-row :gutter="10">
       <el-col :span="24">
-        <span style="height: 500px; display: block"/>
+        <span style="height: 500px; display: block" />
       </el-col>
     </el-row>
     <el-row :align="'bottom'">
@@ -132,7 +132,7 @@
         <div class="sliderMask" ref="divCar">
           <el-carousel
             :indicator-position="'none'"
-            :height="'400px'"
+            :height="getCarouselSize"
             direction="vertical"
             :loop="false"
             :autoplay="false"
@@ -144,6 +144,7 @@
             <el-carousel-item v-for="(value, index) in data" :key="index">
               <img
                 ref="image"
+                style="object-fit: none"
                 class="custom-image"
                 :src="value.imagePaths.large"
                 :alt="value.id"
@@ -155,6 +156,7 @@
       <el-col :span="2">
         <el-row :justify="'center'" :align="'middle'">
           <el-slider
+            v-if="carouselHover"
             class="cursor-pointer"
             ref="slider"
             vertical
@@ -257,6 +259,12 @@ export default {
     relatedImages: function(images) {
       this.displayRelatedImages(images);
     },
+    relatedImagesPosition: {
+      handler() {
+        this.setupSize();
+      },
+      deep: true,
+    },
   },
   data() {
     return {
@@ -296,6 +304,7 @@ export default {
       rectangleYPosition: 10,
 
       moveToImageTimeout: [],
+      carouselHover: true,
     };
   },
   methods: {
@@ -316,13 +325,14 @@ export default {
               (rectangle.y - (this.windowHeight - rectangle.height) / 2);
             window.scrollTo({ left: -newX, top: -newY, behavior: "smooth" });
             this.rectangleXPosition =
-              -newX + (this.windowWidth - rectangle.width) / 2;
+              -newX + (this.windowWidth - rectangle.width) / 2 - 10;
             this.rectangleYPosition =
-              -newY + (this.windowHeight - rectangle.height) / 2;
+              -newY + (this.windowHeight - rectangle.height) / 2 - 10;
           }, 200)
         );
         return true;
       }
+      return false;
     },
     checkCollision() {
       this.moveToImageTimeout.forEach(clearTimeout);
@@ -330,18 +340,24 @@ export default {
       const rectangle = this.$refs.divCar.getBoundingClientRect();
       const x = (this.windowWidth - this.$refs.divCar.clientWidth + 20) / 2;
       const y = (this.windowHeight - this.$refs.divCar.clientHeight + 20) / 2;
-      this.checkPosition(x, y, rectangle);
+      this.carouselHover = this.checkPosition(x, y, rectangle);
       this.relatedImagesPosition.forEach((rectangle) => {
         this.checkPosition(
           x,
           y,
           this.$refs["position" + rectangle.position].getBoundingClientRect()
-        ) ? rectangle.hover = true : rectangle.hover = false;
+        )
+          ? (rectangle.hover = true)
+          : (rectangle.hover = false);
       });
       if (this.moveToImageTimeout.length === 0) {
-        this.rectangleHeight = (this.$refs.divCar.clientHeight + 20) / 2;
-      } else {
         this.rectangleHeight = this.$refs.divCar.clientHeight + 20;
+      } else {
+        if (this.carouselHover) {
+          this.rectangleHeight = this.$refs.divCar.clientHeight + 20;
+        } else {
+          this.rectangleHeight = this.$refs.divCar.clientHeight * 2 + 20;
+        }
       }
     },
     startPosition() {
@@ -492,7 +508,6 @@ export default {
       return this.relatedImagesPosition.filter((e) => e.position === position);
     },
     displayRelatedImages(images) {
-      this.shouldUpdateDisplay = true;
       // Select randomly 3 display positions
       this.potentialPosition
         .sort(() => Math.random() - 0.5)
@@ -514,6 +529,7 @@ export default {
             setTimeout(() => {
               this.relatedImagesPosition[index].display = true;
               this.$nextTick(() => {
+                this.shouldUpdateDisplay = true;
                 this.setupSize(this.relatedImagesPosition[index].position);
               });
             }, animationDelay)
@@ -521,18 +537,28 @@ export default {
         });
       });
     },
-    setupSize(position) {
-      if ((position === 1 || position === 2) && this.shouldUpdateDisplay) {
-        this.x = this.$refs.divCar.getBoundingClientRect().left;
-        this.y = this.$refs.divCar.getBoundingClientRect().top;
-        this.currentXPosition = this.$refs.divCar.getBoundingClientRect().left;
-        this.currentYPosition = this.$refs.divCar.getBoundingClientRect().top;
-        window.scrollTo(0, (this.windowHeight / 6) * 4);
+    setupSize() {
+      if (this.shouldUpdateDisplay) {
+        const rectangle = this.$refs.divCar.getBoundingClientRect();
+        const newX =
+          this.$refs.display.getBoundingClientRect().x -
+          (rectangle.x - (this.windowWidth - rectangle.width) / 2);
+        const newY =
+          this.$refs.display.getBoundingClientRect().y -
+          (rectangle.y - (this.windowHeight - rectangle.height) / 2);
+        window.scrollTo({ left: -newX, top: -newY });
+        this.rectangleXPosition =
+          -newX + (this.windowWidth - rectangle.width) / 2 - 10;
+        this.rectangleYPosition =
+          -newY + (this.windowHeight - rectangle.height) / 2 - 10;
         this.shouldUpdateDisplay = false;
       }
     },
   },
   computed: {
+    getCarouselSize() {
+      return this.carouselHover ? "400px" : "200px";
+    },
     selectZoomAnimation() {
       return {
         zoomTransitionImageFast:
@@ -572,15 +598,9 @@ export default {
     this.rectangleHeight = this.$refs.divCar.clientHeight + 20;
     this.rectangleWidth = this.$refs.divCar.clientWidth + 20;
 
-    this.rectangleXPosition =
-      -this.$refs.display.getBoundingClientRect().left +
-      this.windowWidth / 2 -
-      this.rectangleWidth / 2;
+    this.rectangleXPosition = this.currentXPosition - 10;
+    this.rectangleYPosition = this.currentYPosition - 10;
 
-    this.rectangleYPosition =
-      -this.$refs.display.getBoundingClientRect().top +
-      this.windowHeight / 2 -
-      this.rectangleHeight / 2;
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
     this.$store.dispatch("initializeCarousel", {

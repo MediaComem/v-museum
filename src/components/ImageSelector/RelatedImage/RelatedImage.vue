@@ -31,7 +31,6 @@
 export default {
   methods: {
     getHeight() {
-      console.log(this.imageHeight);
       return this.image[0].hover
         ? this.imageHeight * 2
         : this.imageHeight;
