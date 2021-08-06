@@ -14,7 +14,7 @@
     ref="rectangle"
   />
   <div
-    style="cursor: grab; user-select:none; width: 4000px; height: 4000px"
+    style="cursor: grab; user-select:none; width: 4000px; height: 2500px"
     :style="testMovement"
     @mousedown.left="startPosition"
     @mouseup.left="endPosition"
@@ -114,7 +114,7 @@
       <el-col :span="7"> </el-col>
     </el-row>
     <el-row :gutter="10" :align="'middle'">
-      <el-col :span="5"> </el-col>
+      <el-col :span="5"> <span style="height: 500px; display: block"/></el-col>
       <el-col :span="2">
         <div ref="position3">
           <related-image
