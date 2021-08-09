@@ -7,11 +7,11 @@
 }
 
 .v-museum-end {
-  -webkit-transition: -webkit-transform 1s cubic-bezier(0.25, 0.1, 0.77, 1.79);
-  -moz-transition: -moz-transition 1s cubic-bezier(0.25, 0.1, 0.77, 1.79);
-  transition: -webkit-transform 1s cubic-bezier(0.25, 0.1, 0.77, 1.79);
-  transition: -moz-transform 1s cubic-bezier(0.25, 0.1, 0.77, 1.79);
-  transition: transform 1s cubic-bezier(0.25, 0.1, 0.77, 1.79);
+  -webkit-transition: -webkit-transform 1s cubic-bezier(0, 0, 0, 1.6);
+  -moz-transition: -moz-transition 1s cubic-bezier(0, 0, 0, 1.6);
+  transition: -webkit-transform 1s cubic-bezier(0, 0, 0, 1.6);
+  transition: -moz-transform 1s cubic-bezier(0, 0, 0, 1.6);
+  transition: transform 1s cubic-bezier(0, 0, 0, 1.6);
 }
 
 .v-museum-025 {

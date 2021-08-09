@@ -51,6 +51,7 @@
     <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="1">
       <div :style="sliderMargin">
         <el-slider
+          :class="selectArrayDisplay"
           ref="slider"
           vertical
           v-model="step"
@@ -85,23 +86,17 @@ export default {
       this.data = newImages;
     },
     currentIndex: function(newVal) {
-      // This part analyse if the loop transition is necessary and reset it after.
-      if (this.isLooped && (newVal === 1 || newVal === this.data.length - 2)) {
-        this.isLooped = false;
-        if (newVal === 1) {
-          this.currentIndex = this.currentIndex + 1;
-        } else {
-          this.currentIndex = this.currentIndex - 1;
-        }
-      }
+      this.isBeginning = newVal === 0;
+      this.isEnd = newVal === this.data.length - 1;
+      this.shouldRunAnimation = this.isBeginning || this.isEnd;
     },
   },
   data() {
     return {
-      shouldLoop: false,
+      isBeginning: true,
+      isEnd: false,
+      shouldRunAnimation: false,
       data: undefined,
-      // Use to know if we are in the loop process
-      isLooped: false,
       // Information uses to manage the movement
       step: 300,
       speed: 6000,
@@ -149,22 +144,12 @@ export default {
 
       if (forward) {
         // Loop the scroll
-        if (this.currentIndex === this.data.length - 1) {
-          if (this.shouldLoop) {
-            this.loop(1, 0);
-          }
-        } else {
-          // Move the scroll
+        if (this.currentIndex !== this.data.length - 1) {
           this.currentIndex = this.currentIndex + 1;
         }
       }
       // Loop the scroll
-      else if (this.currentIndex === 0) {
-        if (this.shouldLoop) {
-          this.loop(-1, this.data.length - 1);
-        }
-      } else {
-        // Move the scroll
+      else if (this.currentIndex !== 0) {
         this.currentIndex = this.currentIndex - 1;
       }
       // This incrementation is to manage the animation
@@ -246,6 +231,7 @@ export default {
       clearTimeout(this.timeout);
       this.stopInterval();
 
+      this.shouldRunAnimation = false;
       this.previousSpeed = 0;
       this.step = 300;
 
@@ -379,34 +365,40 @@ export default {
     selectZoomAnimation() {
       return {
         zoomTransitionImageFast:
-          this.speed <= 125 &&
+          this.speed <= 125 && (!this.isBeginning && !this.isEnd) &&
           (this.zoomingStep === 1 || this.zoomingStep === 2),
         zoomTransitionImageMedium:
-          this.speed > 125 && this.speed <= 1000 && this.zoomingStep === 2,
+          this.speed > 125 && this.speed <= 1000 && this.zoomingStep === 2 && (!this.isBeginning && !this.isEnd),
         zoomTransitionImageSlow:
-          this.speed > 1000 && this.speed < 6000 && this.zoomingStep === 2,
+          this.speed > 1000 && this.speed < 6000 && this.zoomingStep === 2 && (!this.isBeginning && !this.isEnd),
         unzoomTransitionImageFastEnd:
           this.speed === 6000 &&
           this.releaseStep === 0 &&
           this.nbImageMove >= 3 &&
-          this.step === 300,
-        unzoomTransitionImageFast: this.speed > 125 && this.zoomingStep === 1,
+          this.step === 300 && this.shouldRunAnimation,
+        unzoomTransitionImageFast: (this.speed > 125 && this.zoomingStep === 1) || ((this.isBeginning || this.isEnd) && this.shouldRunAnimation && this.speed <= 125) ,
       };
     },
     selectSliderTransitionSpeed() {
       return {
-        "v-museum-none": this.isLooped,
-        "v-museum-end": this.speed === 6000 && !this.isLooped,
-        "v-museum-025": this.speed === 4000 && !this.isLooped,
-        "v-museum-05": this.speed === 2000 && !this.isLooped,
-        "v-museum-075": this.speed === 1500 && !this.isLooped,
-        "v-museum-1": this.speed === 1000 && !this.isLooped,
-        "v-museum-2": this.speed === 500 && !this.isLooped,
-        "v-museum-4": this.speed === 250 && !this.isLooped,
-        "v-museum-8": this.speed === 125 && !this.isLooped,
-        "v-museum-16": this.speed === 62 && !this.isLooped,
-        "v-museum-20": this.speed === 50 && !this.isLooped,
+        "v-museum-end": this.speed === 6000, 
+        "v-museum-025": this.speed === 4000, 
+        "v-museum-05": this.speed === 2000, 
+        "v-museum-075": this.speed === 1500, 
+        "v-museum-1": this.speed === 1000, 
+        "v-museum-2": this.speed === 500,
+        "v-museum-4": this.speed === 250,
+        "v-museum-8": this.speed === 125,
+        "v-museum-16": this.speed === 62,
+        "v-museum-20": this.speed === 50,
       };
+    },
+    selectArrayDisplay() {
+      return {
+        "v-start": this.isBeginning,
+        "v-normal": !this.isBeginning && !this.isEnd,
+        "v-end": this.isEnd,
+      }
     },
     ...mapState(["images", "isLoadingImage"]),
   },
