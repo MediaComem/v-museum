@@ -52,10 +52,11 @@
       <div :style="sliderMargin">
         <el-slider
           :class="selectArrayDisplay"
+          style="width: 42px"
           ref="slider"
           vertical
           v-model="step"
-          :height="windowHeight / 5 + 'px'"
+          :height="'150px'"
           :max="600"
           :show-tooltip="false"
           @input="sliderChange"
@@ -334,7 +335,8 @@ export default {
     },
     sliderMargin() {
       return {
-        marginTop: (this.windowHeight - this.windowHeight / 5) / 2 + "px",
+        //marginTop: (this.windowHeight - this.windowHeight / 5) / 2 + "px",
+        marginTop: ((((this.windowHeight - this. heightValue()) / 2) + this.heightValue() / 2) - 75) + 'px',
       };
     },
     scrollingDisplay() {
