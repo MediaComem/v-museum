@@ -1,0 +1,3 @@
+    @mousedown.left="startPosition"
+    @mouseup.left="endPosition"
+    @mousemove="mouseMove"

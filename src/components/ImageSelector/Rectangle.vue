@@ -28,8 +28,8 @@ export default {
   computed: {
       setPosition() {
           return{
-              left: this.offsetX,
-              top: this.offsetY,
+              left: ((this.offsetX - this.width) / 2),
+              top: ((this.offsetY - this.height) / 2),
           }
       }
   }
@@ -38,7 +38,7 @@ export default {
 
 <style>
 svg {
-    position: absolute;
+    position: fixed;
     z-index: 1;
 }
 </style>

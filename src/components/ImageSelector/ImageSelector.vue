@@ -4,20 +4,14 @@
     :y="y"
     :width="rectangleWidth"
     :height="rectangleHeight"
-    :offsetX="rectangleXPosition"
-    :offsetY="rectangleYPosition"
-    @mousedown.left="startPosition"
-    @mouseup.left="endPosition"
-    @mousemove="mouseMove"
+    :offsetX="windowWidth"
+    :offsetY="windowHeight"
     @mousewheel="wheelMove"
     style="cursor: pointer; user-select:none;"
     ref="rectangle"
   />
   <div
-    style="cursor: grab; user-select:none; width: 4000px; height: 2500px"
-    @mousedown.left="startPosition"
-    @mouseup.left="endPosition"
-    @mousemove="mouseMove"
+    style="cursor: grab; user-select:none; width: 5000px; height: 2500px"
     @mousewheel="wheelMove"
     ref="display"
   >
@@ -27,26 +21,22 @@
       </el-col>
     </el-row>
     <el-row :align="'bottom'">
-      <el-col :span="5"><span style="height: 500px; display: block" /> </el-col>
-      <el-col :span="2">
-        <div ref="position1">
+      <el-col :span="6"><span style="height: 500px; display: block" /> </el-col>
+      <el-col :span="3" :justify="'center'">
+        <div ref="position1" :style="getImageWidth">
           <related-image
-            ref="rectangle1"
             :image="getRelatedPositionItem(1)"
             :imageHeight="200"
             :imageWidth="300"
             :align="'bottom'"
             :justify="'end'"
-          />
-        </div>
-      </el-col>
-      <el-col :span="2"> </el-col>
+          /></div
+      ></el-col>
       <el-col :span="2"> </el-col>
       <el-col :span="2"> </el-col>
       <el-col :span="2">
-        <div ref="position2">
+        <div ref="position2" :style="getImageWidth">
           <related-image
-            ref="rectangle2"
             :image="getRelatedPositionItem(2)"
             :imageHeight="200"
             :imageWidth="300"
@@ -113,20 +103,17 @@
       <el-col :span="7"> </el-col>
     </el-row>
     <el-row :gutter="10" :align="'middle'">
-      <el-col :span="5"> <span style="height: 500px; display: block"/></el-col>
-      <el-col :span="2">
-        <div ref="position3">
+      <el-col :span="6"> <span style="height: 500px; display: block"/></el-col>
+      <el-col :span="3">
+        <div ref="position3" :style="getImageWidth">
           <related-image
-            ref="rectangle3"
             :image="getRelatedPositionItem(3)"
             :imageHeight="200"
             :imageWidth="300"
             :align="'top'"
             :justify="'end'"
-          />
-        </div>
-      </el-col>
-      <el-col :span="2"> </el-col>
+          /></div
+      ></el-col>
       <el-col :span="2">
         <div class="sliderMask" ref="divCar" style="width: 300px">
           <el-carousel
@@ -170,9 +157,8 @@
         </el-row>
       </el-col>
       <el-col :span="2">
-        <div ref="position4">
+        <div ref="position4" :style="getImageWidth">
           <related-image
-            ref="rectangle4"
             :image="getRelatedPositionItem(4)"
             :imageHeight="200"
             :imageWidth="300"
@@ -198,11 +184,10 @@
       <el-col :span="7"> </el-col>
     </el-row>
     <el-row>
-      <el-col :span="5"> </el-col>
-      <el-col :span="2">
-        <div ref="position5">
+      <el-col :span="6"> </el-col>
+      <el-col :span="3"
+        ><div ref="position5" :style="getImageWidth">
           <related-image
-            ref="rectangle5"
             :image="getRelatedPositionItem(5)"
             :imageHeight="200"
             :imageWidth="300"
@@ -212,12 +197,10 @@
         </div>
       </el-col>
       <el-col :span="2"> </el-col>
-      <el-col :span="2"> </el-col>
       <el-col :span="2"></el-col>
       <el-col :span="2">
-        <div ref="position6">
+        <div ref="position6" :style="getImageWidth">
           <related-image
-            ref="rectangle6"
             :image="getRelatedPositionItem(6)"
             :imageHeight="200"
             :imageWidth="300"
@@ -226,7 +209,12 @@
           />
         </div>
       </el-col>
-      <el-col :span="5"> </el-col>
+      <el-col :span="5"></el-col>
+    </el-row>
+    <el-row :gutter="10">
+      <el-col :span="24">
+        <span style="height: 1000px; display: block" />
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -323,10 +311,6 @@ export default {
               this.$refs.display.getBoundingClientRect().y -
               (rectangle.y - (this.windowHeight - rectangle.height) / 2);
             window.scrollTo({ left: -newX, top: -newY, behavior: "smooth" });
-            this.rectangleXPosition =
-              -newX + (this.windowWidth - rectangle.width) / 2 - 10;
-            this.rectangleYPosition =
-              -newY + (this.windowHeight - rectangle.height) / 2 - 10;
           }, 200)
         );
         return true;
@@ -359,23 +343,13 @@ export default {
         }
       }
     },
-    startPosition(event) {
-      console.log(event);
+    startPosition() {
       this.isDrag = true;
     },
     endPosition() {
       this.isDrag = false;
     },
     wheelMove() {
-      this.rectangleXPosition =
-        -this.$refs.display.getBoundingClientRect().left +
-        this.windowWidth / 2 -
-        this.rectangleWidth / 2;
-      this.rectangleYPosition =
-        -this.$refs.display.getBoundingClientRect().top +
-        this.windowHeight / 2 -
-        this.rectangleHeight / 2;
-
       this.checkCollision();
     },
     mouseMove(event) {
@@ -559,6 +533,11 @@ export default {
   computed: {
     getCarouselSize() {
       return this.carouselHover ? "400px" : "200px";
+    },
+    getImageWidth() {
+      return {
+        width: '300px',
+      }
     },
     selectZoomAnimation() {
       return {

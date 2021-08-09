@@ -43,6 +43,7 @@ export default {
     align: String,
     justify: String,
     hover: Boolean,
+    position: Number,
   },
   computed: {
     getImage() {
