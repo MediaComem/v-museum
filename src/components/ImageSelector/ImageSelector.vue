@@ -15,7 +15,6 @@
   />
   <div
     style="cursor: grab; user-select:none; width: 4000px; height: 2500px"
-    :style="testMovement"
     @mousedown.left="startPosition"
     @mouseup.left="endPosition"
     @mousemove="mouseMove"
@@ -28,7 +27,7 @@
       </el-col>
     </el-row>
     <el-row :align="'bottom'">
-      <el-col :span="5"> </el-col>
+      <el-col :span="5"><span style="height: 500px; display: block" /> </el-col>
       <el-col :span="2">
         <div ref="position1">
           <related-image
@@ -59,7 +58,7 @@
       <el-col :span="5"> </el-col>
     </el-row>
     <el-row>
-      <el-col :span="7"> </el-col>
+      <el-col :span="7"></el-col>
       <el-col :span="2"> </el-col>
       <el-col :span="6" :align="'bottom'">
         <el-row>
@@ -129,7 +128,7 @@
       </el-col>
       <el-col :span="2"> </el-col>
       <el-col :span="2">
-        <div class="sliderMask" ref="divCar">
+        <div class="sliderMask" ref="divCar" style="width: 300px">
           <el-carousel
             :indicator-position="'none'"
             :height="getCarouselSize"
@@ -360,7 +359,8 @@ export default {
         }
       }
     },
-    startPosition() {
+    startPosition(event) {
+      console.log(event);
       this.isDrag = true;
     },
     endPosition() {
@@ -381,22 +381,23 @@ export default {
     mouseMove(event) {
       if (this.isDrag && !this.blockDrag) {
         const xMovement = this.currentXPosition - event.movementX;
-        this.rectangleXPosition =
-          -this.$refs.display.getBoundingClientRect().left +
-          this.windowWidth / 2 -
-          this.rectangleWidth / 2;
         if (xMovement > 0 || xMovement < event.pageWidth) {
           this.currentXPosition = xMovement;
         }
 
         const yMovement = this.currentYPosition - event.movementY;
+        if (yMovement > 0 || yMovement < event.pageHeight) {
+          this.currentYPosition = yMovement;
+        }
+
+        this.rectangleXPosition =
+          -this.$refs.display.getBoundingClientRect().left +
+          this.windowWidth / 2 -
+          this.rectangleWidth / 2;
         this.rectangleYPosition =
           -this.$refs.display.getBoundingClientRect().top +
           this.windowHeight / 2 -
           this.rectangleHeight / 2;
-        if (yMovement > 0 || yMovement < event.pageHeight) {
-          this.currentYPosition = yMovement;
-        }
         window.scrollTo(this.currentXPosition, this.currentYPosition);
         this.checkCollision();
       }
@@ -572,12 +573,6 @@ export default {
           this.step === 3 && (this.releaseStep === 0 || this.releaseStep === 6),
         unzoomTransitionImageFast:
           (this.step === 1 || this.step === 5) && this.zoomingStep === 1,
-      };
-    },
-    testMovement() {
-      return {
-        left: this.currentXPosition + "px",
-        top: this.currentYPosition + "px",
       };
     },
     ...mapState(["images", "isLoadingImage", "relatedImages"]),
