@@ -375,7 +375,7 @@ export default {
           this.speed === 6000 &&
           this.releaseStep === 0 &&
           this.nbImageMove >= 3 &&
-          this.step === 300 && this.shouldRunAnimation,
+          this.step === 300 && !this.isBeginning && !this.isEnd,
         unzoomTransitionImageFast: (this.speed > 125 && this.zoomingStep === 1) || ((this.isBeginning || this.isEnd) && this.shouldRunAnimation && this.speed <= 125) ,
       };
     },
