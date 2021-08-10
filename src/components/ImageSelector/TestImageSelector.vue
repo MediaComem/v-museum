@@ -1,79 +1,50 @@
 <template>
-  <el-row :gutter="10">
-    <el-col
-      :xs="windowHeight > windowWidth ? 8 : 10"
-      :sm="windowHeight > windowWidth ? 8 : 9"
-      :md="windowHeight > windowWidth ? 8 : 8"
-      :lg="windowHeight > windowWidth ? 8 : 10"
-      :xl="10"
-    >
-    </el-col>
-    <el-col
-      :xs="windowHeight > windowWidth ? 9 : 5"
-      :sm="windowHeight > windowWidth ? 8 : 6"
-      :md="windowHeight > windowWidth ? 9 : 8"
-      :lg="windowHeight > windowWidth ? 7 : 5"
-      :xl="5"
-    >
-      <div :style="sliderPosition">
-        <h3 style="margin: 0; height: 30px;">{{ currentIndex + 1 }}</h3>
-        <div
-          :style="[componentSize]"
-          style="overflow:hidden;"
-          class="sliderMask"
-        >
-          <div :style="componentSize" :class="selectZoomAnimation">
-            <ul
-              :class="selectSliderTransitionSpeed"
-              :style="[scrollingDisplay, scrollingMovement]"
+  <div :style="setPage">
+    <div :style="imagePosition">
+      <h3 style="margin: 0; height: 30px;">{{ currentIndex + 1 }}</h3>
+      <div :style="[componentSize]" style="overflow:hidden;" class="sliderMask">
+        <div :style="componentSize" :class="selectZoomAnimation">
+          <ul
+            ref="ul-image"
+            :class="selectSliderTransitionSpeed"
+            :style="[scrollingDisplay, scrollingMovement]"
+          >
+            <li
+              v-for="(value, index) in data"
+              :key="index"
+              :style="[componentSize]"
+              :ref="'li-' + index"
             >
-              <li
-                v-for="(value, index) in data"
-                :key="index"
-                :style="[componentSize]"
-                :ref="'li-' + index"
-              >
-                <div :style="componentSize">
-                  <img
-                    style="object-fit: none"
-                    :style="[componentSize]"
-                    :ref="'image-' + index"
-                    :src="value.imagePaths.large"
-                    :alt="value.id"
-                  />
-                </div>
-              </li>
-            </ul>
-          </div>
+              <div :style="componentSize">
+                <img
+                  style="object-fit: none"
+                  :style="[componentSize]"
+                  :ref="'image-' + index"
+                  :src="value.imagePaths.large"
+                  :alt="value.id"
+                />
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
-    </el-col>
-    <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="1">
-      <div :style="sliderMargin">
-        <el-slider
-          :class="selectArrayDisplay"
-          style="width: 42px"
-          ref="slider"
-          vertical
-          v-model="step"
-          :height="'150px'"
-          :max="600"
-          :show-tooltip="false"
-          @input="sliderChange"
-          @change="releaseSlider"
-        >
-        </el-slider>
-      </div>
-    </el-col>
-    <el-col
-      :xs="windowHeight > windowWidth ? 3 : 5"
-      :sm="windowHeight > windowWidth ? 4 : 5"
-      :md="windowHeight > windowWidth ? 2 : 3"
-      :lg="5"
-      :xl="7"
-    >
-    </el-col>
-  </el-row>
+    </div>
+    <div :style="sliderPosition">
+      <el-slider
+        :class="selectArrayDisplay"
+        style="width: 42px"
+        ref="slider"
+        vertical
+        v-model="step"
+        :height="'150px'"
+        :max="600"
+        :show-tooltip="false"
+        @input="sliderChange"
+        @change="releaseSlider"
+      >
+      </el-slider>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -120,6 +91,9 @@ export default {
     heightValue() {
       return 17 * 4 * this.defineReponsiveFactor();
     },
+    widthValue() {
+      return 9 * 4 * this.defineReponsiveFactor();
+    },
     isStop() {
       return this.step > 290 && this.step < 310;
     },
@@ -157,7 +131,9 @@ export default {
       this.nbImageMove = this.nbImageMove + 1;
     },
     launchMovement(newSpeed, direction) {
-      this.move(direction);
+      //if (this.$refs["ul-image"].classList.value === "v-museum-end") {
+        this.move(direction);
+      //}
       this.speed = newSpeed;
       this.interval.push(
         setInterval(() => {
@@ -173,14 +149,7 @@ export default {
         clearTimeout(this.timeout);
         this.timeout = undefined;
         this.stopInterval();
-        // Ensure that the scroller has a define speed before launch movement in slow speed.
-        if (newSpeed < 200) {
-          this.launchMovement(newSpeed, direction);
-        } else {
-          this.timeout = setTimeout(() => {
-            this.launchMovement(newSpeed, direction);
-          }, 200);
-        }
+        this.launchMovement(newSpeed, direction);
       }
     },
     sliderChange() {
@@ -234,12 +203,13 @@ export default {
 
       this.shouldRunAnimation = false;
       this.previousSpeed = 0;
-      this.step = 300;
 
       // Reset movement and animation parameters
       if (releaseStep < 100 || releaseStep > 530) {
         this.releaseStep = 0;
       }
+
+      this.step = 300;
 
       if (releaseStep === 300) {
         // This part analyze where we are in the sliding process to get back to the previous image in case we stop the slider.
@@ -259,7 +229,7 @@ export default {
       }
     },
     stopInterval() {
-      this.interval.forEach(clearInterval);
+      this.interval.forEach((element) => clearInterval(element));
       this.interval = [];
     },
     speedSelection() {
@@ -323,20 +293,42 @@ export default {
           return 3;
       }
     },
-    defineTopMargin() {
+    defineTopImagePosition() {
       return (this.windowHeight - this.heightValue()) / 2;
+    },
+    defineLeftImagePosition() {
+      return (this.windowWidth - this.widthValue()) / 2;
+    },
+    defineTopSliderPosition() {
+      return (
+        (this.windowHeight - this.heightValue()) / 2 +
+        this.heightValue() / 2 -
+        75
+      );
+    },
+    defineLeftSliderPosition() {
+      return this.windowWidth / 2 + this.widthValue() / 2;
     },
   },
   computed: {
-    sliderPosition() {
+    setPage() {
       return {
-        marginTop: this.defineTopMargin() - 30 + "px",
+        height: this.windowHeight + "px",
+        width: this.windowWidth + "px",
       };
     },
-    sliderMargin() {
+    imagePosition() {
       return {
-        //marginTop: (this.windowHeight - this.windowHeight / 5) / 2 + "px",
-        marginTop: ((((this.windowHeight - this. heightValue()) / 2) + this.heightValue() / 2) - 75) + 'px',
+        position: "absolute",
+        top: this.defineTopImagePosition() - 30 + "px",
+        left: this.defineLeftImagePosition() + "px",
+      };
+    },
+    sliderPosition() {
+      return {
+        position: "absolute",
+        top: this.defineTopSliderPosition() + "px",
+        left: this.defineLeftSliderPosition() + 32 + "px",
       };
     },
     scrollingDisplay() {
@@ -367,27 +359,43 @@ export default {
     selectZoomAnimation() {
       return {
         zoomTransitionImageFast:
-          this.speed <= 125 && (!this.isBeginning && !this.isEnd) &&
+          this.speed <= 125 &&
+          !this.isBeginning &&
+          !this.isEnd &&
           (this.zoomingStep === 1 || this.zoomingStep === 2),
         zoomTransitionImageMedium:
-          this.speed > 125 && this.speed <= 1000 && this.zoomingStep === 2 && (!this.isBeginning && !this.isEnd),
+          this.speed > 125 &&
+          this.speed <= 1000 &&
+          this.zoomingStep === 2 &&
+          !this.isBeginning &&
+          !this.isEnd,
         zoomTransitionImageSlow:
-          this.speed > 1000 && this.speed < 6000 && this.zoomingStep === 2 && (!this.isBeginning && !this.isEnd),
+          this.speed > 1000 &&
+          this.speed < 6000 &&
+          this.zoomingStep === 2 &&
+          !this.isBeginning &&
+          !this.isEnd,
         unzoomTransitionImageFastEnd:
           this.speed === 6000 &&
           this.releaseStep === 0 &&
           this.nbImageMove >= 3 &&
-          this.step === 300 && !this.isBeginning && !this.isEnd,
-        unzoomTransitionImageFast: (this.speed > 125 && this.zoomingStep === 1) || ((this.isBeginning || this.isEnd) && this.shouldRunAnimation && this.speed <= 125) ,
+          this.step === 300 &&
+          !this.isBeginning &&
+          !this.isEnd,
+        unzoomTransitionImageFast:
+          (this.speed > 125 && this.zoomingStep === 1) ||
+          ((this.isBeginning || this.isEnd) &&
+            this.shouldRunAnimation &&
+            this.speed <= 125),
       };
     },
     selectSliderTransitionSpeed() {
       return {
-        "v-museum-end": this.speed === 6000, 
-        "v-museum-025": this.speed === 4000, 
-        "v-museum-05": this.speed === 2000, 
-        "v-museum-075": this.speed === 1500, 
-        "v-museum-1": this.speed === 1000, 
+        "v-museum-end": this.speed === 6000,
+        "v-museum-025": this.speed === 4000,
+        "v-museum-05": this.speed === 2000,
+        "v-museum-075": this.speed === 1500,
+        "v-museum-1": this.speed === 1000,
         "v-museum-2": this.speed === 500,
         "v-museum-4": this.speed === 250,
         "v-museum-8": this.speed === 125,
@@ -400,7 +408,7 @@ export default {
         "v-start": this.isBeginning,
         "v-normal": !this.isBeginning && !this.isEnd,
         "v-end": this.isEnd,
-      }
+      };
     },
     ...mapState(["images", "isLoadingImage"]),
   },

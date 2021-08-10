@@ -108,6 +108,10 @@
   transform: scale(1);
 }
 
+.el-slider__button:hover {
+  transform: scale(1);
+}
+
 .el-slider__button.dragging {
   transform: scale(1);
 }
