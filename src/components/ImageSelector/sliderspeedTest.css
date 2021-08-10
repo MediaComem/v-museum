@@ -50,6 +50,15 @@
   transition: transform 1s linear, -webkit-transform 1s linear;
   transition: transform 1s linear, -moz-transform 1s linear;
 }
+.v-museum-1_5 {
+  -webkit-transition: -webkit-transform 0.75s linear;
+  -moz-transition: -moz-transition 0.75s linear;
+  transition: -webkit-transform 0.75s linear;
+  transition: -moz-transform 0.75s linear;
+  transition: transform 0.75s linear;
+  transition: transform 0.75s linear, -webkit-transform 0.75s linear;
+  transition: transform 0.75s linear, -moz-transform 0.75s linear;
+}
 .v-museum-2 {
   -webkit-transition: -webkit-transform 0.5s linear;
   -moz-transition: -moz-transition 0.5s linear;
@@ -58,6 +67,15 @@
   transition: transform 0.5s linear;
   transition: transform 0.5s linear, -webkit-transform 0.5s linear;
   transition: transform 0.5s linear, -moz-transform 0.5s linear;
+}
+.v-museum-3 {
+  -webkit-transition: -webkit-transform 0.375s linear;
+  -moz-transition: -moz-transition 0.375s linear;
+  transition: -webkit-transform 0.375s linear;
+  transition: -moz-transform 0.375s linear;
+  transition: transform 0.375s linear;
+  transition: transform 0.375s linear, -webkit-transform 0.375s linear;
+  transition: transform 0.375s linear, -moz-transform 0.375s linear;
 }
 
 .v-museum-4 {

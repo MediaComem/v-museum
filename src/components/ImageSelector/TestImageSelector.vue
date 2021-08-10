@@ -29,6 +29,8 @@
         </div>
       </div>
     </div>
+    <div class="font-slider" :style="fontSliderPosition">
+    </div>
     <div :style="sliderPosition">
       <el-slider
         :class="selectArrayDisplay"
@@ -36,7 +38,7 @@
         ref="slider"
         vertical
         v-model="step"
-        :height="'150px'"
+        :height="'240px'"
         :max="600"
         :show-tooltip="false"
         @input="sliderChange"
@@ -158,10 +160,8 @@ export default {
       // Release animation
       if (
         this.previousSpeed === 0 &&
-        this.releaseStep === 0 &&
         this.step !== 300
       ) {
-        this.releaseStep = -1;
         this.nbImageMove = 0;
       }
       if (this.isStop()) {
@@ -270,13 +270,17 @@ export default {
           return 125;
         case this.step <= 140:
           return 250;
-        case this.step <= 170:
+        case this.step <= 150:
+          return 375;
+        case this.step <= 190:
           return 500;
-        case this.step <= 200:
-          return 1000;
+        case this.step <= 210:
+          return 750;
         case this.step <= 230:
+          return 1000;
+        case this.step <= 250:
           return 1500;
-        case this.step <= 260:
+        case this.step <= 270:
           return 2000;
         case this.step <= 290:
           return 4000;
@@ -284,14 +288,18 @@ export default {
           return 6000;
         case this.step <= 330:
           return 4000;
-        case this.step <= 360:
+        case this.step <= 350:
           return 2000;
-        case this.step <= 390:
+        case this.step <= 370:
           return 1500;
-        case this.step <= 430:
+        case this.step <= 390:
           return 1000;
-        case this.step <= 470:
+        case this.step <= 410:
+          return 750;
+        case this.step <= 440:
           return 500;
+        case this.step <= 470:
+          return 375;
         case this.step <= 500:
           return 250;
         case this.step <= 530:
@@ -329,8 +337,7 @@ export default {
     defineTopSliderPosition() {
       return (
         (this.windowHeight - this.heightValue()) / 2 +
-        this.heightValue() / 2 -
-        75
+        this.heightValue() / 2 - 150
       );
     },
     defineLeftSliderPosition() {
@@ -351,10 +358,17 @@ export default {
         left: this.defineLeftImagePosition() + "px",
       };
     },
+    fontSliderPosition() {
+    return {
+        position: "absolute",
+        top: this.defineTopSliderPosition() + 75 + "px",
+        left: this.defineLeftSliderPosition() + 33 + "px",
+      };
+    },
     sliderPosition() {
       return {
         position: "absolute",
-        top: this.defineTopSliderPosition() + "px",
+        top: this.defineTopSliderPosition() + 30 + "px",
         left: this.defineLeftSliderPosition() + 32 + "px",
       };
     },
@@ -418,7 +432,9 @@ export default {
         "v-museum-05": this.speed === 2000,
         "v-museum-075": this.speed === 1500,
         "v-museum-1": this.speed === 1000,
+        "v-museum-1_5": this.speed === 750,
         "v-museum-2": this.speed === 500,
+        "v-museum-3": this.speed === 375,
         "v-museum-4": this.speed === 250,
         "v-museum-8": this.speed === 125,
         "v-museum-16": this.speed === 62,
