@@ -60,14 +60,15 @@ export default {
     currentIndex: function(newVal) {
       this.isBeginning = newVal === 0;
       this.isEnd = newVal === this.data.length - 1;
-      this.shouldRunAnimation = this.isBeginning || this.isEnd;
+      this.shouldRunSideAnimation = this.isBeginning || this.isEnd;
     },
   },
   data() {
     return {
       isBeginning: true,
       isEnd: false,
-      shouldRunAnimation: false,
+      shouldRunSideAnimation: false,
+      shouldRunDecelerateAnimation: false,
       data: undefined,
       // Information uses to manage the movement
       step: 300,
@@ -85,6 +86,7 @@ export default {
       // Management of the interval and timeout process
       interval: [],
       timeout: undefined,
+      decelerateTimouts: [],
     };
   },
   methods: {
@@ -132,7 +134,7 @@ export default {
     },
     launchMovement(newSpeed, direction) {
       //if (this.$refs["ul-image"].classList.value === "v-museum-end") {
-        this.move(direction);
+      this.move(direction);
       //}
       this.speed = newSpeed;
       this.interval.push(
@@ -171,6 +173,7 @@ export default {
           }
         }, 200);
       } else {
+        this.decelerateTimouts.forEach(clearTimeout);
         const newSpeed = this.speedSelection();
         this.animationStepAnalysis(newSpeed);
 
@@ -181,6 +184,27 @@ export default {
         this.previousSpeed = newSpeed;
         this.previousDirection = direction;
       }
+    },
+    launchDecelerate(direction) {
+      this.decelerateTimouts.push(
+        setTimeout(() => {
+          this.speed = 250;
+          this.move(direction);
+        }, 50)
+      );
+      this.decelerateTimouts.push(
+        setTimeout(() => {
+          this.speed = 500;
+          this.move(direction);
+        }, 250)
+      );
+      this.decelerateTimouts.push(
+        setTimeout(() => {
+          this.speed = 1000;
+          this.move(direction);
+          setTimeout(() => this.shouldRunDecelerateAnimation = false, 1000);
+        }, 500)
+      );
     },
     getBackPreviousPosition() {
       const imagePosition = this.$refs[
@@ -201,12 +225,15 @@ export default {
       clearTimeout(this.timeout);
       this.stopInterval();
 
-      this.shouldRunAnimation = false;
+      this.shouldRunSideAnimation = false;
       this.previousSpeed = 0;
 
-      // Reset movement and animation parameters
-      if (releaseStep < 100 || releaseStep > 530) {
-        this.releaseStep = 0;
+      if (releaseStep <= 140 || releaseStep > 470) {
+        // Reset movement and animation parameters
+        if (releaseStep < 100 || releaseStep > 530) {
+          this.shouldRunDecelerateAnimation = true;
+        }
+        this.launchDecelerate(this.previousDirection);
       }
 
       this.step = 300;
@@ -376,16 +403,11 @@ export default {
           !this.isBeginning &&
           !this.isEnd,
         unzoomTransitionImageFastEnd:
-          this.speed === 6000 &&
-          this.releaseStep === 0 &&
-          this.nbImageMove >= 3 &&
-          this.step === 300 &&
-          !this.isBeginning &&
-          !this.isEnd,
+          this.shouldRunDecelerateAnimation && !this.isBeginning && !this.isEnd,
         unzoomTransitionImageFast:
           (this.speed > 125 && this.zoomingStep === 1) ||
           ((this.isBeginning || this.isEnd) &&
-            this.shouldRunAnimation &&
+            this.shouldRunSideAnimation &&
             this.speed <= 125),
       };
     },
