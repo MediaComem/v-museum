@@ -1,29 +1,11 @@
-.el-carousel__item.is-animating {
-  height: 102%;
+.v-zoom {
+  transform: scale(2);
 }
 
-.el-carousel__item.is-active img {
-  -webkit-transition: transform 20s ease;
-  -moz-transition: transform 20s ease;
-  -ms-transition: transform 20s ease;
-  transition: transform 20s ease;
+.v-unzoom {
+  transform: scale(1);
+  transition: transform 20s linear;
   transition-delay: 3s;
-  transform: scale(1.5);
-}
-
-.custom-image .custom-carousel {
-  margin-top: 0%;
-  margin-bottom: 0%;
-}
-
-.el-carousel__item {
-  overflow: hidden !important;
-}
-
-.el-carousel__indicators--vertical {
-  width: 0px;
-  height: 0px;
-  pointer-events: none;
 }
 
 .el-slider__bar {

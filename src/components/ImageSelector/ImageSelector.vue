@@ -1,56 +1,51 @@
 <template>
-  <el-row :gutter="10" :align="'middle'">
-    <el-col :span="9"> </el-col>
-    <el-col
-      :span="6"
-      :style="{
-        marginTop: windowHeight / 10 + 'px',
-        marginBottom: windowHeight / 10 + 'px',
-      }"
-    >
-      <div class="sliderMask">
-        <el-carousel
-          :height="(windowHeight / 6) * 4 + 'px'"
-          direction="vertical"
-          :loop="true"
-          :autoplay="false"
-          ref="carousel"
-          :style="marginCarourel"
-          :class="selectZoomAnimation"
-          @change="changeImage"
-        >
-          <el-carousel-item
-            v-for="(value, index) in data"
-            :key="index"
+  <div :style="setPage">
+    <div :style="imagePosition">
+      <h3 style="margin: 0; height: 30px;">{{ currentIndex + 1 }}</h3>
+      <div :style="[componentSize]" style="overflow:hidden;" class="sliderMask">
+        <div :style="componentSize" :class="[selectZoomAnimation]">
+          <ul
+            ref="ul-image"
             :class="selectSliderTransitionSpeed"
+            :style="[scrollingDisplay, scrollingMovement]"
           >
-            <img
-              :ref="'image-' + index"
-              class="custom-image"
-              :src="value.imagePaths.large"
-              :alt="value.id"
-            />
-          </el-carousel-item>
-        </el-carousel>
+            <li
+              v-for="(value, index) in data"
+              :key="index"
+              :style="[componentSize]"
+              :ref="'li-' + index"
+            >
+              <div :style="componentSize">
+                <img
+                  style="object-fit: none"
+                  :style="componentSize"
+                  :ref="'image-' + index"
+                  :src="value.imagePaths.large"
+                  :alt="value.id"
+                />
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-    </el-col>
-    <el-col :span="2">
-      <el-row :justify="'center'" :align="'middle'">
-        <el-slider
-          ref="slider"
-          vertical
-          v-model="step"
-          :height="windowHeight / 5 + 'px'"
-          :max="60"
-          :show-tooltip="false"
-          @change="releaseSlider"
-          @input="sliderChange"
-        >
-        </el-slider>
-      </el-row>
-    </el-col>
-    <el-col :span="7"> </el-col>
-  </el-row>
+    </div>
+    <div class="font-slider" :style="fontSliderPosition"></div>
+    <div :style="sliderPosition">
+      <el-slider
+        :class="selectArrayDisplay"
+        style="width: 42px"
+        ref="slider"
+        vertical
+        v-model="step"
+        :height="'240px'"
+        :max="600"
+        :show-tooltip="false"
+        @input="sliderChange"
+        @change="releaseSlider"
+      >
+      </el-slider>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -58,276 +53,395 @@ import { useWindowSize } from "vue-window-size";
 import { mapState } from "vuex";
 
 export default {
-  name: "ImageSelector",
+  name: "TestImageSelector",
   watch: {
     images: function(newImages) {
       this.data = newImages;
-      this.totalCarouselIndex = this.data.length;
-      if (this.isInitialLoad) {
-        this.$nextTick(() => {
-          this.carousel.setActiveItem(0);
-          this.isInitialLoad = false;
-        });
-      }
+    },
+    currentIndex: function(newVal) {
+      this.isBeginning = newVal === 0;
+      this.isEnd = newVal === this.data.length - 1;
+      this.shouldRunSideAnimation = this.isBeginning || this.isEnd;
     },
   },
   data() {
     return {
-      autoplay: false,
-      previousSpeed: 0,
-      currentIndex: 0,
-      isInitialLoad: true,
+      isBeginning: true,
+      isEnd: false,
       data: undefined,
-      releaseStep: -1,
-      previousStep: 3,
+      // Information uses to manage the movement
+      step: 300,
+      speed: 6000,
+      previousSpeed: 0,
+      previousDirection: undefined,
+      currentIndex: 0,
+      // Information uses to manage the animations
       zoomingStep: 3,
-      step: 30,
-      modifiedStep: 3,
+      nbImageMove: 0,
+      shouldRunSideAnimation: false,
+      shouldRunDecelerateAnimation: false,
+      // Information uses to manage the display
       windowHeight: undefined,
       windowWidth: undefined,
-      carousel: undefined,
-      totalCarouselIndex: 0,
-      currentSlide: 0,
+      // Management of the interval and timeout process
+      interval: [],
       timeout: undefined,
+      decelerateTimouts: [],
     };
   },
   methods: {
-    mouseWheelAction(event) {
-      if (event.deltaY < 0) {
-        this.getPreviousImages(this.currentSlide - 1, 80, 100);
-      } else if (event.deltaY > 0) {
-        this.getNextImages(this.currentSlide + 1, 80, 100);
-      }
+    thumbnailHeight() {
+      return 17 * 4 * this.defineReponsiveFactor();
     },
-    // This method reset some properties in case of the user release the slider
-    releaseSlider(releaseStep) {
-      this.previousStepElement = 30;
-      this.zoomingStep = 2;
-      this.releaseStep = releaseStep;
-      this.step = 30;
-      this.stopTimeout();
+    thumbnailWidth() {
+      return 9 * 4 * this.defineReponsiveFactor();
     },
-    animationStepAnalysis(move, faster, slower) {
-      if (move) {
-        if (faster) {
-          this.releaseStep = -1;
-          this.zoomingStep = 2;
-        } else if (slower) {
-          this.zoomingStep = 1;
-        }
-      }
+    isStop() {
+      return this.step > 290 && this.step < 310;
     },
-    isFirstMove(move) {
-      return move && this.previousStep === 3;
-    },
-    speedSelection() {
-      // Moving carousel part
-      switch (true) {
-        case this.step <= 2:
-          return 50;
-        case this.step <= 6:
-          return 62;
-        case this.step <= 10:
-          return 125;
-        case this.step <= 14:
-          return 250;
-        case this.step <= 17:
-          return 500;
-        case this.step <= 20:
-          return 1000;
-        case this.step <= 23:
-          return 1500;
-        case this.step <= 26:
-          return 2000;
-        case this.step <= 29:
-          return 4000;
-        case this.step === 30:
-          return 0;
-        case this.step <= 33:
-          return 4000;
-        case this.step <= 36:
-          return 2000;
-        case this.step <= 39:
-          return 1500;
-        case this.step <= 43:
-          return 1000;
-        case this.step <= 47:
-          return 500;
-        case this.step <= 50:
-          return 250;
-        case this.step <= 53:
-          return 125;
-        case this.step <= 57:
-          return 62;
-        case this.step <= 60:
-          return 50;
-      }
-    },
-    sliderChange() {
-      this.changeImage(undefined);
-    },
-    changeImage(nextImageIndex) {
-      if (nextImageIndex) {
-        this.currentIndex = nextImageIndex;
-      }
-      this.modifiedStep =
-        this.step > 30 ? Math.ceil(this.step / 10) : Math.floor(this.step / 10);
-      // In case of we move to top for animation analysis purpose
-      const forward = this.modifiedStep < 3;
-      let slower = this.modifiedStep - this.previousStep >= 1;
-      let faster = this.modifiedStep - this.previousStep <= -1;
-      this.animationStepAnalysis(forward, faster, slower);
-
-      // In case of we move to bottom for animation analysis purpose
-      const backward = this.modifiedStep > 3;
-      faster = this.modifiedStep - this.previousStep >= 1;
-      slower = this.modifiedStep - this.previousStep <= -1;
-      this.animationStepAnalysis(backward, faster, slower);
-
-      const newSpeed = this.speedSelection();
-
-      if (forward) {
-        this.navigateNextImage(
-          nextImageIndex,
-          80,
-          newSpeed,
-          newSpeed !== this.previousSpeed
-        );
-      }
-
-      if (backward) {
-        this.navigatePreviousImage(
-          nextImageIndex,
-          newSpeed,
-          newSpeed !== this.previousSpeed
-        );
-      }
-
-      this.previousSpeed = newSpeed;
-      // Keep track of this step for animation analysis purpose
-      this.previousStep = this.modifiedStep;
-    },
-    navigatePreviousImage(nextImageIndex, intervalTransitionTime, speedChange) {
-      if (speedChange) {
-        this.stopTimeout();
-        this.carousel.prev();
-      }
-      if (nextImageIndex) {
-        this.stopTimeout();
-      }
-      this.timeout = setTimeout(
-        () => this.carousel.prev(),
-        intervalTransitionTime
-      );
-    },
-    navigateNextImage(
-      nextImageIndex,
-      diffMaxIndexBeforeLoad,
-      intervalTransitionTime,
-      speedChange
-    ) {
+    loadMoreContent(diffMaxIndexBeforeLoad) {
       if (
-        nextImageIndex > this.totalCarouselIndex - diffMaxIndexBeforeLoad &&
+        this.currentIndex > this.data.length - diffMaxIndexBeforeLoad &&
         !this.isLoadingImage
       ) {
         this.$store.dispatch("loadNextContent");
       }
-      if (speedChange) {
-        this.stopTimeout();
-        let image;
-        if (this.carousel.activeIndex === this.totalCarouselIndex) {
-          image = "image-" + 0;
-        } else {
-          image = "image-" + (this.carousel.data.activeIndex + 1);
-        }
-        console.log(this.$refs[image].getBoundingClientRect().y);
-        this.carousel.next();
-      }
-      if (nextImageIndex) {
-        this.stopTimeout();
+    },
+    move(forward) {
+      this.loadMoreContent(80);
 
-        this.timeout = setTimeout(
-          () => this.carousel.next(),
-          intervalTransitionTime
-        );
+      if (forward) {
+        if (this.currentIndex !== this.data.length - 1) {
+          this.currentIndex = this.currentIndex + 1;
+        }
+      }
+      else if (this.currentIndex !== 0) {
+        this.currentIndex = this.currentIndex - 1;
+      }
+      // This incrementation is to manage the animation
+      this.nbImageMove = this.nbImageMove + 1;
+    },
+    launchMovement(newSpeed, direction) {
+      this.move(direction);
+      this.speed = newSpeed;
+      this.interval.push(
+        setInterval(() => {
+          this.move(direction);
+        }, this.speed)
+      );
+    },
+    movementAnalysis(newSpeed, direction) {
+      if (
+        newSpeed !== this.previousSpeed ||
+        this.previousDirection !== direction
+      ) {
+        this.stopInterval();
+        this.launchMovement(newSpeed, direction);
       }
     },
-    stopTimeout() {
+    sliderChange() {
+      // Release animation
+      if (this.previousSpeed === 0 && this.step !== 300) {
+        this.nbImageMove = 0;
+      }
+      if (this.isStop()) {
+        clearTimeout(this.timeout);
+        // Wait to ensure that we are stopped in the stopping step and not change the direction
+        this.timeout = setTimeout(() => {
+          if (this.isStop()) {
+            this.releaseSlider(300);
+          }
+        }, 200);
+      } else {
+        this.decelerateTimouts.forEach(clearTimeout);
+        const newSpeed = this.speedSelection();
+        this.animationStepAnalysis(newSpeed);
+
+        const direction = this.step <= 290;
+        this.movementAnalysis(newSpeed, direction);
+
+        // Keep track of the state for next step of the slider change
+        this.previousSpeed = newSpeed;
+        this.previousDirection = direction;
+      }
+    },
+    launchDecelerate(direction) {
+      this.decelerateTimouts.push(
+        setTimeout(() => {
+          this.speed = 250;
+          this.move(direction);
+        }, 50)
+      );
+      this.decelerateTimouts.push(
+        setTimeout(() => {
+          this.speed = 500;
+          this.move(direction);
+        }, 250)
+      );
+      this.decelerateTimouts.push(
+        setTimeout(() => {
+          this.speed = 1000;
+          this.move(direction);
+          setTimeout(() => (this.shouldRunDecelerateAnimation = false), 1000);
+        }, 500)
+      );
+    },
+    getBackPreviousPosition() {
+      const imagePosition = this.$refs[
+        "image-" + this.currentIndex
+      ].getBoundingClientRect();
+      if (
+        this.previousDirection &&
+        imagePosition.y > imagePosition.height / 2 &&
+        this.currentIndex !== 0
+      ) {
+        this.currentIndex = this.currentIndex - 1;
+      } else if (!this.previousDirection && imagePosition.y < 0) {
+        this.currentIndex = this.currentIndex + 1;
+      }
+    },
+    releaseSlider(releaseStep) {
+      // Reset Interval and Timeout
       clearTimeout(this.timeout);
+      this.stopInterval();
+
+      this.shouldRunSideAnimation = false;
+      this.previousSpeed = 0;
+
+      if (releaseStep <= 140 || releaseStep > 470) {
+        // Reset movement and animation parameters
+        if (releaseStep < 100 || releaseStep > 530) {
+          this.shouldRunDecelerateAnimation = true;
+        }
+        this.launchDecelerate(this.previousDirection);
+      }
+
+      this.step = 300;
+
+      if (releaseStep === 300) {
+        // This part analyze where we are in the sliding process to get back to the previous image in case we stop the slider.
+        this.getBackPreviousPosition();
+        this.zoomingStep = -1;
+        this.speed = 6000;
+        this.previousDirection = undefined;
+      }
+    },
+    animationStepAnalysis(speed) {
+      if (this.previousSpeed > speed) {
+        this.zoomingStep = 2;
+      } else if (this.previousSpeed <= 125 && this.previousSpeed !== 0) {
+        this.zoomingStep = 1;
+      } else if (this.previousSpeed < speed && this.speed > 1000) {
+        this.zoomingStep = 2;
+      }
+    },
+    stopInterval() {
+      this.interval.forEach((element) => clearInterval(element));
+      this.interval = [];
+    },
+    speedSelection() {
+      // Find the transition speed
+      switch (true) {
+        case this.step <= 20:
+          return 50;
+        case this.step <= 60:
+          return 62;
+        case this.step <= 100:
+          return 125;
+        case this.step <= 140:
+          return 250;
+        case this.step <= 150:
+          return 375;
+        case this.step <= 190:
+          return 500;
+        case this.step <= 210:
+          return 750;
+        case this.step <= 230:
+          return 1000;
+        case this.step <= 250:
+          return 1500;
+        case this.step <= 270:
+          return 2000;
+        case this.step <= 290:
+          return 4000;
+        case this.step > 290 && this.step < 310:
+          return 6000;
+        case this.step <= 330:
+          return 4000;
+        case this.step <= 350:
+          return 2000;
+        case this.step <= 370:
+          return 1500;
+        case this.step <= 390:
+          return 1000;
+        case this.step <= 410:
+          return 750;
+        case this.step <= 440:
+          return 500;
+        case this.step <= 470:
+          return 375;
+        case this.step <= 500:
+          return 250;
+        case this.step <= 530:
+          return 125;
+        case this.step <= 570:
+          return 62;
+        case this.step <= 600:
+          return 50;
+      }
+    },
+    defineReponsiveFactor() {
+      switch (true) {
+        case this.windowWidth >= 1000 && this.windowHeight >= 920:
+          return 10;
+        case this.windowWidth >= 700 && this.windowHeight >= 716:
+          return 7;
+        case this.windowWidth >= 550 && this.windowHeight >= 615:
+          return 5.5;
+        case this.windowWidth >= 450 && this.windowHeight >= 548:
+          return 4.5;
+        case this.windowWidth >= 400 && this.windowHeight >= 514:
+          return 4;
+        case this.windowWidth >= 350 && this.windowHeight >= 480:
+          return 3.5;
+        default:
+          return 3;
+      }
+    },
+    defineTopImagePosition() {
+      return (this.windowHeight - this.thumbnailHeight()) / 2;
+    },
+    defineLeftImagePosition() {
+      return (this.windowWidth - this.thumbnailWidth()) / 2;
+    },
+    defineTopSliderPosition() {
+      return (
+        (this.windowHeight - this.thumbnailHeight()) / 2 +
+        this.thumbnailHeight() / 2 -
+        150
+      );
+    },
+    defineLeftSliderPosition() {
+      return this.windowWidth / 2 + this.thumbnailWidth() / 2;
     },
   },
   computed: {
+    setPage() {
+      return {
+        height: this.windowHeight + "px",
+        width: this.windowWidth + "px",
+      };
+    },
+    imagePosition() {
+      return {
+        position: "absolute",
+        top: this.defineTopImagePosition() + "px",
+        left: this.defineLeftImagePosition() + "px",
+      };
+    },
+    fontSliderPosition() {
+      return {
+        position: "absolute",
+        top: this.defineTopSliderPosition() + 75 + "px",
+        left: this.defineLeftSliderPosition() + 33 + "px",
+      };
+    },
+    sliderPosition() {
+      return {
+        position: "absolute",
+        top: this.defineTopSliderPosition() + 30 + "px",
+        left: this.defineLeftSliderPosition() + 32 + "px",
+      };
+    },
+    scrollingDisplay() {
+      return {
+        overflow: "hidden",
+        margin: 0,
+        padding: 0,
+      };
+    },
+    componentSize() {
+      return {
+        height: this.thumbnailHeight() + "px",
+        width: 9 * 4 * this.defineReponsiveFactor() + "px",
+      };
+    },
+    // Setup image display and translation for the scrolling
+    scrollingMovement() {
+      return {
+        "-webkit-transform":
+          "translateY(-" + this.thumbnailHeight() * this.currentIndex + "px)",
+        "-moz-transform":
+          "translateY(-" + this.thumbnailHeight() * this.currentIndex + "px)",
+        transform:
+          "translateY(-" + this.thumbnailHeight() * this.currentIndex + "px)",
+      };
+    },
+    // Base on the movement step and speed, select the right animation
     selectZoomAnimation() {
       return {
         zoomTransitionImageFast:
-          (this.modifiedStep === 0 || this.modifiedStep === 6) &&
-          this.zoomingStep === 2,
+          this.speed <= 125 &&
+          !this.isBeginning &&
+          !this.isEnd &&
+          (this.zoomingStep === 1 || this.zoomingStep === 2),
         zoomTransitionImageMedium:
-          (this.modifiedStep === 1 || this.modifiedStep === 5) &&
-          this.zoomingStep === 2,
+          this.speed > 125 &&
+          this.speed <= 1000 &&
+          this.zoomingStep === 2 &&
+          !this.isBeginning &&
+          !this.isEnd,
         zoomTransitionImageSlow:
-          (this.modifiedStep === 2 || this.modifiedStep === 4) &&
-          (this.zoomingStep === 2 || this.zoomingStep === 1),
+          this.speed > 1000 &&
+          this.speed < 6000 &&
+          this.zoomingStep === 2 &&
+          !this.isBeginning &&
+          !this.isEnd,
         unzoomTransitionImageFastEnd:
-          this.modifiedStep === 3 &&
-          (this.releaseStep === 0 || this.releaseStep === 6),
+          this.shouldRunDecelerateAnimation && !this.isBeginning && !this.isEnd,
         unzoomTransitionImageFast:
-          (this.modifiedStep === 1 || this.modifiedStep === 5) &&
-          this.zoomingStep === 1,
+          (this.speed > 125 && this.zoomingStep === 1) ||
+          ((this.isBeginning || this.isEnd) &&
+            this.shouldRunSideAnimation &&
+            this.speed <= 125),
       };
     },
     selectSliderTransitionSpeed() {
       return {
-        "v-museum-025":
-          (this.step > 26 && this.step <= 29) ||
-          (this.step < 34 && this.step >= 31),
-        "v-museum-05":
-          (this.step > 23 && this.step <= 26) ||
-          (this.step < 37 && this.step >= 34),
-        "v-museum-075":
-          (this.step > 20 && this.step <= 23) ||
-          (this.step < 40 && this.step >= 37),
-        "v-museum-1":
-          (this.step > 17 && this.step <= 20) ||
-          (this.step < 44 && this.step >= 40),
-        "v-museum-2":
-          (this.step > 14 && this.step <= 17) ||
-          (this.step < 48 && this.step >= 44),
-        "v-museum-4":
-          (this.step > 10 && this.step <= 14) ||
-          (this.step < 51 && this.step >= 48),
-        "v-museum-8":
-          (this.step > 6 && this.step <= 10) ||
-          (this.step < 54 && this.step >= 51),
-        "v-museum-16":
-          (this.step > 2 && this.step <= 6) ||
-          (this.step < 58 && this.step >= 54),
-        "v-museum-20": this.step <= 2 || this.step >= 58,
+        "v-museum-end": this.speed === 6000,
+        "v-museum-025": this.speed === 4000,
+        "v-museum-05": this.speed === 2000,
+        "v-museum-075": this.speed === 1500,
+        "v-museum-1": this.speed === 1000,
+        "v-museum-1_5": this.speed === 750,
+        "v-museum-2": this.speed === 500,
+        "v-museum-3": this.speed === 375,
+        "v-museum-4": this.speed === 250,
+        "v-museum-8": this.speed === 125,
+        "v-museum-16": this.speed === 62,
+        "v-museum-20": this.speed === 50,
       };
     },
-    marginCarourel() {
-      return { marginTop: this.windowHeight / 14 + "px" };
+    selectArrayDisplay() {
+      return {
+        "v-start": this.isBeginning,
+        "v-normal": !this.isBeginning && !this.isEnd,
+        "v-end": this.isEnd,
+      };
     },
     ...mapState(["images", "isLoadingImage"]),
   },
   mounted() {
-    // Due to the mandatory height for carousel element in vertical mode.
-    // This lib is used for reponsive purpose
+    // Use to find the ratio and to add the content correctly in the scroll and to know the translation size
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
 
-    this.carousel = this.$refs.carousel;
-    //this.carousel.$el.addEventListener("wheel", this.mouseWheelAction);
-
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
     this.$store.dispatch("initializeCarousel", {
-      decade: "191",
+      decade: "193",
     });
-  },
-  unmounted() {
-    //this.carousel.$el.removeEventListener("wheel", this.keyEvent);
   },
 };
 </script>
