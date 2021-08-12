@@ -1,39 +1,11 @@
-.custom-image {
-  height: 100%;
-  width: 100%;
+.v-zoom {
   transform: scale(2);
 }
 
-.custom-image .custom-carousel {
-  margin-top: 0%;
-  margin-bottom: 0%;
-}
-
-.el-carousel__item {
-  overflow: hidden !important;
-}
-
-.el-carousel__item.is-active img {
-  -webkit-transition: transform 20s ease;
-  -moz-transition: transform 20s ease;
-  -ms-transition: transform 20s ease;
-  transition: transform 20s ease;
+.v-unzoom {
+  transform: scale(1);
+  transition: transform 20s linear;
   transition-delay: 3s;
-  transform: scale(1.5);
-}
-
-.el-carousel__item.is-animating {
-  -webkit-transition: -webkit-transform 0.05s ease-in-out;
-  transition: -webkit-transform 0.1s ease-in-out;
-  transition: transform 0.05s ease-in-out;
-  transition: transform 0.05s ease-in-out, -webkit-transform 0.05s ease-in-out;
-  transition: transform 0.05s ease-in-out, -webkit-transform 0.05s ease-in-out;
-}
-
-.el-carousel__indicators--vertical {
-  width: 0px;
-  height: 0px;
-  pointer-events: none;
 }
 
 .el-slider__bar {
@@ -44,17 +16,42 @@
   background-color: unset;
 }
 
-.el-slider__button {
+.v-start .el-slider__button {
   -moz-border-radius: 30px;
   -webkit-border-radius: 30px;
   border-radius: 30px;
 
-  background: url('../../assets/chevron_up.png') , url('../../assets/chevron_down.png');
-  background-position-x: -1px, 1px;
+  background: url("../../assets/gui-chevron-up.png"),
+    url("../../assets/gui-chevron-down.png");
+  background-position-x: -1px, 12px;
   background-position-y: 5%, 95%;
   background-repeat: no-repeat, no-repeat;
-  background-size: 100%, 100%;
+  background-size: 0%, 40%;
+  border-color: #c0c4cc;
+  border: 1px #c0c4cc;
+  height: 100%;
+  width: 42px;
+  min-width: 10px;
+  max-width: 200px;
+  min-height: 100px;
+  max-height: 300px;
+  background-color: inherit;
+  box-shadow: 1px 5px 12px rgba(0, 0, 0, 0.2);
 
+  height: 150px;
+}
+
+.v-normal .el-slider__button {
+  -moz-border-radius: 30px;
+  -webkit-border-radius: 30px;
+  border-radius: 30px;
+
+  background: url("../../assets/gui-chevron-up.png"),
+    url("../../assets/gui-chevron-down.png");
+  background-position-x: 12px, 12px;
+  background-position-y: 5%, 95%;
+  background-repeat: no-repeat, no-repeat;
+  background-size: 40%, 40%;
   border-color: #c0c4cc;
   border: 1px #c0c4cc;
   height: 100%;
@@ -64,22 +61,69 @@
   min-height: 100px;
   max-height: 300px;
   background-color: inherit;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 1px 5px 12px rgba(0, 0, 0, 0.2);
+
+  height: 150px;
+}
+
+.v-end .el-slider__button {
+  -moz-border-radius: 30px;
+  -webkit-border-radius: 30px;
+  border-radius: 30px;
+
+  background: url("../../assets/gui-chevron-up.png"),
+    url("../../assets/gui-chevron-down.png");
+  background-position-x: 12px, 1px;
+  background-position-y: 5%, 95%;
+  background-repeat: no-repeat, no-repeat;
+  background-size: 40%, 0%;
+  border-color: #c0c4cc;
+  border: 1px #c0c4cc;
+  height: 100%;
+  width: 100%;
+  min-width: 10px;
+  max-width: 200px;
+  min-height: 100px;
+  max-height: 300px;
+  background-color: inherit;
+  box-shadow: 1px 5px 12px rgba(0, 0, 0, 0.2);
+
+  height: 150px;
+}
+
+
+.el-slider__button.hover {
+  transform: scale(1);
+}
+
+.el-slider__button:hover {
+  transform: scale(1);
+}
+
+.el-slider__button.dragging {
+  transform: scale(1);
 }
 
 .el-slider__button-wrapper {
-  height: 100%;
+  height: 150px;
   background-color: white;
   -moz-border-radius: 30px;
   -webkit-border-radius: 30px;
   border-radius: 30px;
+  width: 40px;
 }
 
-.el-slider {
+.font-slider {
   background-color: rgb(192 196 204 / 29%);
   -moz-border-radius: 30px;
   -webkit-border-radius: 30px;
   border-radius: 30px;
+  width: 40px;
+  height: 150px;
+}
+
+.el-slider.is-vertical {
+  width: 55px;
 }
 
 .sliderMask {
@@ -87,16 +131,15 @@
 }
 
 .zoomTransitionImageSlow {
-  opacity: 0.90;
+  opacity: 0.9;
 }
 
 .zoomTransitionImageMedium {
-  opacity: 0.80;
+  opacity: 0.8;
 }
 
 .zoomTransitionImageFast {
-  animation: maskTransitionImageFast 1.5s linear 0s normal forwards;
-  animation-timing-function: ease;
+  animation: maskTransitionImageFast 5s linear 0s normal forwards;
 }
 
 @keyframes maskTransitionImageFast {
@@ -104,63 +147,126 @@
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 80%
+      rgba(0, 0, 0, 0.5) 97%
+    );
+  }
+  5% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.3) 94%
     );
   }
   10% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 76%
+      rgba(0, 0, 0, 0.1) 91%
+    );
+  }
+  15% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 88%
     );
   }
   20% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 74%
+      rgba(0, 0, 0, 0) 85%
+    );
+  }
+  25% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 82%
     );
   }
   30% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 68%
+      rgba(0, 0, 0, 0) 79%
+    );
+  }
+  35% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 76%
     );
   }
   40% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 64%
+      rgba(0, 0, 0, 0) 73%
+    );
+  }
+  45% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 70%
     );
   }
   50% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 60%
+      rgba(0, 0, 0, 0) 67%
+    );
+  }
+  55% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 64%
     );
   }
   60% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 56%
+      rgba(0, 0, 0, 0) 61%
+    );
+  }
+  65% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 59%
     );
   }
   70% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 52%
+      rgba(0, 0, 0, 0) 56%
+    );
+  }
+  75% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 53%
     );
   }
   80% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 48%
+      rgba(0, 0, 0, 0) 50%
+    );
+  }
+  85% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 47%
     );
   }
   90% {
@@ -168,6 +274,13 @@
       circle at 50% 50%,
       black 10%,
       rgba(0, 0, 0, 0) 44%
+    );
+  }
+  95% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 41%
     );
   }
   100% {
@@ -181,7 +294,6 @@
 
 .unzoomTransitionImageFast {
   animation: unMaskTransitionImageFast 1.5s linear 0s normal forwards;
-  animation-timing-function: ease;
 }
 
 @keyframes unMaskTransitionImageFast {
@@ -192,11 +304,25 @@
       rgba(0, 0, 0, 0) 40%
     );
   }
+  5% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 43%
+    );
+  }
   10% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
       rgba(0, 0, 0, 0) 46%
+    );
+  }
+  15% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 49%
     );
   }
   20% {
@@ -206,11 +332,25 @@
       rgba(0, 0, 0, 0) 52%
     );
   }
+  25% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 55%
+    );
+  }
   30% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
       rgba(0, 0, 0, 0) 58%
+    );
+  }
+  35% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 61%
     );
   }
   40% {
@@ -220,11 +360,25 @@
       rgba(0, 0, 0, 0) 64%
     );
   }
+  45% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 67%
+    );
+  }
   50% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
       rgba(0, 0, 0, 0) 70%
+    );
+  }
+  55% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 73%
     );
   }
   60% {
@@ -234,11 +388,25 @@
       rgba(0, 0, 0, 0) 76%
     );
   }
+  65% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 79%
+    );
+  }
   70% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
       rgba(0, 0, 0, 0) 82%
+    );
+  }
+  75% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 85%
     );
   }
   80% {
@@ -248,21 +416,34 @@
       rgba(0, 0, 0, 0) 88%
     );
   }
+  85% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.1) 91%
+    );
+  }
   90% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 94%
+      rgba(0, 0, 0, 0.3) 94%
+    );
+  }
+  95% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.5) 97%
     );
   }
   100% {
-    opacity: 0.80;
+    opacity: 0.8;
   }
 }
 
 .unzoomTransitionImageFastEnd {
   animation: unMaskTransitionImageFastEnd 1.5s linear 0s normal forwards;
-  animation-timing-function: ease;
 }
 
 @keyframes unMaskTransitionImageFastEnd {
@@ -273,11 +454,25 @@
       rgba(0, 0, 0, 0) 40%
     );
   }
+  5% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 43%
+    );
+  }
   10% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
       rgba(0, 0, 0, 0) 46%
+    );
+  }
+  15% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 49%
     );
   }
   20% {
@@ -287,11 +482,25 @@
       rgba(0, 0, 0, 0) 52%
     );
   }
+  25% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 55%
+    );
+  }
   30% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
       rgba(0, 0, 0, 0) 58%
+    );
+  }
+  35% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 61%
     );
   }
   40% {
@@ -301,11 +510,25 @@
       rgba(0, 0, 0, 0) 64%
     );
   }
+  45% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 67%
+    );
+  }
   50% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
       rgba(0, 0, 0, 0) 70%
+    );
+  }
+  55% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 73%
     );
   }
   60% {
@@ -315,11 +538,25 @@
       rgba(0, 0, 0, 0) 76%
     );
   }
+  65% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 79%
+    );
+  }
   70% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
       rgba(0, 0, 0, 0) 82%
+    );
+  }
+  75% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 85%
     );
   }
   80% {
@@ -329,11 +566,25 @@
       rgba(0, 0, 0, 0) 88%
     );
   }
+  85% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.1) 91%
+    );
+  }
   90% {
     mask-image: radial-gradient(
       circle at 50% 50%,
       black 10%,
-      rgba(0, 0, 0, 0) 94%
+      rgba(0, 0, 0, 0.3) 94%
+    );
+  }
+  95% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.5) 97%
     );
   }
   100% {
