@@ -6,13 +6,20 @@
     :height="rectangleHeight"
     :offsetX="windowWidth"
     :offsetY="windowHeight"
+    @mousedown.left="startPosition"
+    @mouseup="endPosition"
+    @mousemove="mouseMove"
     @mousewheel="wheelMove"
     style="cursor: pointer; user-select:none;"
     ref="rectangle"
   />
   <div
     style="cursor: grab; user-select:none; width: 5000px; height: 2500px"
+    @mousedown.left="startPosition"
+    @mouseup="endPosition"
+    @mousemove="mouseMove"
     @mousewheel="wheelMove"
+    @mouseleave="endPosition"
     ref="display"
   >
     <el-row :gutter="10">
@@ -574,6 +581,8 @@ export default {
 
     this.rectangleXPosition = this.currentXPosition - 10;
     this.rectangleYPosition = this.currentYPosition - 10;
+
+    this.setupSize();
 
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
