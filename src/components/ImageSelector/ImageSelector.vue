@@ -5,6 +5,7 @@
       <div :style="[componentSize]" style="overflow:hidden;" class="sliderMask">
         <div :style="componentSize" :class="[selectZoomAnimation]">
           <ul
+            class="ul-image"
             ref="ul-image"
             :class="selectSliderTransitionSpeed"
             :style="[scrollingDisplay, scrollingMovement]"
@@ -15,10 +16,9 @@
               :style="[componentSize]"
               :ref="'li-' + index"
             >
-              <div :style="componentSize">
+              <div :style="componentSize" style="overflow:hidden">
                 <img
-                  style="object-fit: none"
-                  :style="componentSize"
+                  :class="imageUnzoomEffect"
                   :ref="'image-' + index"
                   :src="value.imagePaths.large"
                   :alt="value.id"
@@ -114,8 +114,7 @@ export default {
         if (this.currentIndex !== this.data.length - 1) {
           this.currentIndex = this.currentIndex + 1;
         }
-      }
-      else if (this.currentIndex !== 0) {
+      } else if (this.currentIndex !== 0) {
         this.currentIndex = this.currentIndex - 1;
       }
       // This incrementation is to manage the animation
@@ -366,6 +365,12 @@ export default {
         width: 9 * 4 * this.defineReponsiveFactor() + "px",
       };
     },
+    imageUnzoomEffect() {
+      return {
+        "v-zoom": this.step !== 300,
+        "v-unzoom": this.step === 300,
+      };
+    },
     // Setup image display and translation for the scrolling
     scrollingMovement() {
       return {
@@ -422,6 +427,7 @@ export default {
         "v-museum-20": this.speed === 50,
       };
     },
+
     selectArrayDisplay() {
       return {
         "v-start": this.isBeginning,

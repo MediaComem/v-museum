@@ -1,9 +1,17 @@
+.ul-image {
+  display: block;
+}
+
 .v-zoom {
+  height: 100%;
+  width: 100%;
   transform: scale(2);
 }
 
 .v-unzoom {
-  transform: scale(1);
+  height: 100%;
+  width: 100%;
+  transform: scale(1.5);
   transition: transform 20s linear;
   transition-delay: 3s;
 }
