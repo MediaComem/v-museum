@@ -17,7 +17,10 @@ export const mutations = {
   },
   loadingState(state) {
     state.isLoadingImage = true;
-  }
+  },
+  provideRelatedImages(state, relatedImages) {
+    state.relatedImages = relatedImages;
+  },
 };
 
 export const actions = {
@@ -46,6 +49,29 @@ export const actions = {
         }
       });
   },
+  // TODO: Optimize the time consuming of this part!!!
+  loadRelatedImages(context, { tags, id }) {
+    const relatedImages = [];
+    const promises = [];
+    tags.forEach((tag) => {
+      promises.push(
+        dataFetch.getRelatedImages(tag, id).then((result) => {
+          if (result) {
+            relatedImages.push({tag: tag, result: result});
+          }
+        })
+      );
+    });
+
+    Promise.all(promises).then(() => {
+      if (relatedImages.length > 2) {
+        let shuffled = relatedImages.sort(() => Math.random() - 0.5);
+        context.commit("provideRelatedImages", shuffled.slice(0, 3));
+      } else {
+        context.commit("provideRelatedImages", relatedImages);
+      }
+    });
+  },
 };
 
 const store = createStore({
@@ -55,6 +81,7 @@ const store = createStore({
       nextDecade: 0,
       nextPageOffset: 1,
       images: [],
+      relatedImages: [],
     };
   },
   mutations: mutations,

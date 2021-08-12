@@ -6,6 +6,7 @@ describe("mutations", () => {
     nextDecade: String,
     nextPageOffset: 1,
     images: [],
+    relatedImages: [],
   };
 
   it("setNextDecade", () => {
@@ -21,4 +22,10 @@ describe("mutations", () => {
     expect(state.nextPageOffset).to.equal(1000);
     expect(state.images).to.eql(result);
   });
+
+  it("provideRelatedImages", () => {
+    let result = [1,2,3];
+    mutations.provideRelatedImages(state, [1,2,3]);
+    expect(state.relatedImages).to.eql(result);
+  })
 });

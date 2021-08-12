@@ -1,9 +1,19 @@
 <template>
+  <rectangle
+    :x="x"
+    :y="y"
+    :width="rectangleWidth"
+    :height="rectangleHeight"
+    :offsetX="windowWidth"
+    :offsetY="windowHeight"
+    style="cursor: pointer; user-select:none;"
+    ref="rectangle"
+  />
   <div :style="setPage">
     <div :style="imagePosition">
       <h3 style="margin: 0; height: 30px;">{{ currentIndex + 1 }}</h3>
-      <div :style="[componentSize]" style="overflow:hidden;" class="sliderMask">
-        <div :style="componentSize" :class="[selectZoomAnimation]">
+      <div :style="componentSize" style="overflow:hidden;" class="sliderMask">
+        <div :style="componentSize" :class="[selectZoomAnimation]" ref="divCar">
           <ul
             class="ul-image"
             ref="ul-image"
@@ -52,8 +62,11 @@
 import { useWindowSize } from "vue-window-size";
 import { mapState } from "vuex";
 
+import Rectangle from "./Rectangle.vue";
+
 export default {
   name: "TestImageSelector",
+  components: { Rectangle },
   watch: {
     images: function(newImages) {
       this.data = newImages;
@@ -87,6 +100,11 @@ export default {
       interval: [],
       timeout: undefined,
       decelerateTimouts: [],
+      // Target properties
+      x: 200,
+      y: 200,
+      rectangleWidth: 0,
+      rectangleHeight: 0,
     };
   },
   methods: {
@@ -362,7 +380,7 @@ export default {
     componentSize() {
       return {
         height: this.thumbnailHeight() + "px",
-        width: 9 * 4 * this.defineReponsiveFactor() + "px",
+        width: this.thumbnailWidth() + "px",
       };
     },
     imageUnzoomEffect() {
@@ -443,6 +461,13 @@ export default {
     this.windowHeight = height;
     this.windowWidth = width;
 
+    
+
+    this.x = this.$refs.divCar.getBoundingClientRect().left;
+    this.y = this.$refs.divCar.getBoundingClientRect().top;
+    this.rectangleHeight = this.thumbnailHeight() + 20;
+    this.rectangleWidth = this.thumbnailWidth()+ 20;
+
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
     this.$store.dispatch("initializeCarousel", {
@@ -455,4 +480,5 @@ export default {
 <style scoped>
 @import "./imageselector.css";
 @import "./sliderspeed.css";
+@import "./carouselAnimation.css";
 </style>
