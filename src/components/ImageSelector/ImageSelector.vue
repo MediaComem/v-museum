@@ -31,39 +31,92 @@
     >
       <related-image :image="relatedImagesPosition[2]" />
     </div>
-
-    <!-- Image information part -->
+    <!-- Related image text display -->
+    <div
+      v-if="
+        relatedImagesPosition.length > 0 && relatedImagesPosition[0].display
+      "
+      :style="relatedInformationPosition1"
+    >
+      <p
+        style="margin-bottom: 0; font-weight: bold;"
+        v-if="!relatedImagesPosition[0].hover"
+        class="relatedImageBase"
+      >
+        {{ relatedImagesPosition[0].image.tag["@value"] }}
+      </p>
+    </div>
+    <div
+      v-if="
+        relatedImagesPosition.length > 1 && relatedImagesPosition[1].display
+      "
+      :style="relatedInformationPosition2"
+    >
+      <p
+        style="margin-bottom: 0; font-weight: bold;"
+        v-if="!relatedImagesPosition[1].hover"
+        class="relatedImageBase"
+      >
+        {{ relatedImagesPosition[1].image.tag["@value"] }}
+      </p>
+    </div>
+    <div
+      v-if="
+        relatedImagesPosition.length > 2 && relatedImagesPosition[2].display
+      "
+      :style="relatedInformationPosition3"
+    >
+      <p
+        style="margin-bottom: 0; font-weight: bold;"
+        v-if="!relatedImagesPosition[2].hover"
+        class="relatedImageBase"
+      >
+        {{ relatedImagesPosition[2].image.tag["@value"] }}
+      </p>
+    </div>
+    <!-- Image information top part -->
     <div v-if="carouselHover" :style="imageInformationPosition">
-      <p
-        v-if="relatedImagesPosition.length > 0"
-        style="margin: 0;"
-        :class="{
-          removeRelatedImageBaseText: relatedImagesPosition[0].display,
-        }"
-      >
-        {{ relatedImagesPosition[0].image.tag["@value"] }} &nbsp;
+      <p style="margin: 0;">
+        333 &nbsp;
       </p>
-      <p
-        v-if="relatedImagesPosition.length > 1"
-        style="margin: 0;"
-        :class="{
-          removeRelatedImageBaseText: relatedImagesPosition[1].display,
-        }"
-      >
-        {{ relatedImagesPosition[1].image.tag["@value"] }} &nbsp;
+      <p style="margin: 0;">
+        1930 i &nbsp;
       </p>
-      <p
-        v-if="relatedImagesPosition.length > 2"
-        style="margin: 0;"
-        :class="{
-          removeRelatedImageBaseText: relatedImagesPosition[2].display,
-        }"
+      <div
+        style="display: flex; overflow: hidden;"
+        :style="{ width: thumbnailWidth() / 2 + 'px' }"
       >
-        {{ relatedImagesPosition[2].image.tag["@value"] }} &nbsp;
-      </p>
+        <p
+          v-if="relatedImagesPosition.length > 0"
+          style="margin: 0;"
+          :class="{
+            removeRelatedImageBaseText: relatedImagesPosition[0].display,
+          }"
+        >
+          {{ relatedImagesPosition[0].image.tag["@value"] }} &nbsp;
+        </p>
+        <p
+          v-if="relatedImagesPosition.length > 1"
+          style="margin: 0;"
+          :class="{
+            removeRelatedImageBaseText: relatedImagesPosition[1].display,
+          }"
+        >
+          {{ relatedImagesPosition[1].image.tag["@value"] }} &nbsp;
+        </p>
+        <p
+          v-if="relatedImagesPosition.length > 2"
+          style="margin: 0;"
+          :class="{
+            removeRelatedImageBaseText: relatedImagesPosition[2].display,
+          }"
+        >
+          {{ relatedImagesPosition[2].image.tag["@value"] }} &nbsp;
+        </p>
+      </div>
       <h3 style="margin: 0; height: 30px;">{{ currentIndex + 1 }}</h3>
     </div>
-    <!-- Slider display part -->
+    <!-- Carousel display part -->
     <div :style="imagePosition">
       <div :style="componentSize" style="overflow:hidden;" class="sliderMask">
         <div :style="componentSize" :class="selectZoomAnimation" ref="divCar">
@@ -92,7 +145,31 @@
         </div>
       </div>
     </div>
-    <div v-if="carouselHover" class="font-slider" :style="fontSliderPosition"></div>
+    <!-- Image information bottom part -->
+    <div v-if="data && carouselHover">
+      <div :style="imageCreatorPosition">
+        <p style="margin-bottom: 0; font-weight: bold;">
+          Illustration: &nbsp;
+        </p>
+        <p style="margin-bottom: 0; overflow: hidden;">
+          {{ data[currentIndex].author }}
+        </p>
+      </div>
+      <div :style="imageStoryPosition">
+        <p style="margin: 0; font-weight: bold;">
+          Story: &nbsp;
+        </p>
+        <p style="margin: 0; overflow: hidden;">
+          {{ data[currentIndex].title }}
+        </p>
+      </div>
+    </div>
+    <!-- Slider Part -->
+    <div
+      v-if="carouselHover"
+      class="font-slider"
+      :style="fontSliderPosition"
+    ></div>
     <div :style="sliderPosition">
       <el-slider
         v-if="carouselHover"
@@ -499,7 +576,10 @@ export default {
       }
     },
     defineTopImagePosition() {
-      return this.carouselHover ? (this.pageHeight - this.thumbnailHeight()) / 2 : (this.pageHeight - this.thumbnailHeight()) / 2 + this.thumbnailHeight() / 4;
+      return this.carouselHover
+        ? (this.pageHeight - this.thumbnailHeight()) / 2
+        : (this.pageHeight - this.thumbnailHeight()) / 2 +
+            this.thumbnailHeight() / 4;
     },
     defineLeftImagePosition() {
       return (this.pageWidth - this.thumbnailWidth()) / 2;
@@ -523,53 +603,95 @@ export default {
     getRelatedImagePosition(relatedImage) {
       switch (relatedImage.position) {
         case 1:
-          return relatedImage.hover ? [
-            (this.pageHeight - this.thumbnailHeight() - this.thumbnailHeight() / 4) / 2 - this.thumbnailHeight() / 2.1,
-            this.defineLeftImagePosition() - this.thumbnailWidth() * 1.5,
-          ] : [
-            (this.pageHeight - this.thumbnailHeight()) / 2 - this.thumbnailHeight() / 2.1,
-            this.defineLeftImagePosition() - this.thumbnailWidth() * 1.5,
-          ];
+          return relatedImage.hover
+            ? [
+                (this.pageHeight -
+                  this.thumbnailHeight() -
+                  this.thumbnailHeight() / 4) /
+                  2 -
+                  this.thumbnailHeight() / 2.1,
+                this.defineLeftImagePosition() - this.thumbnailWidth() * 1.5,
+              ]
+            : [
+                (this.pageHeight - this.thumbnailHeight()) / 2 -
+                  this.thumbnailHeight() / 2.1,
+                this.defineLeftImagePosition() - this.thumbnailWidth() * 1.5,
+              ];
         case 2:
-          return relatedImage.hover ? [
-            (this.pageHeight - this.thumbnailHeight() - this.thumbnailHeight() / 2) / 2 - this.thumbnailHeight() / 2.1,
-            this.defineLeftImagePosition() + this.thumbnailWidth() * 1.5,
-          ] : [
-            (this.pageHeight - this.thumbnailHeight()) / 2 - this.thumbnailHeight() / 2.1,
-            this.defineLeftImagePosition() + this.thumbnailWidth() * 1.5,
-          ];
+          return relatedImage.hover
+            ? [
+                (this.pageHeight -
+                  this.thumbnailHeight() -
+                  this.thumbnailHeight() / 2) /
+                  2 -
+                  this.thumbnailHeight() / 2.1,
+                this.defineLeftImagePosition() + this.thumbnailWidth() * 1.5,
+              ]
+            : [
+                (this.pageHeight - this.thumbnailHeight()) / 2 -
+                  this.thumbnailHeight() / 2.1,
+                this.defineLeftImagePosition() + this.thumbnailWidth() * 1.5,
+              ];
         case 3:
-          return relatedImage.hover ? [
-            (this.pageHeight - this.thumbnailHeight() - this.thumbnailHeight() / 2) / 2 + this.thumbnailHeight() / 4,
-            this.defineLeftImagePosition() - this.thumbnailWidth() * 3,
-          ] : [
-            (this.pageHeight - this.thumbnailHeight()) / 2 + this.thumbnailHeight() / 4,
-            this.defineLeftImagePosition() - this.thumbnailWidth() * 3,
-          ];
+          return relatedImage.hover
+            ? [
+                (this.pageHeight -
+                  this.thumbnailHeight() -
+                  this.thumbnailHeight() / 2) /
+                  2 +
+                  this.thumbnailHeight() / 4,
+                this.defineLeftImagePosition() - this.thumbnailWidth() * 3,
+              ]
+            : [
+                (this.pageHeight - this.thumbnailHeight()) / 2 +
+                  this.thumbnailHeight() / 4,
+                this.defineLeftImagePosition() - this.thumbnailWidth() * 3,
+              ];
         case 4:
-          return relatedImage.hover ? [
-            (this.pageHeight - this.thumbnailHeight() - this.thumbnailHeight() / 2) / 2 + this.thumbnailHeight() / 4,
-            this.defineLeftImagePosition() + this.thumbnailWidth() * 3,
-          ] : [
-            (this.pageHeight - this.thumbnailHeight()) / 2 + this.thumbnailHeight() / 4,
-            this.defineLeftImagePosition() + this.thumbnailWidth() * 3,
-          ];
+          return relatedImage.hover
+            ? [
+                (this.pageHeight -
+                  this.thumbnailHeight() -
+                  this.thumbnailHeight() / 2) /
+                  2 +
+                  this.thumbnailHeight() / 4,
+                this.defineLeftImagePosition() + this.thumbnailWidth() * 3,
+              ]
+            : [
+                (this.pageHeight - this.thumbnailHeight()) / 2 +
+                  this.thumbnailHeight() / 4,
+                this.defineLeftImagePosition() + this.thumbnailWidth() * 3,
+              ];
         case 5:
-          return relatedImage.hover ? [
-            (this.pageHeight - this.thumbnailHeight() - this.thumbnailHeight() / 2) / 2 + this.thumbnailHeight() * 1.4,
-            this.defineLeftImagePosition() - this.thumbnailWidth() * 1.5,
-          ] : [
-            (this.pageHeight - this.thumbnailHeight()) / 2 + this.thumbnailHeight() * 1.4,
-            this.defineLeftImagePosition() - this.thumbnailWidth() * 1.5,
-          ];
+          return relatedImage.hover
+            ? [
+                (this.pageHeight -
+                  this.thumbnailHeight() -
+                  this.thumbnailHeight() / 2) /
+                  2 +
+                  this.thumbnailHeight() * 1.4,
+                this.defineLeftImagePosition() - this.thumbnailWidth() * 1.5,
+              ]
+            : [
+                (this.pageHeight - this.thumbnailHeight()) / 2 +
+                  this.thumbnailHeight() * 1.4,
+                this.defineLeftImagePosition() - this.thumbnailWidth() * 1.5,
+              ];
         case 6:
-          return relatedImage.hover ? [
-            (this.pageHeight - this.thumbnailHeight() - this.thumbnailHeight() / 2) / 2 + this.thumbnailHeight() * 1.4,
-            this.defineLeftImagePosition() + this.thumbnailWidth() * 1.5,
-          ] : [
-            (this.pageHeight - this.thumbnailHeight()) / 2 + this.thumbnailHeight() * 1.4,
-            this.defineLeftImagePosition() + this.thumbnailWidth() * 1.5,
-          ];
+          return relatedImage.hover
+            ? [
+                (this.pageHeight -
+                  this.thumbnailHeight() -
+                  this.thumbnailHeight() / 2) /
+                  2 +
+                  this.thumbnailHeight() * 1.4,
+                this.defineLeftImagePosition() + this.thumbnailWidth() * 1.5,
+              ]
+            : [
+                (this.pageHeight - this.thumbnailHeight()) / 2 +
+                  this.thumbnailHeight() * 1.4,
+                this.defineLeftImagePosition() + this.thumbnailWidth() * 1.5,
+              ];
         default:
           return [0, 0];
       }
@@ -591,6 +713,27 @@ export default {
         top: this.defineTopImagePosition() - 40 + "px",
         left: this.defineLeftImagePosition() + "px",
         display: "flex",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    imageCreatorPosition() {
+      return {
+        height: "40px",
+        position: "absolute",
+        display: "flex",
+        top: this.defineTopImagePosition() + this.thumbnailHeight() + "px",
+        left: this.defineLeftImagePosition() + "px",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    imageStoryPosition() {
+      return {
+        height: "40px",
+        position: "absolute",
+        display: "flex",
+        top: this.defineTopImagePosition() + this.thumbnailHeight() + 40 + "px",
+        left: this.defineLeftImagePosition() + "px",
+        width: this.thumbnailWidth() + "px",
       };
     },
     imagePosition() {
@@ -609,9 +752,30 @@ export default {
         top: positions[0] + "px",
         left: positions[1] + "px",
         overflow: "hidden",
-        height: this.relatedImagesPosition[0].hover ? this.relatedThumbnailHeight() * 2 + "px" : this.relatedThumbnailHeight() + "px",
+        height: this.relatedImagesPosition[0].hover
+          ? this.relatedThumbnailHeight() * 2 + "px"
+          : this.relatedThumbnailHeight() + "px",
         width: this.relatedThumbnailWidth() + "px",
-        transition: 'height 0.3s',
+        transition: "height 0.3s",
+      };
+    },
+    relatedInformationPosition1() {
+      const positions = this.getRelatedImagePosition(
+        this.relatedImagesPosition[0]
+      );
+      const top =
+        positions[0] < this.pageHeight / 2
+          ? positions[0] + this.relatedThumbnailHeight()
+          : positions[0] - 60;
+      const left =
+        positions[1] < this.pageWidth / 2
+          ? positions[1] + this.relatedThumbnailWidth() - 60
+          : positions[1];
+      return {
+        position: "absolute",
+        top: top + "px",
+        left: left + "px",
+        overflow: "hidden",
       };
     },
     relatedImagePosition2() {
@@ -623,9 +787,30 @@ export default {
         top: positions[0] + "px",
         left: positions[1] + "px",
         overflow: "hidden",
-        height: this.relatedImagesPosition[1].hover ? this.relatedThumbnailHeight() * 2 + "px" : this.relatedThumbnailHeight() + "px",
+        height: this.relatedImagesPosition[1].hover
+          ? this.relatedThumbnailHeight() * 2 + "px"
+          : this.relatedThumbnailHeight() + "px",
         width: this.relatedThumbnailWidth() + "px",
-        transition: 'height 0.3s',
+        transition: "height 0.3s",
+      };
+    },
+    relatedInformationPosition2() {
+      const positions = this.getRelatedImagePosition(
+        this.relatedImagesPosition[1]
+      );
+      const top =
+        positions[0] < this.pageHeight / 2
+          ? positions[0] + this.relatedThumbnailHeight()
+          : positions[0] - 60;
+      const left =
+        positions[1] < this.pageWidth / 2
+          ? positions[1] + this.relatedThumbnailWidth() - 60
+          : positions[1];
+      return {
+        position: "absolute",
+        top: top + "px",
+        left: left + "px",
+        overflow: "hidden",
       };
     },
     relatedImagePosition3() {
@@ -637,9 +822,30 @@ export default {
         top: positions[0] + "px",
         left: positions[1] + "px",
         overflow: "hidden",
-        height: this.relatedImagesPosition[2].hover ? this.relatedThumbnailHeight() * 2 + "px" : this.relatedThumbnailHeight() + "px",
+        height: this.relatedImagesPosition[2].hover
+          ? this.relatedThumbnailHeight() * 2 + "px"
+          : this.relatedThumbnailHeight() + "px",
         width: this.relatedThumbnailWidth() + "px",
-        transition: 'height 0.3s',
+        transition: "height 0.3s",
+      };
+    },
+    relatedInformationPosition3() {
+      const positions = this.getRelatedImagePosition(
+        this.relatedImagesPosition[2]
+      );
+      const top =
+        positions[0] < this.pageHeight / 2
+          ? positions[0] + this.relatedThumbnailHeight()
+          : positions[0] - 60;
+      const left =
+        positions[1] < this.pageWidth / 2
+          ? positions[1] + this.relatedThumbnailWidth() - 60
+          : positions[1];
+      return {
+        position: "absolute",
+        top: top + "px",
+        left: left + "px",
+        overflow: "hidden",
       };
     },
     fontSliderPosition() {
@@ -664,7 +870,9 @@ export default {
       };
     },
     componentSize() {
-      const height = this.carouselHover ? this.thumbnailHeight() : this.thumbnailHeight() / 2;
+      const height = this.carouselHover
+        ? this.thumbnailHeight()
+        : this.thumbnailHeight() / 2;
       return {
         height: height + "px",
         width: this.thumbnailWidth() + "px",
