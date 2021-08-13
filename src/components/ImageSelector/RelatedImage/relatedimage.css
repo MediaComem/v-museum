@@ -5,28 +5,3 @@
 .endTextAlign {
   text-align: end;
 }
-
-.image-custom {
-  transition: height 0.3s;
-  height: 400px;
-  width: 300px;
-}
-
-.image-custom:hover {
-  transition: height 0.3s;
-  height: 400px;
-  width: 300px;
-
-}
-
-.image-custom-bottom {
-  transition: height 0.3s;
-  height: 400px;
-  width: 300px;
-}
-
-.image-custom-bottom:hover {
-  transition: height 0.3s;
-  height: 400px;
-  width: 300px;
-}

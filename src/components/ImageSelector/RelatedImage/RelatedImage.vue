@@ -1,61 +1,29 @@
 <template>
-  <div
-    v-if="image && image.length > 0 && image[0].display"
-    :style="getImage"
-  >
-    <!--p
-      v-if="align === 'top' || align === 'middle'"
-      class="relatedImageBase index-font"
-      :class="textComponentClass"
-    >
-      {{ image[0].image.tag["@value"] }}
-    </p-->
-    <img
-      style="object-fit: none"
-      :style="getImage"
-      class="relatedImageBase"
-      :src="this.image[0].image.result.imagePaths.large"
-      :alt="image[0].image.result.id"
-    />
-    <!--p
-      v-if="align === 'bottom'"
-      class="relatedImageBase index-font "
-      :class="textComponentClass"
-    >
-      {{ image[0].image.tag["@value"] }}
-    </p-->
-  </div>
+  <img
+    :style="thumbnailHeight"
+    v-if="this.image.display"
+    style="object-fit: none; width: 100%;"
+    class="relatedImageBase"
+    :src="this.image.image.result.imagePaths.large"
+    :alt="image.image.result.id"
+  />
 </template>
 
 <script>
 export default {
   methods: {
     getHeight() {
-      return this.image[0].hover
-        ? this.imageHeight * 2
-        : this.imageHeight;
-    }
+      return this.image.hover ? 100 : 50;
+    },
   },
   props: {
     image: Object,
-    imageHeight: Number,
-    imageWidth: Number,
-    align: String,
-    justify: String,
-    hover: Boolean,
-    position: Number,
   },
   computed: {
-    getImage() {
+    thumbnailHeight() {
       return {
-        height: this.getHeight() + 'px',
-        width: this.imageWidth + 'px',
-      }
-    },
-    textComponentClass() {
-      return {
-        startTextAlign: this.justify === "start",
-        endTextAlign: this.justify === "end",
+        height: this.getHeight() + "%",
+        transition: 'height 0.3s',
       };
     },
   },

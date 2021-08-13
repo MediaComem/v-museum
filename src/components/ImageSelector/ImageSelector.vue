@@ -1,17 +1,70 @@
 <template>
-  <rectangle
-    :x="x"
-    :y="y"
-    :width="rectangleWidth"
-    :height="rectangleHeight"
-    :offsetX="windowWidth"
-    :offsetY="windowHeight"
-    style="cursor: pointer; user-select:none;"
-    ref="rectangle"
-  />
-  <div :style="setPage">
-    <div :style="imagePosition">
+  <div :style="setPage" @mousewheel="mouseWheel" ref="display">
+    <!-- Target display part -->
+    <rectangle
+      :width="rectangleWidth"
+      :height="rectangleHeight"
+      :offsetX="windowWidth"
+      :offsetY="windowHeight"
+      style="cursor: pointer; user-select:none;"
+      ref="rectangle"
+    />
+    <!-- Related Image display part -->
+    <div
+      ref="position0"
+      :style="[relatedComponentSize, relatedImagePosition1]"
+      v-if="relatedImagesPosition.length > 0"
+    >
+      <related-image :image="relatedImagesPosition[0]" />
+    </div>
+    <div
+      ref="position1"
+      :style="[relatedComponentSize, relatedImagePosition2]"
+      v-if="relatedImagesPosition.length > 1"
+    >
+      <related-image :image="relatedImagesPosition[1]" />
+    </div>
+    <div
+      ref="position2"
+      :style="[relatedComponentSize, relatedImagePosition3]"
+      v-if="relatedImagesPosition.length > 2"
+    >
+      <related-image :image="relatedImagesPosition[2]" />
+    </div>
+
+    <!-- Image information part -->
+    <div v-if="carouselHover" :style="imageInformationPosition">
+      <p
+        v-if="relatedImagesPosition.length > 0"
+        style="margin: 0;"
+        :class="{
+          removeRelatedImageBaseText: relatedImagesPosition[0].display,
+        }"
+      >
+        {{ relatedImagesPosition[0].image.tag["@value"] }} &nbsp;
+      </p>
+      <p
+        v-if="relatedImagesPosition.length > 1"
+        style="margin: 0;"
+        :class="{
+          removeRelatedImageBaseText: relatedImagesPosition[1].display,
+        }"
+      >
+        {{ relatedImagesPosition[1].image.tag["@value"] }} &nbsp;
+      </p>
+      <p
+        v-if="relatedImagesPosition.length > 2"
+        style="margin: 0;"
+        :class="{
+          removeRelatedImageBaseText: relatedImagesPosition[2].display,
+        }"
+      >
+        {{ relatedImagesPosition[2].image.tag["@value"] }} &nbsp;
+      </p>
       <h3 style="margin: 0; height: 30px;">{{ currentIndex + 1 }}</h3>
+    </div>
+    <!-- Slider display part -->
+    <div :style="imagePosition">
       <div :style="componentSize" style="overflow:hidden;" class="sliderMask">
         <div :style="componentSize" :class="[selectZoomAnimation]" ref="divCar">
           <ul
@@ -28,7 +81,7 @@
             >
               <div :style="componentSize" style="overflow:hidden">
                 <img
-                  :class="imageUnzoomEffect"
+                  style="object-fit: none; height: 100%; width: 100%;"
                   :ref="'image-' + index"
                   :src="value.imagePaths.large"
                   :alt="value.id"
@@ -39,9 +92,10 @@
         </div>
       </div>
     </div>
-    <div class="font-slider" :style="fontSliderPosition"></div>
+    <div v-if="carouselHover" class="font-slider" :style="fontSliderPosition"></div>
     <div :style="sliderPosition">
       <el-slider
+        v-if="carouselHover"
         :class="selectArrayDisplay"
         style="width: 42px"
         ref="slider"
@@ -63,22 +117,36 @@ import { useWindowSize } from "vue-window-size";
 import { mapState } from "vuex";
 
 import Rectangle from "./Rectangle.vue";
+import RelatedImage from "./RelatedImage/RelatedImage.vue";
 
 export default {
-  name: "TestImageSelector",
-  components: { Rectangle },
+  name: "ImageSelector",
+  components: { Rectangle, RelatedImage },
   watch: {
     images: function(newImages) {
       this.data = newImages;
+      if (this.isInitialLoad) {
+        this.$nextTick(() => {
+          this.isInitialLoad = false;
+          this.$store.dispatch("loadRelatedImages", {
+            tags: this.data[this.currentIndex].tags,
+            id: this.data[this.currentIndex].id,
+          });
+        });
+      }
     },
     currentIndex: function(newVal) {
       this.isBeginning = newVal === 0;
       this.isEnd = newVal === this.data.length - 1;
       this.shouldRunSideAnimation = this.isBeginning || this.isEnd;
     },
+    relatedImages: function(images) {
+      this.displayRelatedImages(images);
+    },
   },
   data() {
     return {
+      // Data informations
       isBeginning: true,
       isEnd: false,
       data: undefined,
@@ -94,6 +162,8 @@ export default {
       shouldRunSideAnimation: false,
       shouldRunDecelerateAnimation: false,
       // Information uses to manage the display
+      pageHeight: 3000,
+      pageWidth: 5000,
       windowHeight: undefined,
       windowWidth: undefined,
       // Management of the interval and timeout process
@@ -101,10 +171,15 @@ export default {
       timeout: undefined,
       decelerateTimouts: [],
       // Target properties
-      x: 200,
-      y: 200,
       rectangleWidth: 0,
       rectangleHeight: 0,
+      moveToImageTimeout: [],
+      carouselHover: true,
+      // Related images properties
+      isInitialLoad: true,
+      potentialPosition: [1, 2, 3, 4, 5, 6],
+      relatedImagesPosition: [],
+      displayRelatedImageTimeout: [],
     };
   },
   methods: {
@@ -113,6 +188,66 @@ export default {
     },
     thumbnailWidth() {
       return 9 * 4 * this.defineReponsiveFactor();
+    },
+    relatedThumbnailHeight() {
+      return 9 * 4 * this.defineReponsiveFactor();
+    },
+    relatedThumbnailWidth() {
+      return 8 * 4 * this.defineReponsiveFactor();
+    },
+    checkPosition(x, y, rectangle) {
+      if (
+        x < rectangle.x + rectangle.width &&
+        x + this.rectangleWidth > rectangle.x &&
+        y < rectangle.y + rectangle.height &&
+        this.rectangleHeight + y > rectangle.y
+      ) {
+        this.moveToImageTimeout.push(
+          setTimeout(() => {
+            const newX =
+              this.$refs.display.getBoundingClientRect().x -
+              (rectangle.x - (this.windowWidth - rectangle.width) / 2);
+            const newY =
+              this.$refs.display.getBoundingClientRect().y -
+              (rectangle.y - (this.windowHeight - rectangle.height) / 2);
+            window.scrollTo({ left: -newX, top: -newY, behavior: "smooth" });
+          }, 200)
+        );
+        return true;
+      }
+      return false;
+    },
+    checkCollision() {
+      this.moveToImageTimeout.forEach(clearTimeout);
+      this.moveToImageTimeout = [];
+      const rectangle = this.$refs.divCar.getBoundingClientRect();
+      const x = (this.windowWidth - this.$refs.divCar.clientWidth + 20) / 2;
+      const y = (this.windowHeight - this.$refs.divCar.clientHeight + 20) / 2;
+      this.carouselHover = this.checkPosition(x, y, rectangle);
+      this.relatedImagesPosition.forEach((rectangle, index) => {
+        this.checkPosition(
+          x,
+          y,
+          this.$refs["position" + index].getBoundingClientRect()
+        )
+          ? (rectangle.hover = true)
+          : (rectangle.hover = false);
+      });
+      if (this.moveToImageTimeout.length === 0) {
+        this.rectangleHeight = this.$refs.divCar.clientHeight + 20;
+        this.rectangleWidth = this.thumbnailWidth() + 20;
+      } else {
+        if (this.carouselHover) {
+          this.rectangleHeight = this.thumbnailHeight() + 20;
+          this.rectangleWidth = this.thumbnailWidth() + 20;
+        } else {
+          this.rectangleHeight = this.relatedThumbnailHeight() * 2 + 20;
+          this.rectangleWidth = this.relatedThumbnailWidth() + 20;
+        }
+      }
+    },
+    mouseWheel() {
+      this.checkCollision();
     },
     isStop() {
       return this.step > 290 && this.step < 310;
@@ -170,6 +305,7 @@ export default {
           }
         }, 200);
       } else {
+        this.stopDisplayRelatedImages();
         this.decelerateTimouts.forEach(clearTimeout);
         const newSpeed = this.speedSelection();
         this.animationStepAnalysis(newSpeed);
@@ -241,6 +377,10 @@ export default {
         this.zoomingStep = -1;
         this.speed = 6000;
         this.previousDirection = undefined;
+        this.$store.dispatch("loadRelatedImages", {
+          tags: this.data[this.currentIndex].tags,
+          id: this.data[this.currentIndex].id,
+        });
       }
     },
     animationStepAnalysis(speed) {
@@ -255,6 +395,39 @@ export default {
     stopInterval() {
       this.interval.forEach((element) => clearInterval(element));
       this.interval = [];
+    },
+    displayRelatedImages(images) {
+      // Select randomly 3 display positions
+      this.potentialPosition
+        .sort(() => Math.random() - 0.5)
+        .slice(0, images.length)
+        .forEach((position, index) => {
+          this.relatedImagesPosition.push({
+            position: position,
+            image: images[index],
+            display: false,
+            hover: false,
+          });
+        });
+      // Setup the display animation
+      this.$nextTick(() => {
+        this.relatedImagesPosition.forEach((element, index) => {
+          const animationDelay = 1000 + 2000 * index;
+          this.displayRelatedImageTimeout.push(
+            setTimeout(() => {
+              this.relatedImagesPosition[index].display = true;
+              this.$nextTick(() => {
+                this.shouldUpdateDisplay = true;
+              });
+            }, animationDelay)
+          );
+        });
+      });
+    },
+    stopDisplayRelatedImages() {
+      this.relatedImagesPosition = [];
+      this.displayRelatedImageTimeout.forEach(clearTimeout);
+      this.displayRelatedImageTimeout = [];
     },
     speedSelection() {
       // Find the transition speed
@@ -326,27 +499,98 @@ export default {
       }
     },
     defineTopImagePosition() {
-      return (this.windowHeight - this.thumbnailHeight()) / 2;
+      return this.carouselHover ? (this.pageHeight - this.thumbnailHeight()) / 2 : (this.pageHeight - this.thumbnailHeight()) / 2 + this.thumbnailHeight() / 4;
     },
     defineLeftImagePosition() {
-      return (this.windowWidth - this.thumbnailWidth()) / 2;
+      return (this.pageWidth - this.thumbnailWidth()) / 2;
     },
     defineTopSliderPosition() {
       return (
-        (this.windowHeight - this.thumbnailHeight()) / 2 +
+        (this.pageHeight - this.thumbnailHeight()) / 2 +
         this.thumbnailHeight() / 2 -
         150
       );
     },
     defineLeftSliderPosition() {
-      return this.windowWidth / 2 + this.thumbnailWidth() / 2;
+      return this.pageWidth / 2 + this.thumbnailWidth() / 2;
+    },
+    defineLeftPositionCenterPage() {
+      return this.pageWidth / 2 - this.windowWidth / 2;
+    },
+    defineTopPositionCenterPage() {
+      return this.pageHeight / 2 - this.windowHeight / 2;
+    },
+    getRelatedImagePosition(relatedImage) {
+      switch (relatedImage.position) {
+        case 1:
+          return relatedImage.hover ? [
+            (this.pageHeight - this.thumbnailHeight() - this.thumbnailHeight() / 4) / 2 - this.thumbnailHeight() / 2.1,
+            this.defineLeftImagePosition() - this.thumbnailWidth() * 1.5,
+          ] : [
+            (this.pageHeight - this.thumbnailHeight()) / 2 - this.thumbnailHeight() / 2.1,
+            this.defineLeftImagePosition() - this.thumbnailWidth() * 1.5,
+          ];
+        case 2:
+          return relatedImage.hover ? [
+            (this.pageHeight - this.thumbnailHeight() - this.thumbnailHeight() / 2) / 2 - this.thumbnailHeight() / 2.1,
+            this.defineLeftImagePosition() + this.thumbnailWidth() * 1.5,
+          ] : [
+            (this.pageHeight - this.thumbnailHeight()) / 2 - this.thumbnailHeight() / 2.1,
+            this.defineLeftImagePosition() + this.thumbnailWidth() * 1.5,
+          ];
+        case 3:
+          return relatedImage.hover ? [
+            (this.pageHeight - this.thumbnailHeight() - this.thumbnailHeight() / 2) / 2 + this.thumbnailHeight() / 4,
+            this.defineLeftImagePosition() - this.thumbnailWidth() * 3,
+          ] : [
+            (this.pageHeight - this.thumbnailHeight()) / 2 + this.thumbnailHeight() / 4,
+            this.defineLeftImagePosition() - this.thumbnailWidth() * 3,
+          ];
+        case 4:
+          return relatedImage.hover ? [
+            (this.pageHeight - this.thumbnailHeight() - this.thumbnailHeight() / 2) / 2 + this.thumbnailHeight() / 4,
+            this.defineLeftImagePosition() + this.thumbnailWidth() * 3,
+          ] : [
+            (this.pageHeight - this.thumbnailHeight()) / 2 + this.thumbnailHeight() / 4,
+            this.defineLeftImagePosition() + this.thumbnailWidth() * 3,
+          ];
+        case 5:
+          return relatedImage.hover ? [
+            (this.pageHeight - this.thumbnailHeight() - this.thumbnailHeight() / 2) / 2 + this.thumbnailHeight() * 1.4,
+            this.defineLeftImagePosition() - this.thumbnailWidth() * 1.5,
+          ] : [
+            (this.pageHeight - this.thumbnailHeight()) / 2 + this.thumbnailHeight() * 1.4,
+            this.defineLeftImagePosition() - this.thumbnailWidth() * 1.5,
+          ];
+        case 6:
+          return relatedImage.hover ? [
+            (this.pageHeight - this.thumbnailHeight() - this.thumbnailHeight() / 2) / 2 + this.thumbnailHeight() * 1.4,
+            this.defineLeftImagePosition() + this.thumbnailWidth() * 1.5,
+          ] : [
+            (this.pageHeight - this.thumbnailHeight()) / 2 + this.thumbnailHeight() * 1.4,
+            this.defineLeftImagePosition() + this.thumbnailWidth() * 1.5,
+          ];
+        default:
+          return [0, 0];
+      }
     },
   },
   computed: {
     setPage() {
       return {
-        height: this.windowHeight + "px",
-        width: this.windowWidth + "px",
+        height: this.pageHeight + "px",
+        width: this.pageWidth + "px",
+        cursor: "pointer",
+        "user-select": "none",
+      };
+    },
+    imageInformationPosition() {
+      return {
+        height: "40px",
+        position: "absolute",
+        top: this.defineTopImagePosition() - 40 + "px",
+        left: this.defineLeftImagePosition() + "px",
+        display: "flex",
       };
     },
     imagePosition() {
@@ -354,6 +598,39 @@ export default {
         position: "absolute",
         top: this.defineTopImagePosition() + "px",
         left: this.defineLeftImagePosition() + "px",
+      };
+    },
+    relatedImagePosition1() {
+      const positions = this.getRelatedImagePosition(
+        this.relatedImagesPosition[0]
+      );
+      return {
+        position: "absolute",
+        top: positions[0] + "px",
+        left: positions[1] + "px",
+        overflow: "hidden",
+      };
+    },
+    relatedImagePosition2() {
+      const positions = this.getRelatedImagePosition(
+        this.relatedImagesPosition[1]
+      );
+      return {
+        position: "absolute",
+        top: positions[0] + "px",
+        left: positions[1] + "px",
+        overflow: "hidden",
+      };
+    },
+    relatedImagePosition3() {
+      const positions = this.getRelatedImagePosition(
+        this.relatedImagesPosition[2]
+      );
+      return {
+        position: "absolute",
+        top: positions[0] + "px",
+        left: positions[1] + "px",
+        overflow: "hidden",
       };
     },
     fontSliderPosition() {
@@ -378,9 +655,16 @@ export default {
       };
     },
     componentSize() {
+      const height = this.carouselHover ? this.thumbnailHeight() : this.thumbnailHeight() / 2;
       return {
-        height: this.thumbnailHeight() + "px",
+        height: height + "px",
         width: this.thumbnailWidth() + "px",
+      };
+    },
+    relatedComponentSize() {
+      return {
+        height: this.relatedThumbnailHeight() * 2 + "px",
+        width: this.relatedThumbnailWidth() + "px",
       };
     },
     imageUnzoomEffect() {
@@ -453,7 +737,7 @@ export default {
         "v-end": this.isEnd,
       };
     },
-    ...mapState(["images", "isLoadingImage"]),
+    ...mapState(["images", "isLoadingImage", "relatedImages"]),
   },
   mounted() {
     // Use to find the ratio and to add the content correctly in the scroll and to know the translation size
@@ -461,12 +745,13 @@ export default {
     this.windowHeight = height;
     this.windowWidth = width;
 
-    
-
-    this.x = this.$refs.divCar.getBoundingClientRect().left;
-    this.y = this.$refs.divCar.getBoundingClientRect().top;
     this.rectangleHeight = this.thumbnailHeight() + 20;
-    this.rectangleWidth = this.thumbnailWidth()+ 20;
+    this.rectangleWidth = this.thumbnailWidth() + 20;
+
+    window.scrollTo(
+      this.defineLeftPositionCenterPage(),
+      this.defineTopPositionCenterPage()
+    );
 
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.

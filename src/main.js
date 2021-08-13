@@ -53,7 +53,9 @@ export const actions = {
   loadRelatedImages(context, { tags, id }) {
     const relatedImages = [];
     const promises = [];
-    tags.forEach((tag) => {
+    tags.sort(() => Math.random() - 0.5)
+    .slice(0, 3)
+    .forEach((tag) => {
       promises.push(
         dataFetch.getRelatedImages(tag, id).then((result) => {
           if (result) {
@@ -64,12 +66,7 @@ export const actions = {
     });
 
     Promise.all(promises).then(() => {
-      if (relatedImages.length > 2) {
-        let shuffled = relatedImages.sort(() => Math.random() - 0.5);
-        context.commit("provideRelatedImages", shuffled.slice(0, 3));
-      } else {
         context.commit("provideRelatedImages", relatedImages);
-      }
     });
   },
 };

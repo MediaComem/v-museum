@@ -17,8 +17,6 @@
 <script>
 export default {
   props: {
-      x: Number,
-      y: Number,
       height: Number,
       width: Number,
       offsetX: Number,
@@ -29,7 +27,7 @@ export default {
       setPosition() {
           return{
               left: ((this.offsetX - this.width) / 2),
-              top: ((this.offsetY - this.height) / 2) + 30,
+              top: ((this.offsetY - this.height) / 2),
           }
       }
   }
