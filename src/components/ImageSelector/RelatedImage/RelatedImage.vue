@@ -1,9 +1,7 @@
 <template>
   <img
-    :style="thumbnailHeight"
     v-if="this.image.display"
-    style="object-fit: none; width: 100%;"
-    class="relatedImageBase"
+    class="relatedImageBase related-image"
     :src="this.image.image.result.imagePaths.large"
     :alt="image.image.result.id"
   />
@@ -11,21 +9,8 @@
 
 <script>
 export default {
-  methods: {
-    getHeight() {
-      return this.image.hover ? 100 : 50;
-    },
-  },
   props: {
     image: Object,
-  },
-  computed: {
-    thumbnailHeight() {
-      return {
-        height: this.getHeight() + "%",
-        transition: 'height 0.3s',
-      };
-    },
   },
 };
 </script>

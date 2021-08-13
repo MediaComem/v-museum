@@ -12,21 +12,21 @@
     <!-- Related Image display part -->
     <div
       ref="position0"
-      :style="[relatedComponentSize, relatedImagePosition1]"
+      :style="relatedImagePosition1"
       v-if="relatedImagesPosition.length > 0"
     >
       <related-image :image="relatedImagesPosition[0]" />
     </div>
     <div
       ref="position1"
-      :style="[relatedComponentSize, relatedImagePosition2]"
+      :style="relatedImagePosition2"
       v-if="relatedImagesPosition.length > 1"
     >
       <related-image :image="relatedImagesPosition[1]" />
     </div>
     <div
       ref="position2"
-      :style="[relatedComponentSize, relatedImagePosition3]"
+      :style="relatedImagePosition3"
       v-if="relatedImagesPosition.length > 2"
     >
       <related-image :image="relatedImagesPosition[2]" />
@@ -66,7 +66,7 @@
     <!-- Slider display part -->
     <div :style="imagePosition">
       <div :style="componentSize" style="overflow:hidden;" class="sliderMask">
-        <div :style="componentSize" :class="[selectZoomAnimation]" ref="divCar">
+        <div :style="componentSize" :class="selectZoomAnimation" ref="divCar">
           <ul
             class="ul-image"
             ref="ul-image"
@@ -76,7 +76,7 @@
             <li
               v-for="(value, index) in data"
               :key="index"
-              :style="[componentSize]"
+              :style="componentSize"
               :ref="'li-' + index"
             >
               <div :style="componentSize" style="overflow:hidden">
@@ -609,6 +609,9 @@ export default {
         top: positions[0] + "px",
         left: positions[1] + "px",
         overflow: "hidden",
+        height: this.relatedImagesPosition[0].hover ? this.relatedThumbnailHeight() * 2 + "px" : this.relatedThumbnailHeight() + "px",
+        width: this.relatedThumbnailWidth() + "px",
+        transition: 'height 0.3s',
       };
     },
     relatedImagePosition2() {
@@ -620,6 +623,9 @@ export default {
         top: positions[0] + "px",
         left: positions[1] + "px",
         overflow: "hidden",
+        height: this.relatedImagesPosition[1].hover ? this.relatedThumbnailHeight() * 2 + "px" : this.relatedThumbnailHeight() + "px",
+        width: this.relatedThumbnailWidth() + "px",
+        transition: 'height 0.3s',
       };
     },
     relatedImagePosition3() {
@@ -631,6 +637,9 @@ export default {
         top: positions[0] + "px",
         left: positions[1] + "px",
         overflow: "hidden",
+        height: this.relatedImagesPosition[2].hover ? this.relatedThumbnailHeight() * 2 + "px" : this.relatedThumbnailHeight() + "px",
+        width: this.relatedThumbnailWidth() + "px",
+        transition: 'height 0.3s',
       };
     },
     fontSliderPosition() {
@@ -659,12 +668,6 @@ export default {
       return {
         height: height + "px",
         width: this.thumbnailWidth() + "px",
-      };
-    },
-    relatedComponentSize() {
-      return {
-        height: this.relatedThumbnailHeight() * 2 + "px",
-        width: this.relatedThumbnailWidth() + "px",
       };
     },
     imageUnzoomEffect() {
