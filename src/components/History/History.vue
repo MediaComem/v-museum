@@ -3,10 +3,11 @@
     <div class="history-element">
       <p class="history-value">{{ currentHistory.length }}</p>
     </div>
-    <div class="history-element" style="left: 100px; opacity: 0.3">
+    <div class="history-element" style="left: 100px;">
       <img
         v-if="currentHistory.length > 2"
         class="history-image"
+        style="opacity: 0.3;"
         @click="comeBackTo(currentHistory.length - 3)"
         :src="
           currentHistory[currentHistory.length - 3].data[
@@ -15,10 +16,11 @@
         "
       />
     </div>
-    <div class="history-element" style="left: 200px; opacity: 0.5;">
+    <div class="history-element" style="left: 200px;">
       <img
         v-if="currentHistory.length > 1"
         class="history-image"
+        style="opacity: 0.5;"
         @click="comeBackTo(currentHistory.length - 2)"
         :src="
           currentHistory[currentHistory.length - 2].data[

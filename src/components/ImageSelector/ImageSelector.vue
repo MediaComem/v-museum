@@ -1019,7 +1019,6 @@ export default {
     ]),
   },
   mounted() {
-    // Use to find the ratio and to add the content correctly in the scroll and to know the translation size
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
@@ -1032,9 +1031,9 @@ export default {
       this.defineTopPositionCenterPage()
     );
 
-    this.currentDecade = "193";
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
+    this.currentDecade = "193";
     this.$store.dispatch("initializeCarousel", {
       decade: this.currentDecade,
     });
