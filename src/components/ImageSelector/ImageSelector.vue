@@ -1,16 +1,26 @@
 <template>
-  <div :style="setPage" @mousewheel="mouseWheel" ref="display">
+  <!-- History Part-->
+  <history :topPosition="windowHeight - 150" :leftPosition="50" />
+
+  <div
+    :style="setPage"
+    @mousewheel="mouseWheel"
+    @mousedown="startPosition"
+    @mouseup="endPosition"
+    @mouseleave="endPosition"
+    @mousemove="mouseMove"
+    ref="display"
+    style="cursor: pointer; user-select:none;"
+  >
     <!-- Target display part -->
     <rectangle
       :width="rectangleWidth"
       :height="rectangleHeight"
       :offsetX="windowWidth"
       :offsetY="windowHeight"
-      style="cursor: pointer; user-select:none;"
       ref="rectangle"
     />
-    <!-- History Part-->
-    <history :topPosition="windowHeight - 150" :leftPosition="50" />
+
     <!-- Related Image display part -->
     <div
       ref="position0"
@@ -131,6 +141,7 @@
     </div>
     <!-- Carousel display part -->
     <div :style="imagePosition">
+      <div v-if="!carouselHover" :style="smallCarouselTop"/>
       <div :style="componentSize" style="overflow:hidden;" class="sliderMask">
         <div :style="componentSize" :class="selectZoomAnimation" ref="divCar">
           <ul
@@ -157,6 +168,7 @@
           </ul>
         </div>
       </div>
+      <div v-if="!carouselHover" :style="smallCarouselBottom"/>
     </div>
     <!-- Image information bottom part -->
     <div v-if="data && carouselHover">
@@ -183,7 +195,11 @@
       class="font-slider"
       :style="fontSliderPosition"
     ></div>
-    <div :style="sliderPosition">
+    <div
+      :style="sliderPosition"
+      @mouseover="blockDrag = true"
+      @mouseleave="blockDrag = false"
+    >
       <el-slider
         v-if="carouselHover"
         :class="selectArrayDisplay"
@@ -275,6 +291,10 @@ export default {
       previousSpeed: 0,
       previousDirection: undefined,
       currentIndex: 0,
+      currentXPosition: 0,
+      currentYPosition: 0,
+      isDrag: false,
+      blockDrag: false,
       // Information uses to manage the animations
       zoomingStep: 3,
       nbImageMove: 0,
@@ -367,8 +387,38 @@ export default {
         }
       }
     },
+    startPosition() {
+      this.isDrag = true;
+    },
+    endPosition() {
+      this.isDrag = false;
+    },
     mouseWheel() {
       this.checkCollision();
+    },
+    mouseMove(event) {
+      if (this.isDrag && !this.blockDrag) {
+        const xMovement = this.currentXPosition - event.movementX;
+        if (xMovement > 0 || xMovement < event.pageWidth) {
+          this.currentXPosition = xMovement;
+        }
+
+        const yMovement = this.currentYPosition - event.movementY;
+        if (yMovement > 0 || yMovement < event.pageHeight) {
+          this.currentYPosition = yMovement;
+        }
+
+        this.rectangleXPosition =
+          -this.$refs.display.getBoundingClientRect().left +
+          this.windowWidth / 2 -
+          this.rectangleWidth / 2;
+        this.rectangleYPosition =
+          -this.$refs.display.getBoundingClientRect().top +
+          this.windowHeight / 2 -
+          this.rectangleHeight / 2;
+        window.scrollTo(this.currentXPosition, this.currentYPosition);
+        this.checkCollision();
+      }
     },
     isStop() {
       return this.step > 290 && this.step < 310;
@@ -630,10 +680,7 @@ export default {
       }
     },
     defineTopImagePosition() {
-      return this.carouselHover
-        ? (this.pageHeight - this.thumbnailHeight()) / 2
-        : (this.pageHeight - this.thumbnailHeight()) / 2 +
-            this.thumbnailHeight() / 4;
+      return (this.pageHeight - this.thumbnailHeight()) / 2;
     },
     defineLeftImagePosition() {
       return (this.pageWidth - this.thumbnailWidth()) / 2;
@@ -806,6 +853,27 @@ export default {
         left: this.defineLeftImagePosition() + "px",
       };
     },
+    smallCarouselTop() {
+      return {
+        position: "absolute",
+        display: "block",
+        "background-color": "white",
+        width: this.thumbnailWidth() + "px",
+        height: this.thumbnailHeight() / 4 + "px",
+        "z-index": 1,
+      };
+    },
+    smallCarouselBottom() {
+      return {
+        position: "absolute",
+        display: "block",
+        "background-color": "white",
+        width: this.thumbnailWidth() + "px",
+        height: this.thumbnailHeight() / 4 + "px",
+        top: this.thumbnailHeight() / 4 * 3 + "px",
+        "z-index": 1,
+      };
+    },
     relatedImagePosition1() {
       const positions = this.getRelatedImagePosition(
         this.relatedImagesPosition[0]
@@ -933,11 +1001,8 @@ export default {
       };
     },
     componentSize() {
-      const height = this.carouselHover
-        ? this.thumbnailHeight()
-        : this.thumbnailHeight() / 2;
       return {
-        height: height + "px",
+        height: this.thumbnailHeight() + "px",
         width: this.thumbnailWidth() + "px",
       };
     },
@@ -1026,10 +1091,10 @@ export default {
     this.rectangleHeight = this.thumbnailHeight() + 20;
     this.rectangleWidth = this.thumbnailWidth() + 20;
 
-    window.scrollTo(
-      this.defineLeftPositionCenterPage(),
-      this.defineTopPositionCenterPage()
-    );
+    this.currentXPosition = this.defineLeftPositionCenterPage();
+    this.currentYPosition = this.defineTopPositionCenterPage();
+
+    window.scrollTo(this.currentXPosition, this.currentYPosition);
 
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
