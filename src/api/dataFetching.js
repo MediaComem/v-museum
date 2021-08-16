@@ -40,8 +40,8 @@ const parseImages = (data) => {
 export default {
   async getImages(decade, offset) {
     const req = process.env.VUE_APP_FETCH_BASE + decade + "&page=" + offset;
-    const { data } = await request(req);
-    return parseImages(data);
+    const { headers, data } = await request(req);
+    return { totalImages: headers["omeka-s-total-results"], images: parseImages(data)};
   },
 
   async getRelatedImages(tag, id) {

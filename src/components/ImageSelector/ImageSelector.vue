@@ -76,10 +76,14 @@
     </div>
     <!-- Image information top part -->
     <div v-if="carouselHover" :style="imageInformationPosition">
-      <p style="margin: 0;">
-        333 &nbsp;
-      </p>
-      <p style="margin: 0;">
+      <completion
+        :key="currentDecade"
+        :height="100"
+        :width="100"
+        :topPosition="-40"
+        :leftPosition="-20"
+      />
+      <p style="margin: 0; margin-left: 60px;">
         1930 i &nbsp;
       </p>
       <div
@@ -195,10 +199,11 @@ import { mapState } from "vuex";
 
 import Rectangle from "./Rectangle.vue";
 import RelatedImage from "./RelatedImage/RelatedImage.vue";
+import Completion from "../Completion/Completion.vue";
 
 export default {
   name: "ImageSelector",
-  components: { Rectangle, RelatedImage },
+  components: { Rectangle, RelatedImage, Completion },
   watch: {
     images: function(newImages) {
       this.data = newImages;
@@ -220,13 +225,27 @@ export default {
     relatedImages: function(images) {
       this.displayRelatedImages(images);
     },
+    completionData: {
+      handler(newCompletionData) {
+        if (this.totalIndex === 0) {
+          this.totalIndex = +newCompletionData.filter(
+            (e) => e.year === this.currentDecade
+          )[0].totalImages;
+        }
+      },
+      deep: true,
+    },
   },
   data() {
     return {
       // Data informations
       isBeginning: true,
       isEnd: false,
+      currentDecade: "",
       data: undefined,
+      totalIndex: 0,
+      maxVisitedIndex: 0,
+      completion: 0,
       // Information uses to manage the movement
       step: 300,
       speed: 6000,
@@ -343,6 +362,16 @@ export default {
       if (forward) {
         if (this.currentIndex !== this.data.length - 1) {
           this.currentIndex = this.currentIndex + 1;
+          if (this.maxVisitedIndex < this.currentIndex) {
+            this.maxVisitedIndex = this.currentIndex;
+            this.completion = Math.floor(
+              (this.maxVisitedIndex * 100) / this.totalIndex
+            );
+            this.$store.dispatch("updateCompletion", {
+              decade: this.currentDecade,
+              completion: this.completion,
+            });
+          }
         }
       } else if (this.currentIndex !== 0) {
         this.currentIndex = this.currentIndex - 1;
@@ -948,7 +977,12 @@ export default {
         "v-end": this.isEnd,
       };
     },
-    ...mapState(["images", "isLoadingImage", "relatedImages"]),
+    ...mapState([
+      "images",
+      "isLoadingImage",
+      "relatedImages",
+      "completionData",
+    ]),
   },
   mounted() {
     // Use to find the ratio and to add the content correctly in the scroll and to know the translation size
@@ -964,10 +998,11 @@ export default {
       this.defineTopPositionCenterPage()
     );
 
+    this.currentDecade = "193";
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
     this.$store.dispatch("initializeCarousel", {
-      decade: "193",
+      decade: this.currentDecade,
     });
   },
 };
