@@ -84,7 +84,7 @@
         :leftPosition="-20"
       />
       <p style="margin: 0; margin-left: 60px;">
-        1930 i &nbsp;
+        {{ currentDecade + '0' }} <img src="@/assets/vector.png" /> &nbsp;
       </p>
       <div
         style="display: flex; overflow: hidden;"
