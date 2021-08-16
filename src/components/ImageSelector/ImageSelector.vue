@@ -9,6 +9,8 @@
       style="cursor: pointer; user-select:none;"
       ref="rectangle"
     />
+    <!-- History Part-->
+    <history :topPosition="windowHeight - 150" :leftPosition="50" />
     <!-- Related Image display part -->
     <div
       ref="position0"
@@ -75,20 +77,13 @@
       </p>
     </div>
     <!-- Image information top part -->
-    <div v-if="carouselHover" :style="imageInformationPosition">
-      <completion
-        :key="currentDecade"
-        :height="100"
-        :width="100"
-        :topPosition="-40"
-        :leftPosition="-20"
-      />
-      <p style="margin: 0; margin-left: 60px;">
-        {{ currentDecade + '0' }} <img src="@/assets/vector.png" /> &nbsp;
-      </p>
+    <div
+      v-if="carouselHover && relatedImagesPosition.length > 0 && !endDisplay"
+      :style="imageInformationPosition"
+    >
       <div
         style="display: flex; overflow: hidden;"
-        :style="{ width: thumbnailWidth() / 2 + 'px' }"
+        :style="{ width: thumbnailWidth() / 1.6 + 'px' }"
       >
         <p
           v-if="relatedImagesPosition.length > 0"
@@ -118,6 +113,20 @@
           {{ relatedImagesPosition[2].image.tag["@value"] }} &nbsp;
         </p>
       </div>
+    </div>
+    <div v-if="carouselHover && endDisplay" :style="imageInformationPosition">
+      <completion
+        :key="currentDecade"
+        :height="100"
+        :width="100"
+        :topPosition="-40"
+        :leftPosition="-20"
+      />
+      <p style="margin: 0; margin-left: 60px;">
+        {{ currentDecade + "0" }} <img src="@/assets/vector.png" /> &nbsp;
+      </p>
+    </div>
+    <div v-if="carouselHover && endDisplay" :style="indexInformationPosition">
       <h3 style="margin: 0; height: 30px;">{{ currentIndex + 1 }}</h3>
     </div>
     <!-- Carousel display part -->
@@ -200,10 +209,11 @@ import { mapState } from "vuex";
 import Rectangle from "./Rectangle.vue";
 import RelatedImage from "./RelatedImage/RelatedImage.vue";
 import Completion from "../Completion/Completion.vue";
+import History from "../History/History.vue";
 
 export default {
   name: "ImageSelector",
-  components: { Rectangle, RelatedImage, Completion },
+  components: { Rectangle, RelatedImage, Completion, History },
   watch: {
     images: function(newImages) {
       this.data = newImages;
@@ -221,9 +231,21 @@ export default {
       this.isBeginning = newVal === 0;
       this.isEnd = newVal === this.data.length - 1;
       this.shouldRunSideAnimation = this.isBeginning || this.isEnd;
+      clearTimeout(this.historyTimeout);
+      this.historyTimeout = undefined;
+      this.endDisplay = true;
     },
     relatedImages: function(images) {
+      this.endDisplay = false;
       this.displayRelatedImages(images);
+      this.historyTimeout = setTimeout(() => {
+        this.$store.dispatch("insertHistory", {
+          decade: this.currentDecade,
+          index: this.currentIndex,
+          data: this.data,
+        });
+        this.endDisplay = true;
+      }, 8000);
     },
     completionData: {
       handler(newCompletionData) {
@@ -246,6 +268,7 @@ export default {
       totalIndex: 0,
       maxVisitedIndex: 0,
       completion: 0,
+      endDisplay: true,
       // Information uses to manage the movement
       step: 300,
       speed: 6000,
@@ -276,6 +299,8 @@ export default {
       potentialPosition: [1, 2, 3, 4, 5, 6],
       relatedImagesPosition: [],
       displayRelatedImageTimeout: [],
+      // History Part
+      historyTimeout: undefined,
     };
   },
   methods: {
@@ -743,6 +768,15 @@ export default {
         left: this.defineLeftImagePosition() + "px",
         display: "flex",
         width: this.thumbnailWidth() + "px",
+      };
+    },
+    indexInformationPosition() {
+      return {
+        position: "absolute",
+        top: this.defineTopImagePosition() - 40 + "px",
+        left:
+          this.defineLeftImagePosition() + this.thumbnailWidth() - 10 + "px",
+        display: "flex",
       };
     },
     imageCreatorPosition() {

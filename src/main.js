@@ -10,6 +10,9 @@ export const getters = {
   getCompletionByDecade: (state) => (decade) => {
     return state.completionData.filter((e) => e.position === decade)[0];
   },
+  getHistory: (state) => {
+    return state.history;
+  }
 };
 
 export const mutations = {
@@ -42,6 +45,13 @@ export const mutations = {
   provideRelatedImages(state, relatedImages) {
     state.relatedImages = relatedImages;
   },
+  insertHistory(state, payload) {
+    state.history.push({
+      decade: payload.decade,
+      index: payload.index,
+      data: payload.data,
+    });
+  },
 };
 
 export const actions = {
@@ -50,6 +60,13 @@ export const actions = {
       year: payload.decade,
       completion: payload.completion,
     });
+  },
+  insertHistory(context, payload) {
+    context.commit("insertHistory", {
+      decade: payload.decade,
+      index: payload.index,
+      data: payload.data,
+    })
   },
   initializeCarousel(context, { decade }) {
     context.commit("setNextDecade", decade);
@@ -81,7 +98,6 @@ export const actions = {
         }
       });
   },
-  // TODO: Optimize the time consuming of this part!!!
   loadRelatedImages(context, { tags, id }) {
     const relatedImages = [];
     const promises = [];
@@ -113,6 +129,7 @@ const store = createStore({
       images: [],
       relatedImages: [],
       completionData: [],
+      history: [],
     };
   },
   getters: getters,
