@@ -924,7 +924,7 @@ export default {
           ? positions[0] +
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
-          : positions[0];
+          : positions[0] + this.relatedThumbnailHeight() / 3;
       const left =
         positions[1] < this.pageWidth / 2
           ? positions[1] + this.relatedThumbnailWidth() - 60
@@ -973,7 +973,7 @@ export default {
           ? positions[0] +
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
-          : positions[0];
+          : positions[0] + this.relatedThumbnailHeight() / 3;
       const left =
         positions[1] < this.pageWidth / 2
           ? positions[1] + this.relatedThumbnailWidth() - 60
@@ -1024,7 +1024,7 @@ export default {
           ? positions[0] +
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
-          : positions[0];
+          : positions[0] + this.relatedThumbnailHeight() / 3;
       const left =
         positions[1] < this.pageWidth / 2
           ? positions[1] + this.relatedThumbnailWidth() - 60
