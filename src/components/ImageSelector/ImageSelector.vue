@@ -213,6 +213,7 @@
 </template>
 
 <script>
+
 import { useWindowSize } from "vue-window-size";
 import { mapState } from "vuex";
 
@@ -234,6 +235,7 @@ export default {
             tags: this.data[this.currentIndex].tags,
             id: this.data[this.currentIndex].id,
           });
+          window.scrollTo(this.currentXPosition, this.currentYPosition);
         });
       }
     },
@@ -387,20 +389,14 @@ export default {
     mouseWheel() {
       this.checkCollision();
     },
-    touchMove(event) {
+    touchMove() {
       if (this.isDrag && !this.blockDrag) {
-        const x = this.touchX - event.touches[0].clientX;
-        if (x < 10 && x > -10) {
-          console.log(this.touchX);
-          this.touchX = this.touchX + x;
-          console.log(x);
-        }
+        this.checkCollision();
       }
     },
     mouseMove(event) {
       if (this.isDrag && !this.blockDrag) {
         const xMovement = this.currentXPosition - event.movementX;
-        console.log(event);
         if (xMovement > 0 || xMovement < event.pageWidth) {
           this.currentXPosition = xMovement;
         }
@@ -1145,8 +1141,6 @@ export default {
     this.currentYPosition = this.defineTopPositionCenterPage();
     this.touchX = this.currentXPosition;
     this.touchY = this.currentYPosition;
-
-    window.scrollTo(this.currentXPosition, this.currentYPosition);
 
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
