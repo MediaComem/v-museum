@@ -1,7 +1,6 @@
 <template>
   <!-- History Part-->
   <history :topPosition="windowHeight - 150" :leftPosition="50" />
-
   <div
     :style="setPage"
     @mousewheel="mouseWheel"
@@ -9,8 +8,11 @@
     @mouseup="endPosition"
     @mouseleave="endPosition"
     @mousemove="mouseMove"
+    @touchstart="startPosition"
+    @touchend="endPosition"
+    @touchmove="touchMove"
     ref="display"
-    style="cursor: pointer; user-select:none;"
+    style="cursor: pointer; user-select:none; touch-action: pan-x pan-y;"
   >
     <!-- Target display part -->
     <rectangle
@@ -22,26 +24,20 @@
     />
 
     <!-- Related Image display part -->
-    <div
-      ref="position0"
-      :style="relatedImagePosition1"
-      v-if="relatedImagesPosition.length > 0"
-    >
-      <related-image :image="relatedImagesPosition[0]" />
+    <div :style="relatedImagePosition1" v-if="relatedImagesPosition.length > 0">
+      <div ref="position0" :style="relatedImageDisplay1">
+        <related-image :image="relatedImagesPosition[0]" />
+      </div>
     </div>
-    <div
-      ref="position1"
-      :style="relatedImagePosition2"
-      v-if="relatedImagesPosition.length > 1"
-    >
-      <related-image :image="relatedImagesPosition[1]" />
+    <div :style="relatedImagePosition2" v-if="relatedImagesPosition.length > 1">
+      <div ref="position1" :style="relatedImageDisplay2">
+        <related-image :image="relatedImagesPosition[1]" />
+      </div>
     </div>
-    <div
-      ref="position2"
-      :style="relatedImagePosition3"
-      v-if="relatedImagesPosition.length > 2"
-    >
-      <related-image :image="relatedImagesPosition[2]" />
+    <div :style="relatedImagePosition3" v-if="relatedImagesPosition.length > 2">
+      <div ref="position2" :style="relatedImageDisplay3">
+        <related-image :image="relatedImagesPosition[2]" />
+      </div>
     </div>
     <!-- Related image text display -->
     <div
@@ -141,7 +137,6 @@
     </div>
     <!-- Carousel display part -->
     <div :style="imagePosition">
-      <div v-if="!carouselHover" :style="smallCarouselTop"/>
       <div :style="componentSize" style="overflow:hidden;" class="sliderMask">
         <div :style="componentSize" :class="selectZoomAnimation" ref="divCar">
           <ul
@@ -168,7 +163,6 @@
           </ul>
         </div>
       </div>
-      <div v-if="!carouselHover" :style="smallCarouselBottom"/>
     </div>
     <!-- Image information bottom part -->
     <div v-if="data && carouselHover">
@@ -295,6 +289,8 @@ export default {
       currentYPosition: 0,
       isDrag: false,
       blockDrag: false,
+      touchX: 0,
+      touchY: 0,
       // Information uses to manage the animations
       zoomingStep: 3,
       nbImageMove: 0,
@@ -375,16 +371,11 @@ export default {
           : (rectangle.hover = false);
       });
       if (this.moveToImageTimeout.length === 0) {
-        this.rectangleHeight = this.$refs.divCar.clientHeight + 20;
-        this.rectangleWidth = this.thumbnailWidth() + 20;
+        this.rectangleHeight = this.relatedThumbnailHeight() + 20;
+        this.rectangleWidth = this.relatedThumbnailWidth() + 20;
       } else {
-        if (this.carouselHover) {
-          this.rectangleHeight = this.thumbnailHeight() + 20;
-          this.rectangleWidth = this.thumbnailWidth() + 20;
-        } else {
-          this.rectangleHeight = this.relatedThumbnailHeight() * 2 + 20;
-          this.rectangleWidth = this.relatedThumbnailWidth() + 20;
-        }
+        this.rectangleHeight = this.thumbnailHeight() + 20;
+        this.rectangleWidth = this.thumbnailWidth() + 20;
       }
     },
     startPosition() {
@@ -396,9 +387,20 @@ export default {
     mouseWheel() {
       this.checkCollision();
     },
+    touchMove(event) {
+      if (this.isDrag && !this.blockDrag) {
+        const x = this.touchX - event.touches[0].clientX;
+        if (x < 10 && x > -10) {
+          console.log(this.touchX);
+          this.touchX = this.touchX + x;
+          console.log(x);
+        }
+      }
+    },
     mouseMove(event) {
       if (this.isDrag && !this.blockDrag) {
         const xMovement = this.currentXPosition - event.movementX;
+        console.log(event);
         if (xMovement > 0 || xMovement < event.pageWidth) {
           this.currentXPosition = xMovement;
         }
@@ -416,7 +418,10 @@ export default {
           -this.$refs.display.getBoundingClientRect().top +
           this.windowHeight / 2 -
           this.rectangleHeight / 2;
-        window.scrollTo(this.currentXPosition, this.currentYPosition);
+        window.scrollTo({
+          left: this.currentXPosition,
+          top: this.currentYPosition,
+        });
         this.checkCollision();
       }
     },
@@ -486,6 +491,7 @@ export default {
           }
         }, 200);
       } else {
+        this.isDrag = false;
         this.stopDisplayRelatedImages();
         this.decelerateTimouts.forEach(clearTimeout);
         const newSpeed = this.speedSelection();
@@ -870,7 +876,7 @@ export default {
         "background-color": "white",
         width: this.thumbnailWidth() + "px",
         height: this.thumbnailHeight() / 4 + "px",
-        top: this.thumbnailHeight() / 4 * 3 + "px",
+        top: (this.thumbnailHeight() / 4) * 3 + "px",
         "z-index": 1,
       };
     },
@@ -883,11 +889,23 @@ export default {
         top: positions[0] + "px",
         left: positions[1] + "px",
         overflow: "hidden",
+        height: this.thumbnailHeight() + "px",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    relatedImageDisplay1() {
+      return {
+        position: "absolute",
         height: this.relatedImagesPosition[0].hover
-          ? this.relatedThumbnailHeight() * 2 + "px"
+          ? this.thumbnailHeight() + "px"
           : this.relatedThumbnailHeight() + "px",
-        width: this.relatedThumbnailWidth() + "px",
-        transition: "height 0.3s",
+        width: this.relatedImagesPosition[0].hover
+          ? this.thumbnailWidth() + "px"
+          : this.relatedThumbnailWidth() + "px",
+        "margin-top": this.relatedImagesPosition[0].hover
+          ? 0
+          : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
+        transition: "height 0.3s, margin 0.3s",
       };
     },
     relatedInformationPosition1() {
@@ -896,8 +914,10 @@ export default {
       );
       const top =
         positions[0] < this.pageHeight / 2
-          ? positions[0] + this.relatedThumbnailHeight()
-          : positions[0] - 60;
+          ? positions[0] +
+            this.relatedThumbnailHeight() +
+            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
+          : positions[0];
       const left =
         positions[1] < this.pageWidth / 2
           ? positions[1] + this.relatedThumbnailWidth() - 60
@@ -918,11 +938,23 @@ export default {
         top: positions[0] + "px",
         left: positions[1] + "px",
         overflow: "hidden",
+        height: this.thumbnailHeight() + "px",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    relatedImageDisplay2() {
+      return {
+        position: "absolute",
         height: this.relatedImagesPosition[1].hover
-          ? this.relatedThumbnailHeight() * 2 + "px"
+          ? this.thumbnailHeight() + "px"
           : this.relatedThumbnailHeight() + "px",
-        width: this.relatedThumbnailWidth() + "px",
-        transition: "height 0.3s",
+        width: this.relatedImagesPosition[1].hover
+          ? this.thumbnailWidth() + "px"
+          : this.relatedThumbnailWidth() + "px",
+        "margin-top": this.relatedImagesPosition[1].hover
+          ? 0
+          : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
+        transition: "height 0.3s, margin 0.3s",
       };
     },
     relatedInformationPosition2() {
@@ -931,8 +963,10 @@ export default {
       );
       const top =
         positions[0] < this.pageHeight / 2
-          ? positions[0] + this.relatedThumbnailHeight()
-          : positions[0] - 60;
+          ? positions[0] +
+            this.relatedThumbnailHeight() +
+            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
+          : positions[0];
       const left =
         positions[1] < this.pageWidth / 2
           ? positions[1] + this.relatedThumbnailWidth() - 60
@@ -942,6 +976,8 @@ export default {
         top: top + "px",
         left: left + "px",
         overflow: "hidden",
+        height: this.thumbnailHeight() + "px",
+        width: this.thumbnailWidth() + "px",
       };
     },
     relatedImagePosition3() {
@@ -953,11 +989,23 @@ export default {
         top: positions[0] + "px",
         left: positions[1] + "px",
         overflow: "hidden",
+        height: this.thumbnailHeight() + "px",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    relatedImageDisplay3() {
+      return {
+        position: "absolute",
         height: this.relatedImagesPosition[2].hover
-          ? this.relatedThumbnailHeight() * 2 + "px"
+          ? this.thumbnailHeight() + "px"
           : this.relatedThumbnailHeight() + "px",
-        width: this.relatedThumbnailWidth() + "px",
-        transition: "height 0.3s",
+        width: this.relatedImagesPosition[2].hover
+          ? this.thumbnailWidth() + "px"
+          : this.relatedThumbnailWidth() + "px",
+        "margin-top": this.relatedImagesPosition[2].hover
+          ? 0
+          : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
+        transition: "height 0.3s, margin 0.3s",
       };
     },
     relatedInformationPosition3() {
@@ -966,8 +1014,10 @@ export default {
       );
       const top =
         positions[0] < this.pageHeight / 2
-          ? positions[0] + this.relatedThumbnailHeight()
-          : positions[0] - 60;
+          ? positions[0] +
+            this.relatedThumbnailHeight() +
+            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
+          : positions[0];
       const left =
         positions[1] < this.pageWidth / 2
           ? positions[1] + this.relatedThumbnailWidth() - 60
@@ -1093,6 +1143,8 @@ export default {
 
     this.currentXPosition = this.defineLeftPositionCenterPage();
     this.currentYPosition = this.defineTopPositionCenterPage();
+    this.touchX = this.currentXPosition;
+    this.touchY = this.currentYPosition;
 
     window.scrollTo(this.currentXPosition, this.currentYPosition);
 
