@@ -1,6 +1,6 @@
 <template>
   <!-- History Part-->
-  <history :topPosition="windowHeight - 150" :leftPosition="50" />
+  <history :topPosition="windowHeight - 150" :leftPosition="50" :fullWidth="windowWidth"/>
   <div
     :style="setPage"
     @mousewheel="mouseWheel"
@@ -49,7 +49,7 @@
       <p
         style="margin-bottom: 0; font-weight: bold;"
         v-if="!relatedImagesPosition[0].hover"
-        class="relatedImageBase"
+        :class="{relatedImageBase: !endDisplay}"
       >
         {{ relatedImagesPosition[0].image.tag["@value"] }}
       </p>
@@ -63,7 +63,7 @@
       <p
         style="margin-bottom: 0; font-weight: bold;"
         v-if="!relatedImagesPosition[1].hover"
-        class="relatedImageBase"
+        :class="{relatedImageBase: !endDisplay}"
       >
         {{ relatedImagesPosition[1].image.tag["@value"] }}
       </p>
@@ -77,7 +77,7 @@
       <p
         style="margin-bottom: 0; font-weight: bold;"
         v-if="!relatedImagesPosition[2].hover"
-        class="relatedImageBase"
+        :class="{relatedImageBase: !endDisplay}"
       >
         {{ relatedImagesPosition[2].image.tag["@value"] }}
       </p>

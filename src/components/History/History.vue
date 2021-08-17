@@ -1,9 +1,9 @@
 <template>
-  <div class="history-layout" :style="displayHistory">
-    <div class="history-text">
+  <div v-if="!displayAllHistory" class="history-layout" :style="displayHistory">
+    <div class="history-text" @click="displayAllHistory = true">
       <p class="history-value">{{ currentHistory.length }}</p>
     </div>
-    <div class="history-display-image" >
+    <div class="history-display-image">
       <div style="position: absolute;">
         <img
           v-if="currentHistory.length > 2"
@@ -44,18 +44,42 @@
       </div>
     </div>
   </div>
+  <div v-if="displayAllHistory" class="history-layout" :style="fullHistory">
+    <div class="history-text" @click="displayAllHistory = false">
+      <p class="history-value">{{ currentHistory.length }}</p>
+    </div>
+    <div v-for="(value, index) in currentHistory" :key="index">
+      <div
+        style="position: absolute;"
+        :style="{ left: 100 * (index + 1) + 'px' }"
+      >
+        <img
+          class="history-image"
+          @click="comeBackTo(index)"
+          :src="value.data[value.index].imagePaths.square"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 export default {
   name: "History",
+  data() {
+    return {
+      displayAllHistory: false,
+    };
+  },
   props: {
     topPosition: Number,
     leftPosition: Number,
+    fullWidth: Number,
   },
   methods: {
     comeBackTo(historyIndex) {
+      this.displayAllHistory = false;
       console.log(this.currentHistory[historyIndex]);
       // TODO: Implemenet come back to the right page when transition ready
     },
@@ -63,8 +87,19 @@ export default {
   computed: {
     displayHistory() {
       return {
+        height: "100px",
+        width: "400px",
         top: this.topPosition + "px",
         left: this.leftPosition + "px",
+      };
+    },
+    fullHistory() {
+      return {
+        height: "100px",
+        width: this.fullWidth + "px",
+        top: this.topPosition + "px",
+        left: "0px",
+        overflow: "scroll",
       };
     },
     ...mapGetters({
@@ -78,8 +113,6 @@ export default {
 .history-layout {
   display: block;
   background-color: black;
-  height: 100px;
-  width: 400px;
   position: fixed;
   z-index: 15;
 }
