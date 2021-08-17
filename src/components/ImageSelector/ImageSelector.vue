@@ -137,7 +137,21 @@
     </div>
     <!-- Carousel display part -->
     <div :style="imagePosition">
-      <div :style="componentSize" style="overflow:hidden;" class="sliderMask">
+      <div v-if="viewerImageMode" :style="componentSize">
+          <div ref="divCar" :style="imageViewerDisplay">
+            <img
+                  style="object-fit: none; height: 100%; width: 100%;"
+                  :src="data[currentIndex].imagePaths.large"
+                  :alt="data[currentIndex].id"
+                />
+          </div>
+      </div>
+      <div
+        v-if="!viewerImageMode"
+        :style="componentSize"
+        style="overflow:hidden;"
+        class="sliderMask"
+      >
         <div :style="componentSize" :class="selectZoomAnimation" ref="divCar">
           <ul
             class="ul-image"
@@ -213,7 +227,6 @@
 </template>
 
 <script>
-
 import { useWindowSize } from "vue-window-size";
 import { mapState } from "vuex";
 
@@ -235,6 +248,7 @@ export default {
             tags: this.data[this.currentIndex].tags,
             id: this.data[this.currentIndex].id,
           });
+          this.viewerImageMode = true;
           window.scrollTo(this.currentXPosition, this.currentYPosition);
         });
       }
@@ -249,6 +263,7 @@ export default {
     },
     relatedImages: function(images) {
       this.endDisplay = false;
+      this.viewerImageMode = true;
       this.displayRelatedImages(images);
       this.historyTimeout = setTimeout(() => {
         this.$store.dispatch("insertHistory", {
@@ -317,6 +332,7 @@ export default {
       potentialPosition: [1, 2, 3, 4, 5, 6],
       relatedImagesPosition: [],
       displayRelatedImageTimeout: [],
+      viewerImageMode: false,
       // History Part
       historyTimeout: undefined,
     };
@@ -372,7 +388,7 @@ export default {
           ? (rectangle.hover = true)
           : (rectangle.hover = false);
       });
-      if (this.moveToImageTimeout.length === 0) {
+      if (this.moveToImageTimeout.length === 0 && !this.carouselHover) {
         this.rectangleHeight = this.relatedThumbnailHeight() + 20;
         this.rectangleWidth = this.relatedThumbnailWidth() + 20;
       } else {
@@ -474,6 +490,7 @@ export default {
       }
     },
     sliderChange() {
+      this.viewerImageMode = false;
       // Release animation
       if (this.previousSpeed === 0 && this.step !== 300) {
         this.nbImageMove = 0;
@@ -855,25 +872,19 @@ export default {
         left: this.defineLeftImagePosition() + "px",
       };
     },
-    smallCarouselTop() {
+    imageViewerDisplay() {
       return {
         position: "absolute",
-        display: "block",
-        "background-color": "white",
-        width: this.thumbnailWidth() + "px",
-        height: this.thumbnailHeight() / 4 + "px",
-        "z-index": 1,
-      };
-    },
-    smallCarouselBottom() {
-      return {
-        position: "absolute",
-        display: "block",
-        "background-color": "white",
-        width: this.thumbnailWidth() + "px",
-        height: this.thumbnailHeight() / 4 + "px",
-        top: (this.thumbnailHeight() / 4) * 3 + "px",
-        "z-index": 1,
+        height: this.carouselHover
+          ? this.thumbnailHeight() + "px"
+          : this.relatedThumbnailHeight() + "px",
+        width: this.carouselHover
+          ? this.thumbnailWidth() + "px"
+          : this.relatedThumbnailWidth() + "px",
+        "margin-top": this.carouselHover
+          ? 0
+          : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
+        transition: "height 0.3s, margin 0.3s",
       };
     },
     relatedImagePosition1() {
