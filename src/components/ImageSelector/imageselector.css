@@ -8,6 +8,21 @@
   height: 100%;
 }
 
+.related-text {
+  margin-bottom: 0; 
+  font-weight: bold;
+}
+
+.image-information {
+  margin: 0;
+}
+
+.carousel-image {
+  object-fit: none; 
+  height: 100%; 
+  width: 100%;
+}
+
 .v-zoom {
   height: 100%;
   width: 100%;

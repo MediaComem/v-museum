@@ -51,7 +51,7 @@
       :style="relatedInformationPosition1"
     >
       <p
-        style="margin-bottom: 0; font-weight: bold;"
+        class="related-text"
         v-if="!relatedImagesPosition[0].hover"
         :class="{ relatedImageBase: !endDisplay }"
       >
@@ -65,7 +65,7 @@
       :style="relatedInformationPosition2"
     >
       <p
-        style="margin-bottom: 0; font-weight: bold;"
+        class="related-text"
         v-if="!relatedImagesPosition[1].hover"
         :class="{ relatedImageBase: !endDisplay }"
       >
@@ -79,7 +79,7 @@
       :style="relatedInformationPosition3"
     >
       <p
-        style="margin-bottom: 0; font-weight: bold;"
+        class="related-text"
         v-if="!relatedImagesPosition[2].hover"
         :class="{ relatedImageBase: !endDisplay }"
       >
@@ -97,7 +97,7 @@
       >
         <p
           v-if="relatedImagesPosition.length > 0"
-          style="margin: 0;"
+          class="image-information"
           :class="{
             removeRelatedImageBaseText: relatedImagesPosition[0].display,
           }"
@@ -106,7 +106,7 @@
         </p>
         <p
           v-if="relatedImagesPosition.length > 1"
-          style="margin: 0;"
+          class="image-information"
           :class="{
             removeRelatedImageBaseText: relatedImagesPosition[1].display,
           }"
@@ -115,7 +115,7 @@
         </p>
         <p
           v-if="relatedImagesPosition.length > 2"
-          style="margin: 0;"
+          class="image-information"
           :class="{
             removeRelatedImageBaseText: relatedImagesPosition[2].display,
           }"
@@ -144,7 +144,7 @@
       <div v-if="viewerImageMode" :style="componentSize">
         <div ref="divCar" :style="imageViewerDisplay">
           <img
-            style="object-fit: none; height: 100%; width: 100%;"
+            class="carousel-image"
             :src="data[currentIndex].imagePaths.large"
             :alt="data[currentIndex].id"
           />
@@ -171,7 +171,7 @@
             >
               <div :style="componentSize" style="overflow:hidden">
                 <img
-                  style="object-fit: none; height: 100%; width: 100%;"
+                  class="carousel-image"
                   :ref="'image-' + index"
                   :src="value.imagePaths.large"
                   :alt="value.id"
