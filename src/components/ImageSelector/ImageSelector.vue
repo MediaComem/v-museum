@@ -1,6 +1,10 @@
 <template>
   <!-- History Part-->
-  <history :topPosition="windowHeight - 150" :leftPosition="50" :fullWidth="windowWidth"/>
+  <history
+    :topPosition="windowHeight - 150"
+    :leftPosition="50"
+    :fullWidth="windowWidth"
+  />
   <div
     :style="setPage"
     @mousewheel="mouseWheel"
@@ -49,7 +53,7 @@
       <p
         style="margin-bottom: 0; font-weight: bold;"
         v-if="!relatedImagesPosition[0].hover"
-        :class="{relatedImageBase: !endDisplay}"
+        :class="{ relatedImageBase: !endDisplay }"
       >
         {{ relatedImagesPosition[0].image.tag["@value"] }}
       </p>
@@ -63,7 +67,7 @@
       <p
         style="margin-bottom: 0; font-weight: bold;"
         v-if="!relatedImagesPosition[1].hover"
-        :class="{relatedImageBase: !endDisplay}"
+        :class="{ relatedImageBase: !endDisplay }"
       >
         {{ relatedImagesPosition[1].image.tag["@value"] }}
       </p>
@@ -77,7 +81,7 @@
       <p
         style="margin-bottom: 0; font-weight: bold;"
         v-if="!relatedImagesPosition[2].hover"
-        :class="{relatedImageBase: !endDisplay}"
+        :class="{ relatedImageBase: !endDisplay }"
       >
         {{ relatedImagesPosition[2].image.tag["@value"] }}
       </p>
@@ -138,13 +142,13 @@
     <!-- Carousel display part -->
     <div :style="imagePosition">
       <div v-if="viewerImageMode" :style="componentSize">
-          <div ref="divCar" :style="imageViewerDisplay">
-            <img
-                  style="object-fit: none; height: 100%; width: 100%;"
-                  :src="data[currentIndex].imagePaths.large"
-                  :alt="data[currentIndex].id"
-                />
-          </div>
+        <div ref="divCar" :style="imageViewerDisplay">
+          <img
+            style="object-fit: none; height: 100%; width: 100%;"
+            :src="data[currentIndex].imagePaths.large"
+            :alt="data[currentIndex].id"
+          />
+        </div>
       </div>
       <div
         v-if="!viewerImageMode"

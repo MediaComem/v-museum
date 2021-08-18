@@ -96,7 +96,7 @@ export default {
     fullHistory() {
       return {
         height: "100px",
-        width: this.fullWidth + "px",
+        width: "100vw",
         top: this.topPosition + "px",
         left: "0px",
         overflow: "scroll",
