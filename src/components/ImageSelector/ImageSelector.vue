@@ -310,8 +310,7 @@ export default {
       currentYPosition: 0,
       isDrag: false,
       blockDrag: false,
-      touchX: 0,
-      touchY: 0,
+      shouldStartRelatedImageSearch: false,
       // Information uses to manage the animations
       zoomingStep: 3,
       nbImageMove: 0,
@@ -508,6 +507,7 @@ export default {
           }
         }, 200);
       } else {
+        this.shouldStartRelatedImageSearch = true;
         this.isDrag = false;
         this.stopDisplayRelatedImages();
         this.decelerateTimouts.forEach(clearTimeout);
@@ -539,6 +539,10 @@ export default {
         setTimeout(() => {
           this.speed = 1000;
           this.move(direction);
+          this.$store.dispatch("loadRelatedImages", {
+            tags: this.data[this.currentIndex].tags,
+            id: this.data[this.currentIndex].id,
+          });
           setTimeout(() => (this.shouldRunDecelerateAnimation = false), 1000);
         }, 500)
       );
@@ -570,6 +574,7 @@ export default {
         if (releaseStep < 100 || releaseStep > 530) {
           this.shouldRunDecelerateAnimation = true;
         }
+        this.shouldStartRelatedImageSearch = false;
         this.launchDecelerate(this.previousDirection);
       }
 
@@ -581,10 +586,12 @@ export default {
         this.zoomingStep = -1;
         this.speed = 6000;
         this.previousDirection = undefined;
-        this.$store.dispatch("loadRelatedImages", {
-          tags: this.data[this.currentIndex].tags,
-          id: this.data[this.currentIndex].id,
-        });
+        if (this.shouldStartRelatedImageSearch) {
+          this.$store.dispatch("loadRelatedImages", {
+            tags: this.data[this.currentIndex].tags,
+            id: this.data[this.currentIndex].id,
+          });
+        }
       }
     },
     animationStepAnalysis(speed) {
@@ -987,8 +994,6 @@ export default {
         top: top + "px",
         left: left + "px",
         overflow: "hidden",
-        height: this.thumbnailHeight() + "px",
-        width: this.thumbnailWidth() + "px",
       };
     },
     relatedImagePosition3() {
@@ -1154,8 +1159,6 @@ export default {
 
     this.currentXPosition = this.defineLeftPositionCenterPage();
     this.currentYPosition = this.defineTopPositionCenterPage();
-    this.touchX = this.currentXPosition;
-    this.touchY = this.currentYPosition;
 
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
