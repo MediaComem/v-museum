@@ -247,6 +247,7 @@ export default {
       this.data = newImages;
       if (this.isInitialLoad) {
         this.$nextTick(() => {
+          //this.currentIndex = +this.$route.params.index;
           this.isInitialLoad = false;
           this.$store.dispatch("loadRelatedImages", {
             tags: this.data[this.currentIndex].tags,
@@ -336,6 +337,7 @@ export default {
       relatedImagesPosition: [],
       displayRelatedImageTimeout: [],
       viewerImageMode: false,
+      loadNewPageTimeout: undefined,
       // History Part
       historyTimeout: undefined,
     };
@@ -383,13 +385,18 @@ export default {
       const y = (this.windowHeight - this.$refs.divCar.clientHeight + 20) / 2;
       this.carouselHover = this.checkPosition(x, y, rectangle);
       this.relatedImagesPosition.forEach((rectangle, index) => {
-        this.checkPosition(
+        const isHover = this.checkPosition(
           x,
           y,
           this.$refs["position" + index].getBoundingClientRect()
-        )
-          ? (rectangle.hover = true)
-          : (rectangle.hover = false);
+        );
+        if (isHover) {
+          rectangle.hover = true;
+
+        }
+        else {
+          rectangle.hover = false;
+        }
       });
       if (this.moveToImageTimeout.length === 0 && !this.carouselHover) {
         this.rectangleHeight = this.relatedThumbnailHeight() + 20;
@@ -1162,7 +1169,7 @@ export default {
 
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
-    this.currentDecade = "193";
+    this.currentDecade = this.$route.params.decade;
     this.$store.dispatch("initializeCarousel", {
       decade: this.currentDecade,
     });

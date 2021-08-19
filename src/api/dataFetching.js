@@ -15,7 +15,8 @@ const parseElement = (element) => {
       element["dcterms:creator"][0]["@value"],
       element["dcterms:medium"][0]["@value"],
       element["thumbnail_display_urls"],
-      element["dcterms:subject"]
+      element["dcterms:subject"],
+      element["dcterms:created"][0]["@value"]
     );
   } else {
     return new ImageData(
@@ -24,7 +25,8 @@ const parseElement = (element) => {
       element["dcterms:creator"][0]["@value"],
       element["dcterms:medium"][0]["@value"],
       element["thumbnail_display_urls"],
-      element["dcterms:subject"]
+      element["dcterms:subject"],
+      element["dcterms:created"][0]["@value"]
     );
   }
 };

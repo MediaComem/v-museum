@@ -1,15 +1,11 @@
 <template>
-  <image-selector/>
+  <router-view/>
 </template>
 
 <script>
-import ImageSelector from "./components/ImageSelector/ImageSelector.vue";
 
 export default {
   name: "App",
-  components: {
-    ImageSelector,
-  },
 };
 </script>
 

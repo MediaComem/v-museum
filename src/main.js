@@ -1,10 +1,13 @@
 import { createApp } from "vue";
 import { createStore } from "vuex";
+
 import ElementPlus from "element-plus";
 import "element-plus/lib/theme-chalk/index.css";
 import App from "./App.vue";
 
 import dataFetch from "./api/dataFetching";
+import router from "./router";
+
 
 export const getters = {
   getCompletionByDecade: (state) => (decade) => {
@@ -139,5 +142,6 @@ const store = createStore({
 
 const app = createApp(App);
 app.use(ElementPlus);
+app.use(router);
 app.use(store);
 app.mount("#app");
