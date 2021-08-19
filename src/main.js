@@ -48,7 +48,7 @@ export const mutations = {
   provideRelatedImages(state, relatedImages) {
     state.relatedImages = relatedImages;
   },
-  insertHistory(state, payload) {
+  addHistoryElement(state, payload) {
     state.history.push({
       decade: payload.decade,
       index: payload.index,
@@ -65,7 +65,7 @@ export const actions = {
     });
   },
   insertHistory(context, payload) {
-    context.commit("insertHistory", {
+    context.commit("addHistoryElement", {
       decade: payload.decade,
       index: payload.index,
       data: payload.data,

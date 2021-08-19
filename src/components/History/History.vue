@@ -1,49 +1,68 @@
 <template>
   <div v-if="!displayAllHistory" class="history-layout" :style="displayHistory">
-    <div class="history-text" @click="displayAllHistory = true">
+    <div class="history-text" @click="displayAllHistory = true" style="z-index: 30">
       <p class="history-value">{{ currentHistory.length }}</p>
     </div>
     <div class="history-display-image">
-      <div style="position: absolute;">
+      <div
+        style="position: absolute; left: 200px"
+        :style="{ transform: 'translateX(' + -(100 * firstPosition) + 'px)' }"
+        :class="{ 'move-image': firstPosition !== 0 }"
+        class="history-image-element"
+      >
         <img
-          v-if="currentHistory.length > 2"
-          class="history-image"
-          style="opacity: 0.3;"
+          v-if="firstImage"
+          :style="{opacity: getOpacity(firstPosition)}"
+          class="history-image display-image"
           @click="comeBackTo(currentHistory.length - 3)"
-          :src="
-            currentHistory[currentHistory.length - 3].data[
-              currentHistory[currentHistory.length - 3].index
-            ].imagePaths.square
-          "
+          :src="firstImage.data[firstImage.index].imagePaths.square"
         />
       </div>
-      <div style="position: absolute; left: 100px;">
+      <div
+        style="position: absolute; left: 200px"
+        :style="{ transform: 'translateX(' + -(100 * secondPosition) + 'px)' }"
+        :class="{ 'move-image': secondPosition !== 0 }"
+        class="history-image-element"
+      >
         <img
-          v-if="currentHistory.length > 1"
-          class="history-image"
-          style="opacity: 0.5;"
+          v-if="secondImage"
+          :style="{opacity: getOpacity(secondPosition)}"
+          class="history-image display-image"
           @click="comeBackTo(currentHistory.length - 2)"
-          :src="
-            currentHistory[currentHistory.length - 2].data[
-              currentHistory[currentHistory.length - 2].index
-            ].imagePaths.square
-          "
+          :src="secondImage.data[secondImage.index].imagePaths.square"
         />
       </div>
-      <div style="position: absolute; left: 200px;">
+      <div
+        style="position: absolute; left: 200px"
+        :style="{ transform: 'translateX(' + -(100 * thirdPosition) + 'px)' }"
+        :class="{ 'move-image': thirdPosition !== 0 }"
+        class="history-image-element"
+      >
         <img
-          class="history-image"
+          v-if="thirdImage"
+          :style="{opacity: getOpacity(thirdPosition)}"
+          class="history-image display-image"
           @click="comeBackTo(currentHistory.length - 1)"
-          v-if="currentHistory.length > 0"
-          :src="
-            currentHistory[currentHistory.length - 1].data[
-              currentHistory[currentHistory.length - 1].index
-            ].imagePaths.square
-          "
+          :src="thirdImage.data[thirdImage.index].imagePaths.square"
+        />
+      </div>
+      <div
+        style="position: absolute; left: 200px"
+        :style="{ transform: 'translateX(' + -(100 * forthPosition) + 'px)' }"
+        :class="{ 'move-image': forthPosition !== 0 }"
+        class="history-image-element"
+      >
+        <img
+          v-if="forthImage"
+          :style="{opacity: getOpacity(forthPosition)}"
+          class="history-image display-image"
+          @click="comeBackTo(currentHistory.length - 1)"
+          :src="forthImage.data[forthImage.index].imagePaths.square"
         />
       </div>
     </div>
   </div>
+
   <div v-if="displayAllHistory" class="history-layout" :style="fullHistory">
     <div class="history-text" @click="displayAllHistory = false">
       <p class="history-value">{{ currentHistory.length }}</p>
@@ -64,18 +83,69 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "History",
-  data() {
-    return {
-      displayAllHistory: false,
-    };
-  },
   props: {
     topPosition: Number,
     leftPosition: Number,
     fullWidth: Number,
+  },
+  data() {
+    return {
+      displayAllHistory: false,
+      firstImage: undefined,
+      firstPosition: 0,
+      secondImage: undefined,
+      secondPosition: 0,
+      thirdImage: undefined,
+      thirdPosition: 0,
+      forthImage: undefined,
+      forthPosition: 0,
+      currentHistoryLength: 0,
+    };
+  },
+  watch: {
+    history: {
+      handler(historyElement) {
+        if (this.currentHistoryLength !== historyElement.length) {
+          if (this.currentHistory.length % 4 === 1) {
+            setTimeout(() => this.secondImage = undefined, 1000);
+            this.firstPosition = 0;
+            this.secondPosition = this.secondPosition + 1;
+            this.thirdPosition = this.thirdPosition + 1;
+            this.forthPosition = this.forthPosition + 1;
+            setTimeout(() => this.firstImage = historyElement[historyElement.length - 1], 1000);
+          }
+          if (this.currentHistory.length % 4 === 2) {
+            setTimeout(() => this.thirdImage = undefined, 1000);
+            this.secondPosition = 0;
+            this.firstPosition = this.firstPosition + 1;
+            this.thirdPosition = this.thirdPosition + 1;
+            this.forthPosition = this.forthPosition + 1;
+            setTimeout(() => this.secondImage = historyElement[historyElement.length - 1], 1000);
+          }
+          if (this.currentHistory.length % 4 === 3) {
+            setTimeout(() => this.forthImage = undefined, 1000);
+            this.thirdPosition = 0;
+            this.firstPosition = this.firstPosition + 1;
+            this.secondPosition = this.secondPosition + 1;
+            this.forthPosition = this.forthPosition + 1;
+            setTimeout(() => this.thirdImage = historyElement[historyElement.length - 1], 1000);
+          }
+          if (this.currentHistory.length % 4 === 0) {
+            setTimeout(() => this.firstImage = undefined, 1000);
+            this.forthPosition = 0;
+            this.firstPosition = this.firstPosition + 1;
+            this.secondPosition = this.secondPosition + 1;
+            this.thirdPosition = this.thirdPosition + 1;
+            setTimeout(() => this.forthImage = historyElement[historyElement.length - 1], 1000);
+          }
+          this.currentHistoryLength = historyElement.length;
+        }
+      },
+      deep: true,
+    },
   },
   methods: {
     comeBackTo(historyIndex) {
@@ -83,6 +153,15 @@ export default {
       console.log(this.currentHistory[historyIndex]);
       // TODO: Implemenet come back to the right page when transition ready
     },
+    getOpacity(position) {
+      if (position === 1) {
+        return '0.7';
+      }
+      if (position === 2 || position === 3) {
+        return '0.4';
+      }
+      return '1';
+    }
   },
   computed: {
     displayHistory() {
@@ -105,6 +184,7 @@ export default {
     ...mapGetters({
       currentHistory: "getHistory",
     }),
+    ...mapState(["history"]),
   },
 };
 </script>
@@ -134,6 +214,13 @@ export default {
   left: 100px;
 }
 
+.history-image-element {
+  display: block;
+  position: absolute;
+  width: 100px;
+  height: 100%;
+}
+
 .history-value {
   width: 100px;
   color: lightgray;
@@ -142,11 +229,27 @@ export default {
 }
 
 .history-image {
-  height: 85px;
-  width: 85px;
   object-fit: none;
   position: absolute;
   top: 7px;
   left: 7px;
+}
+
+.move-image {
+  transition: transform 1s linear;
+}
+
+.display-image {
+  animation: createBox 0.25s;
+  height: 85px;
+  width: 85px;
+}
+@keyframes createBox {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 </style>
