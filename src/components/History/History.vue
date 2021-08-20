@@ -1,6 +1,10 @@
 <template>
   <div v-if="!displayAllHistory" class="history-layout" :style="displayHistory">
-    <div class="history-text" @click="displayAllHistory = true" style="z-index: 30">
+    <div
+      class="history-text"
+      @click="displayAllHistory = true"
+      style="z-index: 30"
+    >
       <p class="history-value">{{ currentHistory.length }}</p>
     </div>
     <div class="history-display-image">
@@ -12,9 +16,9 @@
       >
         <img
           v-if="firstImage"
-          :style="{opacity: getOpacity(firstPosition)}"
+          :style="{ opacity: getOpacity(firstPosition) }"
           class="history-image display-image"
-          @click="comeBackTo(currentHistory.length - 3)"
+          @click="comeBackTo(firstImage, 1)"
           :src="firstImage.data[firstImage.index].imagePaths.square"
         />
       </div>
@@ -26,9 +30,9 @@
       >
         <img
           v-if="secondImage"
-          :style="{opacity: getOpacity(secondPosition)}"
+          :style="{ opacity: getOpacity(secondPosition) }"
           class="history-image display-image"
-          @click="comeBackTo(currentHistory.length - 2)"
+          @click="comeBackTo(secondImage, 2)"
           :src="secondImage.data[secondImage.index].imagePaths.square"
         />
       </div>
@@ -40,9 +44,9 @@
       >
         <img
           v-if="thirdImage"
-          :style="{opacity: getOpacity(thirdPosition)}"
+          :style="{ opacity: getOpacity(thirdPosition) }"
           class="history-image display-image"
-          @click="comeBackTo(currentHistory.length - 1)"
+          @click="comeBackTo(thirdImage, 3)"
           :src="thirdImage.data[thirdImage.index].imagePaths.square"
         />
       </div>
@@ -54,9 +58,9 @@
       >
         <img
           v-if="forthImage"
-          :style="{opacity: getOpacity(forthPosition)}"
+          :style="{ opacity: getOpacity(forthPosition) }"
           class="history-image display-image"
-          @click="comeBackTo(currentHistory.length - 1)"
+          @click="comeBackTo(forthImage, 4)"
           :src="forthImage.data[forthImage.index].imagePaths.square"
         />
       </div>
@@ -69,12 +73,13 @@
     </div>
     <div v-for="(value, index) in currentHistory" :key="index">
       <div
-        style="position: absolute;"
+        style="position: absolute; width: 100px; height: 100px"
         :style="{ left: 100 * (index + 1) + 'px' }"
       >
         <img
           class="history-image"
-          @click="comeBackTo(index)"
+          style="height: 85px; width: 85px;"
+          @click="comeBackTo(value)"
           :src="value.data[value.index].imagePaths.square"
         />
       </div>
@@ -110,36 +115,52 @@ export default {
       handler(historyElement) {
         if (this.currentHistoryLength !== historyElement.length) {
           if (this.currentHistory.length % 4 === 1) {
-            setTimeout(() => this.secondImage = undefined, 1000);
+            setTimeout(() => (this.secondImage = undefined), 1000);
             this.firstPosition = 0;
             this.secondPosition = this.secondPosition + 1;
             this.thirdPosition = this.thirdPosition + 1;
             this.forthPosition = this.forthPosition + 1;
-            setTimeout(() => this.firstImage = historyElement[historyElement.length - 1], 1000);
+            setTimeout(
+              () =>
+                (this.firstImage = historyElement[historyElement.length - 1]),
+              1000
+            );
           }
           if (this.currentHistory.length % 4 === 2) {
-            setTimeout(() => this.thirdImage = undefined, 1000);
+            setTimeout(() => (this.thirdImage = undefined), 1000);
             this.secondPosition = 0;
             this.firstPosition = this.firstPosition + 1;
             this.thirdPosition = this.thirdPosition + 1;
             this.forthPosition = this.forthPosition + 1;
-            setTimeout(() => this.secondImage = historyElement[historyElement.length - 1], 1000);
+            setTimeout(
+              () =>
+                (this.secondImage = historyElement[historyElement.length - 1]),
+              1000
+            );
           }
           if (this.currentHistory.length % 4 === 3) {
-            setTimeout(() => this.forthImage = undefined, 1000);
+            setTimeout(() => (this.forthImage = undefined), 1000);
             this.thirdPosition = 0;
             this.firstPosition = this.firstPosition + 1;
             this.secondPosition = this.secondPosition + 1;
             this.forthPosition = this.forthPosition + 1;
-            setTimeout(() => this.thirdImage = historyElement[historyElement.length - 1], 1000);
+            setTimeout(
+              () =>
+                (this.thirdImage = historyElement[historyElement.length - 1]),
+              1000
+            );
           }
           if (this.currentHistory.length % 4 === 0) {
-            setTimeout(() => this.firstImage = undefined, 1000);
+            setTimeout(() => (this.firstImage = undefined), 1000);
             this.forthPosition = 0;
             this.firstPosition = this.firstPosition + 1;
             this.secondPosition = this.secondPosition + 1;
             this.thirdPosition = this.thirdPosition + 1;
-            setTimeout(() => this.forthImage = historyElement[historyElement.length - 1], 1000);
+            setTimeout(
+              () =>
+                (this.forthImage = historyElement[historyElement.length - 1]),
+              1000
+            );
           }
           this.currentHistoryLength = historyElement.length;
         }
@@ -148,20 +169,34 @@ export default {
     },
   },
   methods: {
-    comeBackTo(historyIndex) {
+    comeBackTo(historyElement, position) {
       this.displayAllHistory = false;
-      console.log(this.currentHistory[historyIndex]);
-      // TODO: Implemenet come back to the right page when transition ready
+      switch (position) {
+        case 1:
+          break;
+        case 2:
+          break;
+        case 3:
+          break;
+        case 4:
+          break;
+      }
+      /* this.$store.dispatch("removeElementHistory", {
+        historyElement: historyElement,
+      }); */
+      this.$router.push({
+       path: `/selector/${historyElement.decade}/${historyElement.index}`
+      });
     },
     getOpacity(position) {
       if (position === 1) {
-        return '0.7';
+        return "0.7";
       }
       if (position === 2 || position === 3) {
-        return '0.4';
+        return "0.4";
       }
-      return '1';
-    }
+      return "1";
+    },
   },
   computed: {
     displayHistory() {
@@ -186,6 +221,28 @@ export default {
     }),
     ...mapState(["history"]),
   },
+  mounted() {
+    const element = this.currentHistory.slice(-3);
+    this.currentHistoryLength = this.currentHistory.length;
+    switch (element.length) {
+      case 1: this.firstImage = element[0];
+              this.firstPosition = 0;
+              
+              break;
+      case 2: this.firstImage = element[0];
+              this.firstPosition = 1;
+              this.secondImage = element[1];
+              this.secondPosition = 0;
+              break;
+      case 3: this.firstImage = element[0];
+              this.firstPosition = 2;
+              this.secondImage = element[1];
+              this.secondPosition = 1;
+              this.thirdImage = element[0];
+              this.thirdPosition = 0;
+              break;
+    }
+  }
 };
 </script>
 

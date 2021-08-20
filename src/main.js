@@ -8,19 +8,26 @@ import App from "./App.vue";
 import dataFetch from "./api/dataFetching";
 import router from "./router";
 
-
 export const getters = {
   getCompletionByDecade: (state) => (decade) => {
     return state.completionData.filter((e) => e.position === decade)[0];
   },
+  getImagesByDecade: (state) => (decade) => {
+    return state.images.find((e) => e.decade === decade);
+  },
   getHistory: (state) => {
     return state.history;
-  }
+  },
 };
 
 export const mutations = {
   setNextContext(state, payload) {
-    state.images = state.images.concat(payload.images);
+    if (store.getters.getImagesByDecade(payload.decade) === undefined) {
+      state.images.push({ decade: payload.decade, data: payload.images });
+    } else {
+      const images = store.getters.getImagesByDecade(payload.decade);
+      images.data = images.data.concat(payload.images);
+    }
     state.nextPageOffset = payload.page;
     state.isLoadingImage = false;
   },
@@ -31,7 +38,7 @@ export const mutations = {
     state.isLoadingImage = true;
   },
   setCompletion(state, payload) {
-    if (payload.getters.getCompletionByDecade(payload.year)) {
+    if (store.getters.getCompletionByDecade(payload.year) === undefined) {
       state.completionData.push({
         year: payload.year,
         totalImages: payload.totalImages,
@@ -49,12 +56,22 @@ export const mutations = {
     state.relatedImages = relatedImages;
   },
   addHistoryElement(state, payload) {
-    state.history.push({
-      decade: payload.decade,
-      index: payload.index,
-      data: payload.data,
-    });
+    const isExist = state.history.find(
+      (e) => e.index === payload.index && e.decade === payload.decade
+    );
+    if (isExist === undefined) {
+      state.history.push({
+        decade: payload.decade,
+        index: payload.index,
+        data: payload.data,
+      });
+    }
   },
+  /* removeHistoryElement(state, payload) {
+    console.log(payload.historyElement);
+    const result = state.history.filter((e) => e.decade !== payload.historyElement.decade && e.index !== payload.historyElement.index);
+    console.log(result);
+  }, */
 };
 
 export const actions = {
@@ -69,8 +86,13 @@ export const actions = {
       decade: payload.decade,
       index: payload.index,
       data: payload.data,
-    })
+    });
   },
+  /*   removeElementHistory(context, payload) {
+    context.commit("removeHistoryElement", {
+      historyElement: payload.historyElement,
+    });
+  }, */
   initializeCarousel(context, { decade }) {
     context.commit("setNextDecade", decade);
     dataFetch
@@ -78,17 +100,17 @@ export const actions = {
       .then((result) => {
         context.commit("setNextContext", {
           images: result.images,
+          decade: decade,
           page: 2,
         });
         context.commit("setCompletion", {
           year: decade,
           totalImages: result.totalImages,
-          getters: getters,
         });
       })
       .catch((err) => console.log(err));
   },
-  loadNextContent(context) {
+  loadNextContent(context, { decade }) {
     context.commit("loadingState");
     dataFetch
       .getImages(context.state.nextDecade, context.state.nextPageOffset)
@@ -96,6 +118,7 @@ export const actions = {
         if (result.images.length > 0) {
           context.commit("setNextContext", {
             images: result.images,
+            decade: decade,
             page: context.state.nextPageOffset + 1,
           });
         }

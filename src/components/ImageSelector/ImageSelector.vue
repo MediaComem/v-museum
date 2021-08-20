@@ -232,7 +232,7 @@
 
 <script>
 import { useWindowSize } from "vue-window-size";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 
 import Rectangle from "./Rectangle.vue";
 import RelatedImage from "./RelatedImage/RelatedImage.vue";
@@ -242,21 +242,45 @@ import History from "../History/History.vue";
 export default {
   name: "ImageSelector",
   components: { Rectangle, RelatedImage, Completion, History },
+  beforeRouteUpdate(to, from) {
+    console.log(from);
+    this.currentDecade = to.params.decade;
+    this.data = this.getImagesByDecade(this.currentDecade).data;
+    this.currentIndex = +to.params.index;
+    this.relatedImagesPosition = [];
+    this.currentXPosition = this.defineLeftPositionCenterPage();
+    this.currentYPosition = this.defineTopPositionCenterPage();
+    this.carouselHover = true;
+    window.scrollTo(this.currentXPosition, this.currentYPosition);
+    this.$store.dispatch("loadRelatedImages", {
+      tags: this.data[this.currentIndex].tags,
+      id: this.data[this.currentIndex].id,
+    });
+  },
   watch: {
-    images: function(newImages) {
-      this.data = newImages;
-      if (this.isInitialLoad) {
-        this.$nextTick(() => {
-          //this.currentIndex = +this.$route.params.index;
-          this.isInitialLoad = false;
-          this.$store.dispatch("loadRelatedImages", {
-            tags: this.data[this.currentIndex].tags,
-            id: this.data[this.currentIndex].id,
+    images: {
+      handler() {
+        this.data = this.getImagesByDecade(this.currentDecade).data;
+        if (this.isInitialLoad) {
+          this.$nextTick(() => {
+            //this.currentIndex = +this.$route.params.index;
+            this.isInitialLoad = false;
+            this.relatedImagesPosition = [];
+            this.$store.dispatch("loadRelatedImages", {
+              tags: this.data[this.currentIndex].tags,
+              id: this.data[this.currentIndex].id,
+            });
+            this.viewerImageMode = true;
+            this.carouselHover = true;
+            this.noMoreCheck = false;
+            window.scrollTo(this.currentXPosition, this.currentYPosition);
           });
-          this.viewerImageMode = true;
-          window.scrollTo(this.currentXPosition, this.currentYPosition);
+        }
+        this.$store.dispatch("loadNextContent", {
+          decade: this.currentDecade,
         });
-      }
+      },
+      deep: true,
     },
     currentIndex: function(newVal) {
       this.isBeginning = newVal === 0;
@@ -331,6 +355,7 @@ export default {
       rectangleHeight: 0,
       moveToImageTimeout: [],
       carouselHover: true,
+      noMoreCheck: false,
       // Related images properties
       isInitialLoad: true,
       potentialPosition: [1, 2, 3, 4, 5, 6],
@@ -380,30 +405,35 @@ export default {
     checkCollision() {
       this.moveToImageTimeout.forEach(clearTimeout);
       this.moveToImageTimeout = [];
-      const rectangle = this.$refs.divCar.getBoundingClientRect();
-      const x = (this.windowWidth - this.$refs.divCar.clientWidth + 20) / 2;
-      const y = (this.windowHeight - this.$refs.divCar.clientHeight + 20) / 2;
-      this.carouselHover = this.checkPosition(x, y, rectangle);
-      this.relatedImagesPosition.forEach((rectangle, index) => {
-        const isHover = this.checkPosition(
-          x,
-          y,
-          this.$refs["position" + index].getBoundingClientRect()
-        );
-        if (isHover) {
-          rectangle.hover = true;
-
+      if (!this.noMoreCheck) {
+        const rectangle = this.$refs.divCar.getBoundingClientRect();
+        const x = (this.windowWidth - this.$refs.divCar.clientWidth + 20) / 2;
+        const y = (this.windowHeight - this.$refs.divCar.clientHeight + 20) / 2;
+        this.carouselHover = this.checkPosition(x, y, rectangle);
+        this.relatedImagesPosition.forEach((rectangle, index) => {
+          const isHover = this.checkPosition(
+            x,
+            y,
+            this.$refs["position" + index].getBoundingClientRect()
+          );
+          if (isHover) {
+            rectangle.hover = true;
+            //this.noMoreCheck = true;
+            //this.$router.push(
+            //  "/selector/" + rectangle.image.result.decade.slice(0, 3)
+            //);
+            //return;
+          } else {
+            rectangle.hover = false;
+          }
+        });
+        if (this.moveToImageTimeout.length === 0 && !this.carouselHover) {
+          this.rectangleHeight = this.relatedThumbnailHeight() + 20;
+          this.rectangleWidth = this.relatedThumbnailWidth() + 20;
+        } else {
+          this.rectangleHeight = this.thumbnailHeight() + 20;
+          this.rectangleWidth = this.thumbnailWidth() + 20;
         }
-        else {
-          rectangle.hover = false;
-        }
-      });
-      if (this.moveToImageTimeout.length === 0 && !this.carouselHover) {
-        this.rectangleHeight = this.relatedThumbnailHeight() + 20;
-        this.rectangleWidth = this.relatedThumbnailWidth() + 20;
-      } else {
-        this.rectangleHeight = this.thumbnailHeight() + 20;
-        this.rectangleWidth = this.thumbnailWidth() + 20;
       }
     },
     startPosition() {
@@ -450,17 +480,7 @@ export default {
     isStop() {
       return this.step > 290 && this.step < 310;
     },
-    loadMoreContent(diffMaxIndexBeforeLoad) {
-      if (
-        this.currentIndex > this.data.length - diffMaxIndexBeforeLoad &&
-        !this.isLoadingImage
-      ) {
-        this.$store.dispatch("loadNextContent");
-      }
-    },
     move(forward) {
-      this.loadMoreContent(80);
-
       if (forward) {
         if (this.currentIndex !== this.data.length - 1) {
           this.currentIndex = this.currentIndex + 1;
@@ -1155,6 +1175,10 @@ export default {
       "relatedImages",
       "completionData",
     ]),
+    ...mapGetters({
+      getImagesByDecade: "getImagesByDecade",
+      getCompletionByDecade: "getCompletionByDecade",
+    }),
   },
   mounted() {
     const { width, height } = useWindowSize();
