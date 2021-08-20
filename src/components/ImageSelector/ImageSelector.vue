@@ -242,22 +242,87 @@ import History from "../History/History.vue";
 export default {
   name: "ImageSelector",
   components: { Rectangle, RelatedImage, Completion, History },
-  beforeRouteUpdate(to, from) {
-    console.log(from);
-    this.currentDecade = to.params.decade;
-    this.data = this.getImagesByDecade(this.currentDecade).data;
-    this.currentIndex = +to.params.index;
-    this.relatedImagesPosition = [];
-    this.currentXPosition = this.defineLeftPositionCenterPage();
-    this.currentYPosition = this.defineTopPositionCenterPage();
-    this.carouselHover = true;
-    window.scrollTo(this.currentXPosition, this.currentYPosition);
-    this.$store.dispatch("loadRelatedImages", {
-      tags: this.data[this.currentIndex].tags,
-      id: this.data[this.currentIndex].id,
-    });
+  /*beforeRouteEnter(to, from, next) {
+    console.log("START");
+    if (to.query.tags !== undefined) {
+      console.log(JSON.parse(to.query.tags));
+    }
+    next();
   },
+  beforeRouteUpdate(to, from, next) {
+    console.log("Update");
+    this.currentDecade = to.params.decade;
+    const newData = this.getImagesByDecade(this.currentDecade);
+    if (newData === undefined) {
+      console.log(JSON.parse(to.query.tags))
+      /* this.$store.dispatch("loadRelatedImages", {
+        tags: JSON.parse(to.query.tags),
+        id: to.params.id,
+      });
+    } else {
+      this.data = newData.data;
+      this.currentIndex = +to.params.index;
+      this.relatedImagesPosition = [];
+      this.currentXPosition = this.defineLeftPositionCenterPage();
+      this.currentYPosition = this.defineTopPositionCenterPage();
+      this.carouselHover = true;
+      window.scrollTo(this.currentXPosition, this.currentYPosition);
+      this.$store.dispatch("loadRelatedImages", {
+        tags: this.data[this.currentIndex].tags,
+        id: this.data[this.currentIndex].id,
+      });
+    }
+    next();
+  },*/
   watch: {
+    $route: function() {
+      if (
+        this.$route.params.index !== undefined &&
+        this.$route.params.index != ""
+      ) {
+        this.currentDecade = this.$route.params.decade;
+        const newData = this.getImagesByDecade(this.currentDecade);
+        if (newData === undefined) {
+          this.isInitialLoad = true;
+          this.relatedImagesPosition = [];
+          this.currentXPosition = this.defineLeftPositionCenterPage();
+          this.currentYPosition = this.defineTopPositionCenterPage();
+          this.carouselHover = true;
+          window.scrollTo(this.currentXPosition, this.currentYPosition);
+          this.$store.dispatch("initializeCarousel", {
+            decade: this.currentDecade,
+          });
+        } else {
+          this.data = newData.data;
+          if (this.$route.query.history !== undefined) {
+            this.currentIndex = +this.$route.params.index;
+            this.relatedImagesPosition = [];
+            this.currentXPosition = this.defineLeftPositionCenterPage();
+            this.currentYPosition = this.defineTopPositionCenterPage();
+            this.carouselHover = true;
+            this.rectangleHeight = this.thumbnailHeight() + 20;
+            this.rectangleWidth = this.thumbnailWidth() + 20;
+            window.scrollTo(this.currentXPosition, this.currentYPosition);
+            this.$store.dispatch("loadRelatedImages", {
+              tags: this.data[this.currentIndex].tags,
+              id: this.data[this.currentIndex].id,
+            });
+          } else {
+            /*this.currentIndex = 0;
+            this.relatedImagesPosition = [];
+            this.currentXPosition = this.defineLeftPositionCenterPage();
+            this.currentYPosition = this.defineTopPositionCenterPage();
+            this.carouselHover = true;
+            window.scrollTo(this.currentXPosition, this.currentYPosition);
+            this.$store.dispatch("loadRelatedImages", {
+              tags: this.data[this.currentIndex].tags,
+              id: this.data[this.currentIndex].id,
+            });*/
+          }
+        }
+        this.$router.push(`/selector/${this.currentDecade}`);
+      }
+    },
     images: {
       handler() {
         this.data = this.getImagesByDecade(this.currentDecade).data;
@@ -380,7 +445,7 @@ export default {
     relatedThumbnailWidth() {
       return 8 * 4 * this.defineReponsiveFactor();
     },
-    checkPosition(x, y, rectangle) {
+    checkPosition(x, y, rectangle, relatedImage, isRelated) {
       if (
         x < rectangle.x + rectangle.width &&
         x + this.rectangleWidth > rectangle.x &&
@@ -396,6 +461,15 @@ export default {
               this.$refs.display.getBoundingClientRect().y -
               (rectangle.y - (this.windowHeight - rectangle.height) / 2);
             window.scrollTo({ left: -newX, top: -newY, behavior: "smooth" });
+            if (isRelated) {
+              this.$router.push({
+                path: `/selector/${relatedImage.image.result.decade.slice(
+                  0,
+                  3
+                )}/${relatedImage.image.result.id}`,
+                query: { tags: JSON.stringify(relatedImage.image.result.tags) },
+              });
+            }
           }, 200)
         );
         return true;
@@ -409,20 +483,23 @@ export default {
         const rectangle = this.$refs.divCar.getBoundingClientRect();
         const x = (this.windowWidth - this.$refs.divCar.clientWidth + 20) / 2;
         const y = (this.windowHeight - this.$refs.divCar.clientHeight + 20) / 2;
-        this.carouselHover = this.checkPosition(x, y, rectangle);
+        this.carouselHover = this.checkPosition(
+          x,
+          y,
+          rectangle,
+          undefined,
+          false
+        );
         this.relatedImagesPosition.forEach((rectangle, index) => {
           const isHover = this.checkPosition(
             x,
             y,
-            this.$refs["position" + index].getBoundingClientRect()
+            this.$refs["position" + index].getBoundingClientRect(),
+            rectangle,
+            true
           );
           if (isHover) {
             rectangle.hover = true;
-            //this.noMoreCheck = true;
-            //this.$router.push(
-            //  "/selector/" + rectangle.image.result.decade.slice(0, 3)
-            //);
-            //return;
           } else {
             rectangle.hover = false;
           }

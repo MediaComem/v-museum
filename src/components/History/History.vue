@@ -185,7 +185,8 @@ export default {
         historyElement: historyElement,
       }); */
       this.$router.push({
-       path: `/selector/${historyElement.decade}/${historyElement.index}`
+       path: `/selector/${historyElement.decade}/${historyElement.index}`,
+       query: {history: true}
       });
     },
     getOpacity(position) {
