@@ -55,6 +55,9 @@ export const mutations = {
   provideRelatedImages(state, relatedImages) {
     state.relatedImages = relatedImages;
   },
+  provideSecondRelatedImages(state, relatedImages) {
+    state.secondRelatedImages = relatedImages;
+  },
   addHistoryElement(state, payload) {
     const isExist = state.history.find(
       (e) => e.index === payload.index && e.decade === payload.decade
@@ -144,6 +147,26 @@ export const actions = {
       context.commit("provideRelatedImages", relatedImages);
     });
   },
+  loadSecondRelatedImages(context, { tags, id }) {
+    const relatedImages = [];
+    const promises = [];
+    tags
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+      .forEach((tag) => {
+        promises.push(
+          dataFetch.getRelatedImages(tag, id).then((result) => {
+            if (result) {
+              relatedImages.push({ tag: tag, result: result });
+            }
+          })
+        );
+      });
+
+    Promise.all(promises).then(() => {
+      context.commit("provideSecondRelatedImages", relatedImages);
+    });
+  },
 };
 
 const store = createStore({
@@ -154,6 +177,7 @@ const store = createStore({
       nextPageOffset: 1,
       images: [],
       relatedImages: [],
+      secondRelatedImages: [],
       completionData: [],
       history: [],
     };

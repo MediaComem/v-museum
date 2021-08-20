@@ -19,7 +19,7 @@
           :style="{ opacity: getOpacity(firstPosition) }"
           class="history-image display-image"
           @click="comeBackTo(firstImage, 1)"
-          :src="firstImage.data[firstImage.index].imagePaths.square"
+          :src="firstImage.data"
         />
       </div>
       <div
@@ -33,7 +33,7 @@
           :style="{ opacity: getOpacity(secondPosition) }"
           class="history-image display-image"
           @click="comeBackTo(secondImage, 2)"
-          :src="secondImage.data[secondImage.index].imagePaths.square"
+          :src="secondImage.data"
         />
       </div>
       <div
@@ -47,7 +47,7 @@
           :style="{ opacity: getOpacity(thirdPosition) }"
           class="history-image display-image"
           @click="comeBackTo(thirdImage, 3)"
-          :src="thirdImage.data[thirdImage.index].imagePaths.square"
+          :src="thirdImage.data"
         />
       </div>
       <div
@@ -61,7 +61,7 @@
           :style="{ opacity: getOpacity(forthPosition) }"
           class="history-image display-image"
           @click="comeBackTo(forthImage, 4)"
-          :src="forthImage.data[forthImage.index].imagePaths.square"
+          :src="forthImage.data"
         />
       </div>
     </div>
@@ -80,7 +80,7 @@
           class="history-image"
           style="height: 85px; width: 85px;"
           @click="comeBackTo(value)"
-          :src="value.data[value.index].imagePaths.square"
+          :src="value.data"
         />
       </div>
     </div>
@@ -228,7 +228,6 @@ export default {
     switch (element.length) {
       case 1: this.firstImage = element[0];
               this.firstPosition = 0;
-              
               break;
       case 2: this.firstImage = element[0];
               this.firstPosition = 1;
