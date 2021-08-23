@@ -179,9 +179,10 @@
         removeRelatedImageBase: secondRelatedImagesPosition.length > 0,
       }"
     >
-      <div v-if="viewerImageMode" :style="componentSize">
+      <div v-show="viewerImageMode" :style="componentSize">
         <div ref="divCar" :style="imageViewerDisplay">
           <img
+            v-if="data"
             class="carousel-image"
             :src="data[currentIndex].imagePaths.large"
             :alt="data[currentIndex].id"
@@ -189,12 +190,12 @@
         </div>
       </div>
       <div
-        v-if="!viewerImageMode"
+        v-show="!viewerImageMode"
         :style="componentSize"
         style="overflow:hidden;"
         class="sliderMask"
       >
-        <div :style="componentSize" :class="selectZoomAnimation" ref="divCar">
+        <div :style="componentSize" :class="selectZoomAnimation">
           <ul
             class="ul-image"
             ref="ul-image"
@@ -330,32 +331,35 @@
     </div>
   </div>
   <div
-    v-if="secondRelatedImagesPosition.length > 0 && secondRelatedImagesPosition[0].display"
+    v-if="
+      secondRelatedImagesPosition.length > 0 &&
+        secondRelatedImagesPosition[0].display
+    "
     :style="secondRelatedInformationPosition1"
   >
-    <p
-      class="related-text relatedImageBase"
-    >
+    <p class="related-text relatedImageBase">
       {{ secondRelatedImagesPosition[0].image.tag["@value"] }}
     </p>
   </div>
   <div
-    v-if="secondRelatedImagesPosition.length > 1 && secondRelatedImagesPosition[1].display"
+    v-if="
+      secondRelatedImagesPosition.length > 1 &&
+        secondRelatedImagesPosition[1].display
+    "
     :style="secondRelatedInformationPosition2"
   >
-    <p
-      class="related-text relatedImageBase"
-    >
+    <p class="related-text relatedImageBase">
       {{ secondRelatedImagesPosition[1].image.tag["@value"] }}
     </p>
   </div>
   <div
-    v-if="secondRelatedImagesPosition.length > 2 && secondRelatedImagesPosition[2].display"
+    v-if="
+      secondRelatedImagesPosition.length > 2 &&
+        secondRelatedImagesPosition[2].display
+    "
     :style="secondRelatedInformationPosition3"
   >
-    <p
-      class="related-text relatedImageBase"
-    >
+    <p class="related-text relatedImageBase">
       {{ secondRelatedImagesPosition[2].image.tag["@value"] }}
     </p>
   </div>
@@ -440,11 +444,6 @@ export default {
             window.scrollTo(this.currentXPosition, this.currentYPosition);
           });
         }
-        if (this.couldLoad) {
-          this.$store.dispatch("loadNextContent", {
-            decade: this.currentDecade,
-          });
-        }
       },
       deep: true,
     },
@@ -458,7 +457,6 @@ export default {
     },
     relatedImages: function(images) {
       this.endDisplay = false;
-      this.viewerImageMode = true;
       this.displayRelatedImages(images);
       this.historyTimeout = setTimeout(() => {
         this.$store.dispatch("insertHistory", {
@@ -471,19 +469,17 @@ export default {
     },
     secondRelatedImages: function(relatedImages) {
       this.displaySecondRelatedImages(relatedImages);
-      const images = this.getImagesByDecade(this.currentDecade);
-      let newIndex = 0;
-      if (images) {
-        newIndex = images.data.findIndex(
-          (e) => e.id === this.nextData.id
-        );
-      }
       this.secondRelatedImageTimeout = setTimeout(() => {
         this.relatedImagesPosition = this.secondRelatedImagesPosition;
         this.secondRelatedImagesPosition = [];
         this.currentXPosition = this.defineLeftPositionCenterPage();
         this.currentYPosition = this.defineTopPositionCenterPage();
         this.carouselHover = true;
+        const images = this.getImagesByDecade(this.currentDecade);
+        let newIndex = 0;
+        if (images) {
+          newIndex = images.data.findIndex((e) => e.id === this.nextData.id);
+        }
         if (newIndex !== -1) {
           this.currentIndex = newIndex;
           this.data = images.data;
@@ -717,7 +713,17 @@ export default {
     isStop() {
       return this.step > 290 && this.step < 310;
     },
+    loadMoreContent(diffMaxIndexBeforeLoad) {
+      if (
+        this.currentIndex > this.data.length - diffMaxIndexBeforeLoad &&
+        !this.isLoadingImage
+      ) {
+        this.$store.dispatch("loadNextContent", { decade: this.currentDecade });
+      }
+    },
     move(forward) {
+      this.loadMoreContent(80);
+
       if (forward) {
         if (this.currentIndex !== this.data.length - 1) {
           this.currentIndex = this.currentIndex + 1;
@@ -807,6 +813,7 @@ export default {
             tags: this.data[this.currentIndex].tags,
             id: this.data[this.currentIndex].id,
           });
+          this.viewerImageMode = true;
           setTimeout(() => (this.shouldRunDecelerateAnimation = false), 1000);
         }, 500)
       );
@@ -855,6 +862,7 @@ export default {
             tags: this.data[this.currentIndex].tags,
             id: this.data[this.currentIndex].id,
           });
+          this.viewerImageMode = true;
         }
       }
     },
@@ -1193,7 +1201,9 @@ export default {
         "margin-top": this.carouselHover
           ? 0
           : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
-        transition: this.shouldRunCentralImageTransition ? "height 0.3s, margin 0.3s" : "height 0s, margin 0s",
+        transition: this.shouldRunCentralImageTransition
+          ? "height 0.3s, margin 0.3s"
+          : "height 0s, margin 0s",
       };
     },
     relatedImagePosition1() {

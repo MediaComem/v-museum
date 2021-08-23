@@ -15,6 +15,9 @@ export const getters = {
   getImagesByDecade: (state) => (decade) => {
     return state.images.find((e) => e.decade === decade);
   },
+  getNextPageByDecade: (state) => (decade) => {
+    return state.nextPageOffset.find((e) => e.decade === decade);
+  },
   getHistory: (state) => {
     return state.history;
   },
@@ -28,11 +31,13 @@ export const mutations = {
       const images = store.getters.getImagesByDecade(payload.decade);
       images.data = images.data.concat(payload.images);
     }
-    state.nextPageOffset = payload.page;
+    if (store.getters.getNextPageByDecade(payload.decade) === undefined) {
+      state.nextPageOffset.push({ decade: payload.decade, page: payload.page });
+    } else {
+      const nextPage = store.getters.getNextPageByDecade(payload.decade);
+      nextPage.page = payload.page;
+    }
     state.isLoadingImage = false;
-  },
-  setNextDecade(state, decade) {
-    state.nextDecade = decade;
   },
   loadingState(state) {
     state.isLoadingImage = true;
@@ -70,11 +75,6 @@ export const mutations = {
       });
     }
   },
-  /* removeHistoryElement(state, payload) {
-    console.log(payload.historyElement);
-    const result = state.history.filter((e) => e.decade !== payload.historyElement.decade && e.index !== payload.historyElement.index);
-    console.log(result);
-  }, */
 };
 
 export const actions = {
@@ -91,41 +91,36 @@ export const actions = {
       data: payload.data,
     });
   },
-  /*   removeElementHistory(context, payload) {
-    context.commit("removeHistoryElement", {
-      historyElement: payload.historyElement,
-    });
-  }, */
   initializeCarousel(context, { decade }) {
-    context.commit("setNextDecade", decade);
-    dataFetch
-      .getImages(decade, context.state.nextPageOffset)
-      .then((result) => {
-        context.commit("setNextContext", {
-          images: result.images,
-          decade: decade,
-          page: 2,
-        });
-        context.commit("setCompletion", {
-          year: decade,
-          totalImages: result.totalImages,
-        });
-      })
-      .catch((err) => console.log(err));
-  },
-  loadNextContent(context, { decade }) {
-    context.commit("loadingState");
-    dataFetch
-      .getImages(context.state.nextDecade, context.state.nextPageOffset)
-      .then((result) => {
-        if (result.images.length > 0) {
+    if (store.getters.getImagesByDecade(decade) === undefined) {
+      dataFetch
+        .getImages(decade, 1)
+        .then((result) => {
           context.commit("setNextContext", {
             images: result.images,
             decade: decade,
-            page: context.state.nextPageOffset + 1,
+            page: 2,
           });
-        }
-      });
+          context.commit("setCompletion", {
+            year: decade,
+            totalImages: result.totalImages,
+          });
+        })
+        .catch((err) => console.log(err));
+    }
+  },
+  loadNextContent(context, { decade }) {
+    context.commit("loadingState");
+    const nextPage = store.getters.getNextPageByDecade(decade);
+    dataFetch.getImages(decade, nextPage).then((result) => {
+      if (result.images.length > 0) {
+        context.commit("setNextContext", {
+          images: result.images,
+          decade: decade,
+          page: nextPage + 1,
+        });
+      }
+    });
   },
   loadRelatedImages(context, { tags, id }) {
     const relatedImages = [];
@@ -173,8 +168,7 @@ const store = createStore({
   state() {
     return {
       isLoadingImage: false,
-      nextDecade: 0,
-      nextPageOffset: 1,
+      nextPageOffset: [],
       images: [],
       relatedImages: [],
       secondRelatedImages: [],
