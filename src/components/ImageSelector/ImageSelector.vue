@@ -346,7 +346,7 @@
     <p
       class="related-text relatedImageBase"
     >
-      {{ secondRelatedImagesPosition[0].image.tag["@value"] }}
+      {{ secondRelatedImagesPosition[1].image.tag["@value"] }}
     </p>
   </div>
   <div
@@ -402,6 +402,7 @@ export default {
             this.carouselHover = true;
             this.rectangleHeight = this.thumbnailHeight() + 20;
             this.rectangleWidth = this.thumbnailWidth() + 20;
+            this.shouldRunCentralImageTransition = false;
             window.scrollTo(this.currentXPosition, this.currentYPosition);
             this.$store.dispatch("loadRelatedImages", {
               tags: this.data[this.currentIndex].tags,
@@ -471,17 +472,11 @@ export default {
     secondRelatedImages: function(relatedImages) {
       this.displaySecondRelatedImages(relatedImages);
       const images = this.getImagesByDecade(this.currentDecade);
+      let newIndex = 0;
       if (images) {
-        const newIndex = images.data.findIndex(
+        newIndex = images.data.findIndex(
           (e) => e.id === this.nextData.id
         );
-        if (newIndex !== -1) {
-          this.currentIndex = newIndex;
-        } else {
-          this.currentIndex = 0;
-        }
-      } else {
-        this.currentIndex = 0;
       }
       this.secondRelatedImageTimeout = setTimeout(() => {
         this.relatedImagesPosition = this.secondRelatedImagesPosition;
@@ -489,18 +484,21 @@ export default {
         this.currentXPosition = this.defineLeftPositionCenterPage();
         this.currentYPosition = this.defineTopPositionCenterPage();
         this.carouselHover = true;
-        if (this.currentIndex !== 0) {
+        if (newIndex !== -1) {
+          this.currentIndex = newIndex;
           this.data = images.data;
         } else {
+          this.currentIndex = 0;
           this.data = [];
           this.data.push(this.nextData);
         }
+        this.shouldRunCentralImageTransition = false;
         window.scrollTo(this.currentXPosition, this.currentYPosition);
-        /*this.$store.dispatch("insertHistory", {
+        this.$store.dispatch("insertHistory", {
           decade: this.currentDecade,
           index: this.currentIndex,
-          data: this.data,
-        });*/
+          data: this.data[this.currentIndex].imagePaths.square,
+        });
       }, 8000);
     },
     completionData: {
@@ -543,6 +541,7 @@ export default {
       nbImageMove: 0,
       shouldRunSideAnimation: false,
       shouldRunDecelerateAnimation: false,
+      shouldRunCentralImageTransition: true,
       // Information uses to manage the display
       pageHeight: 3000,
       pageWidth: 5000,
@@ -664,6 +663,7 @@ export default {
     },
     startPosition() {
       clearTimeout(this.secondRelatedImageTimeout);
+      this.shouldRunCentralImageTransition = true;
       this.secondRelatedImageTimeout = undefined;
       this.secondRelatedImagesPosition = [];
       this.isDrag = true;
@@ -673,12 +673,14 @@ export default {
     },
     mouseWheel() {
       clearTimeout(this.secondRelatedImageTimeout);
+      this.shouldRunCentralImageTransition = true;
       this.secondRelatedImageTimeout = undefined;
       this.secondRelatedImagesPosition = [];
       this.checkCollision();
     },
     touchMove() {
       clearTimeout(this.secondRelatedImageTimeout);
+      this.shouldRunCentralImageTransition = true;
       this.secondRelatedImageTimeout = undefined;
       this.secondRelatedImagesPosition = [];
       if (this.isDrag && !this.blockDrag) {
@@ -1191,7 +1193,7 @@ export default {
         "margin-top": this.carouselHover
           ? 0
           : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
-        transition: "height 0.3s, margin 0.3s",
+        transition: this.shouldRunCentralImageTransition ? "height 0.3s, margin 0.3s" : "height 0s, margin 0s",
       };
     },
     relatedImagePosition1() {
