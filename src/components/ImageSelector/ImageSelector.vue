@@ -183,6 +183,7 @@
         <div ref="divCar" :style="imageViewerDisplay">
           <img
             v-if="data"
+            draggable="false"
             class="carousel-image"
             :src="data[currentIndex].imagePaths.large"
             :alt="data[currentIndex].id"
@@ -468,34 +469,42 @@ export default {
       }, 8000);
     },
     secondRelatedImages: function(relatedImages) {
-      this.displaySecondRelatedImages(relatedImages);
-      this.secondRelatedImageTimeout = setTimeout(() => {
-        this.relatedImagesPosition = this.secondRelatedImagesPosition;
-        this.secondRelatedImagesPosition = [];
-        this.currentXPosition = this.defineLeftPositionCenterPage();
-        this.currentYPosition = this.defineTopPositionCenterPage();
-        this.carouselHover = true;
-        const images = this.getImagesByDecade(this.currentDecade);
-        let newIndex = 0;
-        if (images) {
-          newIndex = images.data.findIndex((e) => e.id === this.nextData.id);
-        }
-        if (newIndex !== -1) {
-          this.currentIndex = newIndex;
-          this.data = images.data;
-        } else {
-          this.currentIndex = 0;
-          this.data = [];
-          this.data.push(this.nextData);
-        }
-        this.shouldRunCentralImageTransition = false;
-        window.scrollTo(this.currentXPosition, this.currentYPosition);
-        this.$store.dispatch("insertHistory", {
-          decade: this.currentDecade,
-          index: this.currentIndex,
-          data: this.data[this.currentIndex].imagePaths.square,
-        });
-      }, 8000);
+      if (
+        this.relatedImagesPosition.filter((e) => e.hover === true).length > 0
+      ) {
+        this.displaySecondRelatedImages(relatedImages);
+        this.secondRelatedImageTimeout.push(
+          setTimeout(() => {
+            this.relatedImagesPosition = this.secondRelatedImagesPosition;
+            this.secondRelatedImagesPosition = [];
+            this.currentXPosition = this.defineLeftPositionCenterPage();
+            this.currentYPosition = this.defineTopPositionCenterPage();
+            this.carouselHover = true;
+            const images = this.getImagesByDecade(this.currentDecade);
+            let newIndex = 0;
+            if (images) {
+              newIndex = images.data.findIndex(
+                (e) => e.id === this.nextData.id
+              );
+            }
+            if (newIndex !== -1) {
+              this.currentIndex = newIndex;
+              this.data = images.data;
+            } else {
+              this.currentIndex = 0;
+              this.data = [];
+              this.data.push(this.nextData);
+            }
+            this.shouldRunCentralImageTransition = false;
+            window.scrollTo(this.currentXPosition, this.currentYPosition);
+            this.$store.dispatch("insertHistory", {
+              decade: this.currentDecade,
+              index: this.currentIndex,
+              data: this.data[this.currentIndex].imagePaths.square,
+            });
+          }, 8000)
+        );
+      }
     },
     completionData: {
       handler(newCompletionData) {
@@ -563,7 +572,7 @@ export default {
       loadNewPageTimeout: undefined,
       newOriginX: 0,
       newOriginY: 0,
-      secondRelatedImageTimeout: undefined,
+      secondRelatedImageTimeout: [],
       // History Part
       historyTimeout: undefined,
     };
@@ -582,6 +591,7 @@ export default {
       return 8 * 4 * this.defineReponsiveFactor();
     },
     checkPosition(x, y, rectangle, relatedImage, isRelated) {
+      console.log(relatedImage + " " + isRelated);
       if (
         x < rectangle.x + rectangle.width &&
         x + this.rectangleWidth > rectangle.x &&
@@ -596,8 +606,10 @@ export default {
             const newY =
               this.$refs.display.getBoundingClientRect().y -
               (rectangle.y - (this.windowHeight - rectangle.height) / 2);
+              this.currentXPosition = -newX;
+              this.currentYPosition = -newY;
             window.scrollTo({ left: -newX, top: -newY, behavior: "smooth" });
-            if (isRelated) {
+            /*if (isRelated) {
               const positions = this.getRelatedImagePosition(
                 relatedImage,
                 this.defineLeftImagePosition(),
@@ -613,7 +625,7 @@ export default {
                 )}/${relatedImage.image.result.id}`,
                 query: { tags: JSON.stringify(relatedImage.image.result.tags) },
               });
-            }
+            }*/
           }, 200)
         );
         return true;
@@ -658,9 +670,9 @@ export default {
       }
     },
     startPosition() {
-      clearTimeout(this.secondRelatedImageTimeout);
+      this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
+      this.secondRelatedImageTimeout = [];
       this.shouldRunCentralImageTransition = true;
-      this.secondRelatedImageTimeout = undefined;
       this.secondRelatedImagesPosition = [];
       this.isDrag = true;
     },
@@ -668,16 +680,16 @@ export default {
       this.isDrag = false;
     },
     mouseWheel() {
-      clearTimeout(this.secondRelatedImageTimeout);
+      this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
+      this.secondRelatedImageTimeout = [];
       this.shouldRunCentralImageTransition = true;
-      this.secondRelatedImageTimeout = undefined;
       this.secondRelatedImagesPosition = [];
       this.checkCollision();
     },
     touchMove() {
-      clearTimeout(this.secondRelatedImageTimeout);
+      this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
+      this.secondRelatedImageTimeout = [];
       this.shouldRunCentralImageTransition = true;
-      this.secondRelatedImageTimeout = undefined;
       this.secondRelatedImagesPosition = [];
       if (this.isDrag && !this.blockDrag) {
         this.checkCollision();
@@ -685,6 +697,7 @@ export default {
     },
     mouseMove(event) {
       if (this.isDrag && !this.blockDrag) {
+        console.log(event);
         const xMovement = this.currentXPosition - event.movementX;
         if (xMovement > 0 || xMovement < event.pageWidth) {
           this.currentXPosition = xMovement;

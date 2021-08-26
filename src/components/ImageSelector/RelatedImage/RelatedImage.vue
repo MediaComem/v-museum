@@ -1,6 +1,7 @@
 <template>
   <img
     v-if="this.image.display"
+    draggable="false"
     class="relatedImageBase related-image"
     :src="this.image.image.result.imagePaths.large"
     :alt="image.image.result.id"
