@@ -384,55 +384,43 @@ export default {
         this.$route.params.index !== undefined &&
         this.$route.params.index != ""
       ) {
-        this.currentDecade = this.$route.params.decade;
-        const newData = this.getImagesByDecade(this.currentDecade);
-        this.couldLoad = false;
-        this.relatedImagesPosition.forEach((e) => {
-          if (e.isTarget) {
-            this.nextData = e.image.result;
-          }
-        });
-        if (newData === undefined) {
-          this.$store.dispatch("loadSecondRelatedImages", {
-            tags: JSON.parse(this.$route.query.tags),
-            id: this.$route.params.index,
+        const newData = this.getImagesByDecade(this.$route.params.decade);
+        if (this.$route.query.history !== undefined) {
+          this.currentDecade = this.$route.params.decade;
+          this.data = newData.data;
+          this.currentIndex = +this.$route.params.index;
+          this.relatedImagesPosition = [];
+          this.currentXPosition = this.defineLeftPositionCenterPage();
+          this.currentYPosition = this.defineTopPositionCenterPage();
+          this.carouselHover = true;
+          this.rectangleHeight = this.thumbnailHeight() + 20;
+          this.rectangleWidth = this.thumbnailWidth() + 20;
+          this.shouldRunCentralImageTransition = false;
+          window.scrollTo(this.currentXPosition, this.currentYPosition);
+          this.$store.dispatch("loadRelatedImages", {
+            tags: this.data[this.currentIndex].tags,
+            id: this.data[this.currentIndex].id,
           });
         } else {
-          if (this.$route.query.history !== undefined) {
-            this.data = newData.data;
-            this.currentIndex = +this.$route.params.index;
-            this.relatedImagesPosition = [];
-            this.currentXPosition = this.defineLeftPositionCenterPage();
-            this.currentYPosition = this.defineTopPositionCenterPage();
-            this.carouselHover = true;
-            this.rectangleHeight = this.thumbnailHeight() + 20;
-            this.rectangleWidth = this.thumbnailWidth() + 20;
-            this.shouldRunCentralImageTransition = false;
-            window.scrollTo(this.currentXPosition, this.currentYPosition);
-            this.$store.dispatch("loadRelatedImages", {
-              tags: this.data[this.currentIndex].tags,
-              id: this.data[this.currentIndex].id,
-            });
-          } else {
-            this.$store.dispatch("loadSecondRelatedImages", {
-              tags: JSON.parse(this.$route.query.tags),
-              id: this.$route.params.index,
-            });
-          }
+          this.nextDecade = this.$route.params.decade;
+          this.nextId = this.$route.params.index;
+          this.$store.dispatch("loadSecondRelatedImages", {
+            tags: JSON.parse(this.$route.query.tags),
+            id: this.nextId,
+          });
         }
-        this.$router.push(`/selector/${this.currentDecade}`);
+        this.$router.push(`/selector/${this.nextDecade}`);
       }
     },
     images: {
       handler() {
         const images = this.getImagesByDecade(this.currentDecade);
-        if (images) {
+        if (images && this.couldLoad) {
           this.data = images.data;
         }
 
         if (this.isInitialLoad) {
           this.$nextTick(() => {
-            //this.currentIndex = +this.$route.params.index;
             this.isInitialLoad = false;
             this.relatedImagesPosition = [];
             this.$store.dispatch("loadRelatedImages", {
@@ -473,28 +461,58 @@ export default {
         this.relatedImagesPosition.filter((e) => e.hover === true).length > 0
       ) {
         this.displaySecondRelatedImages(relatedImages);
+        let newData;
+        let newIndex = -1;
         this.secondRelatedImageTimeout.push(
           setTimeout(() => {
+            this.couldLoad = false;
+            newData = this.getImagesByDecade(this.nextDecade);
+            if (newData === undefined) {
+              this.$store.dispatch("insertSkipId", {
+                decade: this.nextDecade,
+                id: this.nextId,
+              });
+              this.$store.dispatch("loadNextContent", {
+                decade: this.nextDecade,
+                id: this.nextId,
+              });
+            } else {
+              newIndex = newData.data.findIndex((e) => {
+                return e.id == this.nextData.id;
+              });
+              if (newIndex === -1) {
+                this.$store.dispatch("insertSkipId", {
+                  decade: this.nextDecade,
+                  id: this.nextId,
+                });
+                this.$store.dispatch("loadNextContent", {
+                  decade: this.nextDecade,
+                  id: this.nextId,
+                });
+              }
+            }
+          }, 2000)
+        );
+        this.secondRelatedImageTimeout.push(
+          setTimeout(() => {
+            this.couldLoad = true;
             this.relatedImagesPosition = this.secondRelatedImagesPosition;
             this.secondRelatedImagesPosition = [];
             this.currentXPosition = this.defineLeftPositionCenterPage();
             this.currentYPosition = this.defineTopPositionCenterPage();
             this.carouselHover = true;
-            const images = this.getImagesByDecade(this.currentDecade);
-            let newIndex = 0;
-            if (images) {
-              newIndex = images.data.findIndex(
-                (e) => e.id === this.nextData.id
-              );
-            }
+            this.currentDecade = this.nextDecade;
             if (newIndex !== -1) {
               this.currentIndex = newIndex;
-              this.data = images.data;
+              this.data = newData.data;
             } else {
-              this.currentIndex = 0;
-              this.data = [];
-              this.data.push(this.nextData);
+              this.data = this.getImagesByDecade(this.currentDecade).data;
+              const id = this.data.findIndex((e) => {
+                return e.id == this.nextId;
+              });
+              this.currentIndex = id;
             }
+
             this.shouldRunCentralImageTransition = false;
             window.scrollTo(this.currentXPosition, this.currentYPosition);
             this.$store.dispatch("insertHistory", {
@@ -523,6 +541,7 @@ export default {
       isBeginning: true,
       isEnd: false,
       currentDecade: "",
+      nextDecade: "",
       data: undefined,
       totalIndex: 0,
       maxVisitedIndex: 0,
@@ -530,6 +549,7 @@ export default {
       endDisplay: true,
       couldLoad: true,
       nextData: [],
+      nextId: 0,
       // Information uses to manage the movement
       step: 300,
       speed: 6000,
@@ -591,7 +611,6 @@ export default {
       return 8 * 4 * this.defineReponsiveFactor();
     },
     checkPosition(x, y, rectangle, relatedImage, isRelated) {
-      console.log(relatedImage + " " + isRelated);
       if (
         x < rectangle.x + rectangle.width &&
         x + this.rectangleWidth > rectangle.x &&
@@ -606,10 +625,10 @@ export default {
             const newY =
               this.$refs.display.getBoundingClientRect().y -
               (rectangle.y - (this.windowHeight - rectangle.height) / 2);
-              this.currentXPosition = -newX;
-              this.currentYPosition = -newY;
+            this.currentXPosition = -newX;
+            this.currentYPosition = -newY;
             window.scrollTo({ left: -newX, top: -newY, behavior: "smooth" });
-            /*if (isRelated) {
+            if (isRelated) {
               const positions = this.getRelatedImagePosition(
                 relatedImage,
                 this.defineLeftImagePosition(),
@@ -625,7 +644,7 @@ export default {
                 )}/${relatedImage.image.result.id}`,
                 query: { tags: JSON.stringify(relatedImage.image.result.tags) },
               });
-            }*/
+            }
           }, 200)
         );
         return true;
@@ -674,6 +693,7 @@ export default {
       this.secondRelatedImageTimeout = [];
       this.shouldRunCentralImageTransition = true;
       this.secondRelatedImagesPosition = [];
+      this.couldLoad = true;
       this.isDrag = true;
     },
     endPosition() {
@@ -684,6 +704,7 @@ export default {
       this.secondRelatedImageTimeout = [];
       this.shouldRunCentralImageTransition = true;
       this.secondRelatedImagesPosition = [];
+      this.couldLoad = true;
       this.checkCollision();
     },
     touchMove() {
@@ -691,6 +712,7 @@ export default {
       this.secondRelatedImageTimeout = [];
       this.shouldRunCentralImageTransition = true;
       this.secondRelatedImagesPosition = [];
+      this.couldLoad = true;
       if (this.isDrag && !this.blockDrag) {
         this.checkCollision();
       }

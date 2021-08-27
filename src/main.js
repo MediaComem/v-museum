@@ -18,6 +18,9 @@ export const getters = {
   getNextPageByDecade: (state) => (decade) => {
     return state.nextPageOffset.find((e) => e.decade === decade);
   },
+  getSkipIdsByDecade: (state) => (decade) => {
+    return state.loadSkipIds.find((e) => e.decade === decade);
+  },
   getHistory: (state) => {
     return state.history;
   },
@@ -31,13 +34,23 @@ export const mutations = {
       const images = store.getters.getImagesByDecade(payload.decade);
       images.data = images.data.concat(payload.images);
     }
-    if (store.getters.getNextPageByDecade(payload.decade) === undefined) {
-      state.nextPageOffset.push({ decade: payload.decade, page: payload.page });
-    } else {
-      const nextPage = store.getters.getNextPageByDecade(payload.decade);
-      nextPage.page = payload.page;
+    if (payload.page !== undefined){
+      if (store.getters.getNextPageByDecade(payload.decade) === undefined) {
+        state.nextPageOffset.push({ decade: payload.decade, page: payload.page });
+      } else {
+        const nextPage = store.getters.getNextPageByDecade(payload.decade);
+        nextPage.page = payload.page;
+      }
     }
     state.isLoadingImage = false;
+  },
+  insertSkipId(state, payload) {
+    const skipIds = store.getters.getSkipIdsByDecade(payload.decade);
+    if (skipIds === undefined){
+      state.loadSkipIds.push({ decade: payload.decade, ids: [payload.id] });
+    } else {
+      skipIds.ids.push(payload.id);
+    }
   },
   loadingState(state) {
     state.isLoadingImage = true;
@@ -94,7 +107,7 @@ export const actions = {
   initializeCarousel(context, { decade }) {
     if (store.getters.getImagesByDecade(decade) === undefined) {
       dataFetch
-        .getImages(decade, 1)
+        .getImages(decade, 1, [])
         .then((result) => {
           context.commit("setNextContext", {
             images: result.images,
@@ -109,10 +122,31 @@ export const actions = {
         .catch((err) => console.log(err));
     }
   },
-  loadNextContent(context, { decade }) {
+  insertSkipId(context, {decade, id} ) {
+    context .commit("insertSkipId", {
+      decade: decade,
+      id: id
+    });
+  },
+  loadNextContent(context, { decade, id }) {
     context.commit("loadingState");
-    const nextPage = store.getters.getNextPageByDecade(decade);
-    dataFetch.getImages(decade, nextPage).then((result) => {
+    let nextPage = store.getters.getNextPageByDecade(decade);
+    if (nextPage === undefined) {
+      nextPage = 0;
+    }
+    if (id !== undefined) {
+      dataFetch.getImageById(id).then((result) => {
+        context.commit("setNextContext", {
+          images: result,
+          decade: decade
+        })
+      })
+    }
+    let skipIds = store.getters.getSkipIdsByDecade(decade);
+    if (skipIds === undefined) {
+      skipIds = {ids: []};
+    }
+    dataFetch.getImages(decade, nextPage, skipIds.ids).then((result) => {
       if (result.images.length > 0) {
         context.commit("setNextContext", {
           images: result.images,
@@ -174,6 +208,7 @@ const store = createStore({
       secondRelatedImages: [],
       completionData: [],
       history: [],
+      loadSkipIds: [],
     };
   },
   getters: getters,
