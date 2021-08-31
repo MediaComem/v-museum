@@ -9,8 +9,8 @@
     </div>
     <div class="history-display-image">
       <div
-        style="position: absolute; left: 200px"
-        :style="{ transform: 'translateX(' + -(100 * firstPosition) + 'px)' }"
+        style="position: absolute; left: 136px"
+        :style="{ transform: 'translateX(' + -(44 * firstPosition) + 'px)' }"
         :class="{ 'move-image': firstPosition !== 0 }"
         class="history-image-element"
       >
@@ -23,8 +23,8 @@
         />
       </div>
       <div
-        style="position: absolute; left: 200px"
-        :style="{ transform: 'translateX(' + -(100 * secondPosition) + 'px)' }"
+        style="position: absolute; left: 136px"
+        :style="{ transform: 'translateX(' + -(44 * secondPosition) + 'px)' }"
         :class="{ 'move-image': secondPosition !== 0 }"
         class="history-image-element"
       >
@@ -37,8 +37,8 @@
         />
       </div>
       <div
-        style="position: absolute; left: 200px"
-        :style="{ transform: 'translateX(' + -(100 * thirdPosition) + 'px)' }"
+        style="position: absolute; left: 136px"
+        :style="{ transform: 'translateX(' + -(44 * thirdPosition) + 'px)' }"
         :class="{ 'move-image': thirdPosition !== 0 }"
         class="history-image-element"
       >
@@ -51,8 +51,8 @@
         />
       </div>
       <div
-        style="position: absolute; left: 200px"
-        :style="{ transform: 'translateX(' + -(100 * forthPosition) + 'px)' }"
+        style="position: absolute; left: 136px"
+        :style="{ transform: 'translateX(' + -(44 * forthPosition) + 'px)' }"
         :class="{ 'move-image': forthPosition !== 0 }"
         class="history-image-element"
       >
@@ -68,17 +68,14 @@
   </div>
 
   <div v-if="displayAllHistory" class="history-layout" :style="fullHistory">
-    <div class="history-text" @click="displayAllHistory = false">
-      <p class="history-value">{{ currentHistory.length }}</p>
-    </div>
     <div v-for="(value, index) in currentHistory" :key="index">
       <div
-        style="position: absolute; width: 100px; height: 100px"
-        :style="{ left: 100 * (index + 1) + 'px' }"
+        style="position: absolute; width: 61.33; height: 81px"
+        :style="{ left: 69.33 * (index + 1) + 'px' }"
       >
         <img
-          class="history-image"
-          style="height: 85px; width: 85px;"
+          class="history-image-full"
+          style="height: 69px; width: 61.33px;"
           @click="comeBackTo(value)"
           :src="value.data"
         />
@@ -181,38 +178,38 @@ export default {
         case 4:
           break;
       }
-      /* this.$store.dispatch("removeElementHistory", {
-        historyElement: historyElement,
-      }); */
       this.$router.push({
        path: `/selector/${historyElement.decade}/${historyElement.index}`,
        query: {history: true}
       });
     },
     getOpacity(position) {
+      if (position === 0) {
+        return "0.8";
+      }
       if (position === 1) {
-        return "0.7";
+        return "0.6";
       }
-      if (position === 2 || position === 3) {
-        return "0.4";
+      if (position === 2) {
+        return "0.3";
       }
-      return "1";
+      return "0";
     },
   },
   computed: {
     displayHistory() {
       return {
-        height: "100px",
-        width: "400px",
+        height: "53px",
+        width: "184px",
         top: this.topPosition + "px",
         left: this.leftPosition + "px",
       };
     },
     fullHistory() {
       return {
-        height: "100px",
+        height: "81px",
         width: "100vw",
-        top: this.topPosition + "px",
+        top: this.topPosition - 28 + "px",
         left: "0px",
         overflow: "scroll",
       };
@@ -258,7 +255,7 @@ export default {
   display: block;
   position: absolute;
   background-color: black;
-  width: 100px;
+  width: 45px;
   height: 100%;
 }
 
@@ -266,30 +263,41 @@ export default {
   display: block;
   position: absolute;
   background-color: black;
-  width: 300px;
+  width: 133px;
   height: 100%;
-  left: 100px;
+  left: 0px;
 }
 
 .history-image-element {
   display: block;
   position: absolute;
-  width: 100px;
+  width: 41px;
   height: 100%;
 }
 
 .history-value {
-  width: 100px;
+  width: 41px;
   color: lightgray;
-  font-size: xx-large;
+  font-size: medium;
   position: absolute;
 }
 
 .history-image {
   object-fit: none;
   position: absolute;
-  top: 7px;
-  left: 7px;
+  top: 4px;
+  left: 4px;
+}
+
+.history-image-full {
+  object-fit: none;
+  position: absolute;
+  top: 6px;
+  left: 4px;
+}
+
+.history-image:hover {
+  opacity: 1;
 }
 
 .move-image {
@@ -298,8 +306,8 @@ export default {
 
 .display-image {
   animation: createBox 0.25s;
-  height: 85px;
-  width: 85px;
+  height: 45px;
+  width: 40px;
 }
 @keyframes createBox {
   from {

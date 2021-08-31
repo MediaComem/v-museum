@@ -1,8 +1,8 @@
 <template>
   <!-- History Part-->
   <history
-    :topPosition="windowHeight - 150"
-    :leftPosition="50"
+    :topPosition="windowHeight - 63"
+    :leftPosition="10"
     :fullWidth="windowWidth"
   />
   <div
@@ -158,8 +158,8 @@
       </div>
     </div>
     <div v-if="carouselHover && endDisplay" :style="imageInformationPosition">
-      <completion
-        :key="currentDecade"
+      <Completion
+        :decade="currentDecade"
         :height="100"
         :width="100"
         :topPosition="-40"
@@ -421,6 +421,10 @@ export default {
 
         if (this.isInitialLoad) {
           this.$nextTick(() => {
+            const completion = this.getCompletionByDecade(this.currentDecade);
+            if (completion) {
+              this.totalIndex = +completion.totalImages;
+            }
             this.isInitialLoad = false;
             this.relatedImagesPosition = [];
             this.$store.dispatch("loadRelatedImages", {
@@ -524,15 +528,11 @@ export default {
         );
       }
     },
-    completionData: {
-      handler(newCompletionData) {
-        if (this.totalIndex === 0) {
-          this.totalIndex = +newCompletionData.filter(
-            (e) => e.year === this.currentDecade
-          )[0].totalImages;
-        }
-      },
-      deep: true,
+    currentDecade: function() {
+      const completion = this.getCompletionByDecade(this.currentDecade);
+      if (completion) {
+        this.totalIndex = +completion.totalImages;
+      }
     },
   },
   data() {
@@ -719,7 +719,6 @@ export default {
     },
     mouseMove(event) {
       if (this.isDrag && !this.blockDrag) {
-        console.log(event);
         const xMovement = this.currentXPosition - event.movementX;
         if (xMovement > 0 || xMovement < event.pageWidth) {
           this.currentXPosition = xMovement;
@@ -973,9 +972,9 @@ export default {
       });
     },
     stopDisplayRelatedImages() {
-      this.relatedImagesPosition = [];
       this.displayRelatedImageTimeout.forEach(clearTimeout);
       this.displayRelatedImageTimeout = [];
+      this.relatedImagesPosition = [];
     },
     speedSelection() {
       // Find the transition speed

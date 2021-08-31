@@ -10,7 +10,7 @@ import router from "./router";
 
 export const getters = {
   getCompletionByDecade: (state) => (decade) => {
-    return state.completionData.filter((e) => e.position === decade)[0];
+    return state.completionData.find((e) => e.year === decade);
   },
   getImagesByDecade: (state) => (decade) => {
     return state.images.find((e) => e.decade === decade);
@@ -66,9 +66,8 @@ export const mutations = {
     }
   },
   updateCompletion(state, payload) {
-    state.completionData.filter(
-      (e) => e.position === payload.decade
-    )[0].completion = payload.completion;
+    const completions = store.getters.getCompletionByDecade(payload.year)
+    completions.completion = payload.completion;
   },
   provideRelatedImages(state, relatedImages) {
     state.relatedImages = relatedImages;
@@ -134,6 +133,9 @@ export const actions = {
     if (nextPage === undefined) {
       nextPage = 0;
     }
+    else {
+      nextPage = nextPage.page;
+    }
     if (id !== undefined) {
       dataFetch.getImageById(id).then((result) => {
         context.commit("setNextContext", {
@@ -148,6 +150,12 @@ export const actions = {
     }
     dataFetch.getImages(decade, nextPage, skipIds.ids).then((result) => {
       if (result.images.length > 0) {
+        if (nextPage === 0) {
+          context.commit("setCompletion", {
+            year: decade,
+            totalImages: result.totalImages,
+          });
+        }
         context.commit("setNextContext", {
           images: result.images,
           decade: decade,

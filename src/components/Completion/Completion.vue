@@ -31,27 +31,47 @@
       stroke="black"
       stroke-width="0.04"
       stroke-miterlimit="10"
-      :d="setCompletion"
+      :d="completed"
     />
   </svg>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "Completion",
   props: {
-    key: String,
+    decade: String,
     height: Number,
     width: Number,
     topPosition: Number,
     leftPosition: Number,
   },
+  watch: {
+    decade: function() {
+      this.setComplet();
+    },
+    completionData: {
+      handler() {
+        this.setComplet();
+      },
+      deep: true,
+    },
+  },
   data() {
     return {
       index: 0,
       spiral: [],
+      completed: [],
     };
+  },
+  methods: {
+    setComplet() {
+      const completion = this.completion(this.decade);
+      this.completed = completion
+        ? this.spiral.slice(0, completion.completion)
+        : this.spiral.slice(0, 0);
+    },
   },
   mounted() {
     this.spiral.push("M 0 0");
@@ -157,12 +177,9 @@ export default {
     this.spiral.push(
       "M 0 -1.5469 C 0.4103 -1.5495 0.8059 -1.389 1.0993 -1.0993"
     );
+    this.setComplet();
   },
   computed: {
-    setCompletion() {
-      const completion = this.completion(this.key);
-      return completion ? this.spiral.slice(0, completion.completion) : this.spiral.slice(0, 0);
-    },
     positionElement() {
       return {
         position: "absolute",
@@ -183,6 +200,7 @@ export default {
     ...mapGetters({
       completion: "getCompletionByDecade",
     }),
+    ...mapState(["completionData"]),
   },
 };
 </script>
