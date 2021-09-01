@@ -442,7 +442,6 @@ export default {
             });
             this.viewerImageMode = true;
             this.carouselHover = true;
-            this.noMoreCheck = false;
             window.scrollTo(this.currentXPosition, this.currentYPosition);
           });
         }
@@ -594,7 +593,6 @@ export default {
       rectangleHeight: 0,
       moveToImageTimeout: [],
       carouselHover: true,
-      noMoreCheck: false,
       // Related images properties
       isInitialLoad: true,
       potentialPosition: [1, 2, 3, 4, 5, 6],
@@ -656,38 +654,36 @@ export default {
     checkCollision() {
       this.moveToImageTimeout.forEach(clearTimeout);
       this.moveToImageTimeout = [];
-      if (!this.noMoreCheck) {
-        const rectangle = this.$refs.divCar.getBoundingClientRect();
-        const x = (this.windowWidth - this.$refs.divCar.clientWidth + 20) / 2;
-        const y = (this.windowHeight - this.$refs.divCar.clientHeight + 20) / 2;
-        this.carouselHover = this.checkPosition(
+      const rectangle = this.$refs.divCar.getBoundingClientRect();
+      const x = (this.windowWidth - this.$refs.divCar.clientWidth + 20) / 2;
+      const y = (this.windowHeight - this.$refs.divCar.clientHeight + 20) / 2;
+      this.carouselHover = this.checkPosition(
+        x,
+        y,
+        rectangle,
+        undefined,
+        false
+      );
+      this.relatedImagesPosition.forEach((rectangle, index) => {
+        const isHover = this.checkPosition(
           x,
           y,
+          this.$refs["position" + index].getBoundingClientRect(),
           rectangle,
-          undefined,
-          false
+          true
         );
-        this.relatedImagesPosition.forEach((rectangle, index) => {
-          const isHover = this.checkPosition(
-            x,
-            y,
-            this.$refs["position" + index].getBoundingClientRect(),
-            rectangle,
-            true
-          );
-          if (isHover) {
-            rectangle.hover = true;
-          } else {
-            rectangle.hover = false;
-          }
-        });
-        if (this.moveToImageTimeout.length === 0 && !this.carouselHover) {
-          this.rectangleHeight = this.relatedThumbnailHeight() + 20;
-          this.rectangleWidth = this.relatedThumbnailWidth() + 20;
+        if (isHover) {
+          rectangle.hover = true;
         } else {
-          this.rectangleHeight = this.thumbnailHeight() + 20;
-          this.rectangleWidth = this.thumbnailWidth() + 20;
+          rectangle.hover = false;
         }
+      });
+      if (this.moveToImageTimeout.length === 0 && !this.carouselHover) {
+        this.rectangleHeight = this.relatedThumbnailHeight() + 20;
+        this.rectangleWidth = this.relatedThumbnailWidth() + 20;
+      } else {
+        this.rectangleHeight = this.thumbnailHeight() + 20;
+        this.rectangleWidth = this.thumbnailWidth() + 20;
       }
     },
     // Rectangle navigation
@@ -699,7 +695,7 @@ export default {
       this.isDrag = false;
     },
     mouseWheel() {
-      this.stopSecondRelatedDisplay()
+      this.stopSecondRelatedDisplay();
       this.checkCollision();
     },
     touchMove() {
@@ -710,7 +706,6 @@ export default {
     },
     mouseMove(event) {
       if (this.isDrag && !this.blockDrag) {
-
         // Calculate the mouse movement and apply it on the current position
         const xMovement = this.currentXPosition - event.movementX;
         if (xMovement > 0 || xMovement < event.pageWidth) {
