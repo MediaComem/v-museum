@@ -4,6 +4,9 @@
     :topPosition="windowHeight - 63"
     :leftPosition="10"
     :fullWidth="windowWidth"
+    :displayAllHistory="fullHistoryMode"
+    @openFullHistory="fullHistoryMode = true"
+    @closeFullHistory="fullHistoryMode = false"
   />
   <div
     :style="setPage"
@@ -386,6 +389,7 @@ export default {
       ) {
         const newData = this.getImagesByDecade(this.$route.params.decade);
         if (this.$route.query.history !== undefined) {
+          this.nextDecade = this.$route.params.decade;
           this.currentDecade = this.$route.params.decade;
           this.data = newData.data;
           this.currentIndex = +this.$route.params.index;
@@ -595,6 +599,7 @@ export default {
       secondRelatedImageTimeout: [],
       // History Part
       historyTimeout: undefined,
+      fullHistoryMode: false,
     };
   },
   methods: {
@@ -689,6 +694,7 @@ export default {
       }
     },
     startPosition() {
+      this.fullHistoryMode = false;
       this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
       this.secondRelatedImageTimeout = [];
       this.shouldRunCentralImageTransition = true;
@@ -700,6 +706,7 @@ export default {
       this.isDrag = false;
     },
     mouseWheel() {
+      this.fullHistoryMode = false;
       this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
       this.secondRelatedImageTimeout = [];
       this.shouldRunCentralImageTransition = true;
@@ -708,6 +715,7 @@ export default {
       this.checkCollision();
     },
     touchMove() {
+      this.fullHistoryMode = false;
       this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
       this.secondRelatedImageTimeout = [];
       this.shouldRunCentralImageTransition = true;

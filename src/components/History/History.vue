@@ -2,23 +2,58 @@
   <div v-if="!displayAllHistory" class="history-layout" :style="displayHistory">
     <div
       class="history-text"
-      @click="displayAllHistory = true"
       style="z-index: 30"
+      @click="sendOpenFullHistory()"
     >
       <p class="history-value">{{ currentHistory.length }}</p>
     </div>
-    <div class="history-display-image">
+    <div>
+      <div style="position: absolute; left: 44px" class="history-image-element">
+        <img
+          v-if="firstImage"
+          :class="getOpacityFirstPosition"
+          class="history-image display-image"
+          @click="comeBackTo(firstImage)"
+          :src="firstImage.data"
+        />
+      </div>
+    </div>
+    <div>
+      <div style="position: absolute; left: 88px" class="history-image-element">
+        <img
+          v-if="secondImage"
+          :class="getOpacitySecondPosition"
+          class="history-image display-image"
+          @click="comeBackTo(secondImage)"
+          :src="secondImage.data"
+        />
+      </div>
+    </div>
+    <div>
       <div
+        style="position: absolute; left: 132px"
+        class="history-image-element"
+      >
+        <img
+          v-if="thirdImage"
+          class="history-image display-image third-image-opacity"
+          @click="comeBackTo(thirdImage)"
+          :src="thirdImage.data"
+        />
+      </div>
+    </div>
+    <!--div
         style="position: absolute; left: 136px"
         :style="{ transform: 'translateX(' + -(44 * firstPosition) + 'px)' }"
         :class="{ 'move-image': firstPosition !== 0 }"
         class="history-image-element"
+        @mouseover="hoverElement"
       >
         <img
           v-if="firstImage"
           :style="{ opacity: getOpacity(firstPosition) }"
           class="history-image display-image"
-          @click="comeBackTo(firstImage, 1)"
+          @click="comeBackTo(firstImage)"
           :src="firstImage.data"
         />
       </div>
@@ -32,7 +67,7 @@
           v-if="secondImage"
           :style="{ opacity: getOpacity(secondPosition) }"
           class="history-image display-image"
-          @click="comeBackTo(secondImage, 2)"
+          @click="comeBackTo(secondImage)"
           :src="secondImage.data"
         />
       </div>
@@ -46,7 +81,7 @@
           v-if="thirdImage"
           :style="{ opacity: getOpacity(thirdPosition) }"
           class="history-image display-image"
-          @click="comeBackTo(thirdImage, 3)"
+          @click="comeBackTo(thirdImage)"
           :src="thirdImage.data"
         />
       </div>
@@ -60,27 +95,34 @@
           v-if="forthImage"
           :style="{ opacity: getOpacity(forthPosition) }"
           class="history-image display-image"
-          @click="comeBackTo(forthImage, 4)"
+          @click="comeBackTo(forthImage)"
           :src="forthImage.data"
         />
       </div>
-    </div>
+    </div-->
   </div>
 
   <div v-if="displayAllHistory" class="history-layout" :style="fullHistory">
-    <div v-for="(value, index) in currentHistory" :key="index">
-      <div
-        style="position: absolute; width: 61.33; height: 81px"
-        :style="{ left: 69.33 * (index + 1) + 'px' }"
-      >
-        <img
-          class="history-image-full"
-          style="height: 69px; width: 61.33px;"
-          @click="comeBackTo(value)"
-          :src="value.data"
-        />
+    <div class="left-arrow" @click="leftMove()" />
+    <div class="full-history-display">
+      <div v-for="(value, index) in currentHistory" :key="index">
+        <div
+          style="position: absolute; width: 64; height: 81px"
+          :style="{
+            left: 68 * (index) + 'px',
+            transform: 'translateX(' + -(68 * position) + 'px)',
+          }"
+        >
+          <img
+            class="history-image-full"
+            style="height: 69px; width: 60px;"
+            @click="comeBackTo(value)"
+            :src="value.data"
+          />
+        </div>
       </div>
     </div>
+    <div class="right-arrow" @click="rightMove()" />
   </div>
 </template>
 
@@ -92,10 +134,10 @@ export default {
     topPosition: Number,
     leftPosition: Number,
     fullWidth: Number,
+    displayAllHistory: Boolean,
   },
   data() {
     return {
-      displayAllHistory: false,
       firstImage: undefined,
       firstPosition: 0,
       secondImage: undefined,
@@ -105,12 +147,13 @@ export default {
       forthImage: undefined,
       forthPosition: 0,
       currentHistoryLength: 0,
+      position: 0,
     };
   },
   watch: {
     history: {
       handler(historyElement) {
-        if (this.currentHistoryLength !== historyElement.length) {
+        /*if (this.currentHistoryLength !== historyElement.length) {
           if (this.currentHistory.length % 4 === 1) {
             setTimeout(() => (this.secondImage = undefined), 1000);
             this.firstPosition = 0;
@@ -161,46 +204,63 @@ export default {
           }
           this.currentHistoryLength = historyElement.length;
         }
+        */
+        const element = historyElement.slice(-3);
+        this.currentHistoryLength = this.currentHistory.length;
+        switch (element.length) {
+          case 1:
+            this.firstImage = element[0];
+            this.firstPosition = 0;
+            break;
+          case 2:
+            this.firstImage = element[0];
+            this.firstPosition = 1;
+            this.secondImage = element[1];
+            this.secondPosition = 0;
+            break;
+          default:
+            this.firstImage = element[0];
+            this.firstPosition = 2;
+            this.secondImage = element[1];
+            this.secondPosition = 1;
+            this.thirdImage = element[2];
+            this.thirdPosition = 0;
+            break;
+        }
       },
       deep: true,
     },
   },
   methods: {
-    comeBackTo(historyElement, position) {
-      this.displayAllHistory = false;
-      switch (position) {
-        case 1:
-          break;
-        case 2:
-          break;
-        case 3:
-          break;
-        case 4:
-          break;
-      }
-      this.$router.push({
-       path: `/selector/${historyElement.decade}/${historyElement.index}`,
-       query: {history: true}
-      });
+    sendOpenFullHistory() {
+      this.$emit("openFullHistory");
     },
-    getOpacity(position) {
-      if (position === 0) {
-        return "0.8";
+    leftMove() {
+      if (this.position > 0) {
+        this.position = this.position - 1;
       }
-      if (position === 1) {
-        return "0.6";
+    },
+    rightMove() {
+      if (this.position <= this.currentHistory.length - (this.fullWidth / 68 - 1)) {
+        this.position = this.position + 1;
       }
-      if (position === 2) {
-        return "0.3";
-      }
-      return "0";
+    },
+    comeBackTo(historyElement) {
+      this.$router.push({
+        path: `/selector/${historyElement.decade}/${historyElement.index}`,
+        query: { history: true },
+      });
+      this.$emit("closeFullHistory");
     },
   },
   computed: {
     displayHistory() {
       return {
         height: "53px",
-        width: "184px",
+        width:
+          this.currentHistory.length < 3
+            ? (this.currentHistory.length + 1) * 46 + "px"
+            : "180px",
         top: this.topPosition + "px",
         left: this.leftPosition + "px",
       };
@@ -211,7 +271,19 @@ export default {
         width: "100vw",
         top: this.topPosition - 28 + "px",
         left: "0px",
-        overflow: "scroll",
+      };
+    },
+    getOpacityFirstPosition() {
+      return {
+        "third-image-opacity": this.currentHistory.length === 1,
+        "second-image-opacity": this.currentHistory.length === 2,
+        "first-image-opacity": this.currentHistory.length > 2,
+      };
+    },
+    getOpacitySecondPosition() {
+      return {
+        "third-image-opacity": this.currentHistory.length === 2,
+        "second-image-opacity": this.currentHistory.length > 2,
       };
     },
     ...mapGetters({
@@ -223,23 +295,26 @@ export default {
     const element = this.currentHistory.slice(-3);
     this.currentHistoryLength = this.currentHistory.length;
     switch (element.length) {
-      case 1: this.firstImage = element[0];
-              this.firstPosition = 0;
-              break;
-      case 2: this.firstImage = element[0];
-              this.firstPosition = 1;
-              this.secondImage = element[1];
-              this.secondPosition = 0;
-              break;
-      case 3: this.firstImage = element[0];
-              this.firstPosition = 2;
-              this.secondImage = element[1];
-              this.secondPosition = 1;
-              this.thirdImage = element[0];
-              this.thirdPosition = 0;
-              break;
+      case 1:
+        this.firstImage = element[0];
+        this.firstPosition = 0;
+        break;
+      case 2:
+        this.firstImage = element[0];
+        this.firstPosition = 1;
+        this.secondImage = element[1];
+        this.secondPosition = 0;
+        break;
+      case 3:
+        this.firstImage = element[0];
+        this.firstPosition = 2;
+        this.secondImage = element[1];
+        this.secondPosition = 1;
+        this.thirdImage = element[2];
+        this.thirdPosition = 0;
+        break;
     }
-  }
+  },
 };
 </script>
 
@@ -265,7 +340,7 @@ export default {
   background-color: black;
   width: 133px;
   height: 100%;
-  left: 0px;
+  left: 44px;
 }
 
 .history-image-element {
@@ -315,6 +390,118 @@ export default {
   }
   to {
     transform: scale(1);
+  }
+}
+
+.first-image-opacity {
+  opacity: 0.3;
+}
+
+.second-image-opacity {
+  opacity: 0.6;
+}
+
+.third-image-opacity {
+  opacity: 0.8;
+}
+
+@media (pointer: fine) {
+  .full-history-display {
+    position: absolute;
+    display: block;
+    height: inherit;
+    overflow-y: scroll;
+    left: 2.5vw;
+    width: 95vw;
+  }
+
+  .left-arrow {
+    position: absolute;
+    display: block;
+    height: inherit;
+    width: 2.5vw;
+  }
+
+  .right-arrow {
+    left: 97.5vw;
+    position: absolute;
+    display: block;
+    height: inherit;
+    width: 2.5vw;
+  }
+}
+
+@media (pointer: coarse) {
+  .full-history-display {
+    position: absolute;
+    display: block;
+    height: inherit;
+    overflow-y: scroll;
+    width: 100vw;
+  }
+
+  .left-arrow {
+    position: absolute;
+    display: block;
+    height: 0vh;
+    width: 0vw;
+  }
+
+  .right-arrow {
+    left: 97.5vw;
+    position: absolute;
+    display: block;
+    height: 0vh;
+    width: 0vw;
+  }
+}
+
+@media (pointer: none) {
+  .full-history-display {
+    position: absolute;
+    display: block;
+    height: inherit;
+    overflow-y: scroll;
+    width: 100vw;
+  }
+
+  .left-arrow {
+    position: absolute;
+    display: block;
+    height: 0vh;
+    width: 0vw;
+  }
+
+  .right-arrow {
+    left: 97.5vw;
+    position: absolute;
+    display: block;
+    height: 0vh;
+    width: 0vw;
+  }
+}
+
+@media (any-pointer: coarse) {
+  .first-image-opacity:hover {
+    opacity: 0.3;
+  }
+  .second-image-opacity:hover {
+    opacity: 0.6;
+  }
+  .third-image-opacity:hover {
+    opacity: 0.8;
+  }
+}
+
+@media (hover: hover) {
+  .first-image-opacity:hover {
+    opacity: 1;
+  }
+  .second-image-opacity:hover {
+    opacity: 1;
+  }
+  .third-image-opacity:hover {
+    opacity: 1;
   }
 }
 </style>
