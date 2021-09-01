@@ -402,8 +402,8 @@ export default {
           this.shouldRunCentralImageTransition = false;
           window.scrollTo(this.currentXPosition, this.currentYPosition);
           this.$store.dispatch("loadRelatedImages", {
-            tags: this.data[this.currentIndex].tags,
-            id: this.data[this.currentIndex].id,
+            tags: this.data.data[this.currentIndex].tags,
+            id: this.data.data[this.currentIndex].id,
           });
         } else {
           // If the loading comes from related images, load the next related images and associated data
