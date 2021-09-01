@@ -303,7 +303,7 @@
   >
     <div
       style="display: flex; overflow: hidden;"
-      :style="{ width: thumbnailWidth() / 1.6 + 'px' }"
+      :style="{ width: thumbnailWidth() + 'px' }"
     >
       <p
         v-if="secondRelatedImagesPosition.length > 0"
@@ -387,11 +387,11 @@ export default {
         this.$route.params.index !== undefined &&
         this.$route.params.index != ""
       ) {
-        const newData = this.getImagesByDecade(this.$route.params.decade);
         if (this.$route.query.history !== undefined) {
+          // If the loading comes from history, setup the states
           this.nextDecade = this.$route.params.decade;
           this.currentDecade = this.$route.params.decade;
-          this.data = newData.data;
+          this.data = this.getImagesByDecade(this.$route.params.decade);
           this.currentIndex = +this.$route.params.index;
           this.relatedImagesPosition = [];
           this.currentXPosition = this.defineLeftPositionCenterPage();
@@ -406,6 +406,7 @@ export default {
             id: this.data[this.currentIndex].id,
           });
         } else {
+          // If the loading comes from related images, load the next related images and associated data
           this.nextDecade = this.$route.params.decade;
           this.nextId = this.$route.params.index;
           this.$store.dispatch("loadSecondRelatedImages", {
@@ -413,12 +414,15 @@ export default {
             id: this.nextId,
           });
         }
+        // Clean url
         this.$router.push(`/selector/${this.nextDecade}`);
       }
     },
+    // Watcher uses to manage new data in the store
     images: {
       handler() {
         const images = this.getImagesByDecade(this.currentDecade);
+        // Set only when images are available and more important only if necessary
         if (images && this.couldLoad) {
           this.data = images.data;
         }
@@ -456,6 +460,7 @@ export default {
     relatedImages: function(images) {
       this.endDisplay = false;
       this.displayRelatedImages(images);
+      // The animations take 8 seconds so store history only at the end.
       this.historyTimeout = setTimeout(() => {
         this.$store.dispatch("insertHistory", {
           decade: this.currentDecade,
@@ -472,6 +477,7 @@ export default {
         this.displaySecondRelatedImages(relatedImages);
         let newData;
         let newIndex = -1;
+        // Load bundle of images related to the selected related image
         this.secondRelatedImageTimeout.push(
           setTimeout(() => {
             this.couldLoad = false;
@@ -487,7 +493,7 @@ export default {
               });
             } else {
               newIndex = newData.data.findIndex((e) => {
-                return e.id == this.nextData.id;
+                return e.id == this.nextId;
               });
               if (newIndex === -1) {
                 this.$store.dispatch("insertSkipId", {
@@ -502,6 +508,7 @@ export default {
             }
           }, 2000)
         );
+        // Setup state of new center image
         this.secondRelatedImageTimeout.push(
           setTimeout(() => {
             this.couldLoad = true;
@@ -533,6 +540,7 @@ export default {
         );
       }
     },
+    // Watcher uses to manage the completion element
     currentDecade: function() {
       const completion = this.getCompletionByDecade(this.currentDecade);
       if (completion) {
@@ -554,7 +562,6 @@ export default {
       completion: 0,
       endDisplay: true,
       couldLoad: true,
-      nextData: [],
       nextId: 0,
       // Information uses to manage the movement
       step: 300,
@@ -595,7 +602,6 @@ export default {
       secondRelatedImagesPosition: [],
       displayRelatedImageTimeout: [],
       viewerImageMode: false,
-      loadNewPageTimeout: undefined,
       newOriginX: 0,
       newOriginY: 0,
       secondRelatedImageTimeout: [],
@@ -605,18 +611,7 @@ export default {
     };
   },
   methods: {
-    thumbnailHeight() {
-      return 17 * 4 * this.defineReponsiveFactor();
-    },
-    thumbnailWidth() {
-      return 9 * 4 * this.defineReponsiveFactor();
-    },
-    relatedThumbnailHeight() {
-      return 9 * 4 * this.defineReponsiveFactor();
-    },
-    relatedThumbnailWidth() {
-      return 8 * 4 * this.defineReponsiveFactor();
-    },
+    // Colision analysis
     checkPosition(x, y, rectangle, relatedImage, isRelated) {
       if (
         x < rectangle.x + rectangle.width &&
@@ -695,40 +690,28 @@ export default {
         }
       }
     },
+    // Rectangle navigation
     startPosition() {
-      this.fullHistoryMode = false;
-      this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
-      this.secondRelatedImageTimeout = [];
-      this.shouldRunCentralImageTransition = true;
-      this.secondRelatedImagesPosition = [];
-      this.couldLoad = true;
+      this.stopSecondRelatedDisplay();
       this.isDrag = true;
     },
     endPosition() {
       this.isDrag = false;
     },
     mouseWheel() {
-      this.fullHistoryMode = false;
-      this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
-      this.secondRelatedImageTimeout = [];
-      this.shouldRunCentralImageTransition = true;
-      this.secondRelatedImagesPosition = [];
-      this.couldLoad = true;
+      this.stopSecondRelatedDisplay()
       this.checkCollision();
     },
     touchMove() {
-      this.fullHistoryMode = false;
-      this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
-      this.secondRelatedImageTimeout = [];
-      this.shouldRunCentralImageTransition = true;
-      this.secondRelatedImagesPosition = [];
-      this.couldLoad = true;
+      this.stopSecondRelatedDisplay();
       if (this.isDrag && !this.blockDrag) {
         this.checkCollision();
       }
     },
     mouseMove(event) {
       if (this.isDrag && !this.blockDrag) {
+
+        // Calculate the mouse movement and apply it on the current position
         const xMovement = this.currentXPosition - event.movementX;
         if (xMovement > 0 || xMovement < event.pageWidth) {
           this.currentXPosition = xMovement;
@@ -739,6 +722,7 @@ export default {
           this.currentYPosition = yMovement;
         }
 
+        // Calculate the position of the target
         this.rectangleXPosition =
           -this.$refs.display.getBoundingClientRect().left +
           this.windowWidth / 2 -
@@ -747,6 +731,7 @@ export default {
           -this.$refs.display.getBoundingClientRect().top +
           this.windowHeight / 2 -
           this.rectangleHeight / 2;
+        // Move
         window.scrollTo({
           left: this.currentXPosition,
           top: this.currentYPosition,
@@ -754,6 +739,7 @@ export default {
         this.checkCollision();
       }
     },
+    // Slider part
     isStop() {
       return this.step > 290 && this.step < 310;
     },
@@ -837,6 +823,7 @@ export default {
         this.previousDirection = direction;
       }
     },
+    // Method to slow down the slider when the speed is fast and the slider is released
     launchDecelerate(direction) {
       this.decelerateTimouts.push(
         setTimeout(() => {
@@ -953,6 +940,12 @@ export default {
         });
       });
     },
+    stopDisplayRelatedImages() {
+      this.displayRelatedImageTimeout.forEach(clearTimeout);
+      this.displayRelatedImageTimeout = [];
+      this.relatedImagesPosition = [];
+    },
+    // This methods setup the display of related images from a related image
     displaySecondRelatedImages(images) {
       // Select randomly 3 display positions
       this.potentialPosition
@@ -982,10 +975,13 @@ export default {
         });
       });
     },
-    stopDisplayRelatedImages() {
-      this.displayRelatedImageTimeout.forEach(clearTimeout);
-      this.displayRelatedImageTimeout = [];
-      this.relatedImagesPosition = [];
+    stopSecondRelatedDisplay() {
+      this.fullHistoryMode = false;
+      this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
+      this.secondRelatedImageTimeout = [];
+      this.shouldRunCentralImageTransition = true;
+      this.secondRelatedImagesPosition = [];
+      this.couldLoad = true;
     },
     speedSelection() {
       // Find the transition speed
@@ -1037,6 +1033,19 @@ export default {
         case this.step <= 600:
           return 50;
       }
+    },
+    // Position and size calculation methods
+    thumbnailHeight() {
+      return 17 * 4 * this.defineReponsiveFactor();
+    },
+    thumbnailWidth() {
+      return 9 * 4 * this.defineReponsiveFactor();
+    },
+    relatedThumbnailHeight() {
+      return 9 * 4 * this.defineReponsiveFactor();
+    },
+    relatedThumbnailWidth() {
+      return 8 * 4 * this.defineReponsiveFactor();
     },
     defineReponsiveFactor() {
       switch (true) {

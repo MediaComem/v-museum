@@ -42,19 +42,24 @@ const parseImages = (data) => {
 export default {
   async getImages(decade, offset, skipIds) {
     let queryParameterId = 2;
-    let req = process.env.VUE_APP_FETCH_BASE + decade + "&page=" + offset;
+    let req =
+      process.env.VUE_APP_FETCH_BASE +
+      "sort_by=dcterms%3Aidentifier&sort_order=asc&per_page=100&property%5B0%5D%5Bproperty%5D=3&property%5B0%5D%5Btype%5D=ex&property%5B1%5D%5Bjoiner%5D=and&property%5B1%5D%5Bproperty%5D=20&property%5B1%5D%5Btype%5D=in&property%5B1%5D%5Btext%5D=" +
+      decade +
+      "&page=" +
+      offset;
     skipIds.forEach((id) => {
       req =
         req +
-        process.env.VUE_APP_ADD_IDENT_REMOVER_PART_1 +
+        "&property%5B" +
         queryParameterId +
-        process.env.VUE_APP_ADD_IDENT_REMOVER_PART_2 +
+        "%5D%5Bjoiner%5D=and&property%5B" +
         queryParameterId +
-        process.env.VUE_APP_ADD_IDENT_REMOVER_PART_3 +
+        "%5D%5Bproperty%5D=10&property%5B" +
         queryParameterId +
-        process.env.VUE_APP_ADD_IDENT_REMOVER_PART_4 +
+        "%5D%5Btype%5D=neq&property%5B" +
         queryParameterId +
-        process.env.VUE_APP_ADD_IDENT_REMOVER_PART_5 +
+        "%5D%5Btext%5D=" +
         id;
       queryParameterId = queryParameterId + 1;
     });
@@ -66,22 +71,27 @@ export default {
   },
 
   async getImageById(id) {
-    const req = process.env.VUE_APP_SEARCH_BY_ID + id;
+    const req =
+      process.env.VUE_APP_FETCH_BASE +
+      "property%5B0%5D%5Bjoiner%5D=and&property%5B0%5D%5Bproperty%5D=10&property%5B0%5D%5Btype%5D=eq&property%5B0%5D%5Btext%5D=" +
+      id;
     const { data } = await request(req);
     return parseImages(data);
   },
 
   async getRelatedImages(tag, id) {
     const searchNbItems =
-      process.env.VUE_APP_SEARCH_BY_TAG +
+      process.env.VUE_APP_FETCH_BASE +
+      "property%5B0%5D%5Bjoiner%5D=and&property%5B0%5D%5Bproperty%5D=3&property%5B0%5D%5Btype%5D=eq&property%5B0%5D%5Btext%5D=" +
       tag["@value"] +
-      process.env.VUE_APP_REMOVE_ID_FROM_SEARCH +
+      "&property%5B1%5D%5Bjoiner%5D=and&property%5B1%5D%5Bproperty%5D=10&property%5B1%5D%5Btype%5D=neq&property%5B1%5D%5Btext%5D=" +
       id;
     const { headers } = await request(searchNbItems);
     const req =
-      process.env.VUE_APP_SEARCH_BY_TAG +
+      process.env.VUE_APP_FETCH_BASE +
+      "property%5B0%5D%5Bjoiner%5D=and&property%5B0%5D%5Bproperty%5D=3&property%5B0%5D%5Btype%5D=eq&property%5B0%5D%5Btext%5D=" +
       tag["@value"] +
-      process.env.VUE_APP_REMOVE_ID_FROM_SEARCH +
+      "&property%5B1%5D%5Bjoiner%5D=and&property%5B1%5D%5Bproperty%5D=10&property%5B1%5D%5Btype%5D=neq&property%5B1%5D%5Btext%5D=" +
       id +
       "&per_page=" +
       headers["omeka-s-total-results"];
