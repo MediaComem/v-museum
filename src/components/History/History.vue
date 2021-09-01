@@ -471,6 +471,11 @@ export default {
     display: block;
     height: inherit;
     width: 2.5vw;
+    background: url("../../assets/vector-left.png");
+    background-repeat: no-repeat;
+    background-size: 20%;
+    background-position-x: 0.5vw;
+    background-position-y: 50%;
   }
 
   .right-arrow {
@@ -479,6 +484,11 @@ export default {
     display: block;
     height: inherit;
     width: 2.5vw;
+    background: url("../../assets/vector-right.png");
+    background-repeat: no-repeat;
+    background-size: 20%;
+    background-position-x: 0.5vw;
+    background-position-y: 50%;
   }
 }
 
