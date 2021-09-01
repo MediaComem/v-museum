@@ -61,6 +61,7 @@
         <img
           v-if="firstImage"
           class="history-image display-image"
+          :class="getOpacityFullFirstPosition"
           @click="comeBackTo(firstImage)"
           :src="firstImage.data"
         />
@@ -74,6 +75,7 @@
         <img
           v-if="secondImage"
           class="history-image display-image"
+          :class="getOpacityFullSecondPosition"
           @click="comeBackTo(secondImage)"
           :src="secondImage.data"
         />
@@ -87,6 +89,7 @@
         <img
           v-if="thirdImage"
           class="history-image display-image"
+          :class="getOpacityFullThirdPosition"
           @click="comeBackTo(thirdImage)"
           :src="thirdImage.data"
         />
@@ -100,6 +103,7 @@
         <img
           v-if="forthImage"
           class="history-image display-image"
+          :class="getOpacityFullForthPosition"
           @click="comeBackTo(forthImage)"
           :src="forthImage.data"
         />
@@ -297,6 +301,38 @@ export default {
         "second-image-opacity": this.currentHistory.length > 2,
       };
     },
+    getOpacityFullFirstPosition() {
+      return {
+        "third-image-opacity": this.firstPosition === 0,
+        "second-image-opacity": this.firstPosition === 1,
+        "first-image-opacity": this.firstPosition === 2,
+        "final-opacity": this.firstPosition === 3,
+      };
+    },
+    getOpacityFullSecondPosition() {
+      return {
+        "third-image-opacity": this.secondPosition === 0,
+        "second-image-opacity": this.secondPosition === 1,
+        "first-image-opacity": this.secondPosition === 2,
+        "final-opacity": this.secondPosition === 3,
+      };
+    },
+    getOpacityFullThirdPosition() {
+      return {
+        "third-image-opacity": this.thirdPosition === 0,
+        "second-image-opacity": this.thirdPosition === 1,
+        "first-image-opacity": this.thirdPosition === 2,
+        "final-opacity": this.thirdPosition === 3,
+      };
+    },
+    getOpacityFullForthPosition() {
+      return {
+        "third-image-opacity": this.forthPosition === 0,
+        "second-image-opacity": this.forthPosition === 1,
+        "first-image-opacity": this.forthPosition === 2,
+        "final-opacity": this.forthPosition === 3,
+      };
+    },
     ...mapGetters({
       currentHistory: "getHistory",
     }),
@@ -414,6 +450,10 @@ export default {
 
 .third-image-opacity {
   opacity: 0.8;
+}
+
+.final-opacity {
+  opacity: 0.3;
 }
 
 @media (pointer: fine) {
