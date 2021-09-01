@@ -216,28 +216,7 @@ export default {
             this.currentHistoryLength = historyElement.length;
           }
         } else {
-          const element = historyElement.slice(-3);
-          this.currentHistoryLength = this.currentHistory.length;
-          switch (element.length) {
-            case 1:
-              this.firstImage = element[0];
-              this.firstPosition = 0;
-              break;
-            case 2:
-              this.firstImage = element[0];
-              this.firstPosition = 1;
-              this.secondImage = element[1];
-              this.secondPosition = 0;
-              break;
-            default:
-              this.firstImage = element[0];
-              this.firstPosition = 2;
-              this.secondImage = element[1];
-              this.secondPosition = 1;
-              this.thirdImage = element[2];
-              this.thirdPosition = 0;
-              break;
-          }
+          this.loadImages(historyElement);
         }
       },
       deep: true,
@@ -267,6 +246,30 @@ export default {
       });
       this.$emit("closeFullHistory");
     },
+    loadImages(historyElement) {
+          const element = historyElement.slice(-3);
+          this.currentHistoryLength = this.currentHistory.length;
+          switch (element.length) {
+            case 1:
+              this.firstImage = element[0];
+              this.firstPosition = 0;
+              break;
+            case 2:
+              this.firstImage = element[0];
+              this.firstPosition = 1;
+              this.secondImage = element[1];
+              this.secondPosition = 0;
+              break;
+            default:
+              this.firstImage = element[0];
+              this.firstPosition = 2;
+              this.secondImage = element[1];
+              this.secondPosition = 1;
+              this.thirdImage = element[2];
+              this.thirdPosition = 0;
+              break;
+          }
+    }
   },
   computed: {
     displayHistory() {
@@ -339,28 +342,7 @@ export default {
     ...mapState(["history"]),
   },
   mounted() {
-    const element = this.currentHistory.slice(-3);
-    this.currentHistoryLength = this.currentHistory.length;
-    switch (element.length) {
-      case 1:
-        this.firstImage = element[0];
-        this.firstPosition = 0;
-        break;
-      case 2:
-        this.firstImage = element[0];
-        this.firstPosition = 1;
-        this.secondImage = element[1];
-        this.secondPosition = 0;
-        break;
-      case 3:
-        this.firstImage = element[0];
-        this.firstPosition = 2;
-        this.secondImage = element[1];
-        this.secondPosition = 1;
-        this.thirdImage = element[2];
-        this.thirdPosition = 0;
-        break;
-    }
+    this.loadImages(this.currentHistory);
   },
 };
 </script>

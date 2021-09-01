@@ -68,6 +68,7 @@ export const mutations = {
   updateCompletion(state, payload) {
     const completions = store.getters.getCompletionByDecade(payload.year)
     completions.completion = payload.completion;
+    completions.maxVisitedIndex = payload.maxVisitedIndex;
   },
   provideRelatedImages(state, relatedImages) {
     state.relatedImages = relatedImages;
@@ -94,6 +95,7 @@ export const actions = {
     context.commit("updateCompletion", {
       year: payload.decade,
       completion: payload.completion,
+      maxVisitedIndex: payload.maxVisitedIndex,
     });
   },
   insertHistory(context, payload) {

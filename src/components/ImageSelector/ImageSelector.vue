@@ -428,6 +428,7 @@ export default {
             const completion = this.getCompletionByDecade(this.currentDecade);
             if (completion) {
               this.totalIndex = +completion.totalImages;
+              this.maxVisitedIndex = +completion.maxVisitedIndex;
             }
             this.isInitialLoad = false;
             this.relatedImagesPosition = [];
@@ -536,6 +537,7 @@ export default {
       const completion = this.getCompletionByDecade(this.currentDecade);
       if (completion) {
         this.totalIndex = +completion.totalImages;
+        this.maxVisitedIndex = +completion.maxVisitedIndex;
       }
     },
   },
@@ -777,6 +779,7 @@ export default {
             this.$store.dispatch("updateCompletion", {
               decade: this.currentDecade,
               completion: this.completion,
+              maxVisitedIndex: this.maxVisitedIndex,
             });
           }
         }
