@@ -129,7 +129,7 @@
     >
       <div
         style="display: flex; overflow: hidden;"
-        :style="{ width: thumbnailWidth() / 1.6 + 'px' }"
+        :style="{ width: thumbnailWidth() + 'px' }"
       >
         <p
           v-if="relatedImagesPosition.length > 0"
@@ -161,7 +161,7 @@
       </div>
     </div>
     <div v-if="carouselHover && endDisplay" :style="imageInformationPosition">
-      <Completion
+      <completion
         :decade="currentDecade"
         :height="100"
         :width="100"
