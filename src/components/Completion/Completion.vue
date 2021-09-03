@@ -2,7 +2,7 @@
   <svg
     :width="width + 'px'"
     :height="height + 'px'"
-    viewBox="-3 -2.75 6.5 6"
+    viewBox="-2 -2.75 4 5.5"
     enable-background="new 0 0 300 300"
     xml:space="preserve"
     :style="positionElement"
@@ -10,7 +10,7 @@
     <path
       :style="path"
       fill="none"
-      stroke="lightgray"
+      :stroke="emptyColor"
       stroke-width="0.04"
       stroke-miterlimit="10"
       :d="spiral.join(' ')"
@@ -20,7 +20,7 @@
   <svg
     :width="width + 'px'"
     :height="height + 'px'"
-    viewBox="-3 -2.75 6.5 6"
+    viewBox="-2 -2.75 4 5.5"
     enable-background="new 0 0 300 300"
     xml:space="preserve"
     :style="positionElement"
@@ -28,7 +28,7 @@
     <path
       :style="path2"
       fill="none"
-      stroke="black"
+      :stroke="completeColor"
       stroke-width="0.04"
       stroke-miterlimit="10"
       :d="completed"
@@ -46,6 +46,8 @@ export default {
     width: Number,
     topPosition: Number,
     leftPosition: Number,
+    emptyColor: String,
+    completeColor: String,
   },
   watch: {
     decade: function() {

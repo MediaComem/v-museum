@@ -167,6 +167,8 @@
         :width="100"
         :topPosition="-40"
         :leftPosition="-20"
+        :emptyColor="'lightgray'"
+        :completeColor="'black'"
       />
       <p style="margin: 0; margin-left: 60px;">
         {{ currentDecade + "0" }} <img src="@/assets/vector.png" /> &nbsp;
@@ -1696,9 +1698,15 @@ export default {
     // The parameter for the year search will come from the previous selection view.
     // Currently, this value is hard-coded for testing purpose.
     this.currentDecade = this.$route.params.decade;
-    this.$store.dispatch("initializeCarousel", {
-      decade: this.currentDecade,
-    });
+    const data = this.getImagesByDecade(this.currentDecade);
+    if (data === undefined) {
+      this.$store.dispatch("initializeCarousel", {
+        decade: this.currentDecade,
+      });
+    }
+    else {
+      this.data = data.data;
+    }
   },
 };
 </script>

@@ -1,8 +1,10 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+import Onboarding from "./components/Onboarding/Onboarding.vue";
 import ImageSelector from "./components/ImageSelector/ImageSelector.vue";
 
 const routes = [
-    {path: '/', redirect: '/selector/193'},
+    {path: '/', component: Onboarding},
+    {path: '/selector', redirect: '/selector/193'},
     {path: '/selector/:decade/:index?', component: ImageSelector},
   ];
   
