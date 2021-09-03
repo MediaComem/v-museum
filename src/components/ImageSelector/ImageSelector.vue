@@ -171,7 +171,8 @@
         :completeColor="'black'"
       />
       <p style="margin: 0; margin-left: 60px;">
-        {{ currentDecade + "0" }} <img src="@/assets/vector.png" /> &nbsp;
+        {{ currentDecade + "0" }}
+        <img src="@/assets/vector.png" @click="loadOnboarding()" /> &nbsp;
       </p>
     </div>
     <div v-if="carouselHover && endDisplay" :style="indexInformationPosition">
@@ -389,6 +390,7 @@ export default {
         this.$route.params.index !== undefined &&
         this.$route.params.index != ""
       ) {
+        console.log("TEST");
         if (this.$route.query.history !== undefined) {
           // If the loading comes from history, setup the states
           this.nextDecade = this.$route.params.decade;
@@ -430,22 +432,7 @@ export default {
         }
 
         if (this.isInitialLoad) {
-          this.$nextTick(() => {
-            const completion = this.getCompletionByDecade(this.currentDecade);
-            if (completion) {
-              this.totalIndex = +completion.totalImages;
-              this.maxVisitedIndex = +completion.maxVisitedIndex;
-            }
-            this.isInitialLoad = false;
-            this.relatedImagesPosition = [];
-            this.$store.dispatch("loadRelatedImages", {
-              tags: this.data[this.currentIndex].tags,
-              id: this.data[this.currentIndex].id,
-            });
-            this.viewerImageMode = true;
-            this.carouselHover = true;
-            window.scrollTo(this.currentXPosition, this.currentYPosition);
-          });
+          this.loadInitialData();
         }
       },
       deep: true,
@@ -611,6 +598,29 @@ export default {
     };
   },
   methods: {
+    loadInitialData() {
+      this.$nextTick(() => {
+        const completion = this.getCompletionByDecade(this.currentDecade);
+        if (completion) {
+          this.totalIndex = +completion.totalImages;
+          this.maxVisitedIndex = +completion.maxVisitedIndex;
+        }
+        this.isInitialLoad = false;
+        this.relatedImagesPosition = [];
+        this.$store.dispatch("loadRelatedImages", {
+          tags: this.data[this.currentIndex].tags,
+          id: this.data[this.currentIndex].id,
+        });
+        this.viewerImageMode = true;
+        this.carouselHover = true;
+        window.scrollTo(this.currentXPosition, this.currentYPosition);
+      });
+    },
+    loadOnboarding() {
+      this.$router.push({
+        path: `/`,
+      });
+    },
     // Colision analysis
     checkPosition(x, y, rectangle, relatedImage, isRelated) {
       if (
@@ -1703,9 +1713,9 @@ export default {
       this.$store.dispatch("initializeCarousel", {
         decade: this.currentDecade,
       });
-    }
-    else {
+    } else {
       this.data = data.data;
+      this.loadInitialData();
     }
   },
 };

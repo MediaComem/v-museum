@@ -71,7 +71,7 @@ export default {
     };
   },
   methods: {
-    loadImage: function(path) {
+    loadImage(path) {
       return require(path);
     },
     previousSlide() {
