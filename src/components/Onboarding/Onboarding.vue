@@ -7,7 +7,7 @@
     :loop="false"
   >
     <el-carousel-item>
-      <div ref="intro">
+      <div ref="intro" :class="getHeight">
         <el-row :gutter="20" style="margin: 0;">
           <el-col :span="24" style="padding: 0;">
             <img class="first-image" src="@/assets/onboarding/first.png" />
@@ -46,7 +46,8 @@
       :key="index"
     >
       <img
-        style="height: 100vh; width: 100vw; z-index: -1;"
+      :class="getHeight"
+        style="width: 100vw; z-index: -1; object-fit: none;"
         :src="require(`../../assets/onboarding/${item.imagePath}`)"
       />
       <div
@@ -57,8 +58,8 @@
         <p class="collection-text collapse-text-align">{{ item.text }}</p>
       </div>
       <logo style="position: absolute; left: 2vw; top: 2vh" />
-      <arrow-up class="arrow-up" @click="previousSlide()" />
-      <div class="collection-position">
+      <arrow-up v-if="shouldDisplay" class="arrow-up" @click="previousSlide()" />
+      <div v-if="shouldDisplay" class="collection-position">
         <h2 class="collection-title">{{ item.title }}</h2>
         <p class="collection-text">
           {{ item.text.slice(0, 180) }}
@@ -70,7 +71,11 @@
           @click="loadDecade(item.decade)"
         />
       </div>
-      <arrow-down v-if="index !== information.collection.length - 1" class="arrow-down" @click="nextSlide()" />
+      <arrow-down
+        v-if="index !== information.collection.length - 1 && shouldDisplay"
+        class="arrow-down"
+        @click="nextSlide()"
+      />
     </el-carousel-item>
   </el-carousel>
 </template>
@@ -85,8 +90,8 @@ import OnboardingCompletion from "./Logo/OnboadingCompletion.vue";
 export default {
   name: "Onboarding",
   components: { Logo, ArrowUp, ArrowDown, OnboardingCompletion },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
       vm.decade = from.params.decade;
     });
   },
@@ -96,6 +101,8 @@ export default {
       isCollapse: false,
       slide: 0,
       decade: undefined,
+      move: false,
+      shouldDisplay: true,
     };
   },
   methods: {
@@ -103,12 +110,28 @@ export default {
       return require(path);
     },
     previousSlide() {
-      this.$refs.slider.prev();
-      this.slide = this.slide - 1;
+      this.move = true;
+      this.shouldDisplay = false;
+      setTimeout(() => {
+        this.$refs.slider.prev();
+        setTimeout(() => {
+          this.move = false;
+          this.slide = this.slide - 1;
+          this.shouldDisplay = true;
+        }, 500);
+      }, 500);
     },
     nextSlide() {
-      this.$refs.slider.next();
-      this.slide = this.slide + 1;
+      this.move = true;
+      this.shouldDisplay = false;
+      setTimeout(() => {
+        this.$refs.slider.next();
+        setTimeout(() => {
+          this.move = false;
+          this.slide = this.slide + 1;
+          this.shouldDisplay = true;
+        }, 500);
+      }, 500);
     },
     loadDecade(decade) {
       this.$router.push({
@@ -122,6 +145,13 @@ export default {
         return "100vh";
       } else {
         return "200vh";
+      }
+    },
+    getHeight() {
+      return {
+        "slider-height-full": !this.move && this.slide === 0,
+        "slider-height-slide": !this.move && this.slide !== 0,
+        "slider-height-min": this.move,
       }
     },
     collapse() {
@@ -143,7 +173,7 @@ export default {
         this.$refs.slider.setActiveItem(index + 1);
       });
     }
-  }
+  },
 };
 </script>
 
@@ -223,5 +253,24 @@ export default {
   transition: transform;
   transition-duration: 1s;
   transition-timing-function: linear;
+}
+
+.slider-height-full {
+  height: 200vh;
+  transition: height 0.5s linear;
+}
+
+.slider-height-slide {
+  height: 100vh;
+  transition: height 0.5s linear;
+}
+
+.slider-height-min {
+  height: 33vh;
+  transition: height 0.5s linear;
+}
+
+.el-carousel__item.is-animating {
+  transition: transform 0.5s linear;
 }
 </style>
