@@ -1,36 +1,46 @@
 <template>
-  <el-row :gutter="20" style="margin: 0;">
-    <el-col :span="24" style="padding: 0;">
-      <img class="first-image" src="@/assets/onboarding/first.png" />
-    </el-col>
-  </el-row>
-  <el-row :gutter="20" style="margin: 0;">
-    <el-col :span="12" :offset="6">
-      <h1 class="page-title">{{ information.title }}</h1>
-    </el-col>
-  </el-row>
-  <el-row :gutter="20" style="margin: 0;">
-    <el-col :span="12" :offset="6">
-      <h2 class="page-subtitle">{{ information.subtitle }}</h2>
-    </el-col>
-  </el-row>
-  <el-row :gutter="20" style="margin: 0;">
-    <el-col :span="8" :offset="8">
-      <h3 class="text-title">{{ information.header }}</h3>
-    </el-col>
-  </el-row>
-  <el-row :gutter="20" style="margin: 0;">
-    <el-col :span="8" :offset="8">
-      <p class="text">{{ information.body }}</p>
-    </el-col>
-  </el-row>
   <el-carousel
-    height="100vh"
+    :height="getSliderHeight"
     direction="vertical"
     :autoplay="false"
     ref="slider"
     :loop="false"
   >
+    <el-carousel-item>
+      <div ref="intro">
+        <el-row :gutter="20" style="margin: 0;">
+          <el-col :span="24" style="padding: 0;">
+            <img class="first-image" src="@/assets/onboarding/first.png" />
+          </el-col>
+        </el-row>
+        <el-row :gutter="20" style="margin: 0;">
+          <el-col :span="12" :offset="6">
+            <h1 class="page-title">{{ information.title }}</h1>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20" style="margin: 0;">
+          <el-col :span="12" :offset="6">
+            <h2 class="page-subtitle">{{ information.subtitle }}</h2>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20" style="margin: 0;">
+          <el-col :span="8" :offset="8">
+            <h3 class="text-title">{{ information.header }}</h3>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20" style="margin: 0;">
+          <el-col :span="8" :offset="8">
+            <p class="text">{{ information.body }}</p>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8" :offset="8">
+            <arrow-down @click="nextSlide()" />
+          </el-col>
+        </el-row>
+      </div>
+    </el-carousel-item>
+
     <el-carousel-item
       v-for="(item, index) in information.collection"
       :key="index"
@@ -39,18 +49,28 @@
         style="height: 100vh; width: 100vw; z-index: -1;"
         :src="require(`../../assets/onboarding/${item.imagePath}`)"
       />
+      <div
+        class="collapse-transition"
+        :style="collapse"
+        style="position: absolute; left: 0px; top: 0px;"
+      >
+        <p class="collection-text collapse-text-align">{{ item.text }}</p>
+      </div>
       <logo style="position: absolute; left: 2vw; top: 2vh" />
       <arrow-up class="arrow-up" @click="previousSlide()" />
       <div class="collection-position">
         <h2 class="collection-title">{{ item.title }}</h2>
-        <p class="collection-text">{{ item.text }}</p>
+        <p class="collection-text">
+          {{ item.text.slice(0, 180) }}
+          <a class="more-link" @click="isCollapse = !isCollapse">MORE</a>
+        </p>
         <onboarding-completion
           style="left: inherit"
           :decade="item.decade"
           @click="loadDecade(item.decade)"
         />
       </div>
-      <arrow-down class="arrow-down" @click="nextSlide()" />
+      <arrow-down v-if="index !== information.collection.length - 1" class="arrow-down" @click="nextSlide()" />
     </el-carousel-item>
   </el-carousel>
 </template>
@@ -65,9 +85,17 @@ import OnboardingCompletion from "./Logo/OnboadingCompletion.vue";
 export default {
   name: "Onboarding",
   components: { Logo, ArrowUp, ArrowDown, OnboardingCompletion },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.decade = from.params.decade;
+    });
+  },
   data() {
     return {
       information: text,
+      isCollapse: false,
+      slide: 0,
+      decade: undefined,
     };
   },
   methods: {
@@ -76,9 +104,11 @@ export default {
     },
     previousSlide() {
       this.$refs.slider.prev();
+      this.slide = this.slide - 1;
     },
     nextSlide() {
       this.$refs.slider.next();
+      this.slide = this.slide + 1;
     },
     loadDecade(decade) {
       this.$router.push({
@@ -86,6 +116,34 @@ export default {
       });
     },
   },
+  computed: {
+    getSliderHeight() {
+      if (this.slide !== 0) {
+        return "100vh";
+      } else {
+        return "200vh";
+      }
+    },
+    collapse() {
+      return {
+        "background-color": "white",
+        height: "100vh",
+        width: "57vw",
+        transform: this.isCollapse ? "translateX(0)" : "translate(-57vw)",
+      };
+    },
+  },
+  mounted() {
+    if (this.decade) {
+      const index = this.information.collection.findIndex((e) => {
+        return e.decade == this.decade;
+      });
+      this.$nextTick(() => {
+        this.slide = index + 1;
+        this.$refs.slider.setActiveItem(index + 1);
+      });
+    }
+  }
 };
 </script>
 
@@ -147,5 +205,23 @@ export default {
   position: absolute;
   left: 95vw;
   top: 90vh;
+}
+
+.more-link {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.collapse-text-align {
+  text-align: justify;
+  position: absolute;
+  top: 20vh;
+  margin: 3vw;
+}
+
+.collapse-transition {
+  transition: transform;
+  transition-duration: 1s;
+  transition-timing-function: linear;
 }
 </style>

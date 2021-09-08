@@ -390,7 +390,6 @@ export default {
         this.$route.params.index !== undefined &&
         this.$route.params.index != ""
       ) {
-        console.log("TEST");
         if (this.$route.query.history !== undefined) {
           // If the loading comes from history, setup the states
           this.nextDecade = this.$route.params.decade;
@@ -619,6 +618,7 @@ export default {
     loadOnboarding() {
       this.$router.push({
         path: `/`,
+        query: { decade: this.decade },
       });
     },
     // Colision analysis
