@@ -193,6 +193,7 @@
             class="carousel-image"
             :src="data[currentIndex].imagePaths.large"
             :alt="data[currentIndex].id"
+            @click="loadFocusImage(data[currentIndex].id)"
           />
         </div>
       </div>
@@ -388,7 +389,8 @@ export default {
     $route: function() {
       if (
         this.$route.params.index !== undefined &&
-        this.$route.params.index != ""
+        this.$route.params.index != "" &&
+        this.$route.name === "selector"
       ) {
         if (this.$route.query.history !== undefined) {
           // If the loading comes from history, setup the states
@@ -428,6 +430,12 @@ export default {
         // Set only when images are available and more important only if necessary
         if (images && this.couldLoad) {
           this.data = images.data;
+        }
+
+        if (this.shouldFindIndex) {
+          this.currentIndex = this.data.findIndex((e) => {
+            return e.id == this.idToFind;
+          });
         }
 
         if (this.isInitialLoad) {
@@ -470,27 +478,13 @@ export default {
             this.couldLoad = false;
             newData = this.getImagesByDecade(this.nextDecade);
             if (newData === undefined) {
-              this.$store.dispatch("insertSkipId", {
-                decade: this.nextDecade,
-                id: this.nextId,
-              });
-              this.$store.dispatch("loadNextContent", {
-                decade: this.nextDecade,
-                id: this.nextId,
-              });
+              this.loadDataWithSkipId(this.nextDecade, this.nextId);
             } else {
               newIndex = newData.data.findIndex((e) => {
                 return e.id == this.nextId;
               });
               if (newIndex === -1) {
-                this.$store.dispatch("insertSkipId", {
-                  decade: this.nextDecade,
-                  id: this.nextId,
-                });
-                this.$store.dispatch("loadNextContent", {
-                  decade: this.nextDecade,
-                  id: this.nextId,
-                });
+                this.loadDataWithSkipId(this.nextDecade, this.nextId);
               }
             }
           }, 2000)
@@ -550,6 +544,8 @@ export default {
       endDisplay: true,
       couldLoad: true,
       nextId: 0,
+      shouldFindIndex: false,
+      idToFind: 0,
       // Information uses to manage the movement
       step: 300,
       speed: 6000,
@@ -597,6 +593,16 @@ export default {
     };
   },
   methods: {
+    async loadDataWithSkipId(decade, id) {
+      this.$store.dispatch("insertSkipId", {
+        decade: decade,
+        id: id,
+      });
+      this.$store.dispatch("loadNextContent", {
+        decade: decade,
+        id: id,
+      });
+    },
     loadInitialData() {
       this.$nextTick(() => {
         const completion = this.getCompletionByDecade(this.currentDecade);
@@ -606,19 +612,30 @@ export default {
         }
         this.isInitialLoad = false;
         this.relatedImagesPosition = [];
-        this.$store.dispatch("loadRelatedImages", {
-          tags: this.data[this.currentIndex].tags,
-          id: this.data[this.currentIndex].id,
-        });
+        if (this.data[this.currentIndex].tags) {
+          this.$store.dispatch("loadRelatedImages", {
+            tags: this.data[this.currentIndex].tags,
+            id: this.data[this.currentIndex].id,
+          });
+        }
         this.viewerImageMode = true;
         this.carouselHover = true;
         window.scrollTo(this.currentXPosition, this.currentYPosition);
       });
     },
     loadOnboarding() {
+      this.$store.dispatch("updateLastVivistedElement", {
+        decade: this.currentDecade,
+        index: this.currentIndex,
+      });
       this.$router.push({
         path: `/`,
         query: { decade: this.decade },
+      });
+    },
+    loadFocusImage(id) {
+      this.$router.push({
+        path: `/image/${id}`,
       });
     },
     // Colision analysis
@@ -1705,17 +1722,36 @@ export default {
     this.currentXPosition = this.defineLeftPositionCenterPage();
     this.currentYPosition = this.defineTopPositionCenterPage();
 
-    // The parameter for the year search will come from the previous selection view.
-    // Currently, this value is hard-coded for testing purpose.
     this.currentDecade = this.$route.params.decade;
     const data = this.getImagesByDecade(this.currentDecade);
+    const id = this.$route.params.index;
+    
     if (data === undefined) {
-      this.$store.dispatch("initializeCarousel", {
-        decade: this.currentDecade,
-      });
+      if (id == "") {
+        this.$store.dispatch("initializeCarousel", {
+          decade: this.currentDecade,
+        });
+      } else {
+        this.loadDataWithSkipId(this.currentDecade, id);
+      }
     } else {
-      this.data = data.data;
-      this.loadInitialData();
+      if (id == "") {
+        this.data = data.data;
+        this.loadInitialData();
+      } else {
+        const newIndex = data.data.findIndex((e) => {
+          return e.id == id;
+        });
+        if (newIndex !== -1) {
+          this.data = data.data;
+          this.currentIndex = newIndex;
+          this.loadInitialData();
+        } else {
+          this.idToFind = id;
+          this.shouldFindIndex = true;
+          this.loadDataWithSkipId(this.currentDecade, id);
+        }
+      }
     }
   },
 };

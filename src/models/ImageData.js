@@ -1,5 +1,5 @@
 export default class ImageData {
-  constructor(id, title, author, medium, imagePaths, tags, decade) {
+  constructor(id, title, author, medium, imagePaths, tags, decade, media) {
     this.id = id;
     this.title = title;
     this.author = author;
@@ -7,5 +7,6 @@ export default class ImageData {
     this.imagePaths = imagePaths;
     this.tags = tags;
     this.decade = decade;
+    this.media = media;
   }
 }

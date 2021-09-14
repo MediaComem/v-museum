@@ -34,9 +34,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 svg {
     position: fixed;
-    z-index: 1;
+    z-index: -11;
 }
 </style>

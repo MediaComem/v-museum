@@ -10,7 +10,7 @@
       <div ref="intro" :class="getHeight">
         <el-row :gutter="20" style="margin: 0;">
           <el-col :span="24" style="padding: 0;">
-            <img class="first-image" src="@/assets/onboarding/first.png" />
+            <img class="first-image" src="@/assets/onboarding/first.png"/>
           </el-col>
         </el-row>
         <el-row :gutter="20" style="margin: 0;">

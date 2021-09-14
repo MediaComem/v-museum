@@ -21,6 +21,9 @@ export const getters = {
   getSkipIdsByDecade: (state) => (decade) => {
     return state.loadSkipIds.find((e) => e.decade === decade);
   },
+  getVisitedIndexByDecade: (state) => (decade) => {
+    return state.lastVisitedIndex.find((e) => e.decade === decade);
+  },
   getHistory: (state) => {
     return state.history;
   },
@@ -34,9 +37,12 @@ export const mutations = {
       const images = store.getters.getImagesByDecade(payload.decade);
       images.data = images.data.concat(payload.images);
     }
-    if (payload.page !== undefined){
+    if (payload.page !== undefined) {
       if (store.getters.getNextPageByDecade(payload.decade) === undefined) {
-        state.nextPageOffset.push({ decade: payload.decade, page: payload.page });
+        state.nextPageOffset.push({
+          decade: payload.decade,
+          page: payload.page,
+        });
       } else {
         const nextPage = store.getters.getNextPageByDecade(payload.decade);
         nextPage.page = payload.page;
@@ -46,7 +52,7 @@ export const mutations = {
   },
   insertSkipId(state, payload) {
     const skipIds = store.getters.getSkipIdsByDecade(payload.decade);
-    if (skipIds === undefined){
+    if (skipIds === undefined) {
       state.loadSkipIds.push({ decade: payload.decade, ids: [payload.id] });
     } else {
       skipIds.ids.push(payload.id);
@@ -65,8 +71,20 @@ export const mutations = {
       });
     }
   },
+  updateLastVivistedElement(state, payload) {
+    const visited = store.getters.getVisitedIndexByDecade(payload.year);
+    if (visited) {
+      visited.lastIndex = payload.index;
+    }
+    else {
+      visited.push({
+        decade: payload.decade,
+        lastIndex: payload.index
+      })
+    }
+  },
   updateCompletion(state, payload) {
-    const completions = store.getters.getCompletionByDecade(payload.year)
+    const completions = store.getters.getCompletionByDecade(payload.year);
     completions.completion = payload.completion;
     completions.maxVisitedIndex = payload.maxVisitedIndex;
   },
@@ -91,6 +109,12 @@ export const mutations = {
 };
 
 export const actions = {
+  updateLastVivistedElement(constex, payload) {
+    context.commit("updateLastVivistedElement", {
+      decade: payload.decade,
+      index: payload.index
+    });
+  },
   updateCompletion(context, payload) {
     context.commit("updateCompletion", {
       year: payload.decade,
@@ -123,10 +147,10 @@ export const actions = {
         .catch((err) => console.log(err));
     }
   },
-  insertSkipId(context, {decade, id} ) {
-    context .commit("insertSkipId", {
+  insertSkipId(context, { decade, id }) {
+    context.commit("insertSkipId", {
       decade: decade,
-      id: id
+      id: id,
     });
   },
   loadNextContent(context, { decade, id }) {
@@ -134,21 +158,20 @@ export const actions = {
     let nextPage = store.getters.getNextPageByDecade(decade);
     if (nextPage === undefined) {
       nextPage = 0;
-    }
-    else {
+    } else {
       nextPage = nextPage.page;
     }
     if (id !== undefined) {
       dataFetch.getImageById(id).then((result) => {
         context.commit("setNextContext", {
           images: result,
-          decade: decade
-        })
-      })
+          decade: decade,
+        });
+      });
     }
     let skipIds = store.getters.getSkipIdsByDecade(decade);
     if (skipIds === undefined) {
-      skipIds = {ids: []};
+      skipIds = { ids: [] };
     }
     dataFetch.getImages(decade, nextPage, skipIds.ids).then((result) => {
       if (result.images.length > 0) {
@@ -219,6 +242,7 @@ const store = createStore({
       completionData: [],
       history: [],
       loadSkipIds: [],
+      lastVisitedIndex: [],
     };
   },
   getters: getters,
