@@ -638,6 +638,44 @@ export default {
         path: `/image/${id}`,
       });
     },
+    loadFromOnboarding(data) {
+      const visited = this.getVisitedIndexByDecade(this.currentDecade);
+      if (data === undefined) {
+        this.$store.dispatch("initializeCarousel", {
+          decade: this.currentDecade,
+        });
+      } else {
+        this.data = data;
+        if (visited) {
+          this.currentIndex = visited.lastIndex;
+          if (this.currentIndex >= this.data.length - 100) {
+            this.$store.dispatch("loadNextContent", {
+              decade: this.currentDecade,
+            });
+          }
+        } else {
+          this.currentIndex = 0;
+        }
+      }
+    },
+    loadFromFocusPage(data, id) {
+      if (data === undefined) {
+        this.loadDataWithSkipId(this.currentDecade, id);
+      } else {
+        const newIndex = data.data.findIndex((e) => {
+          return e.id == id;
+        });
+        if (newIndex !== -1) {
+          this.data = data.data;
+          this.currentIndex = newIndex;
+          this.loadInitialData();
+        } else {
+          this.idToFind = id;
+          this.shouldFindIndex = true;
+          this.loadDataWithSkipId(this.currentDecade, id);
+        }
+      }
+    },
     // Colision analysis
     checkPosition(x, y, rectangle, relatedImage, isRelated) {
       if (
@@ -1709,6 +1747,7 @@ export default {
     ...mapGetters({
       getImagesByDecade: "getImagesByDecade",
       getCompletionByDecade: "getCompletionByDecade",
+      getVisitedIndexByDecade: "getVisitedIndexByDecade",
     }),
   },
   mounted() {
@@ -1724,34 +1763,20 @@ export default {
 
     this.currentDecade = this.$route.params.decade;
     const data = this.getImagesByDecade(this.currentDecade);
-    const id = this.$route.params.index;
-    
-    if (data === undefined) {
-      if (id == "") {
-        this.$store.dispatch("initializeCarousel", {
-          decade: this.currentDecade,
-        });
-      } else {
-        this.loadDataWithSkipId(this.currentDecade, id);
-      }
+    const id = this.$route.query.id;
+    const comeFromOnboarding = this.$route.query.comeFromOnboarding;
+
+    if (id) {
+      this.loadFromFocusPage(data, id);
+    } else if (comeFromOnboarding) {
+      this.loadFromOnboarding(data);
+    } else if (data === undefined) {
+      this.$store.dispatch("initializeCarousel", {
+        decade: this.currentDecade,
+      });
     } else {
-      if (id == "") {
-        this.data = data.data;
-        this.loadInitialData();
-      } else {
-        const newIndex = data.data.findIndex((e) => {
-          return e.id == id;
-        });
-        if (newIndex !== -1) {
-          this.data = data.data;
-          this.currentIndex = newIndex;
-          this.loadInitialData();
-        } else {
-          this.idToFind = id;
-          this.shouldFindIndex = true;
-          this.loadDataWithSkipId(this.currentDecade, id);
-        }
-      }
+      this.data = data.data;
+      this.loadInitialData();
     }
   },
 };

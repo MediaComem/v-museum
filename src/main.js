@@ -77,7 +77,7 @@ export const mutations = {
       visited.lastIndex = payload.index;
     }
     else {
-      visited.push({
+      state.lastVisitedIndex.push({
         decade: payload.decade,
         lastIndex: payload.index
       })
@@ -109,7 +109,7 @@ export const mutations = {
 };
 
 export const actions = {
-  updateLastVivistedElement(constex, payload) {
+  updateLastVivistedElement(context, payload) {
     context.commit("updateLastVivistedElement", {
       decade: payload.decade,
       index: payload.index

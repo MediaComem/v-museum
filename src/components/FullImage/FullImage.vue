@@ -62,9 +62,8 @@ export default {
     },
     backToCanvasView() {
       this.$router.push({
-        path: `/selector/${this.imageData[0].decade.slice(0, 3)}/${
-          this.imageData[0].id
-        }`,
+        path: `/selector/${this.imageData[0].decade.slice(0, 3)}`,
+        query: { id: this.imageId },
       });
     },
   },
