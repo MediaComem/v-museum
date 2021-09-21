@@ -12,20 +12,20 @@
       {{ this.imageData[0].author }}
     </h3>
     <br />
-    <p class="information-position" style="top: 20vh">
+    <p class="information-position" style="top: 17vh">
       {{ this.imageData[0].medium }}
     </p>
     <br />
     <div v-for="(item, index) in collection" :key="index">
       <v-circle
         :left="index * 2 + 'vw'"
-        :top="25 + 'vh'"
+        :top="22 + 'vh'"
         :shouldFill="isCurrentImage(item)"
         @click="loadOtherImage(item)"
       />
     </div>
     <br />
-    <span class="information-position" style="top: 30vh">{{
+    <span class="information-position" style="top: 27vh">{{
       this.imageData[0].description
     }}</span>
   </div>
@@ -159,6 +159,7 @@ span {
 .information-position {
   position: absolute;
   left: 0;
+  text-align: left;
 }
 
 .page {

@@ -35,7 +35,11 @@
         </el-row>
         <el-row>
           <el-col :span="8" :offset="8">
-            <arrow-down @click="nextSlide()" />
+            <arrow-down
+              style="justify-content: center"
+              :text="undefined"
+              @click="nextSlide()"
+            />
           </el-col>
         </el-row>
       </div>
@@ -62,6 +66,7 @@
       <arrow-up
         v-if="shouldDisplay"
         class="arrow-up"
+        :text="index === 0 ? mainTitle : information.collection[index - 1]"
         @click="previousSlide()"
       />
       <div v-if="shouldDisplay" class="collection-position">
@@ -71,7 +76,7 @@
           <a class="more-link" @click="isCollapse = !isCollapse">MORE</a>
         </p>
         <onboarding-completion
-          style="left: inherit"
+          class="completion-element"
           :decade="item.decade"
           @click="loadDecade(item.decade)"
         />
@@ -79,6 +84,7 @@
       <arrow-down
         v-if="index !== information.collection.length - 1 && shouldDisplay"
         class="arrow-down"
+        :text="information.collection[index + 1]"
         @click="nextSlide()"
       />
     </el-carousel-item>
@@ -102,6 +108,7 @@ export default {
   },
   data() {
     return {
+      mainTitle: {title: 'INTRODUCTION'},
       information: text,
       isCollapse: false,
       slide: 0,
@@ -161,7 +168,10 @@ export default {
     },
     collapse() {
       return {
-        "background-color": this.slide > 0 ? this.information.collection[this.slide-1].color : "white",
+        "background-color":
+          this.slide > 0
+            ? this.information.collection[this.slide - 1].color
+            : "white",
         height: "100vh",
         width: "57vw",
         transform: this.isCollapse ? "translateX(0)" : "translate(-57vw)",
@@ -227,16 +237,25 @@ export default {
   object-fit: cover;
 }
 
+.completion-element {
+  position: absolute;
+  left: 0;
+}
+
 .arrow-up {
   position: absolute;
-  left: 95vw;
+  left: 86vw;
   top: 2vh;
+  width: 12vw;
+  justify-content: end;
 }
 
 .arrow-down {
   position: absolute;
-  left: 95vw;
+  left: 86vw;
   top: 90vh;
+  width: 12vw;
+  justify-content: end;
 }
 
 .more-link {
