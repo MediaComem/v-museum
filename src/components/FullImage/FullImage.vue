@@ -1,29 +1,36 @@
 <template>
-  <div class="information">
-    <div v-if="this.imageData">
-      <cross @click="backToCanvasView()" />
-      <br />
-      <h1>{{ this.imageData[0].title }}</h1>
-      <br />
-      <h2>Author</h2>
-      <br />
-      <h3>{{ this.imageData[0].author }}</h3>
-      <br />
-      <p>{{ this.imageData[0].medium }}</p>
-      <br />
-      <div v-for="(item, index) in collection" :key="index">
-        <v-circle
-          :left="index * 2 + 'vw'"
-          :shouldFill="isCurrentImage(item)"
-          @click="loadOtherImage(item)"
-        />
-      </div>
+  <div v-if="this.imageData" class="information" :style="setHeigth">
+    <cross class="information-position" @click="backToCanvasView()" />
+    <br />
+    <h1 class="information-position" style="top: 5vh">
+      {{ this.imageData[0].title }}
+    </h1>
+    <br />
+    <h2 class="information-position" style="top: 10vh">Author</h2>
+    <br />
+    <h3 class="information-position" style="top: 13vh">
+      {{ this.imageData[0].author }}
+    </h3>
+    <br />
+    <p class="information-position" style="top: 20vh">
+      {{ this.imageData[0].medium }}
+    </p>
+    <br />
+    <div v-for="(item, index) in collection" :key="index">
+      <v-circle
+        :left="index * 2 + 'vw'"
+        :top="25 + 'vh'"
+        :shouldFill="isCurrentImage(item)"
+        @click="loadOtherImage(item)"
+      />
     </div>
+    <br />
+    <span class="information-position" style="top: 30vh">{{
+      this.imageData[0].description
+    }}</span>
   </div>
   <div class="page">
-    <el-row :gutter="20">
-      <div id="viewer" style="width: 100%; height: 100vh;"></div>
-    </el-row>
+    <div id="viewer" class="viewer"></div>
   </div>
 </template>
 
@@ -65,6 +72,13 @@ export default {
         path: `/selector/${this.imageData[0].decade.slice(0, 3)}`,
         query: { id: this.imageId },
       });
+    },
+  },
+  computed: {
+    setHeigth() {
+      return {
+        height: this.imageData[0].description ? "80vh" : "35vh",
+      };
     },
   },
   mounted() {
@@ -121,8 +135,20 @@ h3 {
   margin: 0;
 }
 
+p {
+  font-weight: normal;
+  font-size: 14px;
+  margin: 0;
+}
+
+span {
+  font-weight: normal;
+  font-size: 16px;
+  margin: 0;
+}
+
 .information {
-  width: 30vw;
+  width: 20vw;
   z-index: 1;
   position: relative;
   left: 1vw;
@@ -130,9 +156,20 @@ h3 {
   background: white;
 }
 
+.information-position {
+  position: absolute;
+  left: 0;
+}
+
 .page {
   height: 100vh;
   width: 100vw;
-  position: relative;
+  top: 0;
+  position: absolute;
+}
+
+.viewer {
+  width: 100%;
+  height: 100vh;
 }
 </style>

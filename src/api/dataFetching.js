@@ -4,6 +4,7 @@ import ImageData from "../models/ImageData";
 
 const parseElement = (element) => {
   let title = element["dcterms:title"];
+  let description = element["dcterms:description"] ? element["dcterms:description"][0]["@value"] : null
   if (title) {
     return new ImageData(
       element["dcterms:identifier"][0]["@value"],
@@ -14,6 +15,7 @@ const parseElement = (element) => {
       element["dcterms:subject"],
       element["dcterms:created"][0]["@value"],
       element["o:media"][0]["@id"],
+      description
     );
   } else {
     return new ImageData(
@@ -25,6 +27,7 @@ const parseElement = (element) => {
       element["dcterms:subject"],
       element["dcterms:created"][0]["@value"],
       element["o:media"][0]["@id"],
+      description
     );
   }
 };

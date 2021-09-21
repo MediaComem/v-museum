@@ -14,6 +14,7 @@
 <script>
 export default {
   props: {
+    top: String,
     left: String,
     shouldFill: Boolean,
   },
@@ -22,6 +23,7 @@ export default {
       return {
         position: 'absolute',
         left: this.left,
+        top: this.top
       }
     }
   }

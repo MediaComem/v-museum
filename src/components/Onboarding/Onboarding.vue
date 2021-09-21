@@ -10,7 +10,7 @@
       <div ref="intro" :class="getHeight">
         <el-row :gutter="20" style="margin: 0;">
           <el-col :span="24" style="padding: 0;">
-            <img class="first-image" src="@/assets/onboarding/first.png"/>
+            <img class="first-image" src="@/assets/onboarding/first.png" />
           </el-col>
         </el-row>
         <el-row :gutter="20" style="margin: 0;">
@@ -44,10 +44,11 @@
     <el-carousel-item
       v-for="(item, index) in information.collection"
       :key="index"
+      :style="{ background: item.color }"
     >
       <img
-      :class="getHeight"
-        style="width: 100vw; z-index: -1; object-fit: none;"
+        :class="getHeight"
+        style="width: 57vw; left: 0; position: absolute; z-index: -1; object-fit: cover;"
         :src="require(`../../assets/onboarding/${item.imagePath}`)"
       />
       <div
@@ -58,7 +59,11 @@
         <p class="collection-text collapse-text-align">{{ item.text }}</p>
       </div>
       <logo style="position: absolute; left: 2vw; top: 2vh" />
-      <arrow-up v-if="shouldDisplay" class="arrow-up" @click="previousSlide()" />
+      <arrow-up
+        v-if="shouldDisplay"
+        class="arrow-up"
+        @click="previousSlide()"
+      />
       <div v-if="shouldDisplay" class="collection-position">
         <h2 class="collection-title">{{ item.title }}</h2>
         <p class="collection-text">
@@ -136,7 +141,7 @@ export default {
     loadDecade(decade) {
       this.$router.push({
         path: `/selector/${decade}`,
-        query: { comeFromOnboarding: true }
+        query: { comeFromOnboarding: true },
       });
     },
   },
@@ -152,12 +157,11 @@ export default {
       return {
         "slider-height-full": !this.move && this.slide === 0,
         "slider-height-slide": !this.move && this.slide !== 0,
-        "slider-height-min": this.move,
-      }
+      };
     },
     collapse() {
       return {
-        "background-color": "white",
+        "background-color": this.slide > 0 ? this.information.collection[this.slide-1].color : "white",
         height: "100vh",
         width: "57vw",
         transform: this.isCollapse ? "translateX(0)" : "translate(-57vw)",
@@ -220,10 +224,7 @@ export default {
 .first-image {
   width: 100vw;
   height: 75vh;
-}
-
-.collection-image {
-  widows: 100vw;
+  object-fit: cover;
 }
 
 .arrow-up {
