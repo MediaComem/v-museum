@@ -1,33 +1,43 @@
 <template>
   <div v-if="this.imageData" class="information" :style="setHeigth">
-    <cross class="information-position" @click="backToCanvasView()" />
-    <br />
-    <h1 class="information-position" style="top: 5vh">
-      {{ this.imageData[0].title }}
-    </h1>
-    <br />
-    <h2 class="information-position" style="top: 10vh">Author</h2>
-    <br />
-    <h3 class="information-position" style="top: 13vh">
-      {{ this.imageData[0].author }}
-    </h3>
-    <br />
-    <p class="information-position" style="top: 17vh">
-      {{ this.imageData[0].medium }}
-    </p>
-    <br />
-    <div v-for="(item, index) in collection" :key="index">
-      <v-circle
-        :left="index * 2 + 'vw'"
-        :top="22 + 'vh'"
-        :shouldFill="isCurrentImage(item)"
-        @click="loadOtherImage(item)"
-      />
-    </div>
-    <br />
-    <span class="information-position" style="top: 27vh">{{
-      this.imageData[0].description
-    }}</span>
+    <el-row>
+      <cross @click="backToCanvasView()" />
+    </el-row>
+    <el-row>
+      <h1>
+        {{ this.imageData[0].title }}
+      </h1>
+    </el-row>
+    <el-row>
+      <h2>Author</h2>
+    </el-row>
+    <el-row>
+      <h3>
+        {{ this.imageData[0].author }}
+      </h3>
+    </el-row>
+    <el-row>
+      <p>
+        {{ this.imageData[0].medium }}
+      </p>
+    </el-row>
+    <el-row v-if="collection">
+      <p>{{ currentImage + 1 }} / {{ collection.length }}</p>
+    </el-row>
+    <el-row>
+      <div style="display: flex; cursor: pointer" @click="previousImage()">
+        <arrow-left />
+        <p>&nbsp; Previous &nbsp;</p>
+      </div>
+      <p>|</p>
+      <div style="display: flex; cursor: pointer" @click="nextImage()">
+        <p>&nbsp; Next &nbsp;</p>
+        <arrow-right />
+      </div>
+    </el-row>
+    <el-row>
+      <span>{{ this.imageData[0].description }}</span>
+    </el-row>
   </div>
   <div class="page">
     <div id="viewer" class="viewer"></div>
@@ -37,12 +47,13 @@
 <script>
 import OpenSeadragon from "openseadragon";
 import Cross from "./Cross.vue";
-import VCircle from "./Circle.vue";
+import ArrowLeft from "./ArrowLeft.vue";
+import ArrowRight from "./ArrowRight.vue";
 
 import dataFetching from "../../api/dataFetching";
 
 export default {
-  components: { Cross, VCircle },
+  components: { Cross, ArrowLeft, ArrowRight },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.imageId = to.params.index;
@@ -51,21 +62,32 @@ export default {
   data() {
     return {
       imageId: undefined,
+      currentImage: undefined,
       imageData: undefined,
       collection: undefined,
       viewer: undefined,
     };
   },
   methods: {
-    isCurrentImage(item) {
-      return item.id === this.imageId;
+    previousImage() {
+      if (this.currentImage > 0) {
+        this.currentImage = this.currentImage - 1;
+        this.imageData[0] = this.collection[this.currentImage];
+        this.imageId = this.imageData[0].id;
+        dataFetching.getOriginalImage(this.imageData[0].media).then((image) => {
+          this.viewer.open(image);
+        });
+      }
     },
-    loadOtherImage(item) {
-      this.imageId = item.id;
-      this.imageData[0] = item;
-      dataFetching.getOriginalImage(this.imageData[0].media).then((image) => {
-        this.viewer.open(image);
-      });
+    nextImage() {
+      if (this.currentImage < this.collection.length) {
+        this.currentImage = this.currentImage + 1;
+        this.imageData[0] = this.collection[this.currentImage];
+        this.imageId = this.imageData[0].id;
+        dataFetching.getOriginalImage(this.imageData[0].media).then((image) => {
+          this.viewer.open(image);
+        });
+      }
     },
     backToCanvasView() {
       this.$router.push({
@@ -89,6 +111,9 @@ export default {
           .getImageByTitle(this.imageData[0].title)
           .then((result) => {
             this.collection = result;
+            this.currentImage = this.collection.findIndex((e) => {
+              return e.id === this.imageId;
+            });
           })
           .catch((err) => console.log(err));
         dataFetching.getOriginalImage(this.imageData[0].media).then((image) => {
@@ -120,6 +145,7 @@ h1 {
   font-weight: normal;
   font-size: 24px;
   margin: 0;
+  padding-bottom: 1vh;
 }
 
 h2 {
@@ -133,12 +159,14 @@ h3 {
   font-weight: normal;
   font-size: 18px;
   margin: 0;
+  padding-bottom: 1vh;
 }
 
 p {
   font-weight: normal;
   font-size: 14px;
   margin: 0;
+  padding-bottom: 1vh;
 }
 
 span {
