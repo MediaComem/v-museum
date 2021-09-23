@@ -10,7 +10,7 @@
     <div v-if="currentHistory.length <= 2">
       <div>
         <div
-          style="position: absolute; left: 44px"
+          style="position: absolute; left: 45px"
           class="history-image-element"
         >
           <img
@@ -24,7 +24,7 @@
       </div>
       <div>
         <div
-          style="position: absolute; left: 88px"
+          style="position: absolute; left: 90px"
           class="history-image-element"
         >
           <img
@@ -38,7 +38,7 @@
       </div>
       <div>
         <div
-          style="position: absolute; left: 132px"
+          style="position: absolute; left: 135px"
           class="history-image-element"
         >
           <img
@@ -52,8 +52,8 @@
     </div>
     <div v-if="currentHistory.length > 2">
       <div
-        style="position: absolute; left: 132px"
-        :style="{ transform: 'translateX(' + -(44 * firstPosition) + 'px)' }"
+        style="position: absolute; left: 135px"
+        :style="{ transform: 'translateX(' + -(45 * firstPosition) + 'px)' }"
         :class="{ 'move-image': firstPosition !== 0 }"
         class="history-image-element"
         @mouseover="hoverElement"
@@ -67,8 +67,8 @@
         />
       </div>
       <div
-        style="position: absolute; left: 132px"
-        :style="{ transform: 'translateX(' + -(44 * secondPosition) + 'px)' }"
+        style="position: absolute; left: 135px"
+        :style="{ transform: 'translateX(' + -(45 * secondPosition) + 'px)' }"
         :class="{ 'move-image': secondPosition !== 0 }"
         class="history-image-element"
       >
@@ -81,8 +81,8 @@
         />
       </div>
       <div
-        style="position: absolute; left: 132px"
-        :style="{ transform: 'translateX(' + -(44 * thirdPosition) + 'px)' }"
+        style="position: absolute; left: 135px"
+        :style="{ transform: 'translateX(' + -(45 * thirdPosition) + 'px)' }"
         :class="{ 'move-image': thirdPosition !== 0 }"
         class="history-image-element"
       >
@@ -95,8 +95,8 @@
         />
       </div>
       <div
-        style="position: absolute; left: 132px"
-        :style="{ transform: 'translateX(' + -(44 * forthPosition) + 'px)' }"
+        style="position: absolute; left: 135px"
+        :style="{ transform: 'translateX(' + -(45 * forthPosition) + 'px)' }"
         :class="{ 'move-image': forthPosition !== 0 }"
         class="history-image-element"
       >
@@ -277,7 +277,7 @@ export default {
         height: "53px",
         width:
           this.currentHistory.length < 3
-            ? (this.currentHistory.length + 1) * 46 + "px"
+            ? (this.currentHistory.length + 1) * 45 + "px"
             : "180px",
         top: this.topPosition + "px",
         left: this.leftPosition + "px",
@@ -369,13 +369,13 @@ export default {
   background-color: black;
   width: 133px;
   height: 100%;
-  left: 44px;
+  left: 45px;
 }
 
 .history-image-element {
   display: block;
   position: absolute;
-  width: 41px;
+  width: 45px;
   height: 100%;
 }
 
@@ -384,6 +384,7 @@ export default {
   color: lightgray;
   font-size: medium;
   position: absolute;
+  margin-left: 2px;
 }
 
 .history-image {

@@ -71,8 +71,8 @@ export const mutations = {
       });
     }
   },
-  updateLastVivistedElement(state, payload) {
-    const visited = store.getters.getVisitedIndexByDecade(payload.year);
+  updateLastVisitedElement(state, payload) {
+    const visited = store.getters.getVisitedIndexByDecade(payload.decade);
     if (visited) {
       visited.lastIndex = payload.index;
     }
@@ -109,8 +109,8 @@ export const mutations = {
 };
 
 export const actions = {
-  updateLastVivistedElement(context, payload) {
-    context.commit("updateLastVivistedElement", {
+  updateLastVisitedElement(context, payload) {
+    context.commit("updateLastVisitedElement", {
       decade: payload.decade,
       index: payload.index
     });

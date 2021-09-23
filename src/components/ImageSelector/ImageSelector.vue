@@ -188,7 +188,7 @@
       <div v-show="viewerImageMode" :style="componentSize">
         <div ref="divCar" :style="imageViewerDisplay">
           <img
-            v-if="data"
+            v-if="data && data[currentIndex]"
             draggable="false"
             class="carousel-image"
             :src="data[currentIndex].imagePaths.large"
@@ -218,6 +218,7 @@
             >
               <div :style="componentSize" style="overflow:hidden">
                 <img
+                  v-if="value && value.imagePaths"
                   class="carousel-image"
                   :ref="'image-' + index"
                   :src="value.imagePaths.large"
@@ -230,7 +231,7 @@
       </div>
     </div>
     <!-- Image information bottom part -->
-    <div v-if="data && carouselHover">
+    <div v-if="data && data[currentIndex] && carouselHover">
       <div :style="imageCreatorPosition">
         <p style="margin-bottom: 0; font-weight: bold;">
           Illustration: &nbsp;
@@ -436,6 +437,7 @@ export default {
           this.currentIndex = this.data.findIndex((e) => {
             return e.id == this.idToFind;
           });
+          this.shouldFindIndex = false;
         }
 
         if (this.isInitialLoad) {
@@ -612,7 +614,7 @@ export default {
         }
         this.isInitialLoad = false;
         this.relatedImagesPosition = [];
-        if (this.data[this.currentIndex].tags) {
+        if (this.data[this.currentIndex] && this.data[this.currentIndex].tags) {
           this.$store.dispatch("loadRelatedImages", {
             tags: this.data[this.currentIndex].tags,
             id: this.data[this.currentIndex].id,
@@ -624,7 +626,7 @@ export default {
       });
     },
     loadOnboarding() {
-      this.$store.dispatch("updateLastVivistedElement", {
+      this.$store.dispatch("updateLastVisitedElement", {
         decade: this.currentDecade,
         index: this.currentIndex,
       });
@@ -645,7 +647,7 @@ export default {
           decade: this.currentDecade,
         });
       } else {
-        this.data = data;
+        this.data = data.data;
         if (visited) {
           this.currentIndex = visited.lastIndex;
           if (this.currentIndex >= this.data.length - 100) {
@@ -653,6 +655,7 @@ export default {
               decade: this.currentDecade,
             });
           }
+          this.loadInitialData();
         } else {
           this.currentIndex = 0;
         }
@@ -1253,7 +1256,7 @@ export default {
       return {
         height: "40px",
         position: "absolute",
-        top: this.defineTopImagePosition() - 40 + "px",
+        top: this.defineTopImagePosition() - 60 + "px",
         left: this.defineLeftImagePosition() + "px",
         display: "flex",
         width: this.thumbnailWidth() + "px",
@@ -1263,7 +1266,7 @@ export default {
       return {
         height: "40px",
         position: "absolute",
-        top: this.newOriginY - 40 + "px",
+        top: this.newOriginY - 60 + "px",
         left: this.newOriginX + "px",
         display: "flex",
         width: this.thumbnailWidth() + "px",
@@ -1272,7 +1275,7 @@ export default {
     indexInformationPosition() {
       return {
         position: "absolute",
-        top: this.defineTopImagePosition() - 40 + "px",
+        top: this.defineTopImagePosition() - 60 + "px",
         left:
           this.defineLeftImagePosition() + this.thumbnailWidth() - 10 + "px",
         display: "flex",
