@@ -75,7 +75,8 @@ export default {
         this.imageData[0] = this.collection[this.currentImage];
         this.imageId = this.imageData[0].id;
         dataFetching.getOriginalImage(this.imageData[0].media).then((image) => {
-          this.viewer.open(image);
+          this.viewer.destroy();
+          this.openImage(image);
         });
       }
     },
@@ -85,7 +86,8 @@ export default {
         this.imageData[0] = this.collection[this.currentImage];
         this.imageId = this.imageData[0].id;
         dataFetching.getOriginalImage(this.imageData[0].media).then((image) => {
-          this.viewer.open(image);
+          this.viewer.destroy();
+          this.openImage(image);
         });
       }
     },
@@ -93,6 +95,24 @@ export default {
       this.$router.push({
         path: `/selector/${this.imageData[0].decade.slice(0, 3)}`,
         query: { id: this.imageId },
+      });
+    },
+    openImage(image) {
+      this.viewer = OpenSeadragon({
+        id: "viewer",
+        showZoomControl: false,
+        showHomeControl: false,
+        showFullPageControl: false,
+        tiles: [
+          {
+            scaleFactors: [1, 2, 4, 8, 16, 32],
+          },
+        ],
+        tileSources: {
+          type: "image",
+          prefixUrl: "/openseadragon/images",
+          url: image,
+        },
       });
     },
   },
@@ -117,25 +137,13 @@ export default {
           })
           .catch((err) => console.log(err));
         dataFetching.getOriginalImage(this.imageData[0].media).then((image) => {
-          this.viewer = OpenSeadragon({
-            id: "viewer",
-            showZoomControl: false,
-            showHomeControl: false,
-            showFullPageControl: false,
-            tiles: [
-              {
-                scaleFactors: [1, 2, 4, 8, 16, 32],
-              },
-            ],
-            tileSources: {
-              type: "image",
-              prefixUrl: "/openseadragon/images",
-              url: image,
-            },
-          });
+          this.openImage(image);
         });
       }
     });
+  },
+  unmounted() {
+    this.viewer.destroy();
   },
 };
 </script>

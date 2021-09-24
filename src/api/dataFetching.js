@@ -128,7 +128,14 @@ export default {
   },
 
   async getOriginalImage(url) {
-    const { data } = await axios.get(url.slice(process.env.VUE_APP_URL.length, url.length));
+    let req;
+    if (process.env.NODE_ENV === 'development'){
+      req = url.slice(process.env.VUE_APP_URL.length, url.length)
+    }
+    else {
+      req = url;
+    }
+    const { data } = await axios.get(req);
     return data["o:original_url"];
   }
 };
