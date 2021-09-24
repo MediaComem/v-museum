@@ -658,6 +658,7 @@ export default {
           this.loadInitialData();
         } else {
           this.currentIndex = 0;
+          this.loadInitialData();
         }
       }
     },

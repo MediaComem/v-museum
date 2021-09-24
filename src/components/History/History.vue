@@ -391,7 +391,7 @@ export default {
   object-fit: none;
   position: absolute;
   top: 4px;
-  left: 4px;
+  left: 2.5px;
 }
 
 .history-image-full {
