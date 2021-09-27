@@ -77,17 +77,23 @@ export default {
         dataFetching.getOriginalImage(this.imageData[0].media).then((image) => {
           this.viewer.destroy();
           this.openImage(image);
+          this.$store.dispatch("loadTotalImageByDecade", {
+            decade: this.imageData[0].decade.slice(0, 3),
+          });
         });
       }
     },
     nextImage() {
-      if (this.currentImage < this.collection.length) {
+      if (this.currentImage < this.collection.length - 1) {
         this.currentImage = this.currentImage + 1;
         this.imageData[0] = this.collection[this.currentImage];
         this.imageId = this.imageData[0].id;
         dataFetching.getOriginalImage(this.imageData[0].media).then((image) => {
           this.viewer.destroy();
           this.openImage(image);
+          this.$store.dispatch("loadTotalImageByDecade", {
+            decade: this.imageData[0].decade.slice(0, 3),
+          });
         });
       }
     },
@@ -133,6 +139,9 @@ export default {
             this.collection = result;
             this.currentImage = this.collection.findIndex((e) => {
               return e.id === this.imageId;
+            });
+            this.$store.dispatch("loadTotalImageByDecade", {
+              decade: this.imageData[0].decade.slice(0, 3),
             });
           })
           .catch((err) => console.log(err));

@@ -41,6 +41,27 @@ const parseImages = (data) => {
 };
 
 export default {
+  async getHeadersByDecade(decade) {
+    const params = {
+      params: {
+        sort_by: "dcterms=identifier",
+        sort_order: "asc",
+        per_page: 1,
+        "property[0][property]": 3,
+        "property[0][type]": "ex",
+        "property[1][joiner]": "and",
+        "property[1][property]": 20,
+        "property[1][type]": "in",
+        "property[1][text]": decade,
+      },
+    };
+    const { headers } = await axios.get(
+      process.env.VUE_APP_FETCH_BASE,
+      params
+    );
+    return headers["omeka-s-total-results"];
+  },
+
   async getImages(decade, offset, skipIds) {
     let queryParameterId = 2;
 

@@ -153,6 +153,14 @@ export const actions = {
       id: id,
     });
   },
+  loadTotalImageByDecade(context, { decade }) {
+    dataFetch.getHeadersByDecade(decade).then((totalImages) => {
+      context.commit("setCompletion", {
+        year: decade,
+        totalImages: totalImages,
+      });
+    });
+  },
   loadNextContent(context, { decade, id }) {
     context.commit("loadingState");
     let nextPage = store.getters.getNextPageByDecade(decade);
@@ -175,12 +183,6 @@ export const actions = {
     }
     dataFetch.getImages(decade, nextPage, skipIds.ids).then((result) => {
       if (result.images.length > 0) {
-        if (nextPage === 0) {
-          context.commit("setCompletion", {
-            year: decade,
-            totalImages: result.totalImages,
-          });
-        }
         context.commit("setNextContext", {
           images: result.images,
           decade: decade,

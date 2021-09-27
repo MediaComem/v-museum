@@ -566,8 +566,8 @@ export default {
       shouldRunDecelerateAnimation: false,
       shouldRunCentralImageTransition: true,
       // Information uses to manage the display
-      pageHeight: 3000,
-      pageWidth: 5000,
+      pageHeight: 4000,
+      pageWidth: 6000,
       windowHeight: undefined,
       windowWidth: undefined,
       // Management of the interval and timeout process
