@@ -269,17 +269,15 @@ export default {
 
 .arrow-up {
   position: absolute;
-  left: 86vw;
   top: 2vh;
-  width: 12vw;
+  width: 98vw;
   justify-content: end;
 }
 
 .arrow-down {
   position: absolute;
-  left: 86vw;
   top: 90vh;
-  width: 12vw;
+  width: 98vw;
   justify-content: end;
 }
 
