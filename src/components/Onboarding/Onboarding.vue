@@ -7,7 +7,7 @@
     :loop="false"
   >
     <el-carousel-item>
-      <div ref="intro" :class="getHeight">
+      <div ref="intro" class="slider-effect">
         <el-row :gutter="20" style="margin: 0;">
           <el-col :span="24" style="padding: 0;">
             <img class="first-image" src="@/assets/onboarding/first.png" />
@@ -51,7 +51,7 @@
       :style="{ background: item.color }"
     >
       <img
-        :class="getHeight"
+        class="slider-effect"
         style="width: 57vw; left: 0; position: absolute; z-index: -1; object-fit: cover;"
         :src="`/onboarding/${item.imagePath}`"
       />
@@ -92,6 +92,7 @@
 </template>
 
 <script>
+import { useWindowSize } from "vue-window-size";
 import text from "@/assets/onboarding/text.json";
 import Logo from "./Logo/Logo.vue";
 import ArrowUp from "./Logo/ArrowUp.vue";
@@ -108,13 +109,15 @@ export default {
   },
   data() {
     return {
-      mainTitle: {title: 'INTRODUCTION'},
+      mainTitle: { title: "INTRODUCTION" },
       information: text,
       isCollapse: false,
       slide: 0,
       decade: undefined,
       move: false,
       shouldDisplay: true,
+      windowHeight: undefined,
+      windowWidth: undefined,
     };
   },
   methods: {
@@ -148,20 +151,34 @@ export default {
         query: { comeFromOnboarding: true },
       });
     },
+    calculateSliderHeight() {
+      switch (true) {
+        case this.windowWidth >= 2000 && this.windowHeight >= 1500:
+          return "150vh";
+        case this.windowWidth >= 1400 && this.windowHeight >= 1100:
+          return "170vh";
+        case this.windowWidth >= 1000 && this.windowHeight >= 920:
+          return "210vh";
+        case this.windowWidth >= 800 && this.windowHeight >= 300:
+          return "650vh";
+        case this.windowWidth >= 700 && this.windowHeight >= 400:
+          return "600vh";
+        case this.windowWidth >= 600 && this.windowHeight >= 300:
+          return "700vh";
+        case this.windowWidth >= 500 && this.windowHeight >= 300:
+          return "900vh";
+        default:
+          return "700vh";
+      }
+    },
   },
   computed: {
     getSliderHeight() {
       if (this.slide !== 0) {
         return "100vh";
       } else {
-        return "200vh";
+        return this.calculateSliderHeight();
       }
-    },
-    getHeight() {
-      return {
-        "slider-height-full": !this.move && this.slide === 0,
-        "slider-height-slide": !this.move && this.slide !== 0,
-      };
     },
     collapse() {
       return {
@@ -176,6 +193,9 @@ export default {
     },
   },
   mounted() {
+    const { width, height } = useWindowSize();
+    this.windowHeight = height;
+    this.windowWidth = width;
     if (this.decade) {
       const index = this.information.collection.findIndex((e) => {
         return e.decade == this.decade;
@@ -273,18 +293,7 @@ export default {
   transition-timing-function: linear;
 }
 
-.slider-height-full {
-  height: 200vh;
-  transition: height 0.5s linear;
-}
-
-.slider-height-slide {
-  height: 100vh;
-  transition: height 0.5s linear;
-}
-
-.slider-height-min {
-  height: 33vh;
+.slider-effect {
   transition: height 0.5s linear;
 }
 
