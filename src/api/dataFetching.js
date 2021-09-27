@@ -128,12 +128,12 @@ export default {
 
     const totalImages = headers["omeka-s-total-results"];
 
-    params.params["per_page"] = 100;
-    params.params["page"] = Math.floor(Math.random() * (totalImages / 100));
+    params.params["per_page"] = 1;
+    params.params["page"] = Math.floor(Math.random() * (totalImages));
 
     const { data } = await axios.get(process.env.VUE_APP_FETCH_BASE, params);
     if (data.length > 0) {
-      return parseElement(data[Math.floor(Math.random() * data.length)]);
+      return parseElement(data[0]);
     }
     return undefined;
   },
