@@ -4,6 +4,7 @@
     direction="vertical"
     :autoplay="false"
     ref="slider"
+    :indicator-position="'none'"
     :loop="false"
   >
     <el-carousel-item>
