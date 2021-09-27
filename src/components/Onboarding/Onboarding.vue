@@ -51,8 +51,7 @@
       :style="{ background: item.color }"
     >
       <img
-        class="slider-effect"
-        style="width: 57vw; left: 0; position: absolute; z-index: -1; object-fit: cover;"
+        class="slider-effect image-display"
         :src="`/onboarding/${item.imagePath}`"
       />
       <div
@@ -251,6 +250,15 @@ export default {
 .first-image {
   width: 100vw;
   height: 75vh;
+  object-fit: cover;
+}
+
+.image-display {
+  width: 57vw; 
+  height: 100%; 
+  left: 0; 
+  position: absolute; 
+  z-index: -1; 
   object-fit: cover;
 }
 
