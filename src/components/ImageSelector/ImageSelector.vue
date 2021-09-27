@@ -176,7 +176,7 @@
       </p>
     </div>
     <div v-if="carouselHover && endDisplay" :style="indexInformationPosition">
-      <h3 style="margin: 0; height: 30px;">{{ currentIndex + 1 }}</h3>
+      <h3 style="margin: 0; height: 30px; font-size: 48px">{{ currentIndex + 1 }}</h3>
     </div>
     <!-- Carousel display part -->
     <div
@@ -233,18 +233,18 @@
     <!-- Image information bottom part -->
     <div v-if="data && data[currentIndex] && carouselHover">
       <div :style="imageCreatorPosition">
-        <p style="margin-bottom: 0; font-weight: bold;">
+        <p style="margin-bottom: 0; font-weight: normal; font-size: 15px">
           Illustration: &nbsp;
         </p>
-        <p style="margin-bottom: 0; overflow: hidden;">
+        <p style="margin-bottom: 0; overflow: hidden; font-size: 15px; color: gray">
           {{ data[currentIndex].author }}
         </p>
       </div>
       <div :style="imageStoryPosition">
-        <p style="margin: 0; font-weight: bold;">
+        <p style="margin: 0; font-weight: normal; font-size: 15px">
           Story: &nbsp;
         </p>
-        <p style="margin: 0; overflow: hidden;">
+        <p style="margin: 0; overflow: hidden; font-size: 15px; color: gray">
           {{ data[currentIndex].title }}
         </p>
       </div>
@@ -1276,9 +1276,9 @@ export default {
     indexInformationPosition() {
       return {
         position: "absolute",
-        top: this.defineTopImagePosition() - 60 + "px",
+        top: this.defineTopImagePosition() - 80 + "px",
         left:
-          this.defineLeftImagePosition() + this.thumbnailWidth() - 10 + "px",
+          this.defineLeftImagePosition() + this.thumbnailWidth() - 20 + "px",
         display: "flex",
       };
     },
@@ -1397,7 +1397,7 @@ export default {
           ? positions[0] +
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
-          : positions[0] + this.relatedThumbnailHeight() / 3;
+          : positions[0] + this.relatedThumbnailHeight() / 4;
       const left =
         positions[1] < this.pageWidth / 2
           ? positions[1] + this.relatedThumbnailWidth() - 60
@@ -1420,7 +1420,7 @@ export default {
           ? positions[0] +
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
-          : positions[0] + this.relatedThumbnailHeight() / 3;
+          : positions[0] + this.relatedThumbnailHeight() / 4;
       const left =
         positions[1] < this.newOriginX
           ? positions[1] + this.relatedThumbnailWidth() - 60
@@ -1503,7 +1503,7 @@ export default {
           ? positions[0] +
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
-          : positions[0] + this.relatedThumbnailHeight() / 3;
+          : positions[0] + this.relatedThumbnailHeight() / 4;
       const left =
         positions[1] < this.pageWidth / 2
           ? positions[1] + this.relatedThumbnailWidth() - 60
@@ -1526,7 +1526,7 @@ export default {
           ? positions[0] +
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
-          : positions[0] + this.relatedThumbnailHeight() / 3;
+          : positions[0] + this.relatedThumbnailHeight() / 4;
       const left =
         positions[1] < this.newOriginX
           ? positions[1] + this.relatedThumbnailWidth() - 60
@@ -1609,7 +1609,7 @@ export default {
           ? positions[0] +
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
-          : positions[0] + this.relatedThumbnailHeight() / 3;
+          : positions[0] + this.relatedThumbnailHeight() / 4;
       const left =
         positions[1] < this.pageWidth / 2
           ? positions[1] + this.relatedThumbnailWidth() - 60
@@ -1632,7 +1632,7 @@ export default {
           ? positions[0] +
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
-          : positions[0] + this.relatedThumbnailHeight() / 3;
+          : positions[0] + this.relatedThumbnailHeight() / 4;
       const left =
         positions[1] < this.newOriginX
           ? positions[1] + this.relatedThumbnailWidth() - 60
