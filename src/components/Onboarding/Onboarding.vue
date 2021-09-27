@@ -53,7 +53,7 @@
       <img
         :class="getHeight"
         style="width: 57vw; left: 0; position: absolute; z-index: -1; object-fit: cover;"
-        :src="require(`../../assets/onboarding/${item.imagePath}`)"
+        :src="`/onboarding/${item.imagePath}`"
       />
       <div
         class="collapse-transition"
@@ -118,9 +118,6 @@ export default {
     };
   },
   methods: {
-    loadImage(path) {
-      return require(path);
-    },
     previousSlide() {
       this.move = true;
       this.shouldDisplay = false;

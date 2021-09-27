@@ -1,5 +1,6 @@
 import { createApp } from "vue";
 import { createStore } from "vuex";
+import VuexPersistence from 'vuex-persist'
 
 import ElementPlus from "element-plus";
 import "element-plus/lib/theme-chalk/index.css";
@@ -7,6 +8,10 @@ import App from "./App.vue";
 
 import dataFetch from "./api/dataFetching";
 import router from "./router";
+
+const vuexLocal = new VuexPersistence({
+  storage: window.localStorage
+});
 
 export const getters = {
   getCompletionByDecade: (state) => (decade) => {
@@ -251,6 +256,7 @@ const store = createStore({
   getters: getters,
   mutations: mutations,
   actions: actions,
+  plugins: [vuexLocal.plugin]
 });
 
 const app = createApp(App);
