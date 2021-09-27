@@ -67,7 +67,6 @@ export const mutations = {
     state.isLoadingImage = true;
   },
   setCompletion(state, payload) {
-    console.log(payload);
     if (store.getters.getCompletionByDecade(payload.year) === undefined) {
       state.completionData.push({
         year: payload.year,

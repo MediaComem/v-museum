@@ -12,7 +12,7 @@ const parseElement = (element) => {
       element["dcterms:creator"][0]["@value"],
       element["dcterms:medium"][0]["@value"],
       element["thumbnail_display_urls"],
-      element["dcterms:subject"],
+      element["dcterms:coverage"],
       element["dcterms:created"][0]["@value"],
       element["o:media"][0]["@id"],
       description
@@ -24,7 +24,7 @@ const parseElement = (element) => {
       element["dcterms:creator"][0]["@value"],
       element["dcterms:medium"][0]["@value"],
       element["thumbnail_display_urls"],
-      element["dcterms:subject"],
+      element["dcterms:coverage"],
       element["dcterms:created"][0]["@value"],
       element["o:media"][0]["@id"],
       description
@@ -47,7 +47,7 @@ export default {
         sort_by: "dcterms=identifier",
         sort_order: "asc",
         per_page: 1,
-        "property[0][property]": 3,
+        "property[0][property]": 14,
         "property[0][type]": "ex",
         "property[1][joiner]": "and",
         "property[1][property]": 20,
@@ -70,7 +70,7 @@ export default {
         sort_by: "dcterms=identifier",
         sort_order: "asc",
         per_page: 100,
-        "property[0][property]": 3,
+        "property[0][property]": 14,
         "property[0][type]": "ex",
         "property[1][joiner]": "and",
         "property[1][property]": 20,
@@ -114,7 +114,7 @@ export default {
     const params = {
       params: {
         "property[0][joiner]": "and",
-        "property[0][property]": 3,
+        "property[0][property]": 14,
         "property[0][type]": "eq",
         "property[0][text]": tag["@value"],
         "property[1][joiner]": "and",
@@ -126,7 +126,10 @@ export default {
 
     const { headers } = await axios.get(process.env.VUE_APP_FETCH_BASE, params);
 
-    params.params["per_page"] = headers["omeka-s-total-results"];
+    const totalImages = headers["omeka-s-total-results"];
+
+    params.params["per_page"] = 100;
+    params.params["page"] = Math.floor(Math.random() * (totalImages / 100));
 
     const { data } = await axios.get(process.env.VUE_APP_FETCH_BASE, params);
     if (data.length > 0) {
