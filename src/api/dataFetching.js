@@ -110,17 +110,15 @@ export default {
     return parseImages(data);
   },
 
+  // Voir si en utilisant le full text search avec l'id c'est mieux
   async getRelatedImages(tag, id) {
     const params = {
       params: {
+        "fulltext_search": tag["@value"],
         "property[0][joiner]": "and",
-        "property[0][property]": 14,
-        "property[0][type]": "eq",
-        "property[0][text]": tag["@value"],
-        "property[1][joiner]": "and",
-        "property[1][property]": 10,
-        "property[1][type]": "neq",
-        "property[1][text]": id,
+        "property[0][property]": 10,
+        "property[0][type]": "neq",
+        "property[0][text]": id,
       },
     };
 
