@@ -1,13 +1,11 @@
 <template>
-  <div class="open-information" @click="display = !display">
-    <el-icon :size="20">
-        <info-filled />
-      </el-icon>
+  <div class="information-manager">
+    <el-row>
+      <img src="@/assets/fullimage/cross.svg" @click="backToCanvasView()" />
+      <infos @click="display = !display" :display="display"/>
+    </el-row>
   </div>
   <div v-if="imageData" class="information" :style="collapse">
-    <el-row>
-       <img src="@/assets/fullimage/cross.svg" @click="backToCanvasView()" />
-    </el-row>
     <el-row>
       <h1>
         {{ this.imageData.title }}
@@ -52,12 +50,11 @@
 <script>
 import OpenSeadragon from "openseadragon";
 
-import { InfoFilled } from "@element-plus/icons";
-
+import Infos from "./Infos.vue";
 import dataFetching from "../../api/dataFetching";
 
 export default {
-  components: { InfoFilled },
+  components: { Infos },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.imageId = to.params.index;
@@ -65,7 +62,7 @@ export default {
   },
   data() {
     return {
-      // ID of the image, used to search index position of the storyCollection. 
+      // ID of the image, used to search index position of the storyCollection.
       // And to send the identifier of the image in the slider views
       display: true,
       imageId: undefined,
@@ -137,8 +134,8 @@ export default {
       return {
         transform: this.display ? "translateX(0)" : "translate(-50vw)",
         transition: "transform 1s linear",
-      }
-    }
+      };
+    },
   },
   mounted() {
     dataFetching.getImageById(this.imageId).then((result) => {
@@ -213,6 +210,15 @@ span {
 }
 
 @media only screen and (min-width: 1200px) {
+  .information-manager {
+    width: 20vw;
+    z-index: 1;
+    position: relative;
+    left: 1vw;
+    top: 3vh;
+    background: white;
+  }
+
   .information {
     width: 20vw;
     z-index: 1;
@@ -224,6 +230,15 @@ span {
 }
 
 @media only screen and (min-width: 900px) and (max-width: 1199px) {
+  .information-manager {
+    width: 30vw;
+    z-index: 1;
+    position: relative;
+    left: 1vw;
+    top: 3vh;
+    background: white;
+  }
+
   .information {
     width: 30vw;
     z-index: 1;
@@ -235,6 +250,15 @@ span {
 }
 
 @media only screen and (min-width: 700px) and (max-width: 899px) {
+  .information-manager {
+    width: 40vw;
+    z-index: 1;
+    position: relative;
+    left: 1vw;
+    top: 3vh;
+    background: white;
+  }
+
   .information {
     width: 40vw;
     z-index: 1;
@@ -246,6 +270,15 @@ span {
 }
 
 @media only screen and (min-width: 300px) and (max-width: 699px) {
+  .information-manager {
+    width: 50vw;
+    z-index: 1;
+    position: relative;
+    left: 1vw;
+    top: 3vh;
+    background: white;
+  }
+
   .information {
     width: 50vw;
     z-index: 1;
