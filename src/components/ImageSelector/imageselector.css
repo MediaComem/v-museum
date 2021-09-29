@@ -51,8 +51,8 @@
   -webkit-border-radius: 30px;
   border-radius: 30px;
 
-  background: url("../../assets/gui-chevron-up.png"),
-    url("../../assets/gui-chevron-down.png");
+  background: url("../../assets/image-selector/gui-chevron-up.png"),
+    url("../../assets/image-selector/gui-chevron-down.png");
   background-position-x: -1px, 12px;
   background-position-y: 5%, 95%;
   background-repeat: no-repeat, no-repeat;
@@ -76,8 +76,8 @@
   -webkit-border-radius: 30px;
   border-radius: 30px;
 
-  background: url("../../assets/gui-chevron-up.png"),
-    url("../../assets/gui-chevron-down.png");
+  background: url("../../assets/image-selector/gui-chevron-up.png"),
+    url("../../assets/image-selector/gui-chevron-down.png");
   background-position-x: 12px, 12px;
   background-position-y: 5%, 95%;
   background-repeat: no-repeat, no-repeat;
@@ -101,8 +101,8 @@
   -webkit-border-radius: 30px;
   border-radius: 30px;
 
-  background: url("../../assets/gui-chevron-up.png"),
-    url("../../assets/gui-chevron-down.png");
+  background: url("../../assets/image-selector/gui-chevron-up.png"),
+    url("../../assets/image-selector/gui-chevron-down.png");
   background-position-x: 12px, 1px;
   background-position-y: 5%, 95%;
   background-repeat: no-repeat, no-repeat;

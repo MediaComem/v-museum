@@ -1,12 +1,12 @@
 <template>
   <div class="display">
     <div v-if="text">
-      <h1 class="align">{{ text.title.slice(0, 10) }}</h1>
-      <h1 class="align">{{ text.title.slice(11, 180) }}</h1>
+      <h1 :class="isMobile ? 'align-mobile' : 'align'">{{ text.title.slice(0, 10) }}</h1>
+      <h1 :class="isMobile ? 'align-mobile' : 'align'">{{ text.title.slice(11, 180) }}</h1>
     </div>
     <svg
-      width="60"
-      height="60"
+      :width="isMobile ? 20 : 60"
+      :height="isMobile ? 20 : 60"
       viewBox="0 0 60 60"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -25,6 +25,7 @@
 export default {
   props: {
     text: Object,
+    isMobile: Boolean,
   },
 };
 </script>

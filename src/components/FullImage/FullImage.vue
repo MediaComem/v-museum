@@ -1,7 +1,7 @@
 <template>
   <div class="information-manager">
     <el-row>
-      <img src="@/assets/fullimage/cross.svg" @click="backToCanvasView()" />
+      <img src="@/assets/shared/cross.svg" @click="backToCanvasView()" />
       <infos @click="display = !display" :display="display"/>
     </el-row>
   </div>

@@ -170,13 +170,20 @@
         :emptyColor="'lightgray'"
         :completeColor="'black'"
       />
-      <p style="margin: 0; margin-left: 60px;">
-        {{ currentDecade + "0" }}
-        <img src="@/assets/vector.png" @click="loadOnboarding()" /> &nbsp;
-      </p>
+      <div @click="loadOnboarding()" style="z-index:1">
+        <p style="margin: 0; margin-left: 60px;">
+          {{ currentDecade + "0" }}
+          <img
+            src="@/assets/image-selector/vector.png"
+          />
+          &nbsp;
+        </p>
+      </div>
     </div>
     <div v-if="carouselHover && endDisplay" :style="indexInformationPosition">
-      <h3 style="margin: 0; height: 30px; font-size: 48px">{{ currentIndex + 1 }}</h3>
+      <h3 style="margin: 0; height: 30px; font-size: 48px">
+        {{ currentIndex + 1 }}
+      </h3>
     </div>
     <!-- Carousel display part -->
     <div
@@ -236,7 +243,9 @@
         <p style="margin-bottom: 0; font-weight: normal; font-size: 15px">
           Illustration: &nbsp;
         </p>
-        <p style="margin-bottom: 0; overflow: hidden; font-size: 15px; color: gray">
+        <p
+          style="margin-bottom: 0; overflow: hidden; font-size: 15px; color: gray"
+        >
           {{ data[currentIndex].author }}
         </p>
       </div>
@@ -1277,10 +1286,9 @@ export default {
       return {
         position: "absolute",
         top: this.defineTopImagePosition() - 80 + "px",
-        left:
-          this.defineLeftImagePosition() + "px",
+        left: this.defineLeftImagePosition() + "px",
         width: this.thumbnailWidth() + "px",
-        'text-align': 'end',
+        "text-align": "end",
       };
     },
     imageCreatorPosition() {
@@ -1404,7 +1412,7 @@ export default {
         top: top + "px",
         left: positions[1] + "px",
         overflow: "hidden",
-        'text-align': positions[1] < this.pageWidth / 2 ? 'end' : 'start',
+        "text-align": positions[1] < this.pageWidth / 2 ? "end" : "start",
         width: this.relatedThumbnailWidth() + "px",
       };
     },
@@ -1425,7 +1433,7 @@ export default {
         top: top + "px",
         left: positions[1] + "px",
         width: this.relatedThumbnailWidth() + "px",
-        'text-align': positions[1] < this.newOriginX ? 'end' : 'start',
+        "text-align": positions[1] < this.newOriginX ? "end" : "start",
         overflow: "hidden",
       };
     },
@@ -1506,7 +1514,7 @@ export default {
         top: top + "px",
         left: positions[1] + "px",
         width: this.relatedThumbnailWidth() + "px",
-        'text-align': positions[1] < this.pageWidth / 2 ? 'end' : 'start',
+        "text-align": positions[1] < this.pageWidth / 2 ? "end" : "start",
         overflow: "hidden",
       };
     },
@@ -1527,7 +1535,7 @@ export default {
         top: top + "px",
         left: positions[1] + "px",
         width: this.relatedThumbnailWidth() + "px",
-        'text-align': positions[1] < this.newOriginX ? 'end' : 'start',
+        "text-align": positions[1] < this.newOriginX ? "end" : "start",
         overflow: "hidden",
       };
     },
@@ -1608,7 +1616,7 @@ export default {
         top: top + "px",
         left: positions[1] + "px",
         width: this.relatedThumbnailWidth() + "px",
-        'text-align': positions[1] < this.pageWidth / 2 ? 'end' : 'start',
+        "text-align": positions[1] < this.pageWidth / 2 ? "end" : "start",
         overflow: "hidden",
       };
     },
@@ -1629,7 +1637,7 @@ export default {
         top: top + "px",
         left: positions[1] + "px",
         width: this.relatedThumbnailWidth() + "px",
-        'text-align': positions[1] < this.newOriginX ? 'end' : 'start',
+        "text-align": positions[1] < this.newOriginX ? "end" : "start",
         overflow: "hidden",
       };
     },

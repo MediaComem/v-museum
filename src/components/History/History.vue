@@ -460,7 +460,7 @@ export default {
     display: block;
     height: inherit;
     width: 2.5vw;
-    background: url("../../assets/vector-left.png");
+    background: url("../../assets/image-selector/vector-left.png");
     background-repeat: no-repeat;
     background-size: 20%;
     background-position-x: 0.5vw;
@@ -473,7 +473,7 @@ export default {
     display: block;
     height: inherit;
     width: 2.5vw;
-    background: url("../../assets/vector-right.png");
+    background: url("../../assets/image-selector/vector-right.png");
     background-repeat: no-repeat;
     background-size: 20%;
     background-position-x: 0.5vw;
