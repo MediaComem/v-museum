@@ -1,5 +1,10 @@
 <template>
-  <div v-if="imageData" class="information">
+  <div class="open-information" @click="display = !display">
+    <el-icon :size="20">
+        <info-filled />
+      </el-icon>
+  </div>
+  <div v-if="imageData" class="information" :style="collapse">
     <el-row>
        <img src="@/assets/fullimage/cross.svg" @click="backToCanvasView()" />
     </el-row>
@@ -47,9 +52,12 @@
 <script>
 import OpenSeadragon from "openseadragon";
 
+import { InfoFilled } from "@element-plus/icons";
+
 import dataFetching from "../../api/dataFetching";
 
 export default {
+  components: { InfoFilled },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.imageId = to.params.index;
@@ -59,6 +67,7 @@ export default {
     return {
       // ID of the image, used to search index position of the storyCollection. 
       // And to send the identifier of the image in the slider views
+      display: true,
       imageId: undefined,
       // Index of the current displayed image
       currentIndex: undefined,
@@ -123,6 +132,14 @@ export default {
       });
     },
   },
+  computed: {
+    collapse() {
+      return {
+        transform: this.display ? "translateX(0)" : "translate(-50vw)",
+        transition: "transform 1s linear",
+      }
+    }
+  },
   mounted() {
     dataFetching.getImageById(this.imageId).then((result) => {
       this.imageData = result[0];
@@ -184,6 +201,15 @@ span {
   font-weight: normal;
   font-size: 16px;
   margin: 0;
+}
+
+.open-information {
+  left: 1vw;
+  top: 1vh;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  z-index: 1;
 }
 
 @media only screen and (min-width: 1200px) {

@@ -1278,8 +1278,9 @@ export default {
         position: "absolute",
         top: this.defineTopImagePosition() - 80 + "px",
         left:
-          this.defineLeftImagePosition() + this.thumbnailWidth() - 20 + "px",
-        display: "flex",
+          this.defineLeftImagePosition() + "px",
+        width: this.thumbnailWidth() + "px",
+        'text-align': 'end',
       };
     },
     imageCreatorPosition() {
@@ -1398,15 +1399,13 @@ export default {
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
           : positions[0] + this.relatedThumbnailHeight() / 4;
-      const left =
-        positions[1] < this.pageWidth / 2
-          ? positions[1] + this.relatedThumbnailWidth() - 60
-          : positions[1];
       return {
         position: "absolute",
         top: top + "px",
-        left: left + "px",
+        left: positions[1] + "px",
         overflow: "hidden",
+        'text-align': positions[1] < this.pageWidth / 2 ? 'end' : 'start',
+        width: this.relatedThumbnailWidth() + "px",
       };
     },
     secondRelatedInformationPosition1() {
@@ -1421,14 +1420,12 @@ export default {
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
           : positions[0] + this.relatedThumbnailHeight() / 4;
-      const left =
-        positions[1] < this.newOriginX
-          ? positions[1] + this.relatedThumbnailWidth() - 60
-          : positions[1];
       return {
         position: "absolute",
         top: top + "px",
-        left: left + "px",
+        left: positions[1] + "px",
+        width: this.relatedThumbnailWidth() + "px",
+        'text-align': positions[1] < this.newOriginX ? 'end' : 'start',
         overflow: "hidden",
       };
     },
@@ -1504,14 +1501,12 @@ export default {
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
           : positions[0] + this.relatedThumbnailHeight() / 4;
-      const left =
-        positions[1] < this.pageWidth / 2
-          ? positions[1] + this.relatedThumbnailWidth() - 60
-          : positions[1];
       return {
         position: "absolute",
         top: top + "px",
-        left: left + "px",
+        left: positions[1] + "px",
+        width: this.relatedThumbnailWidth() + "px",
+        'text-align': positions[1] < this.pageWidth / 2 ? 'end' : 'start',
         overflow: "hidden",
       };
     },
@@ -1527,14 +1522,12 @@ export default {
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
           : positions[0] + this.relatedThumbnailHeight() / 4;
-      const left =
-        positions[1] < this.newOriginX
-          ? positions[1] + this.relatedThumbnailWidth() - 60
-          : positions[1];
       return {
         position: "absolute",
         top: top + "px",
-        left: left + "px",
+        left: positions[1] + "px",
+        width: this.relatedThumbnailWidth() + "px",
+        'text-align': positions[1] < this.newOriginX ? 'end' : 'start',
         overflow: "hidden",
       };
     },
@@ -1610,14 +1603,12 @@ export default {
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
           : positions[0] + this.relatedThumbnailHeight() / 4;
-      const left =
-        positions[1] < this.pageWidth / 2
-          ? positions[1] + this.relatedThumbnailWidth() - 60
-          : positions[1];
       return {
         position: "absolute",
         top: top + "px",
-        left: left + "px",
+        left: positions[1] + "px",
+        width: this.relatedThumbnailWidth() + "px",
+        'text-align': positions[1] < this.pageWidth / 2 ? 'end' : 'start',
         overflow: "hidden",
       };
     },
@@ -1633,14 +1624,12 @@ export default {
             this.relatedThumbnailHeight() +
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
           : positions[0] + this.relatedThumbnailHeight() / 4;
-      const left =
-        positions[1] < this.newOriginX
-          ? positions[1] + this.relatedThumbnailWidth() - 60
-          : positions[1];
       return {
         position: "absolute",
         top: top + "px",
-        left: left + "px",
+        left: positions[1] + "px",
+        width: this.relatedThumbnailWidth() + "px",
+        'text-align': positions[1] < this.newOriginX ? 'end' : 'start',
         overflow: "hidden",
       };
     },
