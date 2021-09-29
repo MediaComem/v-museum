@@ -1,7 +1,7 @@
 <template>
   <div v-if="imageData" class="information">
     <el-row>
-      <cross @click="backToCanvasView()" />
+       <img src="@/assets/fullimage/cross.svg" @click="backToCanvasView()" />
     </el-row>
     <el-row>
       <h1>
@@ -26,13 +26,13 @@
     </el-row>
     <el-row>
       <div style="display: flex; cursor: pointer" @click="previousImage()">
-        <arrow-left />
+        <img class="svg-position" src="@/assets/fullimage/left_arrow.svg" />
         <p>&nbsp; Previous &nbsp;</p>
       </div>
       <p>|</p>
       <div style="display: flex; cursor: pointer" @click="nextImage()">
         <p>&nbsp; Next &nbsp;</p>
-        <arrow-right />
+        <img class="svg-position" src="@/assets/fullimage/right_arrow.svg" />
       </div>
     </el-row>
     <el-row>
@@ -46,14 +46,10 @@
 
 <script>
 import OpenSeadragon from "openseadragon";
-import Cross from "./Cross.vue";
-import ArrowLeft from "./ArrowLeft.vue";
-import ArrowRight from "./ArrowRight.vue";
 
 import dataFetching from "../../api/dataFetching";
 
 export default {
-  components: { Cross, ArrowLeft, ArrowRight },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.imageId = to.params.index;
@@ -62,7 +58,7 @@ export default {
   data() {
     return {
       // ID of the image, used to search index position of the storyCollection. 
-      // And to send the identifier of the image in the slider view
+      // And to send the identifier of the image in the slider views
       imageId: undefined,
       // Index of the current displayed image
       currentIndex: undefined,
@@ -250,5 +246,9 @@ span {
 .viewer {
   width: 100%;
   height: 100vh;
+}
+
+.svg-position {
+  margin-bottom: 13px;
 }
 </style>
