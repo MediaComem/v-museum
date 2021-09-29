@@ -162,8 +162,13 @@ export default {
   watch: {
     history: {
       handler(historyElement) {
+        // The store contains enough elements to fill the component?
         if (historyElement.length > 3) {
           if (this.currentHistoryLength !== historyElement.length) {
+            // Depending of the position of the last element, move other images and add the new image.
+            // Each component move depending of its own position.
+            // The last position disappers and the new one appears
+            // The timeout is used to manage the display when the move animation is done
             if (this.currentHistory.length % 4 === 1) {
               setTimeout(() => (this.secondImage = undefined), 1000);
               this.firstPosition = 0;
@@ -216,6 +221,7 @@ export default {
             this.currentHistoryLength = historyElement.length;
           }
         } else {
+          // Load the available images
           this.loadImages(historyElement);
         }
       },

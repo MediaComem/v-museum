@@ -1,11 +1,11 @@
 <template>
-  <div v-if="this.imageData" class="information">
+  <div v-if="imageData" class="information">
     <el-row>
       <cross @click="backToCanvasView()" />
     </el-row>
     <el-row>
       <h1>
-        {{ this.imageData[0].title }}
+        {{ this.imageData.title }}
       </h1>
     </el-row>
     <el-row>
@@ -13,16 +13,16 @@
     </el-row>
     <el-row>
       <h3>
-        {{ this.imageData[0].author }}
+        {{ this.imageData.author }}
       </h3>
     </el-row>
     <el-row>
       <p>
-        {{ this.imageData[0].medium }}
+        {{ this.imageData.medium }}
       </p>
     </el-row>
-    <el-row v-if="collection">
-      <p>{{ currentImage + 1 }} / {{ collection.length }}</p>
+    <el-row v-if="storyCollection">
+      <p>{{ currentIndex + 1 }} / {{ storyCollection.length }}</p>
     </el-row>
     <el-row>
       <div style="display: flex; cursor: pointer" @click="previousImage()">
@@ -36,7 +36,7 @@
       </div>
     </el-row>
     <el-row>
-      <span>{{ this.imageData[0].description }}</span>
+      <span>{{ this.imageData.description }}</span>
     </el-row>
   </div>
   <div class="page">
@@ -61,46 +61,50 @@ export default {
   },
   data() {
     return {
+      // ID of the image, used to search index position of the storyCollection. 
+      // And to send the identifier of the image in the slider view
       imageId: undefined,
-      currentImage: undefined,
+      // Index of the current displayed image
+      currentIndex: undefined,
+      // Represent the current image displayed with all its information
       imageData: undefined,
-      collection: undefined,
+      // All the images related to a story
+      storyCollection: undefined,
+      // Open sea dragon viewer element
       viewer: undefined,
     };
   },
   methods: {
     previousImage() {
-      if (this.currentImage > 0) {
-        this.currentImage = this.currentImage - 1;
-        this.imageData[0] = this.collection[this.currentImage];
-        this.imageId = this.imageData[0].id;
-        dataFetching.getOriginalImage(this.imageData[0].media).then((image) => {
+      if (this.currentIndex > 0) {
+        this.currentIndex = this.currentIndex - 1;
+        this.imageData = this.storyCollection[this.currentIndex];
+        dataFetching.getOriginalImage(this.imageData.media).then((image) => {
           this.viewer.destroy();
           this.openImage(image);
           this.$store.dispatch("loadTotalImageByDecade", {
-            decade: this.imageData[0].decade.slice(0, 3),
+            decade: this.imageData.decade.slice(0, 3),
           });
         });
       }
     },
     nextImage() {
-      if (this.currentImage < this.collection.length - 1) {
-        this.currentImage = this.currentImage + 1;
-        this.imageData[0] = this.collection[this.currentImage];
-        this.imageId = this.imageData[0].id;
-        dataFetching.getOriginalImage(this.imageData[0].media).then((image) => {
+      if (this.currentIndex < this.storyCollection.length - 1) {
+        this.currentIndex = this.currentIndex + 1;
+        this.imageData = this.storyCollection[this.currentIndex];
+        dataFetching.getOriginalImage(this.imageData.media).then((image) => {
           this.viewer.destroy();
           this.openImage(image);
           this.$store.dispatch("loadTotalImageByDecade", {
-            decade: this.imageData[0].decade.slice(0, 3),
+            decade: this.imageData.decade.slice(0, 3),
           });
         });
       }
     },
     backToCanvasView() {
       this.$router.push({
-        path: `/selector/${this.imageData[0].decade.slice(0, 3)}`,
-        query: { id: this.imageId },
+        path: `/selector/${this.imageData.decade.slice(0, 3)}`,
+        query: { id: this.imageData.id },
       });
     },
 
@@ -125,21 +129,21 @@ export default {
   },
   mounted() {
     dataFetching.getImageById(this.imageId).then((result) => {
-      this.imageData = result;
-      if (this.imageData.length > 0 && this.imageData[0].title) {
+      this.imageData = result[0];
+      if (this.imageData && this.imageData.title) {
         dataFetching
-          .getImageByTitle(this.imageData[0].title)
+          .getImagesByTitle(this.imageData.title)
           .then((result) => {
-            this.collection = result;
-            this.currentImage = this.collection.findIndex((e) => {
+            this.storyCollection = result;
+            this.currentIndex = this.storyCollection.findIndex((e) => {
               return e.id === this.imageId;
             });
             this.$store.dispatch("loadTotalImageByDecade", {
-              decade: this.imageData[0].decade.slice(0, 3),
+              decade: this.imageData.decade.slice(0, 3),
             });
           })
           .catch((err) => console.log(err));
-        dataFetching.getOriginalImage(this.imageData[0].media).then((image) => {
+        dataFetching.getOriginalImage(this.imageData.media).then((image) => {
           this.openImage(image);
         });
       }
