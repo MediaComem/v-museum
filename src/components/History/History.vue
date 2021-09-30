@@ -1,117 +1,123 @@
 <template>
-  <div v-if="!displayAllHistory" class="history-layout" :style="displayHistory">
-    <div
-      class="history-text"
-      style="z-index: 30"
-      @click="sendOpenFullHistory()"
-    >
-      <p class="history-value">{{ currentHistory.length }}</p>
-    </div>
-    <div v-if="currentHistory.length <= 2">
-      <div>
+  <div
+    v-if="!isFullHistory"
+    class="history-layout open-animation"
+    :style="isAnimated ? fullHistory : displayHistory"
+  >
+    <div v-if="!isAnimated">
+      <div
+        class="history-text"
+        style="z-index: 30"
+        @click="sendOpenFullHistory()"
+      >
+        <p class="history-value">{{ currentHistory.length }}</p>
+      </div>
+      <div v-if="currentHistory.length <= 2">
+        <div>
+          <div
+            style="position: absolute; left: 45px"
+            class="history-image-element"
+          >
+            <img
+              v-if="firstImage"
+              :class="getOpacityFirstPosition"
+              class="history-image display-image"
+              @click="comeBackTo(firstImage)"
+              :src="firstImage.data"
+            />
+          </div>
+        </div>
+        <div>
+          <div
+            style="position: absolute; left: 90px"
+            class="history-image-element"
+          >
+            <img
+              v-if="secondImage"
+              :class="getOpacitySecondPosition"
+              class="history-image display-image"
+              @click="comeBackTo(secondImage)"
+              :src="secondImage.data"
+            />
+          </div>
+        </div>
+        <div>
+          <div
+            style="position: absolute; left: 135px"
+            class="history-image-element"
+          >
+            <img
+              v-if="thirdImage"
+              class="history-image display-image third-image-opacity"
+              @click="comeBackTo(thirdImage)"
+              :src="thirdImage.data"
+            />
+          </div>
+        </div>
+      </div>
+      <div v-if="currentHistory.length > 2">
         <div
-          style="position: absolute; left: 45px"
+          style="position: absolute; left: 135px"
+          :style="{ transform: 'translateX(' + -(45 * firstPosition) + 'px)' }"
+          :class="{ 'move-image': firstPosition !== 0 }"
           class="history-image-element"
+          @mouseover="hoverElement"
         >
           <img
             v-if="firstImage"
-            :class="getOpacityFirstPosition"
             class="history-image display-image"
+            :class="getOpacityFullFirstPosition"
             @click="comeBackTo(firstImage)"
             :src="firstImage.data"
           />
         </div>
-      </div>
-      <div>
         <div
-          style="position: absolute; left: 90px"
+          style="position: absolute; left: 135px"
+          :style="{ transform: 'translateX(' + -(45 * secondPosition) + 'px)' }"
+          :class="{ 'move-image': secondPosition !== 0 }"
           class="history-image-element"
         >
           <img
             v-if="secondImage"
-            :class="getOpacitySecondPosition"
             class="history-image display-image"
+            :class="getOpacityFullSecondPosition"
             @click="comeBackTo(secondImage)"
             :src="secondImage.data"
           />
         </div>
-      </div>
-      <div>
         <div
           style="position: absolute; left: 135px"
+          :style="{ transform: 'translateX(' + -(45 * thirdPosition) + 'px)' }"
+          :class="{ 'move-image': thirdPosition !== 0 }"
           class="history-image-element"
         >
           <img
             v-if="thirdImage"
-            class="history-image display-image third-image-opacity"
+            class="history-image display-image"
+            :class="getOpacityFullThirdPosition"
             @click="comeBackTo(thirdImage)"
             :src="thirdImage.data"
           />
         </div>
-      </div>
-    </div>
-    <div v-if="currentHistory.length > 2">
-      <div
-        style="position: absolute; left: 135px"
-        :style="{ transform: 'translateX(' + -(45 * firstPosition) + 'px)' }"
-        :class="{ 'move-image': firstPosition !== 0 }"
-        class="history-image-element"
-        @mouseover="hoverElement"
-      >
-        <img
-          v-if="firstImage"
-          class="history-image display-image"
-          :class="getOpacityFullFirstPosition"
-          @click="comeBackTo(firstImage)"
-          :src="firstImage.data"
-        />
-      </div>
-      <div
-        style="position: absolute; left: 135px"
-        :style="{ transform: 'translateX(' + -(45 * secondPosition) + 'px)' }"
-        :class="{ 'move-image': secondPosition !== 0 }"
-        class="history-image-element"
-      >
-        <img
-          v-if="secondImage"
-          class="history-image display-image"
-          :class="getOpacityFullSecondPosition"
-          @click="comeBackTo(secondImage)"
-          :src="secondImage.data"
-        />
-      </div>
-      <div
-        style="position: absolute; left: 135px"
-        :style="{ transform: 'translateX(' + -(45 * thirdPosition) + 'px)' }"
-        :class="{ 'move-image': thirdPosition !== 0 }"
-        class="history-image-element"
-      >
-        <img
-          v-if="thirdImage"
-          class="history-image display-image"
-          :class="getOpacityFullThirdPosition"
-          @click="comeBackTo(thirdImage)"
-          :src="thirdImage.data"
-        />
-      </div>
-      <div
-        style="position: absolute; left: 135px"
-        :style="{ transform: 'translateX(' + -(45 * forthPosition) + 'px)' }"
-        :class="{ 'move-image': forthPosition !== 0 }"
-        class="history-image-element"
-      >
-        <img
-          v-if="forthImage"
-          class="history-image display-image"
-          :class="getOpacityFullForthPosition"
-          @click="comeBackTo(forthImage)"
-          :src="forthImage.data"
-        />
+        <div
+          style="position: absolute; left: 135px"
+          :style="{ transform: 'translateX(' + -(45 * forthPosition) + 'px)' }"
+          :class="{ 'move-image': forthPosition !== 0 }"
+          class="history-image-element"
+        >
+          <img
+            v-if="forthImage"
+            class="history-image display-image"
+            :class="getOpacityFullForthPosition"
+            @click="comeBackTo(forthImage)"
+            :src="forthImage.data"
+          />
+        </div>
       </div>
     </div>
   </div>
 
-  <div v-if="displayAllHistory" class="history-layout" :style="fullHistory">
+  <div v-if="isFullHistory" class="history-layout" :style="fullHistory">
     <div class="left-arrow" @click="leftMove()" />
     <div class="full-history-display">
       <div v-for="(value, index) in currentHistory" :key="index">
@@ -157,9 +163,17 @@ export default {
       forthPosition: 0,
       currentHistoryLength: 0,
       position: 0,
+      isAnimated: false,
     };
   },
   watch: {
+    isFullHistory() {
+      if (!this.isFullHistory) {
+        setTimeout(() => {
+          this.isAnimated = false;
+      }, 300);
+      }
+    },
     history: {
       handler(historyElement) {
         // The store contains enough elements to fill the component?
@@ -230,7 +244,10 @@ export default {
   },
   methods: {
     sendOpenFullHistory() {
-      this.$emit("openFullHistory");
+      this.isAnimated = true;
+      setTimeout(() => {
+        this.$emit("openFullHistory");
+      }, 300);
     },
     leftMove() {
       if (this.position > 0) {
@@ -253,31 +270,34 @@ export default {
       this.$emit("closeFullHistory");
     },
     loadImages(historyElement) {
-          const element = historyElement.slice(-3);
-          this.currentHistoryLength = this.currentHistory.length;
-          switch (element.length) {
-            case 1:
-              this.firstImage = element[0];
-              this.firstPosition = 0;
-              break;
-            case 2:
-              this.firstImage = element[0];
-              this.firstPosition = 1;
-              this.secondImage = element[1];
-              this.secondPosition = 0;
-              break;
-            default:
-              this.firstImage = element[0];
-              this.firstPosition = 2;
-              this.secondImage = element[1];
-              this.secondPosition = 1;
-              this.thirdImage = element[2];
-              this.thirdPosition = 0;
-              break;
-          }
-    }
+      const element = historyElement.slice(-3);
+      this.currentHistoryLength = this.currentHistory.length;
+      switch (element.length) {
+        case 1:
+          this.firstImage = element[0];
+          this.firstPosition = 0;
+          break;
+        case 2:
+          this.firstImage = element[0];
+          this.firstPosition = 1;
+          this.secondImage = element[1];
+          this.secondPosition = 0;
+          break;
+        default:
+          this.firstImage = element[0];
+          this.firstPosition = 2;
+          this.secondImage = element[1];
+          this.secondPosition = 1;
+          this.thirdImage = element[2];
+          this.thirdPosition = 0;
+          break;
+      }
+    },
   },
   computed: {
+    isFullHistory() {
+      return this.displayAllHistory;
+    },
     displayHistory() {
       return {
         height: "53px",
@@ -443,6 +463,10 @@ export default {
 
 .final-opacity {
   opacity: 0.3;
+}
+
+.open-animation {
+  transition: height 0.3s linear, width 0.3s linear, top 0.3s linear, left 0.3s linear;
 }
 
 @media (pointer: fine) {

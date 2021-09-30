@@ -2,7 +2,7 @@
   <svg
     :width="width + 'px'"
     :height="height + 'px'"
-    viewBox="-2 -2.75 4 5.5"
+    :viewBox="viewBox ? viewBox : '-2 -2.75 4 5.5'"
     enable-background="new 0 0 300 300"
     xml:space="preserve"
     :style="positionElement"
@@ -20,7 +20,7 @@
   <svg
     :width="width + 'px'"
     :height="height + 'px'"
-    viewBox="-2 -2.75 4 5.5"
+    :viewBox="viewBox ? viewBox : '-2 -2.75 4 5.5'"
     enable-background="new 0 0 300 300"
     xml:space="preserve"
     :style="positionElement"
@@ -48,6 +48,7 @@ export default {
     leftPosition: Number,
     emptyColor: String,
     completeColor: String,
+    viewBox: String,
   },
   watch: {
     decade: function() {

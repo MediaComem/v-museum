@@ -1,6 +1,6 @@
 <template>
   <el-carousel
-    :height="getSliderHeight"
+    :height="'100vh'"
     direction="vertical"
     :autoplay="false"
     ref="slider"
@@ -8,40 +8,33 @@
     :loop="false"
   >
     <el-carousel-item>
-      <div ref="intro" class="slider-effect">
+
+      <div ref="intro" class="slider-effect" style="height: 100vh; overflow-y: scroll">
         <el-row :gutter="20" style="margin: 0;">
           <el-col :span="24" style="padding: 0;">
             <img class="first-image" src="@/assets/onboarding/first.png" />
           </el-col>
         </el-row>
-        <el-row :gutter="20" style="margin: 0;">
-          <el-col :span="12" :offset="6">
-            <h1 class="page-title">{{ information.title }}</h1>
-          </el-col>
+        <el-row :gutter="20" :justify="'center'">
+          <h1 class="page-title">{{ information.title }}</h1>
         </el-row>
-        <el-row :gutter="20" style="margin: 0;">
-          <el-col :span="12" :offset="6">
-            <h2 class="page-subtitle">{{ information.subtitle }}</h2>
-          </el-col>
+        <el-row :gutter="20" :justify="'center'">
+          <h2 class="page-subtitle">{{ information.subtitle }}</h2>
         </el-row>
-        <el-row :gutter="20" style="margin: 0;">
-          <el-col :span="8" :offset="8">
-            <h3 class="text-title">{{ information.header }}</h3>
-          </el-col>
+        <el-row :gutter="20" :justify="'center'">
+          <h3 class="text-title">{{ information.header }}</h3>
         </el-row>
-        <el-row :gutter="20" style="margin: 0;">
-          <el-col :span="8" :offset="8">
-            <p class="text">{{ information.body }}</p>
-          </el-col>
+        <el-row :gutter="20" :justify="'center'">
+          <p class="text">{{ information.body }}</p>
         </el-row>
-        <el-row>
-          <el-col :span="8" :offset="8">
-            <arrow-down
-              style="justify-content: center"
-              :text="undefined"
-              @click="nextSlide()"
-            />
-          </el-col>
+        <el-row :justify="'center'">
+          <arrow-down
+            style="justify-content: center"
+            :text="undefined"
+            :isFull="true"
+            :isMobile="false"
+            @click="nextSlide()"
+          />
         </el-row>
       </div>
     </el-carousel-item>
@@ -59,13 +52,14 @@
         <div
           class="collapse-transition"
           :style="collapse"
-          style="position: absolute; left: 0px; top: 0px;"
+          style="position: absolute; left: 0px; top: 0px; height: 100vh; overflow-y:scroll"
         >
           <p class="collection-text collapse-text-align">{{ item.text }}</p>
         </div>
         <logo style="position: absolute; left: 2vw; top: 2vh" />
         <arrow-up
           v-if="shouldDisplay"
+          :isFull="isFullSize"
           :isMobile="false"
           class="arrow-up"
           :text="index === 0 ? mainTitle : information.collection[index - 1]"
@@ -73,15 +67,27 @@
         />
         <div v-if="shouldDisplay" class="collection-position">
           <el-row>
-            <h2 class="collection-title">{{ item.title }}</h2>
+            <h2
+              :class="
+                isFullSize
+                  ? 'collection-title'
+                  : 'collection-title-intermediary'
+              "
+            >
+              {{ item.title }}
+            </h2>
           </el-row>
           <el-row>
-            <p class="collection-text">
+            <p
+              :class="
+                isFullSize ? 'collection-text' : 'collection-text-intermediary'
+              "
+            >
               {{ item.text.slice(0, 180) }}
               <a class="more-link" @click="isCollapse = !isCollapse">MORE</a>
             </p>
           </el-row>
-          <el-row>
+          <el-row style="height: 69px; width: 37vw">
             <onboarding-completion
               class="completion-element"
               :decade="item.decade"
@@ -93,6 +99,7 @@
           v-if="index !== information.collection.length - 1 && shouldDisplay"
           class="arrow-down"
           :isMobile="false"
+          :isFull="isFullSize"
           :text="information.collection[index + 1]"
           @click="nextSlide()"
         />
@@ -105,10 +112,12 @@
           style="position: absolute; left: 0px; top: 0px; z-index:1;"
         >
           <el-row :align="'middle'">
-            <el-col :span="18">
-              <h2 class="collection-title-mobile">{{ item.title }}</h2>
+            <el-col :span="21">
+              <h2 class="collection-title-mobile mobile-margin">
+                {{ item.title }}
+              </h2>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="3">
               <img
                 src="@/assets/shared/cross.svg"
                 @click="isCollapse = !isCollapse"
@@ -132,14 +141,17 @@
         <arrow-up
           v-if="shouldDisplay"
           :isMobile="true"
+          :isFull="false"
           class="arrow-up"
           :text="index === 0 ? mainTitle : information.collection[index - 1]"
           @click="previousSlide()"
         />
         <el-row>
-          <h2 class="collection-title-mobile">{{ item.title }}</h2>
+          <h2 class="collection-title-mobile mobile-margin">
+            {{ item.title }}
+          </h2>
         </el-row>
-        <el-row style="height: 60px">
+        <el-row class="completion-element-mobile mobile-margin">
           <onboarding-completion
             class="completion-element"
             :decade="item.decade"
@@ -147,7 +159,7 @@
           />
         </el-row>
         <el-row>
-          <p class="collection-text-mobile">
+          <p class="collection-text-mobile mobile-margin">
             {{ item.text.slice(0, 180) }}
             <a class="more-link" @click="isCollapse = !isCollapse">MORE</a>
           </p>
@@ -156,6 +168,7 @@
           <arrow-down
             v-if="index !== information.collection.length - 1 && shouldDisplay"
             :isMobile="true"
+            :isFull="false"
             :text="information.collection[index + 1]"
             @click="nextSlide()"
           />
@@ -225,37 +238,13 @@ export default {
         query: { comeFromOnboarding: true },
       });
     },
-    calculateSliderHeight() {
-      switch (true) {
-        case this.windowWidth >= 2000 && this.windowHeight >= 1500:
-          return "150vh";
-        case this.windowWidth >= 1400 && this.windowHeight >= 1100:
-          return "170vh";
-        case this.windowWidth >= 1000 && this.windowHeight >= 920:
-          return "210vh";
-        case this.windowWidth >= 800 && this.windowHeight >= 300:
-          return "650vh";
-        case this.windowWidth >= 700 && this.windowHeight >= 400:
-          return "600vh";
-        case this.windowWidth >= 600 && this.windowHeight >= 300:
-          return "700vh";
-        case this.windowWidth >= 500 && this.windowHeight >= 300:
-          return "900vh";
-        default:
-          return "700vh";
-      }
-    },
   },
   computed: {
     isMobile() {
-      return true;
+      return this.windowWidth < 600;
     },
-    getSliderHeight() {
-      if (this.slide !== 0) {
-        return "100vh";
-      } else {
-        return this.calculateSliderHeight();
-      }
+    isFullSize() {
+      return this.windowWidth > 1200;
     },
     collapse() {
       return {
@@ -298,26 +287,43 @@ export default {
 </script>
 
 <style scoped>
+h1 {
+  font-weight: normal;
+}
+
+h2 {
+  font-weight: normal;
+}
+
+h3 {
+  font-weight: normal;
+  margin-bottom: 0;
+}
+
 .page-title {
   font-size: 74.1515px;
+  max-width: 60rem;
 }
 
 .page-subtitle {
   font-size: 50px;
+  max-width: 60rem;
 }
 
 .text-title {
   font-size: 30px;
   text-align: left;
+  max-width: 35rem;
 }
 
 .text {
   font-size: 20px;
   text-align: left;
+  max-width: 35rem;
 }
 
 .collection-position {
-  width: 40vw;
+  width: 37vw;
   height: 80vh;
   display: flex;
   flex-wrap: wrap;
@@ -331,21 +337,37 @@ export default {
 .collection-title {
   font-size: 50px;
   text-align: left;
+  max-width: 35em;
+}
+
+.collection-title-intermediary {
+  font-size: 36px;
+  text-align: left;
+  max-width: 35em;
 }
 
 .collection-title-mobile {
   font-size: 22px;
   text-align: left;
+  max-width: 35em;
 }
 
 .collection-text {
   font-size: 22px;
   text-align: left;
+  max-width: 35em;
+}
+
+.collection-text-intermediary {
+  font-size: 18px;
+  text-align: left;
+  max-width: 35em;
 }
 
 .collection-text-mobile {
   font-size: 15px;
   text-align: left;
+  max-width: 35em;
 }
 
 .padding {
@@ -378,6 +400,15 @@ export default {
   left: 0;
 }
 
+.completion-element-mobile {
+  height: 69px;
+}
+
+.mobile-margin {
+  margin-left: 3vw;
+  margin-right: 3vw;
+}
+
 .arrow-up {
   position: absolute;
   top: 2vh;
@@ -405,21 +436,23 @@ export default {
 }
 
 .collapse-text-align {
-  text-align: justify;
+  text-align: left;
   position: absolute;
   top: 20vh;
   margin: 3vw;
+  max-width: 35em;
 }
 
 .collapse-text-align-mobile {
-  text-align: justify;
+  text-align: left;
   margin: 3vw;
+  max-width: 35em;
 }
 
 .collapse-transition {
   transition: transform;
-  transition-duration: 1s;
-  transition-timing-function: linear;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-out;
 }
 
 .slider-effect {

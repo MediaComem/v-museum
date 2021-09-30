@@ -8,6 +8,7 @@
   >
     <rect width="240" height="69" rx="34.5" fill="black" />
     <completion
+      :viewBox="'-1.5 -2.21 3 4.5'"
       :decade="decade"
       :height="69"
       :width="69"
@@ -75,6 +76,6 @@ export default {
 <style scoped>
 .text {
   font-weight: normal;
-  stroke: lightgray;
+  fill: lightgray;
 }
 </style>

@@ -6,6 +6,14 @@
   font-weight: normal;
 }
 
+.align-intermediary {
+  text-align: right;
+  margin: 0;
+  padding-right: 1vw;
+  font-size: 15px;
+  font-weight: normal;
+}
+
 .align-mobile {
   text-align: right;
   margin: 0;
