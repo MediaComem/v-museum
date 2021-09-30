@@ -31,7 +31,7 @@
       :stroke="completeColor"
       stroke-width="0.04"
       stroke-miterlimit="10"
-      :d="completed"
+      :d="completed.join(' ')"
     />
   </svg>
 </template>
