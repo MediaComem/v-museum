@@ -63,8 +63,8 @@ export const mutations = {
       skipIds.ids.push(payload.id);
     }
   },
-  loadingState(state) {
-    state.isLoadingImage = true;
+  loadingState(state, val) {
+    state.isLoadingImage = val;
   },
   setCompletion(state, payload) {
     if (store.getters.getCompletionByDecade(payload.year) === undefined) {
@@ -114,6 +114,9 @@ export const mutations = {
 };
 
 export const actions = {
+  restartLoadingState(context) {
+    context.commit("loadingState", false);
+  },
   updateLastVisitedElement(context, payload) {
     context.commit("updateLastVisitedElement", {
       decade: payload.decade,
@@ -167,7 +170,7 @@ export const actions = {
     });
   },
   loadNextContent(context, { decade, id }) {
-    context.commit("loadingState");
+    context.commit("loadingState", true);
     let nextPage = store.getters.getNextPageByDecade(decade);
     if (nextPage === undefined) {
       nextPage = 0;
@@ -193,6 +196,9 @@ export const actions = {
           decade: decade,
           page: nextPage + 1,
         });
+      }
+      else {
+        context.commit("loadingState", false);
       }
     });
   },

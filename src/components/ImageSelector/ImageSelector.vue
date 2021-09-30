@@ -823,10 +823,12 @@ export default {
       return this.step > 290 && this.step < 310;
     },
     loadMoreContent(diffMaxIndexBeforeLoad) {
+      console.log("SHOULD LOAD? " + this.data.length + " : " + diffMaxIndexBeforeLoad + " : " + this.isLoadingImage)
       if (
         this.currentIndex > this.data.length - diffMaxIndexBeforeLoad &&
         !this.isLoadingImage
       ) {
+        console.log("LOAD")
         this.$store.dispatch("loadNextContent", { decade: this.currentDecade });
       }
     },
@@ -1756,6 +1758,8 @@ export default {
     }),
   },
   mounted() {
+    this.$store.dispatch("restartLoadingState");
+
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
