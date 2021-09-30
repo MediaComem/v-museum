@@ -1,0 +1,15 @@
+h1 {
+  margin: 0;
+  padding-right: 1vw;
+  font-size: 22px;
+  font-weight: normal;
+}
+
+.align {
+  text-align: right;
+}
+
+.display {
+  display: flex;
+  align-items: center;
+}

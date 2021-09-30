@@ -1,21 +1,23 @@
 <template>
-  <image-selector/>
+  <router-view/>
 </template>
 
 <script>
-import ImageSelector from "./components/ImageSelector/ImageSelector.vue";
 
 export default {
   name: "App",
-  components: {
-    ImageSelector,
-  },
 };
 </script>
 
 <style>
+@font-face {
+  font-family: "Certeau";
+  src: local("WOFF2"),
+   url(./fonts/Certeau/WOFF2/CerteauWeb-Regular.woff2) format("woff2");
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Certeau";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

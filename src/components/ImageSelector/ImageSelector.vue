@@ -1,10 +1,211 @@
 <template>
-  <div :style="setPage">
-    <div :style="imagePosition">
-      <h3 style="margin: 0; height: 30px;">{{ currentIndex + 1 }}</h3>
-      <div :style="[componentSize]" style="overflow:hidden;" class="sliderMask">
-        <div :style="componentSize" :class="[selectZoomAnimation]">
+  <!-- History Part-->
+  <history
+    :topPosition="windowHeight - 63"
+    :leftPosition="10"
+    :fullWidth="windowWidth"
+    :displayAllHistory="fullHistoryMode"
+    @openFullHistory="fullHistoryMode = true"
+    @closeFullHistory="fullHistoryMode = false"
+  />
+  <div
+    :style="setPage"
+    @mousewheel="mouseWheel"
+    @mousedown="startPosition"
+    @mouseup="endPosition"
+    @mouseleave="endPosition"
+    @mousemove="mouseMove"
+    @touchstart="startPosition"
+    @touchend="endPosition"
+    @touchmove="touchMove"
+    ref="display"
+    style="cursor: pointer; user-select:none; touch-action: pan-x pan-y;"
+  >
+    <!-- Target display part -->
+    <rectangle
+      :width="rectangleWidth"
+      :height="rectangleHeight"
+      :offsetX="windowWidth"
+      :offsetY="windowHeight"
+      ref="rectangle"
+    />
+
+    <!-- Related Image display part -->
+    <div
+      :style="relatedImagePosition1"
+      v-if="relatedImagesPosition.length > 0"
+      :class="{
+        removeRelatedImageBase:
+          secondRelatedImagesPosition.length > 0 &&
+          !relatedImagesPosition[0].isTarget,
+      }"
+    >
+      <div ref="position0" :style="relatedImageDisplay1">
+        <related-image :image="relatedImagesPosition[0]" />
+      </div>
+    </div>
+    <div
+      :style="relatedImagePosition2"
+      v-if="relatedImagesPosition.length > 1"
+      :class="{
+        removeRelatedImageBase:
+          secondRelatedImagesPosition.length > 0 &&
+          !relatedImagesPosition[1].isTarget,
+      }"
+    >
+      <div ref="position1" :style="relatedImageDisplay2">
+        <related-image :image="relatedImagesPosition[1]" />
+      </div>
+    </div>
+    <div
+      :style="relatedImagePosition3"
+      v-if="relatedImagesPosition.length > 2"
+      :class="{
+        removeRelatedImageBase:
+          secondRelatedImagesPosition.length > 0 &&
+          !relatedImagesPosition[2].isTarget,
+      }"
+    >
+      <div ref="position2" :style="relatedImageDisplay3">
+        <related-image :image="relatedImagesPosition[2]" />
+      </div>
+    </div>
+    <!-- Related image text display -->
+    <div
+      v-if="
+        relatedImagesPosition.length > 0 && relatedImagesPosition[0].display
+      "
+      :style="relatedInformationPosition1"
+      :class="{
+        removeRelatedImageBase: secondRelatedImagesPosition.length > 0,
+      }"
+    >
+      <p
+        class="related-text"
+        v-if="!relatedImagesPosition[0].hover"
+        :class="{ relatedImageBase: !endDisplay }"
+      >
+        {{ relatedImagesPosition[0].image.tag["@value"] }}
+      </p>
+    </div>
+    <div
+      v-if="
+        relatedImagesPosition.length > 1 && relatedImagesPosition[1].display
+      "
+      :style="relatedInformationPosition2"
+      :class="{
+        removeRelatedImageBase: secondRelatedImagesPosition.length > 0,
+      }"
+    >
+      <p
+        class="related-text"
+        v-if="!relatedImagesPosition[1].hover"
+        :class="{ relatedImageBase: !endDisplay }"
+      >
+        {{ relatedImagesPosition[1].image.tag["@value"] }}
+      </p>
+    </div>
+    <div
+      v-if="
+        relatedImagesPosition.length > 2 && relatedImagesPosition[2].display
+      "
+      :style="relatedInformationPosition3"
+      :class="{
+        removeRelatedImageBase: secondRelatedImagesPosition.length > 0,
+      }"
+    >
+      <p
+        class="related-text"
+        v-if="!relatedImagesPosition[2].hover"
+        :class="{ relatedImageBase: !endDisplay }"
+      >
+        {{ relatedImagesPosition[2].image.tag["@value"] }}
+      </p>
+    </div>
+    <!-- Image information top part -->
+    <div
+      v-if="carouselHover && relatedImagesPosition.length > 0 && !endDisplay"
+      :style="imageInformationPosition"
+    >
+      <div
+        style="display: flex; overflow: hidden;"
+        :style="{ width: thumbnailWidth() + 'px' }"
+      >
+        <p
+          v-if="relatedImagesPosition.length > 0"
+          class="image-information"
+          :class="{
+            removeRelatedImageBaseText: relatedImagesPosition[0].display,
+          }"
+        >
+          {{ relatedImagesPosition[0].image.tag["@value"] }} &nbsp;
+        </p>
+        <p
+          v-if="relatedImagesPosition.length > 1"
+          class="image-information"
+          :class="{
+            removeRelatedImageBaseText: relatedImagesPosition[1].display,
+          }"
+        >
+          {{ relatedImagesPosition[1].image.tag["@value"] }} &nbsp;
+        </p>
+        <p
+          v-if="relatedImagesPosition.length > 2"
+          class="image-information"
+          :class="{
+            removeRelatedImageBaseText: relatedImagesPosition[2].display,
+          }"
+        >
+          {{ relatedImagesPosition[2].image.tag["@value"] }} &nbsp;
+        </p>
+      </div>
+    </div>
+    <div v-if="carouselHover && endDisplay" :style="imageInformationPosition">
+      <completion
+        :decade="currentDecade"
+        :height="100"
+        :width="100"
+        :topPosition="-40"
+        :leftPosition="-20"
+        :emptyColor="'lightgray'"
+        :completeColor="'black'"
+      />
+      <p style="margin: 0; margin-left: 60px;">
+        {{ currentDecade + "0" }}
+        <img src="@/assets/vector.png" @click="loadOnboarding()" /> &nbsp;
+      </p>
+    </div>
+    <div v-if="carouselHover && endDisplay" :style="indexInformationPosition">
+      <h3 style="margin: 0; height: 30px; font-size: 48px">{{ currentIndex + 1 }}</h3>
+    </div>
+    <!-- Carousel display part -->
+    <div
+      :style="imagePosition"
+      :class="{
+        removeRelatedImageBase: secondRelatedImagesPosition.length > 0,
+      }"
+    >
+      <div v-show="viewerImageMode" :style="componentSize">
+        <div ref="divCar" :style="imageViewerDisplay">
+          <img
+            v-if="data && data[currentIndex]"
+            draggable="false"
+            class="carousel-image"
+            :src="data[currentIndex].imagePaths.large"
+            :alt="data[currentIndex].id"
+            @click="loadFocusImage(data[currentIndex].id)"
+          />
+        </div>
+      </div>
+      <div
+        v-show="!viewerImageMode"
+        :style="componentSize"
+        style="overflow:hidden;"
+        class="sliderMask"
+      >
+        <div :style="componentSize" :class="selectZoomAnimation">
           <ul
+            class="ul-image"
             ref="ul-image"
             :class="selectSliderTransitionSpeed"
             :style="[scrollingDisplay, scrollingMovement]"
@@ -12,13 +213,13 @@
             <li
               v-for="(value, index) in data"
               :key="index"
-              :style="[componentSize]"
+              :style="componentSize"
               :ref="'li-' + index"
             >
-              <div :style="componentSize">
+              <div :style="componentSize" style="overflow:hidden">
                 <img
-                  style="object-fit: none"
-                  :style="componentSize"
+                  v-if="value && value.imagePaths"
+                  class="carousel-image"
                   :ref="'image-' + index"
                   :src="value.imagePaths.large"
                   :alt="value.id"
@@ -29,9 +230,38 @@
         </div>
       </div>
     </div>
-    <div class="font-slider" :style="fontSliderPosition"></div>
-    <div :style="sliderPosition">
+    <!-- Image information bottom part -->
+    <div v-if="data && data[currentIndex] && carouselHover">
+      <div :style="imageCreatorPosition">
+        <p style="margin-bottom: 0; font-weight: normal; font-size: 15px">
+          Illustration: &nbsp;
+        </p>
+        <p style="margin-bottom: 0; overflow: hidden; font-size: 15px; color: gray">
+          {{ data[currentIndex].author }}
+        </p>
+      </div>
+      <div :style="imageStoryPosition">
+        <p style="margin: 0; font-weight: normal; font-size: 15px">
+          Story: &nbsp;
+        </p>
+        <p style="margin: 0; overflow: hidden; font-size: 15px; color: gray">
+          {{ data[currentIndex].title }}
+        </p>
+      </div>
+    </div>
+    <!-- Slider Part -->
+    <div
+      v-if="carouselHover"
+      class="font-slider"
+      :style="fontSliderPosition"
+    ></div>
+    <div
+      :style="sliderPosition"
+      @mouseover="blockDrag = true"
+      @mouseleave="blockDrag = false"
+    >
       <el-slider
+        v-if="carouselHover"
         :class="selectArrayDisplay"
         style="width: 42px"
         ref="slider"
@@ -45,57 +275,537 @@
       >
       </el-slider>
     </div>
+    <!-- Second related Images -->
+    <div
+      :style="secondRelatedImagePosition1"
+      v-if="secondRelatedImagesPosition.length > 0"
+    >
+      <div :style="secondRelatedImageDisplay1">
+        <related-image :image="secondRelatedImagesPosition[0]" />
+      </div>
+    </div>
+    <div
+      :style="secondRelatedImagePosition2"
+      v-if="secondRelatedImagesPosition.length > 1"
+    >
+      <div :style="secondRelatedImageDisplay2">
+        <related-image :image="secondRelatedImagesPosition[1]" />
+      </div>
+    </div>
+    <div
+      :style="secondRelatedImagePosition3"
+      v-if="secondRelatedImagesPosition.length > 2"
+    >
+      <div :style="secondRelatedImageDisplay3">
+        <related-image :image="secondRelatedImagesPosition[2]" />
+      </div>
+    </div>
+  </div>
+  <!-- Second related images information -->
+  <div
+    v-if="secondRelatedImagesPosition.length > 0"
+    :style="secondImageInformationPosition"
+  >
+    <div
+      style="display: flex; overflow: hidden;"
+      :style="{ width: thumbnailWidth() + 'px' }"
+    >
+      <p
+        v-if="secondRelatedImagesPosition.length > 0"
+        class="image-information"
+        :class="{
+          removeRelatedImageBaseText: secondRelatedImagesPosition[0].display,
+        }"
+      >
+        {{ secondRelatedImagesPosition[0].image.tag["@value"] }} &nbsp;
+      </p>
+      <p
+        v-if="secondRelatedImagesPosition.length > 1"
+        class="image-information"
+        :class="{
+          removeRelatedImageBaseText: secondRelatedImagesPosition[1].display,
+        }"
+      >
+        {{ secondRelatedImagesPosition[1].image.tag["@value"] }} &nbsp;
+      </p>
+      <p
+        v-if="secondRelatedImagesPosition.length > 2"
+        class="image-information"
+        :class="{
+          removeRelatedImageBaseText: secondRelatedImagesPosition[2].display,
+        }"
+      >
+        {{ secondRelatedImagesPosition[2].image.tag["@value"] }} &nbsp;
+      </p>
+    </div>
+  </div>
+  <div
+    v-if="
+      secondRelatedImagesPosition.length > 0 &&
+        secondRelatedImagesPosition[0].display
+    "
+    :style="secondRelatedInformationPosition1"
+  >
+    <p class="related-text relatedImageBase">
+      {{ secondRelatedImagesPosition[0].image.tag["@value"] }}
+    </p>
+  </div>
+  <div
+    v-if="
+      secondRelatedImagesPosition.length > 1 &&
+        secondRelatedImagesPosition[1].display
+    "
+    :style="secondRelatedInformationPosition2"
+  >
+    <p class="related-text relatedImageBase">
+      {{ secondRelatedImagesPosition[1].image.tag["@value"] }}
+    </p>
+  </div>
+  <div
+    v-if="
+      secondRelatedImagesPosition.length > 2 &&
+        secondRelatedImagesPosition[2].display
+    "
+    :style="secondRelatedInformationPosition3"
+  >
+    <p class="related-text relatedImageBase">
+      {{ secondRelatedImagesPosition[2].image.tag["@value"] }}
+    </p>
   </div>
 </template>
 
 <script>
 import { useWindowSize } from "vue-window-size";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
+
+import Rectangle from "./Rectangle.vue";
+import RelatedImage from "./RelatedImage/RelatedImage.vue";
+import Completion from "../Completion/Completion.vue";
+import History from "../History/History.vue";
 
 export default {
-  name: "TestImageSelector",
+  name: "ImageSelector",
+  components: { Rectangle, RelatedImage, Completion, History },
   watch: {
-    images: function(newImages) {
-      this.data = newImages;
+    $route: function() {
+      if (
+        this.$route.params.index !== undefined &&
+        this.$route.params.index != "" &&
+        this.$route.name === "selector"
+      ) {
+        if (this.$route.query.history !== undefined) {
+          // If the loading comes from history, setup the states
+          this.nextDecade = this.$route.params.decade;
+          this.currentDecade = this.$route.params.decade;
+          this.data = this.getImagesByDecade(this.$route.params.decade);
+          this.currentIndex = +this.$route.params.index;
+          this.relatedImagesPosition = [];
+          this.currentXPosition = this.defineLeftPositionCenterPage();
+          this.currentYPosition = this.defineTopPositionCenterPage();
+          this.carouselHover = true;
+          this.rectangleHeight = this.thumbnailHeight() + 20;
+          this.rectangleWidth = this.thumbnailWidth() + 20;
+          this.shouldRunCentralImageTransition = false;
+          window.scrollTo(this.currentXPosition, this.currentYPosition);
+          this.$store.dispatch("loadRelatedImages", {
+            tags: this.data.data[this.currentIndex].tags,
+            id: this.data.data[this.currentIndex].id,
+          });
+        } else {
+          // If the loading comes from related images, load the next related images and associated data
+          this.nextDecade = this.$route.params.decade;
+          this.nextId = this.$route.params.index;
+          this.$store.dispatch("loadSecondRelatedImages", {
+            tags: JSON.parse(this.$route.query.tags),
+            id: this.nextId,
+          });
+        }
+        // Clean url
+        this.$router.push(`/selector/${this.nextDecade}`);
+      }
+    },
+    // Watcher uses to manage new data in the store
+    images: {
+      handler() {
+        const images = this.getImagesByDecade(this.currentDecade);
+        // Set only when images are available and more important only if necessary
+        if (images && this.couldLoad) {
+          this.data = images.data;
+        }
+
+        if (this.shouldFindIndex) {
+          this.currentIndex = this.data.findIndex((e) => {
+            return e.id == this.idToFind;
+          });
+          this.shouldFindIndex = false;
+        }
+
+        if (this.isInitialLoad) {
+          this.loadInitialData();
+        }
+      },
+      deep: true,
     },
     currentIndex: function(newVal) {
       this.isBeginning = newVal === 0;
       this.isEnd = newVal === this.data.length - 1;
       this.shouldRunSideAnimation = this.isBeginning || this.isEnd;
+      clearTimeout(this.historyTimeout);
+      this.historyTimeout = undefined;
+      this.endDisplay = true;
+    },
+    relatedImages: function(images) {
+      this.endDisplay = false;
+      this.displayRelatedImages(images);
+      // The animations take 8 seconds so store history only at the end.
+      this.historyTimeout = setTimeout(() => {
+        this.$store.dispatch("insertHistory", {
+          decade: this.currentDecade,
+          index: this.currentIndex,
+          data: this.data[this.currentIndex].imagePaths.square,
+        });
+        this.endDisplay = true;
+      }, 8000);
+    },
+    secondRelatedImages: function(relatedImages) {
+      if (
+        this.relatedImagesPosition.filter((e) => e.hover === true).length > 0
+      ) {
+        this.displaySecondRelatedImages(relatedImages);
+        let newData;
+        let newIndex = -1;
+        // Load bundle of images related to the selected related image
+        this.secondRelatedImageTimeout.push(
+          setTimeout(() => {
+            this.couldLoad = false;
+            newData = this.getImagesByDecade(this.nextDecade);
+            if (newData === undefined) {
+              this.loadDataWithSkipId(this.nextDecade, this.nextId);
+            } else {
+              newIndex = newData.data.findIndex((e) => {
+                return e.id == this.nextId;
+              });
+              if (newIndex === -1) {
+                this.loadDataWithSkipId(this.nextDecade, this.nextId);
+              }
+            }
+          }, 2000)
+        );
+        // Setup state of new center image
+        this.secondRelatedImageTimeout.push(
+          setTimeout(() => {
+            this.couldLoad = true;
+            this.relatedImagesPosition = this.secondRelatedImagesPosition;
+            this.secondRelatedImagesPosition = [];
+            this.currentXPosition = this.defineLeftPositionCenterPage();
+            this.currentYPosition = this.defineTopPositionCenterPage();
+            this.carouselHover = true;
+            this.currentDecade = this.nextDecade;
+            if (newIndex !== -1) {
+              this.currentIndex = newIndex;
+              this.data = newData.data;
+            } else {
+              this.data = this.getImagesByDecade(this.currentDecade).data;
+              const id = this.data.findIndex((e) => {
+                return e.id == this.nextId;
+              });
+              this.currentIndex = id;
+            }
+
+            this.shouldRunCentralImageTransition = false;
+            window.scrollTo(this.currentXPosition, this.currentYPosition);
+            this.$store.dispatch("insertHistory", {
+              decade: this.currentDecade,
+              index: this.currentIndex,
+              data: this.data[this.currentIndex].imagePaths.square,
+            });
+          }, 8000)
+        );
+      }
+    },
+    // Watcher uses to manage the completion element
+    currentDecade: function() {
+      const completion = this.getCompletionByDecade(this.currentDecade);
+      if (completion) {
+        this.totalIndex = +completion.totalImages;
+        this.maxVisitedIndex = +completion.maxVisitedIndex;
+      }
     },
   },
   data() {
     return {
+      // Data informations
       isBeginning: true,
       isEnd: false,
+      currentDecade: "",
+      nextDecade: "",
       data: undefined,
+      totalIndex: 0,
+      maxVisitedIndex: 0,
+      completion: 0,
+      endDisplay: true,
+      couldLoad: true,
+      nextId: 0,
+      shouldFindIndex: false,
+      idToFind: 0,
       // Information uses to manage the movement
       step: 300,
       speed: 6000,
       previousSpeed: 0,
       previousDirection: undefined,
       currentIndex: 0,
+      currentXPosition: 0,
+      currentYPosition: 0,
+      isDrag: false,
+      blockDrag: false,
+      shouldStartRelatedImageSearch: false,
       // Information uses to manage the animations
       zoomingStep: 3,
       nbImageMove: 0,
       shouldRunSideAnimation: false,
       shouldRunDecelerateAnimation: false,
+      shouldRunCentralImageTransition: true,
       // Information uses to manage the display
+      pageHeight: 4000,
+      pageWidth: 6000,
       windowHeight: undefined,
       windowWidth: undefined,
       // Management of the interval and timeout process
       interval: [],
       timeout: undefined,
       decelerateTimouts: [],
+      // Target properties
+      rectangleWidth: 0,
+      rectangleHeight: 0,
+      moveToImageTimeout: [],
+      carouselHover: true,
+      // Related images properties
+      isInitialLoad: true,
+      potentialPosition: [1, 2, 3, 4, 5, 6],
+      relatedImagesPosition: [],
+      secondRelatedImagesPosition: [],
+      displayRelatedImageTimeout: [],
+      viewerImageMode: false,
+      newOriginX: 0,
+      newOriginY: 0,
+      secondRelatedImageTimeout: [],
+      // History Part
+      historyTimeout: undefined,
+      fullHistoryMode: false,
     };
   },
   methods: {
-    thumbnailHeight() {
-      return 17 * 4 * this.defineReponsiveFactor();
+    async loadDataWithSkipId(decade, id) {
+      this.$store.dispatch("insertSkipId", {
+        decade: decade,
+        id: id,
+      });
+      this.$store.dispatch("loadNextContent", {
+        decade: decade,
+        id: id,
+      });
     },
-    thumbnailWidth() {
-      return 9 * 4 * this.defineReponsiveFactor();
+    loadInitialData() {
+      this.$nextTick(() => {
+        const completion = this.getCompletionByDecade(this.currentDecade);
+        if (completion) {
+          this.totalIndex = +completion.totalImages;
+          this.maxVisitedIndex = +completion.maxVisitedIndex;
+        }
+        this.isInitialLoad = false;
+        this.relatedImagesPosition = [];
+        if (this.data[this.currentIndex] && this.data[this.currentIndex].tags) {
+          this.$store.dispatch("loadRelatedImages", {
+            tags: this.data[this.currentIndex].tags,
+            id: this.data[this.currentIndex].id,
+          });
+        }
+        this.viewerImageMode = true;
+        this.carouselHover = true;
+        window.scrollTo(this.currentXPosition, this.currentYPosition);
+      });
     },
+    loadOnboarding() {
+      this.$store.dispatch("updateLastVisitedElement", {
+        decade: this.currentDecade,
+        index: this.currentIndex,
+      });
+      this.$router.push({
+        path: `/`,
+        query: { decade: this.decade },
+      });
+    },
+    loadFocusImage(id) {
+      this.$router.push({
+        path: `/image/${id}`,
+      });
+    },
+    loadFromOnboarding(data) {
+      const visited = this.getVisitedIndexByDecade(this.currentDecade);
+      if (data === undefined) {
+        this.$store.dispatch("initializeCarousel", {
+          decade: this.currentDecade,
+        });
+      } else {
+        this.data = data.data;
+        if (visited) {
+          this.currentIndex = visited.lastIndex;
+          if (this.currentIndex >= this.data.length - 100) {
+            this.$store.dispatch("loadNextContent", {
+              decade: this.currentDecade,
+            });
+          }
+          this.loadInitialData();
+        } else {
+          this.currentIndex = 0;
+          this.loadInitialData();
+        }
+      }
+    },
+    loadFromFocusPage(data, id) {
+      if (data === undefined) {
+        this.loadDataWithSkipId(this.currentDecade, id);
+      } else {
+        const newIndex = data.data.findIndex((e) => {
+          return e.id == id;
+        });
+        if (newIndex !== -1) {
+          this.data = data.data;
+          this.currentIndex = newIndex;
+          this.loadInitialData();
+        } else {
+          this.idToFind = id;
+          this.shouldFindIndex = true;
+          this.loadDataWithSkipId(this.currentDecade, id);
+        }
+      }
+    },
+    // Colision analysis
+    checkPosition(x, y, rectangle, relatedImage, isRelated) {
+      if (
+        x < rectangle.x + rectangle.width &&
+        x + this.rectangleWidth > rectangle.x &&
+        y < rectangle.y + rectangle.height &&
+        this.rectangleHeight + y > rectangle.y
+      ) {
+        this.moveToImageTimeout.push(
+          setTimeout(() => {
+            const newX =
+              this.$refs.display.getBoundingClientRect().x -
+              (rectangle.x - (this.windowWidth - rectangle.width) / 2);
+            const newY =
+              this.$refs.display.getBoundingClientRect().y -
+              (rectangle.y - (this.windowHeight - rectangle.height) / 2);
+            this.currentXPosition = -newX;
+            this.currentYPosition = -newY;
+            window.scrollTo({ left: -newX, top: -newY, behavior: "smooth" });
+            if (isRelated) {
+              const positions = this.getRelatedImagePosition(
+                relatedImage,
+                this.defineLeftImagePosition(),
+                this.defineTopImagePosition()
+              );
+              relatedImage.isTarget = true;
+              this.newOriginY = positions[0];
+              this.newOriginX = positions[1];
+              this.$router.push({
+                path: `/selector/${relatedImage.image.result.decade.slice(
+                  0,
+                  3
+                )}/${relatedImage.image.result.id}`,
+                query: { tags: JSON.stringify(relatedImage.image.result.tags) },
+              });
+            }
+          }, 200)
+        );
+        return true;
+      }
+      return false;
+    },
+    checkCollision() {
+      this.moveToImageTimeout.forEach(clearTimeout);
+      this.moveToImageTimeout = [];
+      const rectangle = this.$refs.divCar.getBoundingClientRect();
+      const x = (this.windowWidth - this.$refs.divCar.clientWidth + 20) / 2;
+      const y = (this.windowHeight - this.$refs.divCar.clientHeight + 20) / 2;
+      this.carouselHover = this.checkPosition(
+        x,
+        y,
+        rectangle,
+        undefined,
+        false
+      );
+      this.relatedImagesPosition.forEach((rectangle, index) => {
+        const isHover = this.checkPosition(
+          x,
+          y,
+          this.$refs["position" + index].getBoundingClientRect(),
+          rectangle,
+          true
+        );
+        if (isHover) {
+          rectangle.hover = true;
+        } else {
+          rectangle.hover = false;
+        }
+      });
+      if (this.moveToImageTimeout.length === 0 && !this.carouselHover) {
+        this.rectangleHeight = this.relatedThumbnailHeight() + 20;
+        this.rectangleWidth = this.relatedThumbnailWidth() + 20;
+      } else {
+        this.rectangleHeight = this.thumbnailHeight() + 20;
+        this.rectangleWidth = this.thumbnailWidth() + 20;
+      }
+    },
+    // Rectangle navigation
+    startPosition() {
+      this.stopSecondRelatedDisplay();
+      this.isDrag = true;
+    },
+    endPosition() {
+      this.isDrag = false;
+    },
+    mouseWheel() {
+      this.stopSecondRelatedDisplay();
+      this.checkCollision();
+    },
+    touchMove() {
+      this.stopSecondRelatedDisplay();
+      if (this.isDrag && !this.blockDrag) {
+        this.checkCollision();
+      }
+    },
+    mouseMove(event) {
+      if (this.isDrag && !this.blockDrag) {
+        // Calculate the mouse movement and apply it on the current position
+        const xMovement = this.currentXPosition - event.movementX;
+        if (xMovement > 0 || xMovement < event.pageWidth) {
+          this.currentXPosition = xMovement;
+        }
+
+        const yMovement = this.currentYPosition - event.movementY;
+        if (yMovement > 0 || yMovement < event.pageHeight) {
+          this.currentYPosition = yMovement;
+        }
+
+        // Calculate the position of the target
+        this.rectangleXPosition =
+          -this.$refs.display.getBoundingClientRect().left +
+          this.windowWidth / 2 -
+          this.rectangleWidth / 2;
+        this.rectangleYPosition =
+          -this.$refs.display.getBoundingClientRect().top +
+          this.windowHeight / 2 -
+          this.rectangleHeight / 2;
+        // Move
+        window.scrollTo({
+          left: this.currentXPosition,
+          top: this.currentYPosition,
+        });
+        this.checkCollision();
+      }
+    },
+    // Slider part
     isStop() {
       return this.step > 290 && this.step < 310;
     },
@@ -104,7 +814,7 @@ export default {
         this.currentIndex > this.data.length - diffMaxIndexBeforeLoad &&
         !this.isLoadingImage
       ) {
-        this.$store.dispatch("loadNextContent");
+        this.$store.dispatch("loadNextContent", { decade: this.currentDecade });
       }
     },
     move(forward) {
@@ -113,9 +823,19 @@ export default {
       if (forward) {
         if (this.currentIndex !== this.data.length - 1) {
           this.currentIndex = this.currentIndex + 1;
+          if (this.maxVisitedIndex < this.currentIndex) {
+            this.maxVisitedIndex = this.currentIndex;
+            this.completion = Math.floor(
+              (this.maxVisitedIndex * 100) / this.totalIndex
+            );
+            this.$store.dispatch("updateCompletion", {
+              decade: this.currentDecade,
+              completion: this.completion,
+              maxVisitedIndex: this.maxVisitedIndex,
+            });
+          }
         }
-      }
-      else if (this.currentIndex !== 0) {
+      } else if (this.currentIndex !== 0) {
         this.currentIndex = this.currentIndex - 1;
       }
       // This incrementation is to manage the animation
@@ -140,6 +860,7 @@ export default {
       }
     },
     sliderChange() {
+      this.viewerImageMode = false;
       // Release animation
       if (this.previousSpeed === 0 && this.step !== 300) {
         this.nbImageMove = 0;
@@ -153,6 +874,9 @@ export default {
           }
         }, 200);
       } else {
+        this.shouldStartRelatedImageSearch = true;
+        this.isDrag = false;
+        this.stopDisplayRelatedImages();
         this.decelerateTimouts.forEach(clearTimeout);
         const newSpeed = this.speedSelection();
         this.animationStepAnalysis(newSpeed);
@@ -165,6 +889,7 @@ export default {
         this.previousDirection = direction;
       }
     },
+    // Method to slow down the slider when the speed is fast and the slider is released
     launchDecelerate(direction) {
       this.decelerateTimouts.push(
         setTimeout(() => {
@@ -182,6 +907,11 @@ export default {
         setTimeout(() => {
           this.speed = 1000;
           this.move(direction);
+          this.$store.dispatch("loadRelatedImages", {
+            tags: this.data[this.currentIndex].tags,
+            id: this.data[this.currentIndex].id,
+          });
+          this.viewerImageMode = true;
           setTimeout(() => (this.shouldRunDecelerateAnimation = false), 1000);
         }, 500)
       );
@@ -213,6 +943,7 @@ export default {
         if (releaseStep < 100 || releaseStep > 530) {
           this.shouldRunDecelerateAnimation = true;
         }
+        this.shouldStartRelatedImageSearch = false;
         this.launchDecelerate(this.previousDirection);
       }
 
@@ -224,6 +955,13 @@ export default {
         this.zoomingStep = -1;
         this.speed = 6000;
         this.previousDirection = undefined;
+        if (this.shouldStartRelatedImageSearch) {
+          this.$store.dispatch("loadRelatedImages", {
+            tags: this.data[this.currentIndex].tags,
+            id: this.data[this.currentIndex].id,
+          });
+          this.viewerImageMode = true;
+        }
       }
     },
     animationStepAnalysis(speed) {
@@ -238,6 +976,78 @@ export default {
     stopInterval() {
       this.interval.forEach((element) => clearInterval(element));
       this.interval = [];
+    },
+    displayRelatedImages(images) {
+      // Select randomly 3 display positions
+      this.potentialPosition
+        .sort(() => Math.random() - 0.5)
+        .slice(0, images.length)
+        .forEach((position, index) => {
+          this.relatedImagesPosition.push({
+            position: position,
+            image: images[index],
+            display: false,
+            hover: false,
+            isTarget: false,
+          });
+        });
+      // Setup the display animation
+      this.$nextTick(() => {
+        this.relatedImagesPosition.forEach((element, index) => {
+          const animationDelay = 1000 + 2000 * index;
+          this.displayRelatedImageTimeout.push(
+            setTimeout(() => {
+              this.relatedImagesPosition[index].display = true;
+              this.$nextTick(() => {
+                this.shouldUpdateDisplay = true;
+              });
+            }, animationDelay)
+          );
+        });
+      });
+    },
+    stopDisplayRelatedImages() {
+      this.displayRelatedImageTimeout.forEach(clearTimeout);
+      this.displayRelatedImageTimeout = [];
+      this.relatedImagesPosition = [];
+    },
+    // This methods setup the display of related images from a related image
+    displaySecondRelatedImages(images) {
+      // Select randomly 3 display positions
+      this.potentialPosition
+        .sort(() => Math.random() - 0.5)
+        .slice(0, images.length)
+        .forEach((position, index) => {
+          this.secondRelatedImagesPosition.push({
+            position: position,
+            image: images[index],
+            display: false,
+            hover: false,
+            isTarget: false,
+          });
+        });
+      // Setup the display animation
+      this.$nextTick(() => {
+        this.secondRelatedImagesPosition.forEach((element, index) => {
+          const animationDelay = 1000 + 2000 * index;
+          this.displayRelatedImageTimeout.push(
+            setTimeout(() => {
+              this.secondRelatedImagesPosition[index].display = true;
+              this.$nextTick(() => {
+                this.shouldUpdateDisplay = true;
+              });
+            }, animationDelay)
+          );
+        });
+      });
+    },
+    stopSecondRelatedDisplay() {
+      this.fullHistoryMode = false;
+      this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
+      this.secondRelatedImageTimeout = [];
+      this.shouldRunCentralImageTransition = true;
+      this.secondRelatedImagesPosition = [];
+      this.couldLoad = true;
     },
     speedSelection() {
       // Find the transition speed
@@ -290,6 +1100,19 @@ export default {
           return 50;
       }
     },
+    // Position and size calculation methods
+    thumbnailHeight() {
+      return 17 * 4 * this.defineReponsiveFactor();
+    },
+    thumbnailWidth() {
+      return 9 * 4 * this.defineReponsiveFactor();
+    },
+    relatedThumbnailHeight() {
+      return 9 * 4 * this.defineReponsiveFactor();
+    },
+    relatedThumbnailWidth() {
+      return 8 * 4 * this.defineReponsiveFactor();
+    },
     defineReponsiveFactor() {
       switch (true) {
         case this.windowWidth >= 1000 && this.windowHeight >= 920:
@@ -309,27 +1132,174 @@ export default {
       }
     },
     defineTopImagePosition() {
-      return (this.windowHeight - this.thumbnailHeight()) / 2;
+      return (this.pageHeight - this.thumbnailHeight()) / 2;
     },
     defineLeftImagePosition() {
-      return (this.windowWidth - this.thumbnailWidth()) / 2;
+      return (this.pageWidth - this.thumbnailWidth()) / 2;
     },
     defineTopSliderPosition() {
       return (
-        (this.windowHeight - this.thumbnailHeight()) / 2 +
+        (this.pageHeight - this.thumbnailHeight()) / 2 +
         this.thumbnailHeight() / 2 -
         150
       );
     },
     defineLeftSliderPosition() {
-      return this.windowWidth / 2 + this.thumbnailWidth() / 2;
+      return this.pageWidth / 2 + this.thumbnailWidth() / 2;
+    },
+    defineLeftPositionCenterPage() {
+      return this.pageWidth / 2 - this.windowWidth / 2;
+    },
+    defineTopPositionCenterPage() {
+      return this.pageHeight / 2 - this.windowHeight / 2;
+    },
+    getRelatedImagePosition(relatedImage, originX, originY) {
+      switch (relatedImage.position) {
+        case 1:
+          return relatedImage.hover
+            ? [
+                (this.pageHeight -
+                  this.thumbnailHeight() -
+                  this.thumbnailHeight() / 4) /
+                  2 -
+                  this.thumbnailHeight() / 2.1,
+                originX - this.thumbnailWidth() * 1.5,
+              ]
+            : [
+                originY - this.thumbnailHeight() / 2.1,
+                originX - this.thumbnailWidth() * 1.5,
+              ];
+        case 2:
+          return relatedImage.hover
+            ? [
+                (this.pageHeight -
+                  this.thumbnailHeight() -
+                  this.thumbnailHeight() / 2) /
+                  2 -
+                  this.thumbnailHeight() / 2.1,
+                originX + this.thumbnailWidth() * 1.5,
+              ]
+            : [
+                originY - this.thumbnailHeight() / 2.1,
+                originX + this.thumbnailWidth() * 1.5,
+              ];
+        case 3:
+          return relatedImage.hover
+            ? [
+                (this.pageHeight -
+                  this.thumbnailHeight() -
+                  this.thumbnailHeight() / 2) /
+                  2 +
+                  this.thumbnailHeight() / 4,
+                originX - this.thumbnailWidth() * 3,
+              ]
+            : [
+                originY + this.thumbnailHeight() / 4,
+                originX - this.thumbnailWidth() * 3,
+              ];
+        case 4:
+          return relatedImage.hover
+            ? [
+                (this.pageHeight -
+                  this.thumbnailHeight() -
+                  this.thumbnailHeight() / 2) /
+                  2 +
+                  this.thumbnailHeight() / 4,
+                originX + this.thumbnailWidth() * 3,
+              ]
+            : [
+                originY + this.thumbnailHeight() / 4,
+                originX + this.thumbnailWidth() * 3,
+              ];
+        case 5:
+          return relatedImage.hover
+            ? [
+                (this.pageHeight -
+                  this.thumbnailHeight() -
+                  this.thumbnailHeight() / 2) /
+                  2 +
+                  this.thumbnailHeight() * 1.4,
+                originX - this.thumbnailWidth() * 1.5,
+              ]
+            : [
+                originY + this.thumbnailHeight() * 1.4,
+                originX - this.thumbnailWidth() * 1.5,
+              ];
+        case 6:
+          return relatedImage.hover
+            ? [
+                (this.pageHeight -
+                  this.thumbnailHeight() -
+                  this.thumbnailHeight() / 2) /
+                  2 +
+                  this.thumbnailHeight() * 1.4,
+                originX + this.thumbnailWidth() * 1.5,
+              ]
+            : [
+                originY + this.thumbnailHeight() * 1.4,
+                originX + this.thumbnailWidth() * 1.5,
+              ];
+        default:
+          return [0, 0];
+      }
     },
   },
   computed: {
     setPage() {
       return {
-        height: this.windowHeight + "px",
-        width: this.windowWidth + "px",
+        height: this.pageHeight + "px",
+        width: this.pageWidth + "px",
+        cursor: "pointer",
+        "user-select": "none",
+      };
+    },
+    imageInformationPosition() {
+      return {
+        height: "40px",
+        position: "absolute",
+        top: this.defineTopImagePosition() - 60 + "px",
+        left: this.defineLeftImagePosition() + "px",
+        display: "flex",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    secondImageInformationPosition() {
+      return {
+        height: "40px",
+        position: "absolute",
+        top: this.newOriginY - 60 + "px",
+        left: this.newOriginX + "px",
+        display: "flex",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    indexInformationPosition() {
+      return {
+        position: "absolute",
+        top: this.defineTopImagePosition() - 80 + "px",
+        left:
+          this.defineLeftImagePosition() + this.thumbnailWidth() - 20 + "px",
+        display: "flex",
+      };
+    },
+    imageCreatorPosition() {
+      return {
+        height: "40px",
+        position: "absolute",
+        display: "flex",
+        top: this.defineTopImagePosition() + this.thumbnailHeight() + "px",
+        left: this.defineLeftImagePosition() + "px",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    imageStoryPosition() {
+      return {
+        height: "40px",
+        position: "absolute",
+        display: "flex",
+        top: this.defineTopImagePosition() + this.thumbnailHeight() + 40 + "px",
+        left: this.defineLeftImagePosition() + "px",
+        width: this.thumbnailWidth() + "px",
       };
     },
     imagePosition() {
@@ -337,6 +1307,341 @@ export default {
         position: "absolute",
         top: this.defineTopImagePosition() + "px",
         left: this.defineLeftImagePosition() + "px",
+      };
+    },
+    imageViewerDisplay() {
+      return {
+        position: "absolute",
+        height: this.carouselHover
+          ? this.thumbnailHeight() + "px"
+          : this.relatedThumbnailHeight() + "px",
+        width: this.carouselHover
+          ? this.thumbnailWidth() + "px"
+          : this.relatedThumbnailWidth() + "px",
+        "margin-top": this.carouselHover
+          ? 0
+          : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
+        transition: this.shouldRunCentralImageTransition
+          ? "height 0.3s, margin 0.3s"
+          : "height 0s, margin 0s",
+      };
+    },
+    relatedImagePosition1() {
+      const positions = this.getRelatedImagePosition(
+        this.relatedImagesPosition[0],
+        this.defineLeftImagePosition(),
+        this.defineTopImagePosition()
+      );
+      return {
+        position: "absolute",
+        top: positions[0] + "px",
+        left: positions[1] + "px",
+        overflow: "hidden",
+        height: this.thumbnailHeight() + "px",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    relatedImageDisplay1() {
+      return {
+        position: "absolute",
+        height: this.relatedImagesPosition[0].hover
+          ? this.thumbnailHeight() + "px"
+          : this.relatedThumbnailHeight() + "px",
+        width: this.relatedImagesPosition[0].hover
+          ? this.thumbnailWidth() + "px"
+          : this.relatedThumbnailWidth() + "px",
+        "margin-top": this.relatedImagesPosition[0].hover
+          ? 0
+          : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
+        transition: "height 0.3s, margin 0.3s",
+      };
+    },
+    secondRelatedImagePosition1() {
+      const positions = this.getRelatedImagePosition(
+        this.secondRelatedImagesPosition[0],
+        this.newOriginX,
+        this.newOriginY
+      );
+      return {
+        position: "absolute",
+        top: positions[0] + "px",
+        left: positions[1] + "px",
+        overflow: "hidden",
+        height: this.thumbnailHeight() + "px",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    secondRelatedImageDisplay1() {
+      return {
+        position: "absolute",
+        height: this.secondRelatedImagesPosition[0].hover
+          ? this.thumbnailHeight() + "px"
+          : this.relatedThumbnailHeight() + "px",
+        width: this.secondRelatedImagesPosition[0].hover
+          ? this.thumbnailWidth() + "px"
+          : this.relatedThumbnailWidth() + "px",
+        "margin-top": this.secondRelatedImagesPosition[0].hover
+          ? 0
+          : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
+        transition: "height 0.3s, margin 0.3s",
+      };
+    },
+    relatedInformationPosition1() {
+      const positions = this.getRelatedImagePosition(
+        this.relatedImagesPosition[0],
+        this.defineLeftImagePosition(),
+        this.defineTopImagePosition()
+      );
+      const top =
+        positions[0] < this.pageHeight / 2
+          ? positions[0] +
+            this.relatedThumbnailHeight() +
+            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
+          : positions[0] + this.relatedThumbnailHeight() / 4;
+      const left =
+        positions[1] < this.pageWidth / 2
+          ? positions[1] + this.relatedThumbnailWidth() - 60
+          : positions[1];
+      return {
+        position: "absolute",
+        top: top + "px",
+        left: left + "px",
+        overflow: "hidden",
+      };
+    },
+    secondRelatedInformationPosition1() {
+      const positions = this.getRelatedImagePosition(
+        this.secondRelatedImagesPosition[0],
+        this.newOriginX,
+        this.newOriginY
+      );
+      const top =
+        positions[0] < this.newOriginY
+          ? positions[0] +
+            this.relatedThumbnailHeight() +
+            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
+          : positions[0] + this.relatedThumbnailHeight() / 4;
+      const left =
+        positions[1] < this.newOriginX
+          ? positions[1] + this.relatedThumbnailWidth() - 60
+          : positions[1];
+      return {
+        position: "absolute",
+        top: top + "px",
+        left: left + "px",
+        overflow: "hidden",
+      };
+    },
+    relatedImagePosition2() {
+      const positions = this.getRelatedImagePosition(
+        this.relatedImagesPosition[1],
+        this.defineLeftImagePosition(),
+        this.defineTopImagePosition()
+      );
+      return {
+        position: "absolute",
+        top: positions[0] + "px",
+        left: positions[1] + "px",
+        overflow: "hidden",
+        height: this.thumbnailHeight() + "px",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    relatedImageDisplay2() {
+      return {
+        position: "absolute",
+        height: this.relatedImagesPosition[1].hover
+          ? this.thumbnailHeight() + "px"
+          : this.relatedThumbnailHeight() + "px",
+        width: this.relatedImagesPosition[1].hover
+          ? this.thumbnailWidth() + "px"
+          : this.relatedThumbnailWidth() + "px",
+        "margin-top": this.relatedImagesPosition[1].hover
+          ? 0
+          : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
+        transition: "height 0.3s, margin 0.3s",
+      };
+    },
+    secondRelatedImagePosition2() {
+      const positions = this.getRelatedImagePosition(
+        this.secondRelatedImagesPosition[1],
+        this.newOriginX,
+        this.newOriginY
+      );
+      return {
+        position: "absolute",
+        top: positions[0] + "px",
+        left: positions[1] + "px",
+        overflow: "hidden",
+        height: this.thumbnailHeight() + "px",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    secondRelatedImageDisplay2() {
+      return {
+        position: "absolute",
+        height: this.secondRelatedImagesPosition[1].hover
+          ? this.thumbnailHeight() + "px"
+          : this.relatedThumbnailHeight() + "px",
+        width: this.secondRelatedImagesPosition[1].hover
+          ? this.thumbnailWidth() + "px"
+          : this.relatedThumbnailWidth() + "px",
+        "margin-top": this.secondRelatedImagesPosition[1].hover
+          ? 0
+          : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
+        transition: "height 0.3s, margin 0.3s",
+      };
+    },
+    relatedInformationPosition2() {
+      const positions = this.getRelatedImagePosition(
+        this.relatedImagesPosition[1],
+        this.defineLeftImagePosition(),
+        this.defineTopImagePosition()
+      );
+      const top =
+        positions[0] < this.pageHeight / 2
+          ? positions[0] +
+            this.relatedThumbnailHeight() +
+            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
+          : positions[0] + this.relatedThumbnailHeight() / 4;
+      const left =
+        positions[1] < this.pageWidth / 2
+          ? positions[1] + this.relatedThumbnailWidth() - 60
+          : positions[1];
+      return {
+        position: "absolute",
+        top: top + "px",
+        left: left + "px",
+        overflow: "hidden",
+      };
+    },
+    secondRelatedInformationPosition2() {
+      const positions = this.getRelatedImagePosition(
+        this.secondRelatedImagesPosition[1],
+        this.newOriginX,
+        this.newOriginY
+      );
+      const top =
+        positions[0] < this.newOriginY
+          ? positions[0] +
+            this.relatedThumbnailHeight() +
+            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
+          : positions[0] + this.relatedThumbnailHeight() / 4;
+      const left =
+        positions[1] < this.newOriginX
+          ? positions[1] + this.relatedThumbnailWidth() - 60
+          : positions[1];
+      return {
+        position: "absolute",
+        top: top + "px",
+        left: left + "px",
+        overflow: "hidden",
+      };
+    },
+    relatedImagePosition3() {
+      const positions = this.getRelatedImagePosition(
+        this.relatedImagesPosition[2],
+        this.defineLeftImagePosition(),
+        this.defineTopImagePosition()
+      );
+      return {
+        position: "absolute",
+        top: positions[0] + "px",
+        left: positions[1] + "px",
+        overflow: "hidden",
+        height: this.thumbnailHeight() + "px",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    relatedImageDisplay3() {
+      return {
+        position: "absolute",
+        height: this.relatedImagesPosition[2].hover
+          ? this.thumbnailHeight() + "px"
+          : this.relatedThumbnailHeight() + "px",
+        width: this.relatedImagesPosition[2].hover
+          ? this.thumbnailWidth() + "px"
+          : this.relatedThumbnailWidth() + "px",
+        "margin-top": this.relatedImagesPosition[2].hover
+          ? 0
+          : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
+        transition: "height 0.3s, margin 0.3s",
+      };
+    },
+    secondRelatedImagePosition3() {
+      const positions = this.getRelatedImagePosition(
+        this.secondRelatedImagesPosition[2],
+        this.newOriginX,
+        this.newOriginY
+      );
+      return {
+        position: "absolute",
+        top: positions[0] + "px",
+        left: positions[1] + "px",
+        overflow: "hidden",
+        height: this.thumbnailHeight() + "px",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    secondRelatedImageDisplay3() {
+      return {
+        position: "absolute",
+        height: this.secondRelatedImagesPosition[2].hover
+          ? this.thumbnailHeight() + "px"
+          : this.relatedThumbnailHeight() + "px",
+        width: this.secondRelatedImagesPosition[2].hover
+          ? this.thumbnailWidth() + "px"
+          : this.relatedThumbnailWidth() + "px",
+        "margin-top": this.secondRelatedImagesPosition[2].hover
+          ? 0
+          : (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 + "px",
+        transition: "height 0.3s, margin 0.3s",
+      };
+    },
+    relatedInformationPosition3() {
+      const positions = this.getRelatedImagePosition(
+        this.relatedImagesPosition[2],
+        this.defineLeftImagePosition(),
+        this.defineTopImagePosition()
+      );
+      const top =
+        positions[0] < this.pageHeight / 2
+          ? positions[0] +
+            this.relatedThumbnailHeight() +
+            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
+          : positions[0] + this.relatedThumbnailHeight() / 4;
+      const left =
+        positions[1] < this.pageWidth / 2
+          ? positions[1] + this.relatedThumbnailWidth() - 60
+          : positions[1];
+      return {
+        position: "absolute",
+        top: top + "px",
+        left: left + "px",
+        overflow: "hidden",
+      };
+    },
+    secondRelatedInformationPosition3() {
+      const positions = this.getRelatedImagePosition(
+        this.secondRelatedImagesPosition[2],
+        this.newOriginX,
+        this.newOriginY
+      );
+      const top =
+        positions[0] < this.newOriginY
+          ? positions[0] +
+            this.relatedThumbnailHeight() +
+            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
+          : positions[0] + this.relatedThumbnailHeight() / 4;
+      const left =
+        positions[1] < this.newOriginX
+          ? positions[1] + this.relatedThumbnailWidth() - 60
+          : positions[1];
+      return {
+        position: "absolute",
+        top: top + "px",
+        left: left + "px",
+        overflow: "hidden",
       };
     },
     fontSliderPosition() {
@@ -363,7 +1668,13 @@ export default {
     componentSize() {
       return {
         height: this.thumbnailHeight() + "px",
-        width: 9 * 4 * this.defineReponsiveFactor() + "px",
+        width: this.thumbnailWidth() + "px",
+      };
+    },
+    imageUnzoomEffect() {
+      return {
+        "v-zoom": this.step !== 300,
+        "v-unzoom": this.step === 300,
       };
     },
     // Setup image display and translation for the scrolling
@@ -422,6 +1733,7 @@ export default {
         "v-museum-20": this.speed === 50,
       };
     },
+
     selectArrayDisplay() {
       return {
         "v-start": this.isBeginning,
@@ -429,19 +1741,47 @@ export default {
         "v-end": this.isEnd,
       };
     },
-    ...mapState(["images", "isLoadingImage"]),
+    ...mapState([
+      "images",
+      "isLoadingImage",
+      "relatedImages",
+      "secondRelatedImages",
+      "completionData",
+    ]),
+    ...mapGetters({
+      getImagesByDecade: "getImagesByDecade",
+      getCompletionByDecade: "getCompletionByDecade",
+      getVisitedIndexByDecade: "getVisitedIndexByDecade",
+    }),
   },
   mounted() {
-    // Use to find the ratio and to add the content correctly in the scroll and to know the translation size
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
 
-    // The parameter for the year search will come from the previous selection view.
-    // Currently, this value is hard-coded for testing purpose.
-    this.$store.dispatch("initializeCarousel", {
-      decade: "193",
-    });
+    this.rectangleHeight = this.thumbnailHeight() + 20;
+    this.rectangleWidth = this.thumbnailWidth() + 20;
+
+    this.currentXPosition = this.defineLeftPositionCenterPage();
+    this.currentYPosition = this.defineTopPositionCenterPage();
+
+    this.currentDecade = this.$route.params.decade;
+    const data = this.getImagesByDecade(this.currentDecade);
+    const id = this.$route.query.id;
+    const comeFromOnboarding = this.$route.query.comeFromOnboarding;
+
+    if (id) {
+      this.loadFromFocusPage(data, id);
+    } else if (comeFromOnboarding) {
+      this.loadFromOnboarding(data);
+    } else if (data === undefined) {
+      this.$store.dispatch("initializeCarousel", {
+        decade: this.currentDecade,
+      });
+    } else {
+      this.data = data.data;
+      this.loadInitialData();
+    }
   },
 };
 </script>
@@ -449,4 +1789,5 @@ export default {
 <style scoped>
 @import "./imageselector.css";
 @import "./sliderspeed.css";
+@import "./carouselAnimation.css";
 </style>

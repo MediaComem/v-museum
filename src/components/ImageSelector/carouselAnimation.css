@@ -1,0 +1,461 @@
+.zoomTransitionImageSlow {
+  opacity: 0.9;
+}
+
+.zoomTransitionImageMedium {
+  opacity: 0.8;
+}
+
+.zoomTransitionImageFast {
+  animation: maskTransitionImageFast 5s linear 0s normal forwards;
+}
+
+@keyframes maskTransitionImageFast {
+  0% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.5) 97%
+    );
+  }
+  5% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.3) 94%
+    );
+  }
+  10% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.1) 91%
+    );
+  }
+  15% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 88%
+    );
+  }
+  20% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 85%
+    );
+  }
+  25% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 82%
+    );
+  }
+  30% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 79%
+    );
+  }
+  35% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 76%
+    );
+  }
+  40% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 73%
+    );
+  }
+  45% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 70%
+    );
+  }
+  50% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 67%
+    );
+  }
+  55% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 64%
+    );
+  }
+  60% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 61%
+    );
+  }
+  65% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 59%
+    );
+  }
+  70% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 56%
+    );
+  }
+  75% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 53%
+    );
+  }
+  80% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 50%
+    );
+  }
+  85% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 47%
+    );
+  }
+  90% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 44%
+    );
+  }
+  95% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 41%
+    );
+  }
+  100% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 40%
+    );
+  }
+}
+
+.unzoomTransitionImageFast {
+  animation: unMaskTransitionImageFast 1.5s linear 0s normal forwards;
+}
+
+@keyframes unMaskTransitionImageFast {
+  0% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 40%
+    );
+  }
+  5% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 43%
+    );
+  }
+  10% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 46%
+    );
+  }
+  15% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 49%
+    );
+  }
+  20% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 52%
+    );
+  }
+  25% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 55%
+    );
+  }
+  30% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 58%
+    );
+  }
+  35% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 61%
+    );
+  }
+  40% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 64%
+    );
+  }
+  45% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 67%
+    );
+  }
+  50% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 70%
+    );
+  }
+  55% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 73%
+    );
+  }
+  60% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 76%
+    );
+  }
+  65% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 79%
+    );
+  }
+  70% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 82%
+    );
+  }
+  75% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 85%
+    );
+  }
+  80% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 88%
+    );
+  }
+  85% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.1) 91%
+    );
+  }
+  90% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.3) 94%
+    );
+  }
+  95% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.5) 97%
+    );
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
+.unzoomTransitionImageFastEnd {
+  animation: unMaskTransitionImageFastEnd 1.5s linear 0s normal forwards;
+}
+
+@keyframes unMaskTransitionImageFastEnd {
+  0% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 40%
+    );
+  }
+  5% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 43%
+    );
+  }
+  10% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 46%
+    );
+  }
+  15% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 49%
+    );
+  }
+  20% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 52%
+    );
+  }
+  25% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 55%
+    );
+  }
+  30% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 58%
+    );
+  }
+  35% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 61%
+    );
+  }
+  40% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 64%
+    );
+  }
+  45% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 67%
+    );
+  }
+  50% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 70%
+    );
+  }
+  55% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 73%
+    );
+  }
+  60% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 76%
+    );
+  }
+  65% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 79%
+    );
+  }
+  70% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 82%
+    );
+  }
+  75% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 85%
+    );
+  }
+  80% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0) 88%
+    );
+  }
+  85% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.1) 91%
+    );
+  }
+  90% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.3) 94%
+    );
+  }
+  95% {
+    mask-image: radial-gradient(
+      circle at 50% 50%,
+      black 10%,
+      rgba(0, 0, 0, 0.5) 97%
+    );
+  }
+  100% {
+    mask-image: unset;
+  }
+}

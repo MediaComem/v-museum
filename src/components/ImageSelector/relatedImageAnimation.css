@@ -1,0 +1,29 @@
+.relatedImageBase {
+  animation: relatedImageBaseAnimation 3s linear 0s normal forwards;
+}
+
+@keyframes relatedImageBaseAnimation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.removeRelatedImageBaseText {
+  animation: removeRelatedImageBaseAnimation 3s linear 0s normal forwards;
+}
+
+.removeRelatedImageBase {
+  animation: removeRelatedImageBaseAnimation 8s linear 0s normal forwards;
+}
+
+@keyframes removeRelatedImageBaseAnimation {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
