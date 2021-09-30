@@ -836,6 +836,7 @@ export default {
       this.loadMoreContent(80);
 
       if (forward) {
+        console.log(this.data.length)
         if (this.currentIndex !== this.data.length - 1) {
           this.currentIndex = this.currentIndex + 1;
           if (this.maxVisitedIndex < this.currentIndex) {
