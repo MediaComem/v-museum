@@ -413,19 +413,19 @@ h3 {
   position: absolute;
   top: 2vh;
   width: 98vw;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 .arrow-down {
   position: absolute;
   top: 90vh;
   width: 98vw;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 .arrow-down-mobile {
   width: 98vw;
-  justify-content: end;
+  justify-content: flex-end;
   position: absolute;
   top: 95vh;
 }
