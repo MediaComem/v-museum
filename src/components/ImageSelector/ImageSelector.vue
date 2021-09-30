@@ -260,7 +260,7 @@
     </div>
     <!-- Slider Part -->
     <div
-      v-if="carouselHover"
+      v-show="carouselHover"
       class="font-slider"
       :style="fontSliderPosition"
     ></div>
@@ -268,9 +268,13 @@
       :style="sliderPosition"
       @mouseover="blockDrag = true"
       @mouseleave="blockDrag = false"
+      @dragover="blockDrag = true"
+      @dragleave="blockDrag = false"
+      @touchstart="blockDrag = true"
+      @touchend="blockDrag = false"
     >
       <el-slider
-        v-if="carouselHover"
+        v-show="carouselHover"
         :class="selectArrayDisplay"
         style="width: 42px"
         ref="slider"
