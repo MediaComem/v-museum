@@ -171,7 +171,7 @@ export default {
       if (!this.isFullHistory) {
         setTimeout(() => {
           this.isAnimated = false;
-      }, 300);
+      }, 100);
       }
     },
     history: {

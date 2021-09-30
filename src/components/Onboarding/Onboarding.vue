@@ -47,7 +47,7 @@
       <div v-if="!isMobile">
         <img
           class="slider-effect image-display"
-          :src="`/onboarding/${item.imagePath}`"
+          :src="`/v-museum/onboarding/${item.imagePath}`"
         />
         <div
           class="collapse-transition"
@@ -135,7 +135,7 @@
         <el-row>
           <img
             class="image-display-mobile"
-            :src="`/onboarding/${item.imagePath}`"
+            :src="`/v-museum/onboarding/${item.imagePath}`"
           />
         </el-row>
         <arrow-up
