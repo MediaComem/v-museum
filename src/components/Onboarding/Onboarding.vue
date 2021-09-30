@@ -15,16 +15,16 @@
             <img class="first-image" src="@/assets/onboarding/first.png" />
           </el-col>
         </el-row>
-        <el-row :gutter="20" :justify="'center'">
+        <el-row :gutter="20" :justify="'center'" style="margin:0">
           <h1 class="page-title">{{ information.title }}</h1>
         </el-row>
-        <el-row :gutter="20" :justify="'center'">
+        <el-row :gutter="20" :justify="'center'" style="margin:0">
           <h2 class="page-subtitle">{{ information.subtitle }}</h2>
         </el-row>
-        <el-row :gutter="20" :justify="'center'">
+        <el-row :gutter="20" :justify="'center'" style="margin:0">
           <h3 class="text-title">{{ information.header }}</h3>
         </el-row>
-        <el-row :gutter="20" :justify="'center'">
+        <el-row :gutter="20" :justify="'center'" style="margin:0">
           <p class="text">{{ information.body }}</p>
         </el-row>
         <el-row :justify="'center'">
@@ -47,7 +47,7 @@
       <div v-if="!isMobile">
         <img
           class="slider-effect image-display"
-          :src="`/v-museum/onboarding/${item.imagePath}`"
+          :src="`/onboarding/${item.imagePath}`"
         />
         <div
           class="collapse-transition"
