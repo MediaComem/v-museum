@@ -173,9 +173,7 @@
       <div @click="loadOnboarding()" style="z-index:1">
         <p style="margin: 0; margin-left: 60px;">
           {{ currentDecade + "0" }}
-          <img
-            src="@/assets/image-selector/vector.png"
-          />
+          <img src="@/assets/image-selector/vector.png" />
           &nbsp;
         </p>
       </div>
@@ -468,17 +466,19 @@ export default {
       this.endDisplay = true;
     },
     relatedImages: function(images) {
-      this.endDisplay = false;
-      this.displayRelatedImages(images);
-      // The animations take 8 seconds so store history only at the end.
-      this.historyTimeout = setTimeout(() => {
-        this.$store.dispatch("insertHistory", {
-          decade: this.currentDecade,
-          index: this.currentIndex,
-          data: this.data[this.currentIndex].imagePaths.square,
-        });
-        this.endDisplay = true;
-      }, 8000);
+      if (this.shouldLoadRelatedImage) {
+        this.endDisplay = false;
+        this.displayRelatedImages(images);
+        // The animations take 8 seconds so store history only at the end.
+        this.historyTimeout = setTimeout(() => {
+          this.$store.dispatch("insertHistory", {
+            decade: this.currentDecade,
+            index: this.currentIndex,
+            data: this.data[this.currentIndex].imagePaths.square,
+          });
+          this.endDisplay = true;
+        }, 8000);
+      }
     },
     secondRelatedImages: function(relatedImages) {
       if (
@@ -572,6 +572,7 @@ export default {
       isDrag: false,
       blockDrag: false,
       shouldStartRelatedImageSearch: false,
+      shouldLoadRelatedImage: true,
       // Information uses to manage the animations
       zoomingStep: 3,
       nbImageMove: 0,
@@ -888,6 +889,7 @@ export default {
         }, 200);
       } else {
         this.shouldStartRelatedImageSearch = true;
+        this.shouldLoadRelatedImage = false;
         this.isDrag = false;
         this.stopDisplayRelatedImages();
         this.decelerateTimouts.forEach(clearTimeout);
@@ -948,6 +950,7 @@ export default {
       clearTimeout(this.timeout);
       this.stopInterval();
 
+      this.shouldLoadRelatedImage = true;
       this.shouldRunSideAnimation = false;
       this.previousSpeed = 0;
 
