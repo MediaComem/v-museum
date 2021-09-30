@@ -47,7 +47,7 @@
       <div v-if="!isMobile">
         <img
           class="slider-effect image-display"
-          :src="`/onboarding/${item.imagePath}`"
+          :src="`/v-museum/onboarding/${item.imagePath}`"
         />
         <div
           class="collapse-transition"
