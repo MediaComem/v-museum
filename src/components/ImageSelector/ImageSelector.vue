@@ -823,12 +823,10 @@ export default {
       return this.step > 290 && this.step < 310;
     },
     loadMoreContent(diffMaxIndexBeforeLoad) {
-      console.log("SHOULD LOAD? " + this.data.length + " : " + diffMaxIndexBeforeLoad + " : " + this.isLoadingImage)
       if (
         this.currentIndex > this.data.length - diffMaxIndexBeforeLoad &&
         !this.isLoadingImage
       ) {
-        console.log("LOAD")
         this.$store.dispatch("loadNextContent", { decade: this.currentDecade });
       }
     },
@@ -836,7 +834,6 @@ export default {
       this.loadMoreContent(80);
 
       if (forward) {
-        console.log(this.data.length)
         if (this.currentIndex !== this.data.length - 1) {
           this.currentIndex = this.currentIndex + 1;
           if (this.maxVisitedIndex < this.currentIndex) {
