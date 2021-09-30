@@ -1172,11 +1172,11 @@ export default {
                   this.thumbnailHeight() / 4) /
                   2 -
                   this.thumbnailHeight() / 2.1,
-                originX - this.thumbnailWidth() * 1.5,
+                originX - this.thumbnailWidth() * 1.2,
               ]
             : [
                 originY - this.thumbnailHeight() / 2.1,
-                originX - this.thumbnailWidth() * 1.5,
+                originX - this.thumbnailWidth() * 1.2,
               ];
         case 2:
           return relatedImage.hover
@@ -1186,11 +1186,11 @@ export default {
                   this.thumbnailHeight() / 2) /
                   2 -
                   this.thumbnailHeight() / 2.1,
-                originX + this.thumbnailWidth() * 1.5,
+                originX + this.thumbnailWidth() * 1.2,
               ]
             : [
                 originY - this.thumbnailHeight() / 2.1,
-                originX + this.thumbnailWidth() * 1.5,
+                originX + this.thumbnailWidth() * 1.2,
               ];
         case 3:
           return relatedImage.hover
@@ -1200,11 +1200,11 @@ export default {
                   this.thumbnailHeight() / 2) /
                   2 +
                   this.thumbnailHeight() / 4,
-                originX - this.thumbnailWidth() * 3,
+                originX - this.thumbnailWidth() * 2.3,
               ]
             : [
                 originY + this.thumbnailHeight() / 4,
-                originX - this.thumbnailWidth() * 3,
+                originX - this.thumbnailWidth() * 2.3,
               ];
         case 4:
           return relatedImage.hover
@@ -1214,11 +1214,11 @@ export default {
                   this.thumbnailHeight() / 2) /
                   2 +
                   this.thumbnailHeight() / 4,
-                originX + this.thumbnailWidth() * 3,
+                originX + this.thumbnailWidth() * 2.3,
               ]
             : [
                 originY + this.thumbnailHeight() / 4,
-                originX + this.thumbnailWidth() * 3,
+                originX + this.thumbnailWidth() * 2.3,
               ];
         case 5:
           return relatedImage.hover
@@ -1227,12 +1227,12 @@ export default {
                   this.thumbnailHeight() -
                   this.thumbnailHeight() / 2) /
                   2 +
-                  this.thumbnailHeight() * 1.4,
-                originX - this.thumbnailWidth() * 1.5,
+                  this.thumbnailHeight(),
+                originX - this.thumbnailWidth() * 1.2,
               ]
             : [
-                originY + this.thumbnailHeight() * 1.4,
-                originX - this.thumbnailWidth() * 1.5,
+                originY + this.thumbnailHeight(),
+                originX - this.thumbnailWidth() * 1.2,
               ];
         case 6:
           return relatedImage.hover
@@ -1241,12 +1241,12 @@ export default {
                   this.thumbnailHeight() -
                   this.thumbnailHeight() / 2) /
                   2 +
-                  this.thumbnailHeight() * 1.4,
-                originX + this.thumbnailWidth() * 1.5,
+                  this.thumbnailHeight(),
+                originX + this.thumbnailWidth() * 1.2,
               ]
             : [
-                originY + this.thumbnailHeight() * 1.4,
-                originX + this.thumbnailWidth() * 1.5,
+                originY + this.thumbnailHeight(),
+                originX + this.thumbnailWidth() * 1.2,
               ];
         default:
           return [0, 0];
