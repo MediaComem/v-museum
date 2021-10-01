@@ -1761,6 +1761,8 @@ export default {
   mounted() {
     this.$store.dispatch("restartLoadingState");
 
+    this.$refs.display.addEventListener("DOMMouseScroll", this.mouseWheel, false);
+
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
@@ -1789,6 +1791,9 @@ export default {
       this.loadInitialData();
     }
   },
+  unmounted() {
+    this.$refs.display.removeEventListener("DOMMouseScroll", this.mouseWheel, false);
+  }
 };
 </script>
 
