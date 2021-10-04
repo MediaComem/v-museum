@@ -35,7 +35,7 @@
       </p>
     </el-row>
     <el-row>
-      <p>{{ tags.join(", ") }}</p>
+      <p style="text-align: left">{{ tags.join(", ") }}</p>
     </el-row>
     <el-row v-if="storyCollection">
       <p>{{ currentIndex + 1 }} / {{ storyCollection.length }}</p>
