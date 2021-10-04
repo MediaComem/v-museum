@@ -2,7 +2,7 @@
   <div class="information-manager">
     <el-row>
       <img src="@/assets/shared/cross.svg" @click="backToCanvasView()" />
-      <infos @click="display = !display" :display="display"/>
+      <infos @click="display = !display" :display="display" />
     </el-row>
   </div>
   <div v-if="imageData" class="information" :style="collapse">
@@ -12,7 +12,7 @@
       </h1>
     </el-row>
     <el-row>
-      <h2>Author</h2>
+      <h2>Illustrator</h2>
     </el-row>
     <el-row>
       <h3>
@@ -20,9 +20,22 @@
       </h3>
     </el-row>
     <el-row>
+      <p class="gray-text">
+        Magazine Issue
+      </p>
+    </el-row>
+    <el-row>
       <p>
         {{ this.imageData.medium }}
       </p>
+    </el-row>
+    <el-row>
+      <p class="gray-text">
+        Key words
+      </p>
+    </el-row>
+    <el-row>
+      <p>{{ tags.join(", ") }}</p>
     </el-row>
     <el-row v-if="storyCollection">
       <p>{{ currentIndex + 1 }} / {{ storyCollection.length }}</p>
@@ -70,6 +83,7 @@ export default {
       currentIndex: undefined,
       // Represent the current image displayed with all its information
       imageData: undefined,
+      tags: [],
       // All the images related to a story
       storyCollection: undefined,
       // Open sea dragon viewer element
@@ -80,28 +94,30 @@ export default {
     previousImage() {
       if (this.currentIndex > 0) {
         this.currentIndex = this.currentIndex - 1;
-        this.imageData = this.storyCollection[this.currentIndex];
-        dataFetching.getOriginalImage(this.imageData.media).then((image) => {
-          this.viewer.destroy();
-          this.openImage(image);
-          this.$store.dispatch("loadTotalImageByDecade", {
-            decade: this.imageData.decade.slice(0, 3),
-          });
-        });
+      } else {
+        this.currentIndex = this.storyCollection.length - 1;
       }
+      this.loadImage();
     },
     nextImage() {
       if (this.currentIndex < this.storyCollection.length - 1) {
         this.currentIndex = this.currentIndex + 1;
-        this.imageData = this.storyCollection[this.currentIndex];
-        dataFetching.getOriginalImage(this.imageData.media).then((image) => {
-          this.viewer.destroy();
-          this.openImage(image);
-          this.$store.dispatch("loadTotalImageByDecade", {
-            decade: this.imageData.decade.slice(0, 3),
-          });
-        });
+      } else {
+        this.currentIndex = 0;
       }
+      this.loadImage();
+    },
+    loadImage() {
+      this.imageData = this.storyCollection[this.currentIndex];
+      this.tags = [];
+      this.imageData.tags.forEach((tag) => this.tags.push(tag["@value"]));
+      dataFetching.getOriginalImage(this.imageData.media).then((image) => {
+        this.viewer.destroy();
+        this.openImage(image);
+        this.$store.dispatch("loadTotalImageByDecade", {
+          decade: this.imageData.decade.slice(0, 3),
+        });
+      });
     },
     backToCanvasView() {
       this.$router.push({
@@ -140,6 +156,8 @@ export default {
   mounted() {
     dataFetching.getImageById(this.imageId).then((result) => {
       this.imageData = result[0];
+      this.tags = [];
+      this.imageData.tags.forEach((tag) => this.tags.push(tag["@value"]));
       if (this.imageData && this.imageData.title) {
         dataFetching
           .getImagesByTitle(this.imageData.title)
@@ -309,5 +327,9 @@ span {
 
 .svg-position {
   margin-bottom: 13px;
+}
+
+.gray-text {
+  color: gray;
 }
 </style>
