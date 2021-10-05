@@ -212,7 +212,7 @@ export const actions = {
         promises.push(
           dataFetch.getRelatedImages(tag, id).then((result) => {
             if (result) {
-              relatedImages.push({ tag: tag, result: result });
+              relatedImages.push({ tag: tag, result: result, originalId: id });
             }
           })
         );
@@ -232,7 +232,7 @@ export const actions = {
         promises.push(
           dataFetch.getRelatedImages(tag, id).then((result) => {
             if (result) {
-              relatedImages.push({ tag: tag, result: result });
+              relatedImages.push({ tag: tag, result: result, originalId: id });
             }
           })
         );

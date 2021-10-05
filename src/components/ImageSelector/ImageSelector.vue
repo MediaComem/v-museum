@@ -33,7 +33,23 @@
     <!-- Related Image display part -->
     <div
       :style="relatedImagePosition1"
-      v-if="relatedImagesPosition.length > 0"
+      v-if="relatedImagesPosition.length > 0 && !relatedImagesPosition[0].image"
+    >
+      <div
+        ref="position0"
+        class="loading"
+        :style="relatedImageDisplay1"
+        style="background-color: lightgray"
+      >
+        <div class="loader">
+          <div class="loader-wheel"></div>
+          <div class="loader-text"></div>
+        </div>
+      </div>
+    </div>
+    <div
+      :style="relatedImagePosition1"
+      v-if="relatedImagesPosition.length > 0 && relatedImagesPosition[0].image"
       :class="{
         removeRelatedImageBase:
           secondRelatedImagesPosition.length > 0 &&
@@ -46,7 +62,22 @@
     </div>
     <div
       :style="relatedImagePosition2"
-      v-if="relatedImagesPosition.length > 1"
+      v-if="relatedImagesPosition.length > 1 && !relatedImagesPosition[1].image"
+    >
+      <div
+        ref="position1"
+        class="loading"
+        :style="relatedImageDisplay2"
+        style="background-color: lightgray"
+      >
+        <div class="loader">
+          <div class="loader-wheel"></div>
+        </div>
+      </div>
+    </div>
+    <div
+      :style="relatedImagePosition2"
+      v-if="relatedImagesPosition.length > 1 && relatedImagesPosition[1].image"
       :class="{
         removeRelatedImageBase:
           secondRelatedImagesPosition.length > 0 &&
@@ -59,7 +90,23 @@
     </div>
     <div
       :style="relatedImagePosition3"
-      v-if="relatedImagesPosition.length > 2"
+      v-if="relatedImagesPosition.length > 2 && !relatedImagesPosition[2].image"
+    >
+      <div
+        ref="position2"
+        class="loading"
+        :style="relatedImageDisplay3"
+        style="background-color: lightgray"
+      >
+        <div class="loader">
+          <div class="loader-wheel"></div>
+          <div class="loader-text"></div>
+        </div>
+      </div>
+    </div>
+    <div
+      :style="relatedImagePosition3"
+      v-if="relatedImagesPosition.length > 2 && relatedImagesPosition[2].image"
       :class="{
         removeRelatedImageBase:
           secondRelatedImagesPosition.length > 0 &&
@@ -132,7 +179,9 @@
         :style="{ width: thumbnailWidth() + 'px' }"
       >
         <p
-          v-if="relatedImagesPosition.length > 0"
+          v-if="
+            relatedImagesPosition.length > 0 && relatedImagesPosition[0].image
+          "
           class="image-information"
           :class="{
             removeRelatedImageBaseText: relatedImagesPosition[0].display,
@@ -141,7 +190,9 @@
           {{ relatedImagesPosition[0].image.tag["@value"] }} &nbsp;
         </p>
         <p
-          v-if="relatedImagesPosition.length > 1"
+          v-if="
+            relatedImagesPosition.length > 1 && relatedImagesPosition[1].image
+          "
           class="image-information"
           :class="{
             removeRelatedImageBaseText: relatedImagesPosition[1].display,
@@ -150,7 +201,9 @@
           {{ relatedImagesPosition[1].image.tag["@value"] }} &nbsp;
         </p>
         <p
-          v-if="relatedImagesPosition.length > 2"
+          v-if="
+            relatedImagesPosition.length > 2 && relatedImagesPosition[2].image
+          "
           class="image-information"
           :class="{
             removeRelatedImageBaseText: relatedImagesPosition[2].display,
@@ -422,6 +475,7 @@ export default {
             tags: this.data.data[this.currentIndex].tags,
             id: this.data.data[this.currentIndex].id,
           });
+          this.setupPosition();
         } else {
           // If the loading comes from related images, load the next related images and associated data
           this.nextDecade = this.$route.params.decade;
@@ -466,7 +520,11 @@ export default {
       this.endDisplay = true;
     },
     relatedImages: function(images) {
-      if (this.shouldLoadRelatedImage) {
+      if (
+        this.shouldLoadRelatedImage &&
+        images[0] &&
+        images[0].originalId == this.data[this.currentIndex].id
+      ) {
         this.endDisplay = false;
         this.displayRelatedImages(images);
         // The animations take 8 seconds so store history only at the end.
@@ -633,6 +691,7 @@ export default {
             tags: this.data[this.currentIndex].tags,
             id: this.data[this.currentIndex].id,
           });
+          this.setupPosition();
         }
         this.viewerImageMode = true;
         this.carouselHover = true;
@@ -652,6 +711,7 @@ export default {
     loadFocusImage(id) {
       this.$router.push({
         path: `/image/${id}`,
+        query: {image: JSON.stringify(this.data[this.currentIndex])}
       });
     },
     loadFromOnboarding(data) {
@@ -781,7 +841,14 @@ export default {
     },
     mouseWheel() {
       this.stopSecondRelatedDisplay();
-      this.checkCollision();
+      if (!this.blockDrag) {
+        this.checkCollision();
+      } else {
+        window.scrollTo({
+          left: this.currentXPosition,
+          top: this.currentYPosition,
+        });
+      }
     },
     touchMove() {
       this.stopSecondRelatedDisplay();
@@ -926,6 +993,7 @@ export default {
             tags: this.data[this.currentIndex].tags,
             id: this.data[this.currentIndex].id,
           });
+          this.setupPosition();
           this.viewerImageMode = true;
           setTimeout(() => (this.shouldRunDecelerateAnimation = false), 1000);
         }, 500)
@@ -976,6 +1044,7 @@ export default {
             tags: this.data[this.currentIndex].tags,
             id: this.data[this.currentIndex].id,
           });
+          this.setupPosition();
           this.viewerImageMode = true;
         }
       }
@@ -993,30 +1062,38 @@ export default {
       this.interval.forEach((element) => clearInterval(element));
       this.interval = [];
     },
-    displayRelatedImages(images) {
-      // Select randomly 3 display positions
+    // Select randomly 3 display positions
+    setupPosition() {
       this.potentialPosition
         .sort(() => Math.random() - 0.5)
-        .slice(0, images.length)
-        .forEach((position, index) => {
+        .slice(0, 3)
+        .forEach((position) => {
           this.relatedImagesPosition.push({
             position: position,
-            image: images[index],
+            image: undefined,
             display: false,
             hover: false,
             isTarget: false,
           });
         });
+    },
+    displayRelatedImages(images) {
+      images.forEach((image, index) => {
+        this.relatedImagesPosition[index].image = image;
+      });
       // Setup the display animation
       this.$nextTick(() => {
         this.relatedImagesPosition.forEach((element, index) => {
           const animationDelay = 1000 + 2000 * index;
           this.displayRelatedImageTimeout.push(
             setTimeout(() => {
-              this.relatedImagesPosition[index].display = true;
-              this.$nextTick(() => {
-                this.shouldUpdateDisplay = true;
-              });
+              if (this.relatedImagesPosition[index]) {
+                this.relatedImagesPosition[index].display = true;
+                this.relatedImagesPosition[index].image = images[index];
+                this.$nextTick(() => {
+                  this.shouldUpdateDisplay = true;
+                });
+              }
             }, animationDelay)
           );
         });
@@ -1048,10 +1125,12 @@ export default {
           const animationDelay = 1000 + 2000 * index;
           this.displayRelatedImageTimeout.push(
             setTimeout(() => {
-              this.secondRelatedImagesPosition[index].display = true;
-              this.$nextTick(() => {
-                this.shouldUpdateDisplay = true;
-              });
+              if (this.secondRelatedImagesPosition[index]) {
+                this.secondRelatedImagesPosition[index].display = true;
+                this.$nextTick(() => {
+                  this.shouldUpdateDisplay = true;
+                });
+              }
             }, animationDelay)
           );
         });
@@ -1761,7 +1840,11 @@ export default {
   mounted() {
     this.$store.dispatch("restartLoadingState");
 
-    this.$refs.display.addEventListener("DOMMouseScroll", this.mouseWheel, false);
+    this.$refs.display.addEventListener(
+      "DOMMouseScroll",
+      this.mouseWheel,
+      false
+    );
 
     const { width, height } = useWindowSize();
     this.windowHeight = height;
@@ -1791,9 +1874,6 @@ export default {
       this.loadInitialData();
     }
   },
-  unmounted() {
-    this.$refs.display.removeEventListener("DOMMouseScroll", this.mouseWheel, false);
-  }
 };
 </script>
 
@@ -1801,4 +1881,5 @@ export default {
 @import "./imageselector.css";
 @import "./sliderspeed.css";
 @import "./carouselAnimation.css";
+@import "./loader.css";
 </style>

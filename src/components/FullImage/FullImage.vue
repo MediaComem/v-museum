@@ -71,6 +71,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.imageId = to.params.index;
+      vm.imageData = JSON.parse(to.query.image);
     });
   },
   data() {
@@ -110,7 +111,9 @@ export default {
     loadImage() {
       this.imageData = this.storyCollection[this.currentIndex];
       this.tags = [];
-      this.imageData.tags.forEach((tag) => this.tags.push(tag["@value"]));
+      if (this.imageData.tags) {
+        this.imageData.tags.forEach((tag) => this.tags.push(tag["@value"]));
+      }
       dataFetching.getOriginalImage(this.imageData.media).then((image) => {
         this.viewer.destroy();
         this.openImage(image);
@@ -125,7 +128,26 @@ export default {
         query: { id: this.imageData.id },
       });
     },
-
+    loadImagesByTitle() {
+      dataFetching
+        .getImagesByTitle(this.imageData.title)
+        .then((result) => {
+          this.storyCollection = result;
+          this.currentIndex = this.storyCollection.findIndex((e) => {
+            return e.id === this.imageId;
+          });
+          this.$store.dispatch("loadTotalImageByDecade", {
+            decade: this.imageData.decade.slice(0, 3),
+          });
+        })
+        .catch((err) => console.log(err));
+    },
+    loadMedia() {
+      dataFetching.getOriginalImage(this.imageData.media).then((image) => {
+        this.viewer.destroy();
+        this.openImage(image);
+      });
+    },
     openImage(image) {
       this.viewer = OpenSeadragon({
         id: "viewer",
@@ -154,28 +176,26 @@ export default {
     },
   },
   mounted() {
-    dataFetching.getImageById(this.imageId).then((result) => {
-      this.imageData = result[0];
-      this.tags = [];
-      this.imageData.tags.forEach((tag) => this.tags.push(tag["@value"]));
-      if (this.imageData && this.imageData.title) {
-        dataFetching
-          .getImagesByTitle(this.imageData.title)
-          .then((result) => {
-            this.storyCollection = result;
-            this.currentIndex = this.storyCollection.findIndex((e) => {
-              return e.id === this.imageId;
-            });
-            this.$store.dispatch("loadTotalImageByDecade", {
-              decade: this.imageData.decade.slice(0, 3),
-            });
-          })
-          .catch((err) => console.log(err));
-        dataFetching.getOriginalImage(this.imageData.media).then((image) => {
-          this.openImage(image);
-        });
+    if (this.imageData) {
+      if (this.imageData.tags) {
+        this.imageData.tags.forEach((tag) => this.tags.push(tag["@value"]));
       }
-    });
+      this.openImage(this.imageData.imagePaths.large);
+      this.loadImagesByTitle();
+      this.loadMedia();
+    } else {
+      dataFetching.getImageById(this.imageId).then((result) => {
+        this.imageData = result[0];
+        this.tags = [];
+        if (this.imageData.tags) {
+          this.imageData.tags.forEach((tag) => this.tags.push(tag["@value"]));
+        }
+        if (this.imageData && this.imageData.title) {
+          this.loadImagesByTitle();
+          this.loadMedia();
+        }
+      });
+    }
   },
   unmounted() {
     this.viewer.destroy();
