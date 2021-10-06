@@ -193,7 +193,7 @@ export default {
   computed: {
     collapse() {
       return {
-        transform: this.display ? "translateX(0)" : "translate(-60vw)",
+        transform: this.display ? "translateX(0)" : "translate(-70vw)",
         transition: "transform 0.3s ease-in-out",
       };
     },

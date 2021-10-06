@@ -8,26 +8,29 @@
     :loop="false"
   >
     <el-carousel-item>
-
-      <div ref="intro" class="slider-effect" style="height: 100vh; overflow-y: scroll">
+      <div
+        ref="intro"
+        class="slider-effect"
+        style="height: 100vh; overflow-y: scroll"
+      >
         <el-row :gutter="20" style="margin: 0;">
           <el-col :span="24" style="padding: 0;">
             <img class="first-image" src="@/assets/onboarding/first.png" />
           </el-col>
         </el-row>
-        <el-row :gutter="20" :justify="'center'" style="margin:0">
+        <el-row :gutter="20" :justify="'center'" style="margin:5px">
           <h1 class="page-title">{{ information.title }}</h1>
         </el-row>
-        <el-row :gutter="20" :justify="'center'" style="margin:0">
+        <el-row :gutter="20" :justify="'center'" style="margin:5px">
           <h2 class="page-subtitle">{{ information.subtitle }}</h2>
         </el-row>
-        <el-row :gutter="20" :justify="'center'" style="margin:0">
+        <el-row :gutter="20" :justify="'center'" style="margin:5px">
           <h3 class="text-title">{{ information.header }}</h3>
         </el-row>
-        <el-row :gutter="20" :justify="'center'" style="margin:0">
+        <el-row :gutter="20" :justify="'center'" style="margin:5px">
           <p class="text">{{ information.body }}</p>
         </el-row>
-        <el-row :justify="'center'">
+        <el-row :justify="'center'" style="padding-bottom: 10px">
           <arrow-down
             style="justify-content: center"
             :text="undefined"
@@ -300,14 +303,28 @@ h3 {
   margin-bottom: 0;
 }
 
-.page-title {
-  font-size: 74.1515px;
-  max-width: 60rem;
+@media only screen and (min-width: 300px) and (max-width: 699px) {
+  .page-title {
+    font-size: 50px;
+    max-width: 60rem;
+  }
+
+  .page-subtitle {
+    font-size: 40px;
+    max-width: 60rem;
+  }
 }
 
-.page-subtitle {
-  font-size: 50px;
-  max-width: 60rem;
+@media only screen and (min-width: 700px) {
+  .page-title {
+    font-size: 74.1515px;
+    max-width: 60rem;
+  }
+
+  .page-subtitle {
+    font-size: 50px;
+    max-width: 60rem;
+  }
 }
 
 .text-title {
