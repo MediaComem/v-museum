@@ -48,8 +48,6 @@ export default {
   },
 
   async getImages(decade, offset, skipIds) {
-    let queryParameterId = 2;
-
     const params = {
       params: {
         sort_by: "dcterms=identifier",
@@ -64,21 +62,22 @@ export default {
         page: offset,
       },
     };
-    skipIds.forEach((id) => {
-      params.params["property[" + queryParameterId + "][joiner]"] = "and";
-      params.params["property[" + queryParameterId + "][property]"] = "10";
-      params.params["property[" + queryParameterId + "][type]"] = "neq";
-      params.params["property[" + queryParameterId + "][text]"] = id;
-      queryParameterId = queryParameterId + 1;
-    });
-
     const { headers, data } = await axios.get(
       process.env.VUE_APP_FETCH_BASE,
       params
     );
+
+    let dataResult = parseImages(data);
+
+    skipIds.forEach((id) => {
+      let result = dataResult.filter(d => d.id !== id);
+      dataResult = result;
+    });
+
+    
     return {
       totalImages: headers["omeka-s-total-results"],
-      images: parseImages(data),
+      images: dataResult,
     };
   },
 

@@ -33,7 +33,8 @@
     <!-- Related Image display part -->
     <div
       :style="relatedImagePosition1"
-      v-if="relatedImagesPosition.length > 0 && !relatedImagesPosition[0].image"
+      v-if="relatedImagesPosition.length > 0"
+      style="z-index: -1"
     >
       <div
         ref="position0"
@@ -41,7 +42,7 @@
         :style="relatedImageDisplay1"
         style="background-color: lightgray"
       >
-        <div class="loader">
+        <div class="loader" v-if="!relatedImagesPosition[0].image">
           <div class="loader-wheel"></div>
           <div class="loader-text"></div>
         </div>
@@ -57,12 +58,17 @@
       }"
     >
       <div ref="position0" :style="relatedImageDisplay1">
-        <related-image :image="relatedImagesPosition[0]" />
+        <related-image
+          :image="relatedImagesPosition[0]"
+          :runTransition="carouselHover"
+          :isTransitionExecuted="shouldRunRelatedImageTransition"
+        />
       </div>
     </div>
     <div
       :style="relatedImagePosition2"
-      v-if="relatedImagesPosition.length > 1 && !relatedImagesPosition[1].image"
+      v-if="relatedImagesPosition.length > 1"
+      style="z-index: -1"
     >
       <div
         ref="position1"
@@ -70,7 +76,7 @@
         :style="relatedImageDisplay2"
         style="background-color: lightgray"
       >
-        <div class="loader">
+        <div class="loader" v-if="!relatedImagesPosition[1].image">
           <div class="loader-wheel"></div>
         </div>
       </div>
@@ -85,12 +91,17 @@
       }"
     >
       <div ref="position1" :style="relatedImageDisplay2">
-        <related-image :image="relatedImagesPosition[1]" />
+        <related-image
+          :image="relatedImagesPosition[1]"
+          :runTransition="carouselHover"
+          :isTransitionExecuted="shouldRunRelatedImageTransition"
+        />
       </div>
     </div>
     <div
       :style="relatedImagePosition3"
-      v-if="relatedImagesPosition.length > 2 && !relatedImagesPosition[2].image"
+      v-if="relatedImagesPosition.length > 2"
+      style="z-index: -1"
     >
       <div
         ref="position2"
@@ -98,7 +109,7 @@
         :style="relatedImageDisplay3"
         style="background-color: lightgray"
       >
-        <div class="loader">
+        <div class="loader" v-if="!relatedImagesPosition[2].image">
           <div class="loader-wheel"></div>
           <div class="loader-text"></div>
         </div>
@@ -114,7 +125,11 @@
       }"
     >
       <div ref="position2" :style="relatedImageDisplay3">
-        <related-image :image="relatedImagesPosition[2]" />
+        <related-image
+          :image="relatedImagesPosition[2]"
+          :runTransition="carouselHover"
+          :isTransitionExecuted="shouldRunRelatedImageTransition"
+        />
       </div>
     </div>
     <!-- Related image text display -->
@@ -130,7 +145,10 @@
       <p
         class="related-text"
         v-if="!relatedImagesPosition[0].hover"
-        :class="{ relatedImageBase: !endDisplay }"
+        :class="{
+          relatedImageBase:
+            !endDisplay && carouselHover && !shouldRunRelatedImageTransition,
+        }"
       >
         {{ relatedImagesPosition[0].image.tag["@value"] }}
       </p>
@@ -147,7 +165,10 @@
       <p
         class="related-text"
         v-if="!relatedImagesPosition[1].hover"
-        :class="{ relatedImageBase: !endDisplay }"
+        :class="{
+          relatedImageBase:
+            !endDisplay && carouselHover && !shouldRunRelatedImageTransition,
+        }"
       >
         {{ relatedImagesPosition[1].image.tag["@value"] }}
       </p>
@@ -164,7 +185,10 @@
       <p
         class="related-text"
         v-if="!relatedImagesPosition[2].hover"
-        :class="{ relatedImageBase: !endDisplay }"
+        :class="{
+          relatedImageBase:
+            !endDisplay && carouselHover && !shouldRunRelatedImageTransition,
+        }"
       >
         {{ relatedImagesPosition[2].image.tag["@value"] }}
       </p>
@@ -172,11 +196,11 @@
     <!-- Image information top part -->
     <div
       v-if="carouselHover && relatedImagesPosition.length > 0 && !endDisplay"
-      :style="imageInformationPosition"
+      :style="imageInformationPositionTag"
     >
       <div
-        style="display: flex; overflow: hidden;"
-        :style="{ width: thumbnailWidth() + 'px' }"
+        style="overflow: hidden;"
+        :style="{ width: thumbnailWidth() + 20 + 'px' }"
       >
         <p
           v-if="
@@ -184,7 +208,9 @@
           "
           class="image-information"
           :class="{
-            removeRelatedImageBaseText: relatedImagesPosition[0].display,
+            removeRelatedImageBaseText:
+              relatedImagesPosition[0].display &&
+              !shouldRunRelatedImageTransition,
           }"
         >
           {{ relatedImagesPosition[0].image.tag["@value"] }} &nbsp;
@@ -195,7 +221,9 @@
           "
           class="image-information"
           :class="{
-            removeRelatedImageBaseText: relatedImagesPosition[1].display,
+            removeRelatedImageBaseText:
+              relatedImagesPosition[1].display &&
+              !shouldRunRelatedImageTransition,
           }"
         >
           {{ relatedImagesPosition[1].image.tag["@value"] }} &nbsp;
@@ -206,7 +234,9 @@
           "
           class="image-information"
           :class="{
-            removeRelatedImageBaseText: relatedImagesPosition[2].display,
+            removeRelatedImageBaseText:
+              relatedImagesPosition[2].display &&
+              !shouldRunRelatedImageTransition,
           }"
         >
           {{ relatedImagesPosition[2].image.tag["@value"] }} &nbsp;
@@ -216,15 +246,15 @@
     <div v-if="carouselHover && endDisplay" :style="imageInformationPosition">
       <completion
         :decade="currentDecade"
-        :height="100"
-        :width="100"
-        :topPosition="-40"
+        :height="completionSize"
+        :width="completionSize"
+        :topPosition="topCompletioPosition"
         :leftPosition="-20"
         :emptyColor="'lightgray'"
         :completeColor="'black'"
       />
       <div @click="loadOnboarding()" style="z-index:1">
-        <p style="margin: 0; margin-left: 60px;">
+        <p class="return-position">
           {{ currentDecade + "0" }}
           <img src="@/assets/image-selector/vector.png" />
           &nbsp;
@@ -232,7 +262,7 @@
       </div>
     </div>
     <div v-if="carouselHover && endDisplay" :style="indexInformationPosition">
-      <h3 style="margin: 0; height: 30px; font-size: 48px">
+      <h3 style="margin: 0;" class="index-text-font">
         {{ currentIndex + 1 }}
       </h3>
     </div>
@@ -291,20 +321,30 @@
     <!-- Image information bottom part -->
     <div v-if="data && data[currentIndex] && carouselHover">
       <div :style="imageCreatorPosition">
-        <p style="margin-bottom: 0; font-weight: normal; font-size: 15px">
+        <p
+          style="margin-bottom: 0; margin-top: 20px; font-weight: normal;"
+          class="font-size-information"
+        >
           Illustration: &nbsp;
         </p>
         <p
-          style="margin-bottom: 0; overflow: hidden; font-size: 15px; color: gray"
+          style="margin-bottom: 0; margin-top: 20px; overflow: hidden; color: gray; white-space: nowrap"
+          class="font-size-information"
         >
           {{ data[currentIndex].author }}
         </p>
       </div>
       <div :style="imageStoryPosition">
-        <p style="margin: 0; font-weight: normal; font-size: 15px">
+        <p
+          style="margin: 0; font-weight: normal;"
+          class="font-size-information"
+        >
           Story: &nbsp;
         </p>
-        <p style="margin: 0; overflow: hidden; font-size: 15px; color: gray">
+        <p
+          style="margin: 0; overflow: hidden; color: gray; white-space: nowrap;"
+          class="font-size-information"
+        >
           {{ data[currentIndex].title }}
         </p>
       </div>
@@ -345,7 +385,11 @@
       v-if="secondRelatedImagesPosition.length > 0"
     >
       <div :style="secondRelatedImageDisplay1">
-        <related-image :image="secondRelatedImagesPosition[0]" />
+        <related-image
+          :image="secondRelatedImagesPosition[0]"
+          :runTransition="true"
+          :isTransitionExecuted="false"
+        />
       </div>
     </div>
     <div
@@ -353,7 +397,11 @@
       v-if="secondRelatedImagesPosition.length > 1"
     >
       <div :style="secondRelatedImageDisplay2">
-        <related-image :image="secondRelatedImagesPosition[1]" />
+        <related-image
+          :image="secondRelatedImagesPosition[1]"
+          :runTransition="true"
+          :isTransitionExecuted="false"
+        />
       </div>
     </div>
     <div
@@ -361,7 +409,11 @@
       v-if="secondRelatedImagesPosition.length > 2"
     >
       <div :style="secondRelatedImageDisplay3">
-        <related-image :image="secondRelatedImagesPosition[2]" />
+        <related-image
+          :image="secondRelatedImagesPosition[2]"
+          :runTransition="true"
+          :isTransitionExecuted="false"
+        />
       </div>
     </div>
   </div>
@@ -519,6 +571,22 @@ export default {
       this.historyTimeout = undefined;
       this.endDisplay = true;
     },
+    carouselHover: function(newVal) {
+      if (!newVal) {
+        this.displayRelatedImageTimeout.forEach(clearTimeout);
+        this.displayRelatedImageTimeout = [];
+
+        this.relatedImagesPosition.forEach((element, index) => {
+          if (this.relatedImagesPosition[index]) {
+            this.relatedImagesPosition[index].display = true;
+            this.$nextTick(() => {
+              this.shouldUpdateDisplay = true;
+            });
+          }
+        });
+        this.shouldRunRelatedImageTransition = true;
+      }
+    },
     relatedImages: function(images) {
       if (
         this.shouldLoadRelatedImage &&
@@ -637,6 +705,7 @@ export default {
       shouldRunSideAnimation: false,
       shouldRunDecelerateAnimation: false,
       shouldRunCentralImageTransition: true,
+      shouldRunRelatedImageTransition: true,
       // Information uses to manage the display
       pageHeight: 4000,
       pageWidth: 6000,
@@ -711,7 +780,7 @@ export default {
     loadFocusImage(id) {
       this.$router.push({
         path: `/image/${id}`,
-        query: {image: JSON.stringify(this.data[this.currentIndex])}
+        query: { image: JSON.stringify(this.data[this.currentIndex]) },
       });
     },
     loadFromOnboarding(data) {
@@ -754,14 +823,8 @@ export default {
         }
       }
     },
-    // Colision analysis
-    checkPosition(x, y, rectangle, relatedImage, isRelated) {
-      if (
-        x < rectangle.x + rectangle.width &&
-        x + this.rectangleWidth > rectangle.x &&
-        y < rectangle.y + rectangle.height &&
-        this.rectangleHeight + y > rectangle.y
-      ) {
+    centerTarget(rectangle, relatedImage, isRelated, isHover) {
+      if (isHover) {
         this.moveToImageTimeout.push(
           setTimeout(() => {
             const newX =
@@ -792,6 +855,24 @@ export default {
             }
           }, 200)
         );
+      }
+    },
+    colision(top, left, isHover) {
+      if (
+        !isHover &&
+        left <= 100 &&
+        left >= -100 &&
+        top <= 100 &&
+        top >= -100
+      ) {
+        return true;
+      } else if (
+        isHover &&
+        left <= 120 &&
+        left >= -120 &&
+        top <= 120 &&
+        top >= -120
+      ) {
         return true;
       }
       return false;
@@ -799,29 +880,35 @@ export default {
     checkCollision() {
       this.moveToImageTimeout.forEach(clearTimeout);
       this.moveToImageTimeout = [];
-      const rectangle = this.$refs.divCar.getBoundingClientRect();
-      const x = (this.windowWidth - this.$refs.divCar.clientWidth + 20) / 2;
-      const y = (this.windowHeight - this.$refs.divCar.clientHeight + 20) / 2;
-      this.carouselHover = this.checkPosition(
-        x,
-        y,
-        rectangle,
-        undefined,
-        false
-      );
+      let thumbnail = this.$refs.divCar.getBoundingClientRect();
+      let left = this.carouselHover
+        ? thumbnail.left - this.windowWidth / 2 + this.thumbnailWidth() / 2
+        : thumbnail.left -
+          this.windowWidth / 2 +
+          this.relatedThumbnailWidth() / 2;
+      let top = this.carouselHover
+        ? thumbnail.top - this.windowHeight / 2 + this.thumbnailHeight() / 2
+        : thumbnail.top -
+          this.windowHeight / 2 +
+          this.relatedThumbnailHeight() / 2;
+      this.carouselHover = this.colision(top, left, this.carouselHover);
+      this.centerTarget(thumbnail, null, false, this.carouselHover);
+
       this.relatedImagesPosition.forEach((rectangle, index) => {
-        const isHover = this.checkPosition(
-          x,
-          y,
-          this.$refs["position" + index].getBoundingClientRect(),
-          rectangle,
-          true
-        );
-        if (isHover) {
-          rectangle.hover = true;
-        } else {
-          rectangle.hover = false;
-        }
+        thumbnail = this.$refs["position" + index].getBoundingClientRect();
+        left = rectangle.hover
+          ? thumbnail.left - this.windowWidth / 2 + this.thumbnailWidth() / 2
+          : thumbnail.left -
+            this.windowWidth / 2 +
+            this.relatedThumbnailWidth() / 2;
+        top = rectangle.hover
+          ? thumbnail.top - this.windowHeight / 2 + this.thumbnailHeight() / 2
+          : thumbnail.top -
+            this.windowHeight / 2 +
+            this.relatedThumbnailHeight() / 2 -
+            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2;
+        rectangle.hover = this.colision(top, left, rectangle.hover);
+        this.centerTarget(thumbnail, rectangle, true, rectangle.hover);
       });
       if (this.moveToImageTimeout.length === 0 && !this.carouselHover) {
         this.rectangleHeight = this.relatedThumbnailHeight() + 20;
@@ -955,6 +1042,7 @@ export default {
           }
         }, 200);
       } else {
+        this.shouldRunRelatedImageTransition = false;
         this.shouldStartRelatedImageSearch = true;
         this.shouldLoadRelatedImage = false;
         this.isDrag = false;
@@ -1084,18 +1172,27 @@ export default {
       // Setup the display animation
       this.$nextTick(() => {
         this.relatedImagesPosition.forEach((element, index) => {
-          const animationDelay = 1000 + 2000 * index;
-          this.displayRelatedImageTimeout.push(
-            setTimeout(() => {
-              if (this.relatedImagesPosition[index]) {
-                this.relatedImagesPosition[index].display = true;
-                this.relatedImagesPosition[index].image = images[index];
-                this.$nextTick(() => {
-                  this.shouldUpdateDisplay = true;
-                });
-              }
-            }, animationDelay)
-          );
+          if (this.carouselHover) {
+            const animationDelay = 1000 + 2000 * index;
+            this.displayRelatedImageTimeout.push(
+              setTimeout(() => {
+                if (this.relatedImagesPosition[index]) {
+                  this.relatedImagesPosition[index].display = true;
+                  this.$nextTick(() => {
+                    this.shouldUpdateDisplay = true;
+                  });
+                }
+              }, animationDelay)
+            );
+          } else {
+            if (this.relatedImagesPosition[index]) {
+              this.relatedImagesPosition[index].display = true;
+              this.$nextTick(() => {
+                this.shouldUpdateDisplay = true;
+                this.shouldRunRelatedImageTransition = true;
+              });
+            }
+          }
         });
       });
     },
@@ -1338,8 +1435,50 @@ export default {
           return [0, 0];
       }
     },
+    imageInformationTopTagPosition() {
+      switch (true) {
+        case this.windowWidth < 700:
+          return 60;
+        case this.windowWidth < 900:
+          return 60;
+        default:
+          return 80;
+      }
+    },
+    imageInformationTopPosition() {
+      switch (true) {
+        case this.windowWidth < 700:
+          return 60;
+        default:
+          return 80;
+      }
+    },
+    indexInformationTopPosition() {
+      switch (true) {
+        case this.windowWidth < 700:
+          return 40;
+        default:
+          return 80;
+      }
+    },
   },
   computed: {
+    completionSize() {
+      switch (true) {
+        case this.windowWidth < 700:
+          return 60;
+        default:
+          return 100;
+      }
+    },
+    topCompletioPosition() {
+      switch (true) {
+        case this.windowWidth < 900:
+          return -20;
+        default:
+          return -40;
+      }
+    },
     setPage() {
       return {
         height: this.pageHeight + "px",
@@ -1348,14 +1487,27 @@ export default {
         "user-select": "none",
       };
     },
+    imageInformationPositionTag() {
+      return {
+        position: "absolute",
+        top:
+          this.defineTopImagePosition() -
+          this.imageInformationTopTagPosition() +
+          "px",
+        left: this.defineLeftImagePosition() - 10 + "px",
+        width: this.thumbnailWidth() + 20 + "px",
+
+      };
+    },
     imageInformationPosition() {
       return {
-        height: "40px",
         position: "absolute",
-        top: this.defineTopImagePosition() - 60 + "px",
-        left: this.defineLeftImagePosition() + "px",
-        display: "flex",
-        width: this.thumbnailWidth() + "px",
+        top:
+          this.defineTopImagePosition() -
+          this.imageInformationTopPosition() +
+          "px",
+        left: this.defineLeftImagePosition() - 10 + "px",
+        width: this.thumbnailWidth() + 20 + "px",
       };
     },
     secondImageInformationPosition() {
@@ -1365,36 +1517,39 @@ export default {
         top: this.newOriginY - 60 + "px",
         left: this.newOriginX + "px",
         display: "flex",
-        width: this.thumbnailWidth() + "px",
+        width: this.thumbnailWidth() + 20 + "px",
       };
     },
     indexInformationPosition() {
       return {
         position: "absolute",
-        top: this.defineTopImagePosition() - 80 + "px",
+        top:
+          this.defineTopImagePosition() -
+          this.indexInformationTopPosition() +
+          "px",
         left: this.defineLeftImagePosition() + "px",
-        width: this.thumbnailWidth() + "px",
+        width: this.thumbnailWidth() + 10 + "px",
         "text-align": "end",
       };
     },
     imageCreatorPosition() {
       return {
-        height: "40px",
+        height: "35px",
         position: "absolute",
         display: "flex",
         top: this.defineTopImagePosition() + this.thumbnailHeight() + "px",
-        left: this.defineLeftImagePosition() + "px",
-        width: this.thumbnailWidth() + "px",
+        left: this.defineLeftImagePosition() - 10 + "px",
+        width: this.thumbnailWidth() + 20 + "px",
       };
     },
     imageStoryPosition() {
       return {
-        height: "40px",
+        height: "20px",
         position: "absolute",
         display: "flex",
         top: this.defineTopImagePosition() + this.thumbnailHeight() + 40 + "px",
-        left: this.defineLeftImagePosition() + "px",
-        width: this.thumbnailWidth() + "px",
+        left: this.defineLeftImagePosition() - 10 + "px",
+        width: this.thumbnailWidth() + 20 + "px",
       };
     },
     imagePosition() {
@@ -1882,4 +2037,132 @@ export default {
 @import "./sliderspeed.css";
 @import "./carouselAnimation.css";
 @import "./loader.css";
+
+@media only screen and (min-width: 1200px) {
+  .index-text-font {
+    font-size: 48px;
+  }
+
+  .related-text {
+    margin-bottom: 0;
+    font-size: 20px;
+    font-weight: normal;
+    text-transform: uppercase;
+  }
+
+  .font-size-information {
+    text-align: start;
+    font-size: 15px;
+  }
+
+  .image-information {
+    font-size: 15px;
+    margin: 0;
+    display: contents;
+    text-transform: uppercase
+  }
+
+  .return-position {
+    margin-left: 60px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+}
+
+@media only screen and (min-width: 900px) and (max-width: 1199px) {
+  .index-text-font {
+    font-size: 48px;
+  }
+
+  .related-text {
+    margin-bottom: 0;
+    font-size: 20px;
+    font-weight: normal;
+    text-transform: uppercase;
+  }
+
+  .font-size-information {
+    text-align: start;
+    font-size: 15px;
+  }
+
+  .image-information {
+    font-size: 15px;
+    margin: 0;
+    display: contents;
+    text-transform: uppercase
+  }
+
+  .return-position {
+    margin-left: 30px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+}
+
+@media only screen and (min-width: 700px) and (max-width: 899px) {
+  .index-text-font {
+    font-size: 48px;
+  }
+
+  .related-text {
+    margin-bottom: 0;
+    font-size: 15px;
+    font-weight: normal;
+    text-transform: uppercase;
+  }
+
+  .font-size-information {
+    text-align: start;
+    font-size: 15px;
+  }
+
+  .image-information {
+    font-size: 15px;
+    margin: 0;
+    display: contents;
+    text-transform: uppercase
+  }
+
+  .return-position {
+    margin-left: 60px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+}
+
+@media only screen and (min-width: 300px) and (max-width: 699px) {
+  .index-text-font {
+    font-size: 15px;
+  }
+
+  .related-text {
+    margin-bottom: 0px;
+    font-size: 10px;
+    font-weight: normal;
+    text-transform: uppercase;
+  }
+
+  .font-size-information {
+    text-align: start;
+    font-size: 11px;
+  }
+
+  .image-information {
+    font-size: 11px;
+    margin: 0;
+    display: contents;
+    text-transform: uppercase
+  }
+
+  .return-position {
+    margin-left: 30px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+}
 </style>

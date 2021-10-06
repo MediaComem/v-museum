@@ -1,18 +1,36 @@
 <template>
-  <div class="information-manager">
+  <div class="information-manager" style="margin-left: 12px">
     <el-row>
-      <img src="@/assets/shared/cross.svg" @click="backToCanvasView()" />
-      <infos @click="display = !display" :display="display" />
+      <div
+        style="width: 53px; height: 53px; display: flex; justify-content: center; align-items: center;"
+      >
+        <img
+          src="@/assets/shared/cross.svg"
+          @click="backToCanvasView()"
+          style="width: 30px; height: 29px"
+        />
+      </div>
+      <div
+        style="width: 53px; height: 53px; display: flex; justify-content: center; align-items: center;"
+      >
+        <infos @click="display = !display" :display="display" />
+      </div>
     </el-row>
   </div>
-  <div v-if="imageData" class="information" :style="collapse">
+
+  <div
+    v-if="imageData"
+    class="information information-padding"
+    :style="collapse"
+  >
+    <el-row style="height: 1;"> </el-row>
     <el-row>
       <h1>
         {{ this.imageData.title }}
       </h1>
     </el-row>
     <el-row>
-      <h2>Illustrator</h2>
+      <p class="gray-text">Illustrator</p>
     </el-row>
     <el-row>
       <h3>
@@ -51,7 +69,7 @@
         <img class="svg-position" src="@/assets/fullimage/right_arrow.svg" />
       </div>
     </el-row>
-    <el-row>
+    <el-row style="height: auto; padding-bottom: 24px; max-height: 15vh">
       <span>{{ this.imageData.description }}</span>
     </el-row>
   </div>
@@ -71,7 +89,9 @@ export default {
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.imageId = to.params.index;
-      vm.imageData = JSON.parse(to.query.image);
+      if (to.query.image) {
+        vm.imageData = JSON.parse(to.query.image);
+      }
     });
   },
   data() {
@@ -144,7 +164,10 @@ export default {
     },
     loadMedia() {
       dataFetching.getOriginalImage(this.imageData.media).then((image) => {
-        this.viewer.destroy();
+        if (this.viewer) {
+          this.viewer.destroy();
+        }
+
         this.openImage(image);
       });
     },
@@ -170,8 +193,8 @@ export default {
   computed: {
     collapse() {
       return {
-        transform: this.display ? "translateX(0)" : "translate(-50vw)",
-        transition: "transform 1s linear",
+        transform: this.display ? "translateX(0)" : "translate(-60vw)",
+        transition: "transform 0.3s ease-in-out",
       };
     },
   },
@@ -247,83 +270,66 @@ span {
   z-index: 1;
 }
 
-@media only screen and (min-width: 1200px) {
-  .information-manager {
-    width: 20vw;
-    z-index: 1;
-    position: relative;
-    left: 1vw;
-    top: 3vh;
-    background: white;
-  }
+.information-padding {
+  padding: 24px;
+  padding-top: 130px;
+}
 
+.information-manager {
+  width: 106px;
+  height: 53px;
+  z-index: 2;
+  position: relative;
+  left: 1vw;
+  top: 4vh;
+  background: white;
+}
+
+@media only screen and (min-width: 1200px) {
   .information {
     width: 20vw;
     z-index: 1;
     position: relative;
     left: 1vw;
-    top: 5vh;
+    top: 0vh;
     background: white;
+    overflow: scroll;
   }
 }
 
 @media only screen and (min-width: 900px) and (max-width: 1199px) {
-  .information-manager {
-    width: 30vw;
-    z-index: 1;
-    position: relative;
-    left: 1vw;
-    top: 3vh;
-    background: white;
-  }
-
   .information {
     width: 30vw;
     z-index: 1;
     position: relative;
     left: 1vw;
-    top: 5vh;
+    top: 0vh;
     background: white;
+    overflow: scroll;
   }
 }
 
 @media only screen and (min-width: 700px) and (max-width: 899px) {
-  .information-manager {
-    width: 40vw;
-    z-index: 1;
-    position: relative;
-    left: 1vw;
-    top: 3vh;
-    background: white;
-  }
-
   .information {
     width: 40vw;
     z-index: 1;
     position: relative;
     left: 1vw;
-    top: 5vh;
+    top: 0vh;
     background: white;
+    overflow: scroll;
   }
 }
 
 @media only screen and (min-width: 300px) and (max-width: 699px) {
-  .information-manager {
-    width: 50vw;
-    z-index: 1;
-    position: relative;
-    left: 1vw;
-    top: 3vh;
-    background: white;
-  }
-
   .information {
     width: 50vw;
     z-index: 1;
     position: relative;
     left: 1vw;
-    top: 5vh;
+    top: 0vh;
     background: white;
+    overflow: scroll;
   }
 }
 
@@ -350,6 +356,7 @@ span {
 }
 
 .gray-text {
+  padding: 0;
   color: gray;
 }
 </style>

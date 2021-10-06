@@ -15,7 +15,7 @@ const vuexLocal = new VuexPersistence({
 
 export const getters = {
   getCompletionByDecade: (state) => (decade) => {
-    return state.completionData.find((e) => e.year === decade);
+    return state.completionData.find((e) => e.year == decade);
   },
   getImagesByDecade: (state) => (decade) => {
     return state.images.find((e) => e.decade === decade);
@@ -200,6 +200,9 @@ export const actions = {
       else {
         context.commit("loadingState", false);
       }
+    }).catch(err => {
+      context.commit("loadingState", false);
+      console.log(err);
     });
   },
   loadRelatedImages(context, { tags, id }) {

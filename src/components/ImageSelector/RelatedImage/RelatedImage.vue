@@ -2,7 +2,8 @@
   <img
     v-if="this.image.display"
     draggable="false"
-    class="relatedImageBase related-image"
+    class="related-image"
+    :class="{relatedImageBase: runTransition && !isTransitionExecuted}"
     :src="this.image.image.result.imagePaths.large"
     :alt="image.image.result.id"
   />
@@ -12,6 +13,8 @@
 export default {
   props: {
     image: Object,
+    runTransition: Boolean,
+    isTransitionExecuted: Boolean,
   },
 };
 </script>
