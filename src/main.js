@@ -96,7 +96,10 @@ export const mutations = {
     state.relatedImages = relatedImages;
   },
   provideSecondRelatedImages(state, relatedImages) {
-    state.secondRelatedImages = relatedImages;
+    if (relatedImages.length === 0) {
+      state.secondRelatedImages = []
+    }
+    state.secondRelatedImages.push(relatedImages);
   },
   setSecondRelatedTags(state, selectedTags) {
     state.secondRelatedTags = selectedTags;
@@ -229,10 +232,11 @@ export const actions = {
       context.commit("provideRelatedImages", relatedImages);
     });
   },
-  loadSecondRelatedImages(context, { tags, id }) {
-    const relatedImages = [];
+  loadSecondRelatedImages(context, { tags, id, position }) {
     const promises = [];
+    const relatedImages = [];
     const selectedTags = [];
+    context.commit("provideSecondRelatedImages", relatedImages);
     context.commit("setSecondRelatedTags", selectedTags);
     tags
       .sort(() => Math.random() - 0.5)
@@ -242,7 +246,7 @@ export const actions = {
         promises.push(
           dataFetch.getRelatedImages(tag, id).then((result) => {
             if (result) {
-              relatedImages.push({ tag: tag, result: result, originalId: id });
+              relatedImages.push({ tag: tag, result: result, originalId: id, position: position });
             }
           })
         );

@@ -144,7 +144,7 @@
     >
       <p
         class="related-text"
-        v-if="!relatedImagesPosition[0].hover"
+        v-if="!relatedImagesPosition[0].hover && relatedImagesPosition[0].image"
         :class="{
           relatedImageBase:
             !endDisplay && carouselHover && !shouldRunRelatedImageTransition,
@@ -194,7 +194,7 @@
     >
       <p
         class="related-text"
-        v-if="!relatedImagesPosition[1].hover"
+        v-if="!relatedImagesPosition[1].hover && relatedImagesPosition[1].image"
         :class="{
           relatedImageBase:
             !endDisplay && carouselHover && !shouldRunRelatedImageTransition,
@@ -244,7 +244,7 @@
     >
       <p
         class="related-text"
-        v-if="!relatedImagesPosition[2].hover"
+        v-if="!relatedImagesPosition[2].hover && relatedImagesPosition[2].image"
         :class="{
           relatedImageBase:
             !endDisplay && carouselHover && !shouldRunRelatedImageTransition,
@@ -624,15 +624,7 @@ export default {
             id: this.data.data[this.currentIndex].id,
           });
           this.setupPosition();
-        } else {
-          // If the loading comes from related images, load the next related images and associated data
-          this.nextDecade = this.$route.params.decade;
-          this.nextId = this.$route.params.index;
-          this.$store.dispatch("loadSecondRelatedImages", {
-            tags: JSON.parse(this.$route.query.tags),
-            id: this.nextId,
-          });
-        }
+        } 
         // Clean url
         this.$router.push(`/selector/${this.nextDecade}`);
       }
@@ -808,6 +800,7 @@ export default {
       shouldRunDecelerateAnimation: false,
       shouldRunCentralImageTransition: true,
       shouldRunRelatedImageTransition: true,
+      endOfSlider: undefined,
       // Information uses to manage the display
       pageHeight: 4000,
       pageWidth: 6000,
@@ -948,41 +941,52 @@ export default {
               relatedImage.isTarget = true;
               this.newOriginY = positions[0];
               this.newOriginX = positions[1];
-              this.$router.push({
-                path: `/selector/${relatedImage.image.result.decade.slice(
-                  0,
-                  3
-                )}/${relatedImage.image.result.id}`,
-                query: { tags: JSON.stringify(relatedImage.image.result.tags) },
-              });
             }
           }, 200)
         );
       }
     },
-    colision(top, left, isHover) {
+    colision(top, left, isHover, isRelated) {  
       if (
-        !isHover &&
+        !isHover && !isRelated &&
         left <= 100 &&
         left >= -100 &&
         top <= 100 &&
         top >= -100
       ) {
         return true;
-      } else if (
-        isHover &&
-        left <= 120 &&
-        left >= -120 &&
-        top <= 120 &&
-        top >= -120
+      } 
+      else if (
+        isHover && !isRelated &&
+        left <= 100 + ((this.thumbnailWidth() - this.relatedThumbnailWidth()) / 4) &&
+        left >= -100 - ((this.thumbnailWidth() - this.relatedThumbnailWidth()) / 4) &&
+        top <= 100 + ((this.thumbnailHeight() - this.relatedThumbnailHeight()) / 4) &&
+        top >= -100 - ((this.thumbnailHeight() - this.relatedThumbnailHeight()) / 4)
       ) {
         return true;
       }
+      else if (
+        !isHover && isRelated &&
+        left <= 100 &&
+        left >= -100 &&
+        top <= 100 - ((this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2) &&
+        top >= -100 - ((this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2)
+      ) {
+        return true;
+      }
+      else if (isHover && isRelated &&
+        left <= 100 + ((this.thumbnailWidth() - this.relatedThumbnailWidth()) / 4) &&
+        left >= -100 - ((this.thumbnailWidth() - this.relatedThumbnailWidth()) / 4) &&
+        top <= 100 + ((this.thumbnailHeight() - this.relatedThumbnailHeight()) / 4) &&
+        top >= -100 - ((this.thumbnailHeight() - this.relatedThumbnailHeight()) / 4)) {
+          return true;
+        }
       return false;
     },
     checkCollision() {
       this.moveToImageTimeout.forEach(clearTimeout);
       this.moveToImageTimeout = [];
+
       let thumbnail = this.$refs.divCar.getBoundingClientRect();
       let left = this.carouselHover
         ? thumbnail.left - this.windowWidth / 2 + this.thumbnailWidth() / 2
@@ -994,7 +998,7 @@ export default {
         : thumbnail.top -
           this.windowHeight / 2 +
           this.relatedThumbnailHeight() / 2;
-      this.carouselHover = this.colision(top, left, this.carouselHover);
+      this.carouselHover = this.colision(top, left, this.carouselHover, false);
       this.centerTarget(thumbnail, null, false, this.carouselHover);
 
       this.relatedImagesPosition.forEach((rectangle, index) => {
@@ -1010,7 +1014,7 @@ export default {
             this.windowHeight / 2 +
             this.relatedThumbnailHeight() / 2 -
             (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2;
-        rectangle.hover = this.colision(top, left, rectangle.hover);
+        rectangle.hover = this.colision(top, left, rectangle.hover, true);
         this.centerTarget(thumbnail, rectangle, true, rectangle.hover);
       });
       if (this.moveToImageTimeout.length === 0 && !this.carouselHover) {
@@ -1131,6 +1135,8 @@ export default {
       }
     },
     sliderChange() {
+      clearTimeout(this.endOfSlider)
+      this.endOfSlider = undefined;
       this.viewerImageMode = false;
       // Release animation
       if (this.previousSpeed === 0 && this.step !== 300) {
@@ -1185,8 +1191,10 @@ export default {
             id: this.data[this.currentIndex].id,
           });
           this.setupPosition();
-          this.viewerImageMode = true;
-          setTimeout(() => (this.shouldRunDecelerateAnimation = false), 1000);
+          setTimeout(() => {
+            this.viewerImageMode = true;
+            this.shouldRunDecelerateAnimation = false
+          }, 1000);
         }, 500)
       );
     },
@@ -1236,7 +1244,7 @@ export default {
             id: this.data[this.currentIndex].id,
           });
           this.setupPosition();
-          this.viewerImageMode = true;
+          this.endOfSlider = setTimeout(() => this.viewerImageMode = true, 1200);
         }
       }
     },
@@ -1271,6 +1279,11 @@ export default {
     displayRelatedImages(images) {
       images.forEach((image, index) => {
         this.relatedImagesPosition[index].image = image;
+        /*this.$store.dispatch("loadSecondRelatedImages", {
+          tags: image.result.tags,
+          id: image.result.id,
+          position: this.relatedImagesPosition[index].position,
+        });*/
       });
       // Setup the display animation
       this.$nextTick(() => {
