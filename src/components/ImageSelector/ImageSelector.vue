@@ -152,6 +152,36 @@
       >
         {{ relatedImagesPosition[0].image.tag["@value"] }}
       </p>
+      <div v-if="relatedImagesPosition[0].hover">
+        <div class="illustration">
+          <p
+            style="margin-bottom: 0; margin-top: 20px; font-weight: normal;"
+            class="font-size-information"
+          >
+            Illustration: &nbsp;
+          </p>
+          <p
+            style="margin-bottom: 0; margin-top: 20px; overflow: hidden; color: gray; white-space: nowrap"
+            class="font-size-information"
+          >
+            {{ relatedImagesPosition[0].image.result.author }}
+          </p>
+        </div>
+        <div class="story story-related">
+          <p
+            style="margin: 0; font-weight: normal;"
+            class="font-size-information"
+          >
+            Story: &nbsp;
+          </p>
+          <p
+            style="margin: 0; overflow: hidden; color: gray; white-space: nowrap;"
+            class="font-size-information"
+          >
+            {{ relatedImagesPosition[0].image.result.title }}
+          </p>
+        </div>
+      </div>
     </div>
     <div
       v-if="
@@ -172,6 +202,36 @@
       >
         {{ relatedImagesPosition[1].image.tag["@value"] }}
       </p>
+      <div v-if="relatedImagesPosition[1].hover">
+        <div class="illustration">
+          <p
+            style="margin-bottom: 0; margin-top: 20px; font-weight: normal;"
+            class="font-size-information"
+          >
+            Illustration: &nbsp;
+          </p>
+          <p
+            style="margin-bottom: 0; margin-top: 20px; overflow: hidden; color: gray; white-space: nowrap"
+            class="font-size-information"
+          >
+            {{ relatedImagesPosition[1].image.result.author }}
+          </p>
+        </div>
+        <div class="story story-related">
+          <p
+            style="margin: 0; font-weight: normal;"
+            class="font-size-information"
+          >
+            Story: &nbsp;
+          </p>
+          <p
+            style="margin: 0; overflow: hidden; color: gray; white-space: nowrap;"
+            class="font-size-information"
+          >
+            {{ relatedImagesPosition[1].image.result.title }}
+          </p>
+        </div>
+      </div>
     </div>
     <div
       v-if="
@@ -192,6 +252,36 @@
       >
         {{ relatedImagesPosition[2].image.tag["@value"] }}
       </p>
+      <div v-if="relatedImagesPosition[2].hover">
+        <div class="illustration">
+          <p
+            style="margin-bottom: 0; margin-top: 20px; font-weight: normal;"
+            class="font-size-information"
+          >
+            Illustration: &nbsp;
+          </p>
+          <p
+            style="margin-bottom: 0; margin-top: 20px; overflow: hidden; color: gray; white-space: nowrap"
+            class="font-size-information"
+          >
+            {{ relatedImagesPosition[2].image.result.author }}
+          </p>
+        </div>
+        <div class="story story-related">
+          <p
+            style="margin: 0; font-weight: normal;"
+            class="font-size-information"
+          >
+            Story: &nbsp;
+          </p>
+          <p
+            style="margin: 0; overflow: hidden; color: gray; white-space: nowrap;"
+            class="font-size-information"
+          >
+            {{ relatedImagesPosition[2].image.result.title }}
+          </p>
+        </div>
+      </div>
     </div>
     <!-- Image information top part -->
     <div
@@ -320,7 +410,7 @@
     </div>
     <!-- Image information bottom part -->
     <div v-if="data && data[currentIndex] && carouselHover">
-      <div :style="imageCreatorPosition">
+      <div :style="imageCreatorPosition" class="illustration">
         <p
           style="margin-bottom: 0; margin-top: 20px; font-weight: normal;"
           class="font-size-information"
@@ -334,7 +424,7 @@
           {{ data[currentIndex].author }}
         </p>
       </div>
-      <div :style="imageStoryPosition">
+      <div :style="imageStoryPosition" class="story">
         <p
           style="margin: 0; font-weight: normal;"
           class="font-size-information"
@@ -419,7 +509,7 @@
   </div>
   <!-- Second related images information -->
   <div
-    v-if="secondRelatedImagesPosition.length > 0"
+    v-if="secondRelatedTagsElements.length > 0 && relatedOver"
     :style="secondImageInformationPosition"
   >
     <div
@@ -427,31 +517,37 @@
       :style="{ width: thumbnailWidth() + 'px' }"
     >
       <p
-        v-if="secondRelatedImagesPosition.length > 0"
+        v-if="secondRelatedTagsElements.length > 0"
         class="image-information"
         :class="{
-          removeRelatedImageBaseText: secondRelatedImagesPosition[0].display,
+          removeRelatedImageBaseText:
+            secondRelatedImagesPosition[0] &&
+            secondRelatedImagesPosition[0].display,
         }"
       >
-        {{ secondRelatedImagesPosition[0].image.tag["@value"] }} &nbsp;
+        {{ secondRelatedTagsElements[0]["@value"] }} &nbsp;
       </p>
       <p
-        v-if="secondRelatedImagesPosition.length > 1"
+        v-if="secondRelatedTagsElements.length > 1"
         class="image-information"
         :class="{
-          removeRelatedImageBaseText: secondRelatedImagesPosition[1].display,
+          removeRelatedImageBaseText:
+            secondRelatedImagesPosition[1] &&
+            secondRelatedImagesPosition[1].display,
         }"
       >
-        {{ secondRelatedImagesPosition[1].image.tag["@value"] }} &nbsp;
+        {{ secondRelatedTagsElements[1]["@value"] }} &nbsp;
       </p>
       <p
-        v-if="secondRelatedImagesPosition.length > 2"
+        v-if="secondRelatedTagsElements.length > 2"
         class="image-information"
         :class="{
-          removeRelatedImageBaseText: secondRelatedImagesPosition[2].display,
+          removeRelatedImageBaseText:
+            secondRelatedImagesPosition[2] &&
+            secondRelatedImagesPosition[2].display,
         }"
       >
-        {{ secondRelatedImagesPosition[2].image.tag["@value"] }} &nbsp;
+        {{ secondRelatedTagsElements[2]["@value"] }} &nbsp;
       </p>
     </div>
   </div>
@@ -562,6 +658,12 @@ export default {
         }
       },
       deep: true,
+    },
+    secondRelatedTags: {
+      handler(tags) {
+        this.secondRelatedTagsElements = tags;
+      },
+      deeè: true,
     },
     currentIndex: function(newVal) {
       this.isBeginning = newVal === 0;
@@ -730,6 +832,7 @@ export default {
       newOriginX: 0,
       newOriginY: 0,
       secondRelatedImageTimeout: [],
+      secondRelatedTagsElements: [],
       // History Part
       historyTimeout: undefined,
       fullHistoryMode: false,
@@ -1234,6 +1337,7 @@ export default {
       });
     },
     stopSecondRelatedDisplay() {
+      this.secondRelatedTagsElements = [];
       this.fullHistoryMode = false;
       this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
       this.secondRelatedImageTimeout = [];
@@ -1448,9 +1552,9 @@ export default {
     imageInformationTopPosition() {
       switch (true) {
         case this.windowWidth < 700:
-          return 60;
+          return 40;
         default:
-          return 80;
+          return 60;
       }
     },
     indexInformationTopPosition() {
@@ -1463,6 +1567,9 @@ export default {
     },
   },
   computed: {
+    relatedOver() {
+      return this.relatedImagesPosition.filter((e) => e.hover).length > 0;
+    },
     completionSize() {
       switch (true) {
         case this.windowWidth < 700:
@@ -1473,8 +1580,10 @@ export default {
     },
     topCompletioPosition() {
       switch (true) {
-        case this.windowWidth < 900:
+        case this.windowWidth < 700:
           return -20;
+        case this.windowWidth < 900:
+          return -40;
         default:
           return -40;
       }
@@ -1496,7 +1605,6 @@ export default {
           "px",
         left: this.defineLeftImagePosition() - 10 + "px",
         width: this.thumbnailWidth() + 20 + "px",
-
       };
     },
     imageInformationPosition() {
@@ -1534,9 +1642,6 @@ export default {
     },
     imageCreatorPosition() {
       return {
-        height: "35px",
-        position: "absolute",
-        display: "flex",
         top: this.defineTopImagePosition() + this.thumbnailHeight() + "px",
         left: this.defineLeftImagePosition() - 10 + "px",
         width: this.thumbnailWidth() + 20 + "px",
@@ -1544,9 +1649,6 @@ export default {
     },
     imageStoryPosition() {
       return {
-        height: "20px",
-        position: "absolute",
-        display: "flex",
         top: this.defineTopImagePosition() + this.thumbnailHeight() + 40 + "px",
         left: this.defineLeftImagePosition() - 10 + "px",
         width: this.thumbnailWidth() + 20 + "px",
@@ -1642,19 +1744,51 @@ export default {
         this.defineLeftImagePosition(),
         this.defineTopImagePosition()
       );
-      const top =
-        positions[0] < this.pageHeight / 2
-          ? positions[0] +
-            this.relatedThumbnailHeight() +
-            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
-          : positions[0] + this.relatedThumbnailHeight() / 4;
+      let top = 0;
+      if (
+        positions[0] < this.pageHeight / 2 &&
+        this.relatedImagesPosition[0].hover
+      ) {
+        top =
+          positions[0] +
+          this.relatedThumbnailHeight() +
+          (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 +
+          this.relatedThumbnailHeight() / 2;
+      } else if (positions[0] < this.pageHeight / 2) {
+        top =
+          positions[0] +
+          this.relatedThumbnailHeight() +
+          (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2;
+      } else if (
+        positions[0] >= this.pageHeight / 2 &&
+        this.relatedImagesPosition[0].hover
+      ) {
+        if (
+          this.relatedImagesPosition[0].position === 3 ||
+          this.relatedImagesPosition[0].position === 4
+        ) {
+          top =
+            positions[0] +
+            this.relatedThumbnailHeight() / 4 +
+            this.thumbnailHeight();
+        } else {
+          top = positions[0] + this.thumbnailHeight();
+        }
+      } else {
+        top = positions[0] + this.relatedThumbnailHeight() / 4;
+      }
       return {
         position: "absolute",
         top: top + "px",
-        left: positions[1] + "px",
+        left: this.relatedImagesPosition[0].hover
+          ? positions[1] - 10 + "px"
+          : positions[1] + "px",
         overflow: "hidden",
         "text-align": positions[1] < this.pageWidth / 2 ? "end" : "start",
-        width: this.relatedThumbnailWidth() + "px",
+        width: this.relatedImagesPosition[0].hover
+          ? this.relatedThumbnailWidth() + 20 + "px"
+          : this.relatedThumbnailWidth() + "px",
+        height: "100px",
       };
     },
     secondRelatedInformationPosition1() {
@@ -1744,17 +1878,49 @@ export default {
         this.defineLeftImagePosition(),
         this.defineTopImagePosition()
       );
-      const top =
-        positions[0] < this.pageHeight / 2
-          ? positions[0] +
-            this.relatedThumbnailHeight() +
-            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
-          : positions[0] + this.relatedThumbnailHeight() / 4;
+      let top = 0;
+      if (
+        positions[0] < this.pageHeight / 2 &&
+        this.relatedImagesPosition[1].hover
+      ) {
+        top =
+          positions[0] +
+          this.relatedThumbnailHeight() +
+          (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 +
+          this.relatedThumbnailHeight() / 2;
+      } else if (positions[0] < this.pageHeight / 2) {
+        top =
+          positions[0] +
+          this.relatedThumbnailHeight() +
+          (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2;
+      } else if (
+        positions[0] >= this.pageHeight / 2 &&
+        this.relatedImagesPosition[1].hover
+      ) {
+        if (
+          this.relatedImagesPosition[0].position === 3 ||
+          this.relatedImagesPosition[0].position === 4
+        ) {
+          top =
+            positions[0] +
+            this.relatedThumbnailHeight() / 4 +
+            this.thumbnailHeight();
+        } else {
+          top = positions[0] + this.thumbnailHeight();
+        }
+      } else {
+        top = positions[0] + this.relatedThumbnailHeight() / 4;
+      }
       return {
         position: "absolute",
         top: top + "px",
-        left: positions[1] + "px",
-        width: this.relatedThumbnailWidth() + "px",
+        left: this.relatedImagesPosition[1].hover
+          ? positions[1] - 10 + "px"
+          : positions[1] + "px",
+        width: this.relatedImagesPosition[1].hover
+          ? this.relatedThumbnailWidth() + 20 + "px"
+          : this.relatedThumbnailWidth() + "px",
+        height: "100px",
         "text-align": positions[1] < this.pageWidth / 2 ? "end" : "start",
         overflow: "hidden",
       };
@@ -1846,17 +2012,49 @@ export default {
         this.defineLeftImagePosition(),
         this.defineTopImagePosition()
       );
-      const top =
-        positions[0] < this.pageHeight / 2
-          ? positions[0] +
-            this.relatedThumbnailHeight() +
-            (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
-          : positions[0] + this.relatedThumbnailHeight() / 4;
+      let top = 0;
+      if (
+        positions[0] < this.pageHeight / 2 &&
+        this.relatedImagesPosition[2].hover
+      ) {
+        top =
+          positions[0] +
+          this.relatedThumbnailHeight() +
+          (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 +
+          this.relatedThumbnailHeight() / 2;
+      } else if (positions[0] < this.pageHeight / 2) {
+        top =
+          positions[0] +
+          this.relatedThumbnailHeight() +
+          (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2;
+      } else if (
+        positions[0] >= this.pageHeight / 2 &&
+        this.relatedImagesPosition[2].hover
+      ) {
+        if (
+          this.relatedImagesPosition[0].position === 3 ||
+          this.relatedImagesPosition[0].position === 4
+        ) {
+          top =
+            positions[0] +
+            this.relatedThumbnailHeight() / 4 +
+            this.thumbnailHeight();
+        } else {
+          top = positions[0] + this.thumbnailHeight();
+        }
+      } else {
+        top = positions[0] + this.relatedThumbnailHeight() / 4;
+      }
       return {
         position: "absolute",
         top: top + "px",
-        left: positions[1] + "px",
-        width: this.relatedThumbnailWidth() + "px",
+        left: this.relatedImagesPosition[2].hover
+          ? positions[1] - 10 + "px"
+          : positions[1] + "px",
+        width: this.relatedImagesPosition[2].hover
+          ? this.relatedThumbnailWidth() + 20 + "px"
+          : this.relatedThumbnailWidth() + "px",
+        height: "100px",
         "text-align": positions[1] < this.pageWidth / 2 ? "end" : "start",
         overflow: "hidden",
       };
@@ -1985,6 +2183,7 @@ export default {
       "relatedImages",
       "secondRelatedImages",
       "completionData",
+      "secondRelatedTags",
     ]),
     ...mapGetters({
       getImagesByDecade: "getImagesByDecade",
@@ -2038,6 +2237,22 @@ export default {
 @import "./carouselAnimation.css";
 @import "./loader.css";
 
+.illustration {
+  height: 35px;
+  position: absolute;
+  display: flex;
+}
+
+.story {
+  height: 20px;
+  position: absolute;
+  display: flex;
+}
+
+.story-related {
+  top: 35px;
+}
+
 @media only screen and (min-width: 1200px) {
   .index-text-font {
     font-size: 48px;
@@ -2059,7 +2274,7 @@ export default {
     font-size: 15px;
     margin: 0;
     display: contents;
-    text-transform: uppercase
+    text-transform: uppercase;
   }
 
   .return-position {
@@ -2091,11 +2306,11 @@ export default {
     font-size: 15px;
     margin: 0;
     display: contents;
-    text-transform: uppercase
+    text-transform: uppercase;
   }
 
   .return-position {
-    margin-left: 30px;
+    margin-left: 60px;
     margin-right: 0px;
     margin-top: 0px;
     margin-bottom: 0px;
@@ -2123,7 +2338,7 @@ export default {
     font-size: 15px;
     margin: 0;
     display: contents;
-    text-transform: uppercase
+    text-transform: uppercase;
   }
 
   .return-position {
@@ -2155,7 +2370,7 @@ export default {
     font-size: 11px;
     margin: 0;
     display: contents;
-    text-transform: uppercase
+    text-transform: uppercase;
   }
 
   .return-position {

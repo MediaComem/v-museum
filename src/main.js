@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import { createStore } from "vuex";
-import VuexPersistence from 'vuex-persist'
+import VuexPersistence from "vuex-persist";
 
 import ElementPlus from "element-plus";
 import "element-plus/lib/theme-chalk/index.css";
@@ -10,7 +10,7 @@ import dataFetch from "./api/dataFetching";
 import router from "./router";
 
 const vuexLocal = new VuexPersistence({
-  storage: window.localStorage
+  storage: window.localStorage,
 });
 
 export const getters = {
@@ -80,12 +80,11 @@ export const mutations = {
     const visited = store.getters.getVisitedIndexByDecade(payload.decade);
     if (visited) {
       visited.lastIndex = payload.index;
-    }
-    else {
+    } else {
       state.lastVisitedIndex.push({
         decade: payload.decade,
-        lastIndex: payload.index
-      })
+        lastIndex: payload.index,
+      });
     }
   },
   updateCompletion(state, payload) {
@@ -98,6 +97,9 @@ export const mutations = {
   },
   provideSecondRelatedImages(state, relatedImages) {
     state.secondRelatedImages = relatedImages;
+  },
+  setSecondRelatedTags(state, selectedTags) {
+    state.secondRelatedTags = selectedTags;
   },
   addHistoryElement(state, payload) {
     const isExist = state.history.find(
@@ -120,7 +122,7 @@ export const actions = {
   updateLastVisitedElement(context, payload) {
     context.commit("updateLastVisitedElement", {
       decade: payload.decade,
-      index: payload.index
+      index: payload.index,
     });
   },
   updateCompletion(context, payload) {
@@ -189,21 +191,23 @@ export const actions = {
     if (skipIds === undefined) {
       skipIds = { ids: [] };
     }
-    dataFetch.getImages(decade, nextPage, skipIds.ids).then((result) => {
-      if (result.images.length > 0) {
-        context.commit("setNextContext", {
-          images: result.images,
-          decade: decade,
-          page: nextPage + 1,
-        });
-      }
-      else {
+    dataFetch
+      .getImages(decade, nextPage, skipIds.ids)
+      .then((result) => {
+        if (result.images.length > 0) {
+          context.commit("setNextContext", {
+            images: result.images,
+            decade: decade,
+            page: nextPage + 1,
+          });
+        } else {
+          context.commit("loadingState", false);
+        }
+      })
+      .catch((err) => {
         context.commit("loadingState", false);
-      }
-    }).catch(err => {
-      context.commit("loadingState", false);
-      console.log(err);
-    });
+        console.log(err);
+      });
   },
   loadRelatedImages(context, { tags, id }) {
     const relatedImages = [];
@@ -228,10 +232,13 @@ export const actions = {
   loadSecondRelatedImages(context, { tags, id }) {
     const relatedImages = [];
     const promises = [];
+    const selectedTags = [];
+    context.commit("setSecondRelatedTags", selectedTags);
     tags
       .sort(() => Math.random() - 0.5)
       .slice(0, 3)
       .forEach((tag) => {
+        selectedTags.push(tag);
         promises.push(
           dataFetch.getRelatedImages(tag, id).then((result) => {
             if (result) {
@@ -240,6 +247,8 @@ export const actions = {
           })
         );
       });
+
+    context.commit("setSecondRelatedTags", selectedTags);
 
     Promise.all(promises).then(() => {
       context.commit("provideSecondRelatedImages", relatedImages);
@@ -259,12 +268,13 @@ const store = createStore({
       history: [],
       loadSkipIds: [],
       lastVisitedIndex: [],
+      secondRelatedTags: [],
     };
   },
   getters: getters,
   mutations: mutations,
   actions: actions,
-  plugins: [vuexLocal.plugin]
+  plugins: [vuexLocal.plugin],
 });
 
 const app = createApp(App);

@@ -10,7 +10,6 @@
     <el-carousel-item>
       <div
         ref="intro"
-        class="slider-effect"
         style="height: 100vh; overflow-y: scroll"
       >
         <el-row :gutter="20" style="margin: 0;">
@@ -49,7 +48,7 @@
     >
       <div v-if="!isMobile">
         <img
-          class="slider-effect image-display"
+          class="image-display"
           :src="`/v-museum/onboarding/${item.imagePath}`"
         />
         <div
@@ -61,14 +60,13 @@
         </div>
         <logo style="position: absolute; left: 2vw; top: 2vh" />
         <arrow-up
-          v-if="shouldDisplay"
           :isFull="isFullSize"
           :isMobile="false"
           class="arrow-up"
           :text="index === 0 ? mainTitle : information.collection[index - 1]"
           @click="previousSlide()"
         />
-        <div v-if="shouldDisplay" class="collection-position">
+        <div class="collection-position">
           <el-row>
             <h2
               :class="
@@ -99,7 +97,7 @@
           </el-row>
         </div>
         <arrow-down
-          v-if="index !== information.collection.length - 1 && shouldDisplay"
+          v-if="index !== information.collection.length - 1"
           class="arrow-down"
           :isMobile="false"
           :isFull="isFullSize"
@@ -142,7 +140,6 @@
           />
         </el-row>
         <arrow-up
-          v-if="shouldDisplay"
           :isMobile="true"
           :isFull="false"
           class="arrow-up"
@@ -169,7 +166,7 @@
         </el-row>
         <el-row class="arrow-down-mobile">
           <arrow-down
-            v-if="index !== information.collection.length - 1 && shouldDisplay"
+            v-if="index !== information.collection.length - 1"
             :isMobile="true"
             :isFull="false"
             :text="information.collection[index + 1]"
@@ -204,36 +201,18 @@ export default {
       isCollapse: false,
       slide: 0,
       decade: undefined,
-      move: false,
-      shouldDisplay: true,
       windowHeight: undefined,
       windowWidth: undefined,
     };
   },
   methods: {
     previousSlide() {
-      this.move = true;
-      this.shouldDisplay = false;
-      setTimeout(() => {
-        this.$refs.slider.prev();
-        setTimeout(() => {
-          this.move = false;
-          this.slide = this.slide - 1;
-          this.shouldDisplay = true;
-        }, 500);
-      }, 500);
+      this.$refs.slider.prev();
+      this.slide = this.slide - 1;
     },
     nextSlide() {
-      this.move = true;
-      this.shouldDisplay = false;
-      setTimeout(() => {
-        this.$refs.slider.next();
-        setTimeout(() => {
-          this.move = false;
-          this.slide = this.slide + 1;
-          this.shouldDisplay = true;
-        }, 500);
-      }, 500);
+      this.slide = this.slide + 1;
+      this.$refs.slider.next();
     },
     loadDecade(decade) {
       this.$router.push({
@@ -472,11 +451,7 @@ h3 {
   transition-timing-function: ease-out;
 }
 
-.slider-effect {
-  transition: height 0.5s linear;
-}
-
 .el-carousel__item.is-animating {
-  transition: transform 0.5s linear;
+  transition: transform 0.5s ease-in-out;
 }
 </style>
