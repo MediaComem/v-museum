@@ -20,7 +20,7 @@ export default {
 </script>
 
 <style>
-@import "../imageselector.css";
-@import "../relatedImageAnimation.css";
+@import "../css/imageselector.css";
+@import "../css/relatedImageAnimation.css";
 @import "./relatedimage.css";
 </style>

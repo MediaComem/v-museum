@@ -406,6 +406,8 @@ export default {
 }
 
 .history-value {
+  display: flex;
+  justify-content: center;
   width: 41px;
   color: lightgray;
   font-size: medium;

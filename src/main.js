@@ -32,6 +32,12 @@ export const getters = {
   getHistory: (state) => {
     return state.history;
   },
+  getSecondRelatedTagsByPosition: (state) => (position) => {
+    return state.secondRelatedTags.find((e) => e.position === position).tags;
+  },
+  getSecondRelatedImageById: (state) => (id) => {
+    return state.secondRelatedImages.find((e) => e.id === id)
+  }
 };
 
 export const mutations = {
@@ -97,12 +103,18 @@ export const mutations = {
   },
   provideSecondRelatedImages(state, relatedImages) {
     if (relatedImages.length === 0) {
-      state.secondRelatedImages = []
+      state.secondRelatedImages = [];
+    } else {
+      state.secondRelatedImages.push(relatedImages);
     }
-    state.secondRelatedImages.push(relatedImages);
   },
   setSecondRelatedTags(state, selectedTags) {
-    state.secondRelatedTags = selectedTags;
+    if (selectedTags.length === 0) {
+      state.secondRelatedTags = [];
+    }
+    else {
+      state.secondRelatedTags.push(selectedTags);
+    }
   },
   addHistoryElement(state, payload) {
     const isExist = state.history.find(
@@ -232,12 +244,14 @@ export const actions = {
       context.commit("provideRelatedImages", relatedImages);
     });
   },
+  removeSecondRelatedInformation(context) {
+    context.commit("setSecondRelatedTags", []);
+    context.commit("provideSecondRelatedImages", []);
+  },
   loadSecondRelatedImages(context, { tags, id, position }) {
     const promises = [];
     const relatedImages = [];
     const selectedTags = [];
-    context.commit("provideSecondRelatedImages", relatedImages);
-    context.commit("setSecondRelatedTags", selectedTags);
     tags
       .sort(() => Math.random() - 0.5)
       .slice(0, 3)
@@ -246,16 +260,24 @@ export const actions = {
         promises.push(
           dataFetch.getRelatedImages(tag, id).then((result) => {
             if (result) {
-              relatedImages.push({ tag: tag, result: result, originalId: id, position: position });
+              relatedImages.push({
+                tag: tag,
+                result: result,
+                originalId: id,
+                position: position,
+              });
             }
           })
         );
       });
 
-    context.commit("setSecondRelatedTags", selectedTags);
+    context.commit("setSecondRelatedTags", {position: position, tags: selectedTags});
 
     Promise.all(promises).then(() => {
-      context.commit("provideSecondRelatedImages", relatedImages);
+      context.commit("provideSecondRelatedImages", {
+        id: id,
+        images: relatedImages,
+      });
     });
   },
 };

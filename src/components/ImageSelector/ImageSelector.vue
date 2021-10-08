@@ -44,7 +44,6 @@
       >
         <div class="loader" v-if="!relatedImagesPosition[0].image">
           <div class="loader-wheel"></div>
-          <div class="loader-text"></div>
         </div>
       </div>
     </div>
@@ -111,7 +110,6 @@
       >
         <div class="loader" v-if="!relatedImagesPosition[2].image">
           <div class="loader-wheel"></div>
-          <div class="loader-text"></div>
         </div>
       </div>
     </div>
@@ -521,7 +519,7 @@
         class="image-information"
         :class="{
           removeRelatedImageBaseText:
-            secondRelatedImagesPosition[0] &&
+            secondRelatedImagesPosition.length > 0 &&
             secondRelatedImagesPosition[0].display,
         }"
       >
@@ -532,7 +530,7 @@
         class="image-information"
         :class="{
           removeRelatedImageBaseText:
-            secondRelatedImagesPosition[1] &&
+            secondRelatedImagesPosition.length > 1 &&
             secondRelatedImagesPosition[1].display,
         }"
       >
@@ -543,11 +541,17 @@
         class="image-information"
         :class="{
           removeRelatedImageBaseText:
-            secondRelatedImagesPosition[2] &&
+            secondRelatedImagesPosition.length > 2 &&
             secondRelatedImagesPosition[2].display,
         }"
       >
         {{ secondRelatedTagsElements[2]["@value"] }} &nbsp;
+      </p>
+      <p
+        v-if="shouldDisplayLoading"
+        class="image-information loader-text"
+      >
+        Loading
       </p>
     </div>
   </div>
@@ -624,7 +628,7 @@ export default {
             id: this.data.data[this.currentIndex].id,
           });
           this.setupPosition();
-        } 
+        }
         // Clean url
         this.$router.push(`/selector/${this.nextDecade}`);
       }
@@ -650,12 +654,6 @@ export default {
         }
       },
       deep: true,
-    },
-    secondRelatedTags: {
-      handler(tags) {
-        this.secondRelatedTagsElements = tags;
-      },
-      deeè: true,
     },
     currentIndex: function(newVal) {
       this.isBeginning = newVal === 0;
@@ -698,62 +696,6 @@ export default {
           });
           this.endDisplay = true;
         }, 8000);
-      }
-    },
-    secondRelatedImages: function(relatedImages) {
-      if (
-        this.relatedImagesPosition.filter((e) => e.hover === true).length > 0
-      ) {
-        this.displaySecondRelatedImages(relatedImages);
-        let newData;
-        let newIndex = -1;
-        // Load bundle of images related to the selected related image
-        this.secondRelatedImageTimeout.push(
-          setTimeout(() => {
-            this.couldLoad = false;
-            newData = this.getImagesByDecade(this.nextDecade);
-            if (newData === undefined) {
-              this.loadDataWithSkipId(this.nextDecade, this.nextId);
-            } else {
-              newIndex = newData.data.findIndex((e) => {
-                return e.id == this.nextId;
-              });
-              if (newIndex === -1) {
-                this.loadDataWithSkipId(this.nextDecade, this.nextId);
-              }
-            }
-          }, 2000)
-        );
-        // Setup state of new center image
-        this.secondRelatedImageTimeout.push(
-          setTimeout(() => {
-            this.couldLoad = true;
-            this.relatedImagesPosition = this.secondRelatedImagesPosition;
-            this.secondRelatedImagesPosition = [];
-            this.currentXPosition = this.defineLeftPositionCenterPage();
-            this.currentYPosition = this.defineTopPositionCenterPage();
-            this.carouselHover = true;
-            this.currentDecade = this.nextDecade;
-            if (newIndex !== -1) {
-              this.currentIndex = newIndex;
-              this.data = newData.data;
-            } else {
-              this.data = this.getImagesByDecade(this.currentDecade).data;
-              const id = this.data.findIndex((e) => {
-                return e.id == this.nextId;
-              });
-              this.currentIndex = id;
-            }
-
-            this.shouldRunCentralImageTransition = false;
-            window.scrollTo(this.currentXPosition, this.currentYPosition);
-            this.$store.dispatch("insertHistory", {
-              decade: this.currentDecade,
-              index: this.currentIndex,
-              data: this.data[this.currentIndex].imagePaths.square,
-            });
-          }, 8000)
-        );
       }
     },
     // Watcher uses to manage the completion element
@@ -801,6 +743,7 @@ export default {
       shouldRunCentralImageTransition: true,
       shouldRunRelatedImageTransition: true,
       endOfSlider: undefined,
+      shouldDisplayLoading: true,
       // Information uses to manage the display
       pageHeight: 4000,
       pageWidth: 6000,
@@ -826,6 +769,7 @@ export default {
       newOriginY: 0,
       secondRelatedImageTimeout: [],
       secondRelatedTagsElements: [],
+      secondRelatedImageInterval: undefined,
       // History Part
       historyTimeout: undefined,
       fullHistoryMode: false,
@@ -941,49 +885,84 @@ export default {
               relatedImage.isTarget = true;
               this.newOriginY = positions[0];
               this.newOriginX = positions[1];
+              this.secondRelatedTagsElements = this.getSecondRelatedTags(
+                relatedImage.position
+              );
+              this.secondRelatedImageInterval = setInterval(() => {
+                const relatedImages = this.getSecondRelatedImages(
+                  relatedImage.image.result.id
+                );
+                if (relatedImages) {
+                  this.shouldDisplayLoading = true;
+                  clearInterval(this.secondRelatedImageInterval);
+                  this.$router.push(
+                    `/selector/${relatedImage.image.result.decade.slice(0, 3)}`
+                  );
+                  this.loadSecondRelatedImages(
+                    relatedImage.image.result.decade.slice(0, 3),
+                    relatedImage.image.result.id,
+                    relatedImages.images
+                  );
+                  this.shouldDisplayLoading = false;
+                }
+              }, 100);
             }
           }, 200)
         );
       }
     },
-    colision(top, left, isHover, isRelated) {  
+    colision(top, left, isHover, isRelated) {
       if (
-        !isHover && !isRelated &&
+        !isHover &&
+        !isRelated &&
         left <= 100 &&
         left >= -100 &&
         top <= 100 &&
         top >= -100
       ) {
         return true;
-      } 
-      else if (
-        isHover && !isRelated &&
-        left <= 100 + ((this.thumbnailWidth() - this.relatedThumbnailWidth()) / 4) &&
-        left >= -100 - ((this.thumbnailWidth() - this.relatedThumbnailWidth()) / 4) &&
-        top <= 100 + ((this.thumbnailHeight() - this.relatedThumbnailHeight()) / 4) &&
-        top >= -100 - ((this.thumbnailHeight() - this.relatedThumbnailHeight()) / 4)
+      } else if (
+        isHover &&
+        !isRelated &&
+        left <=
+          100 + (this.thumbnailWidth() - this.relatedThumbnailWidth()) / 4 &&
+        left >=
+          -100 - (this.thumbnailWidth() - this.relatedThumbnailWidth()) / 4 &&
+        top <=
+          100 + (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 4 &&
+        top >=
+          -100 - (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 4
       ) {
         return true;
-      }
-      else if (
-        !isHover && isRelated &&
+      } else if (
+        !isHover &&
+        isRelated &&
         left <= 100 &&
         left >= -100 &&
-        top <= 100 - ((this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2) &&
-        top >= -100 - ((this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2)
+        top <=
+          100 - (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2 &&
+        top >=
+          -100 - (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 2
+      ) {
+        return true;
+      } else if (
+        isHover &&
+        isRelated &&
+        left <=
+          100 + (this.thumbnailWidth() - this.relatedThumbnailWidth()) / 4 &&
+        left >=
+          -100 - (this.thumbnailWidth() - this.relatedThumbnailWidth()) / 4 &&
+        top <=
+          100 + (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 4 &&
+        top >=
+          -100 - (this.thumbnailHeight() - this.relatedThumbnailHeight()) / 4
       ) {
         return true;
       }
-      else if (isHover && isRelated &&
-        left <= 100 + ((this.thumbnailWidth() - this.relatedThumbnailWidth()) / 4) &&
-        left >= -100 - ((this.thumbnailWidth() - this.relatedThumbnailWidth()) / 4) &&
-        top <= 100 + ((this.thumbnailHeight() - this.relatedThumbnailHeight()) / 4) &&
-        top >= -100 - ((this.thumbnailHeight() - this.relatedThumbnailHeight()) / 4)) {
-          return true;
-        }
       return false;
     },
     checkCollision() {
+      clearInterval(this.secondRelatedImageInterval);
       this.moveToImageTimeout.forEach(clearTimeout);
       this.moveToImageTimeout = [];
 
@@ -1135,7 +1114,7 @@ export default {
       }
     },
     sliderChange() {
-      clearTimeout(this.endOfSlider)
+      clearTimeout(this.endOfSlider);
       this.endOfSlider = undefined;
       this.viewerImageMode = false;
       // Release animation
@@ -1193,7 +1172,7 @@ export default {
           this.setupPosition();
           setTimeout(() => {
             this.viewerImageMode = true;
-            this.shouldRunDecelerateAnimation = false
+            this.shouldRunDecelerateAnimation = false;
           }, 1000);
         }, 500)
       );
@@ -1244,7 +1223,10 @@ export default {
             id: this.data[this.currentIndex].id,
           });
           this.setupPosition();
-          this.endOfSlider = setTimeout(() => this.viewerImageMode = true, 1200);
+          this.endOfSlider = setTimeout(
+            () => (this.viewerImageMode = true),
+            1200
+          );
         }
       }
     },
@@ -1277,13 +1259,14 @@ export default {
         });
     },
     displayRelatedImages(images) {
+      this.$store.dispatch("removeSecondRelatedInformation");
       images.forEach((image, index) => {
         this.relatedImagesPosition[index].image = image;
-        /*this.$store.dispatch("loadSecondRelatedImages", {
+        this.$store.dispatch("loadSecondRelatedImages", {
           tags: image.result.tags,
           id: image.result.id,
           position: this.relatedImagesPosition[index].position,
-        });*/
+        });
       });
       // Setup the display animation
       this.$nextTick(() => {
@@ -1316,6 +1299,58 @@ export default {
       this.displayRelatedImageTimeout.forEach(clearTimeout);
       this.displayRelatedImageTimeout = [];
       this.relatedImagesPosition = [];
+    },
+    loadSecondRelatedImages(decade, nextId, relatedImages) {
+      this.displaySecondRelatedImages(relatedImages);
+      let newData;
+      let newIndex = -1;
+      // Load bundle of images related to the selected related image
+      this.secondRelatedImageTimeout.push(
+        setTimeout(() => {
+          this.couldLoad = false;
+          newData = this.getImagesByDecade(decade);
+          if (newData === undefined) {
+            this.loadDataWithSkipId(decade, nextId);
+          } else {
+            newIndex = newData.data.findIndex((e) => {
+              return e.id == nextId;
+            });
+            if (newIndex === -1) {
+              this.loadDataWithSkipId(decade, nextId);
+            }
+          }
+        }, 2000)
+      );
+      // Setup state of new center image
+      /*this.secondRelatedImageTimeout.push(
+        setTimeout(() => {
+          this.couldLoad = true;
+          this.relatedImagesPosition = this.secondRelatedImagesPosition;
+          this.secondRelatedImagesPosition = [];
+          this.currentXPosition = this.defineLeftPositionCenterPage();
+          this.currentYPosition = this.defineTopPositionCenterPage();
+          this.carouselHover = true;
+          this.currentDecade = decade;
+          if (newIndex !== -1) {
+            this.currentIndex = newIndex;
+            this.data = newData.data;
+          } else {
+            this.data = this.getImagesByDecade(this.currentDecade).data;
+            const id = this.data.findIndex((e) => {
+              return e.id == nextId;
+            });
+            this.currentIndex = id;
+          }
+
+          this.shouldRunCentralImageTransition = false;
+          window.scrollTo(this.currentXPosition, this.currentYPosition);
+          this.$store.dispatch("insertHistory", {
+            decade: this.currentDecade,
+            index: this.currentIndex,
+            data: this.data[this.currentIndex].imagePaths.square,
+          });
+        }, 8000)
+      );*/
     },
     // This methods setup the display of related images from a related image
     displaySecondRelatedImages(images) {
@@ -2196,15 +2231,17 @@ export default {
       "relatedImages",
       "secondRelatedImages",
       "completionData",
-      "secondRelatedTags",
     ]),
     ...mapGetters({
       getImagesByDecade: "getImagesByDecade",
       getCompletionByDecade: "getCompletionByDecade",
       getVisitedIndexByDecade: "getVisitedIndexByDecade",
+      getSecondRelatedTags: "getSecondRelatedTagsByPosition",
+      getSecondRelatedImages: "getSecondRelatedImageById",
     }),
   },
   mounted() {
+    this.shouldRunRelatedImageTransition = false;
     this.$store.dispatch("restartLoadingState");
 
     this.$refs.display.addEventListener(
@@ -2245,152 +2282,9 @@ export default {
 </script>
 
 <style scoped>
-@import "./imageselector.css";
-@import "./sliderspeed.css";
-@import "./carouselAnimation.css";
-@import "./loader.css";
-
-.illustration {
-  height: 35px;
-  position: absolute;
-  display: flex;
-}
-
-.story {
-  height: 20px;
-  position: absolute;
-  display: flex;
-}
-
-.story-related {
-  top: 35px;
-}
-
-@media only screen and (min-width: 1200px) {
-  .index-text-font {
-    font-size: 48px;
-  }
-
-  .related-text {
-    margin-bottom: 0;
-    font-size: 20px;
-    font-weight: normal;
-    text-transform: uppercase;
-  }
-
-  .font-size-information {
-    text-align: start;
-    font-size: 15px;
-  }
-
-  .image-information {
-    font-size: 15px;
-    margin: 0;
-    display: contents;
-    text-transform: uppercase;
-  }
-
-  .return-position {
-    margin-left: 60px;
-    margin-right: 0px;
-    margin-top: 0px;
-    margin-bottom: 0px;
-  }
-}
-
-@media only screen and (min-width: 900px) and (max-width: 1199px) {
-  .index-text-font {
-    font-size: 48px;
-  }
-
-  .related-text {
-    margin-bottom: 0;
-    font-size: 20px;
-    font-weight: normal;
-    text-transform: uppercase;
-  }
-
-  .font-size-information {
-    text-align: start;
-    font-size: 15px;
-  }
-
-  .image-information {
-    font-size: 15px;
-    margin: 0;
-    display: contents;
-    text-transform: uppercase;
-  }
-
-  .return-position {
-    margin-left: 60px;
-    margin-right: 0px;
-    margin-top: 0px;
-    margin-bottom: 0px;
-  }
-}
-
-@media only screen and (min-width: 700px) and (max-width: 899px) {
-  .index-text-font {
-    font-size: 48px;
-  }
-
-  .related-text {
-    margin-bottom: 0;
-    font-size: 15px;
-    font-weight: normal;
-    text-transform: uppercase;
-  }
-
-  .font-size-information {
-    text-align: start;
-    font-size: 15px;
-  }
-
-  .image-information {
-    font-size: 15px;
-    margin: 0;
-    display: contents;
-    text-transform: uppercase;
-  }
-
-  .return-position {
-    margin-left: 60px;
-    margin-right: 0px;
-    margin-top: 0px;
-    margin-bottom: 0px;
-  }
-}
-
-@media only screen and (min-width: 300px) and (max-width: 699px) {
-  .index-text-font {
-    font-size: 15px;
-  }
-
-  .related-text {
-    margin-bottom: 0px;
-    font-size: 10px;
-    font-weight: normal;
-    text-transform: uppercase;
-  }
-
-  .font-size-information {
-    text-align: start;
-    font-size: 11px;
-  }
-
-  .image-information {
-    font-size: 11px;
-    margin: 0;
-    display: contents;
-    text-transform: uppercase;
-  }
-
-  .return-position {
-    margin-left: 30px;
-    margin-right: 0px;
-    margin-top: 0px;
-    margin-bottom: 0px;
-  }
-}
+@import "./css/imageselector.css";
+@import "./css/sliderspeed.css";
+@import "./css/carouselAnimation.css";
+@import "./css/loader.css";
+@import "./css/text.css";
 </style>
