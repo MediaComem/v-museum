@@ -127,9 +127,9 @@
           </el-row>
           <el-row>
             <div style="height: 80vh; overflow: scroll">
-              <p class="collection-text-mobile collapse-text-align-mobile">
+              <text class="collection-text-mobile collapse-text-align-mobile">
                 {{ item.text }}
-              </p>
+              </text>
             </div>
           </el-row>
         </div>

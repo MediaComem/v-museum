@@ -37,6 +37,7 @@
       style="z-index: -1"
     >
       <div
+        v-if="secondRelatedImagesPosition.length === 0"
         ref="position0"
         class="loading"
         :style="relatedImageDisplay1"
@@ -70,6 +71,7 @@
       style="z-index: -1"
     >
       <div
+        v-if="secondRelatedImagesPosition.length === 0"
         ref="position1"
         class="loading"
         :style="relatedImageDisplay2"
@@ -103,6 +105,7 @@
       style="z-index: -1"
     >
       <div
+        v-if="secondRelatedImagesPosition.length === 0"
         ref="position2"
         class="loading"
         :style="relatedImageDisplay3"
@@ -150,7 +153,9 @@
       >
         {{ relatedImagesPosition[0].image.tag["@value"] }}
       </p>
-      <div v-if="relatedImagesPosition[0].hover && relatedImagesPosition[0].image">
+      <div
+        v-if="relatedImagesPosition[0].hover && relatedImagesPosition[0].image"
+      >
         <div class="illustration">
           <p
             style="margin-bottom: 0; margin-top: 20px; font-weight: normal;"
@@ -200,7 +205,9 @@
       >
         {{ relatedImagesPosition[1].image.tag["@value"] }}
       </p>
-      <div v-if="relatedImagesPosition[1].hover && relatedImagesPosition[0].image">
+      <div
+        v-if="relatedImagesPosition[1].hover && relatedImagesPosition[0].image"
+      >
         <div class="illustration">
           <p
             style="margin-bottom: 0; margin-top: 20px; font-weight: normal;"
@@ -250,7 +257,9 @@
       >
         {{ relatedImagesPosition[2].image.tag["@value"] }}
       </p>
-      <div v-if="relatedImagesPosition[2].hover && relatedImagesPosition[0].image">
+      <div
+        v-if="relatedImagesPosition[2].hover && relatedImagesPosition[0].image"
+      >
         <div class="illustration">
           <p
             style="margin-bottom: 0; margin-top: 20px; font-weight: normal;"
