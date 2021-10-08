@@ -161,7 +161,7 @@ export default {
       thirdPosition: 0,
       forthImage: undefined,
       forthPosition: 0,
-      currentHistoryLength: 0,
+      nextPosition: 1,
       position: 0,
       isAnimated: false,
     };
@@ -171,68 +171,74 @@ export default {
       if (!this.isFullHistory) {
         setTimeout(() => {
           this.isAnimated = false;
-      }, 100);
+        }, 100);
       }
     },
     history: {
       handler(historyElement) {
+        console.log(historyElement.length);
+        console.log(this.nextPosition);
         // The store contains enough elements to fill the component?
         if (historyElement.length > 3) {
-          if (this.currentHistoryLength !== historyElement.length) {
-            // Depending of the position of the last element, move other images and add the new image.
-            // Each component move depending of its own position.
-            // The last position disappers and the new one appears
-            // The timeout is used to manage the display when the move animation is done
-            if (this.currentHistory.length % 4 === 1) {
-              setTimeout(() => (this.secondImage = undefined), 1000);
-              this.firstPosition = 0;
-              this.secondPosition = this.secondPosition + 1;
-              this.thirdPosition = this.thirdPosition + 1;
-              this.forthPosition = this.forthPosition + 1;
-              setTimeout(
-                () =>
-                  (this.firstImage = historyElement[historyElement.length - 1]),
-                1000
-              );
-            }
-            if (this.currentHistory.length % 4 === 2) {
-              setTimeout(() => (this.thirdImage = undefined), 1000);
-              this.secondPosition = 0;
-              this.firstPosition = this.firstPosition + 1;
-              this.thirdPosition = this.thirdPosition + 1;
-              this.forthPosition = this.forthPosition + 1;
-              setTimeout(
-                () =>
-                  (this.secondImage =
-                    historyElement[historyElement.length - 1]),
-                1000
-              );
-            }
-            if (this.currentHistory.length % 4 === 3) {
-              setTimeout(() => (this.forthImage = undefined), 1000);
-              this.thirdPosition = 0;
-              this.firstPosition = this.firstPosition + 1;
-              this.secondPosition = this.secondPosition + 1;
-              this.forthPosition = this.forthPosition + 1;
-              setTimeout(
-                () =>
-                  (this.thirdImage = historyElement[historyElement.length - 1]),
-                1000
-              );
-            }
-            if (this.currentHistory.length % 4 === 0) {
-              setTimeout(() => (this.firstImage = undefined), 1000);
-              this.forthPosition = 0;
-              this.firstPosition = this.firstPosition + 1;
-              this.secondPosition = this.secondPosition + 1;
-              this.thirdPosition = this.thirdPosition + 1;
-              setTimeout(
-                () =>
-                  (this.forthImage = historyElement[historyElement.length - 1]),
-                1000
-              );
-            }
-            this.currentHistoryLength = historyElement.length;
+          // Depending of the position of the last element, move other images and add the new image.
+          // Each component move depending of its own position.
+          // The last position disappers and the new one appears
+          // The timeout is used to manage the display when the move animation is done
+          if (this.nextPosition === 1) {
+            setTimeout(() => (this.secondImage = undefined), 1000);
+            this.firstPosition = 0;
+            this.nextPosition = 2
+            this.secondPosition = this.secondPosition + 1;
+            this.thirdPosition = this.thirdPosition + 1;
+            this.forthPosition = this.forthPosition + 1;
+            setTimeout(
+              () =>
+                (this.firstImage = historyElement[historyElement.length - 1]),
+              1000
+            );
+            return;
+          }
+          if (this.nextPosition === 2) {
+            setTimeout(() => (this.thirdImage = undefined), 1000);
+            this.secondPosition = 0;
+            this.nextPosition = 3;
+            this.firstPosition = this.firstPosition + 1;
+            this.thirdPosition = this.thirdPosition + 1;
+            this.forthPosition = this.forthPosition + 1;
+            setTimeout(
+              () =>
+                (this.secondImage = historyElement[historyElement.length - 1]),
+              1000
+            );
+            return;
+          }
+          if (this.nextPosition === 3) {
+            setTimeout(() => (this.forthImage = undefined), 1000);
+            this.thirdPosition = 0;
+            this.nextPosition = 4
+            this.firstPosition = this.firstPosition + 1;
+            this.secondPosition = this.secondPosition + 1;
+            this.forthPosition = this.forthPosition + 1;
+            setTimeout(
+              () =>
+                (this.thirdImage = historyElement[historyElement.length - 1]),
+              1000
+            );
+            return;
+          }
+          if (this.nextPosition === 4) {
+            setTimeout(() => (this.firstImage = undefined), 1000);
+            this.forthPosition = 0;
+            this.nextPosition = 1;
+            this.firstPosition = this.firstPosition + 1;
+            this.secondPosition = this.secondPosition + 1;
+            this.thirdPosition = this.thirdPosition + 1;
+            setTimeout(
+              () =>
+                (this.forthImage = historyElement[historyElement.length - 1]),
+              1000
+            );
+            return;
           }
         } else {
           // Load the available images
@@ -271,17 +277,18 @@ export default {
     },
     loadImages(historyElement) {
       const element = historyElement.slice(-3);
-      this.currentHistoryLength = this.currentHistory.length;
       switch (element.length) {
         case 1:
           this.firstImage = element[0];
           this.firstPosition = 0;
+          this.nextPosition = 2;
           break;
         case 2:
           this.firstImage = element[0];
           this.firstPosition = 1;
           this.secondImage = element[1];
           this.secondPosition = 0;
+          this.nextPosition = 3;
           break;
         default:
           this.firstImage = element[0];
@@ -290,6 +297,7 @@ export default {
           this.secondPosition = 1;
           this.thirdImage = element[2];
           this.thirdPosition = 0;
+          this.nextPosition = 4;
           break;
       }
     },
@@ -468,7 +476,8 @@ export default {
 }
 
 .open-animation {
-  transition: height 0.3s linear, width 0.3s linear, top 0.3s linear, left 0.3s linear;
+  transition: height 0.3s linear, width 0.3s linear, top 0.3s linear,
+    left 0.3s linear;
 }
 
 @media (pointer: fine) {
