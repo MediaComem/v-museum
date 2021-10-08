@@ -547,10 +547,7 @@
       >
         {{ secondRelatedTagsElements[2]["@value"] }} &nbsp;
       </p>
-      <p
-        v-if="shouldDisplayLoading"
-        class="image-information loader-text"
-      >
+      <p v-if="shouldDisplayLoading" class="image-information loader-text">
         Loading
       </p>
     </div>
@@ -1344,6 +1341,15 @@ export default {
 
           this.shouldRunCentralImageTransition = false;
           window.scrollTo(this.currentXPosition, this.currentYPosition);
+          this.$store.dispatch("removeSecondRelatedInformation");
+          this.relatedImagesPosition.forEach((image) => {
+            this.$store.dispatch("loadSecondRelatedImages", {
+              tags: image.image.result.tags,
+              id: image.image.result.id,
+              position: image.position,
+            });
+          });
+          this.shouldDisplayLoading = true;
           this.$store.dispatch("insertHistory", {
             decade: this.currentDecade,
             index: this.currentIndex,
