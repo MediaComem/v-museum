@@ -291,6 +291,7 @@ h3 {
   .page-subtitle {
     font-size: 40px;
     max-width: 60rem;
+    text-align: center;
   }
 }
 
@@ -303,6 +304,7 @@ h3 {
   .page-subtitle {
     font-size: 50px;
     max-width: 60rem;
+    text-align: center;
   }
 }
 
