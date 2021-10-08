@@ -150,7 +150,7 @@
       >
         {{ relatedImagesPosition[0].image.tag["@value"] }}
       </p>
-      <div v-if="relatedImagesPosition[0].hover">
+      <div v-if="relatedImagesPosition[0].hover && relatedImagesPosition[0].image">
         <div class="illustration">
           <p
             style="margin-bottom: 0; margin-top: 20px; font-weight: normal;"
@@ -200,7 +200,7 @@
       >
         {{ relatedImagesPosition[1].image.tag["@value"] }}
       </p>
-      <div v-if="relatedImagesPosition[1].hover">
+      <div v-if="relatedImagesPosition[1].hover && relatedImagesPosition[0].image">
         <div class="illustration">
           <p
             style="margin-bottom: 0; margin-top: 20px; font-weight: normal;"
@@ -250,7 +250,7 @@
       >
         {{ relatedImagesPosition[2].image.tag["@value"] }}
       </p>
-      <div v-if="relatedImagesPosition[2].hover">
+      <div v-if="relatedImagesPosition[2].hover && relatedImagesPosition[0].image">
         <div class="illustration">
           <p
             style="margin-bottom: 0; margin-top: 20px; font-weight: normal;"
