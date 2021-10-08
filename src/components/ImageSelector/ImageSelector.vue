@@ -1322,7 +1322,7 @@ export default {
         }, 2000)
       );
       // Setup state of new center image
-      /*this.secondRelatedImageTimeout.push(
+      this.secondRelatedImageTimeout.push(
         setTimeout(() => {
           this.couldLoad = true;
           this.relatedImagesPosition = this.secondRelatedImagesPosition;
@@ -1350,7 +1350,7 @@ export default {
             data: this.data[this.currentIndex].imagePaths.square,
           });
         }, 8000)
-      );*/
+      );
     },
     // This methods setup the display of related images from a related image
     displaySecondRelatedImages(images) {
