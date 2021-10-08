@@ -176,8 +176,6 @@ export default {
     },
     history: {
       handler(historyElement) {
-        console.log(historyElement.length);
-        console.log(this.nextPosition);
         // The store contains enough elements to fill the component?
         if (historyElement.length > 3) {
           // Depending of the position of the last element, move other images and add the new image.
