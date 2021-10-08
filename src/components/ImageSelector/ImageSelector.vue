@@ -19,7 +19,7 @@
     @touchend="endPosition"
     @touchmove="touchMove"
     ref="display"
-    style="cursor: pointer; user-select:none; touch-action: pan-x pan-y;"
+    style="touch-action: pan-x pan-y;"
   >
     <!-- Target display part -->
     <rectangle
@@ -341,7 +341,7 @@
         :emptyColor="'lightgray'"
         :completeColor="'black'"
       />
-      <div @click="loadOnboarding()" style="z-index:1">
+      <div @click="loadOnboarding()" style="z-index: 1;">
         <p class="return-position">
           {{ currentDecade + "0" }}
           <img src="@/assets/image-selector/vector.png" />
@@ -1692,6 +1692,7 @@ export default {
         left: this.defineLeftImagePosition() + "px",
         width: this.thumbnailWidth() + 10 + "px",
         "text-align": "end",
+        "z-index": "-1",
       };
     },
     imageCreatorPosition() {
