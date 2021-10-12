@@ -2,6 +2,7 @@
   <div
     v-if="!isFullHistory"
     class="history-layout open-animation"
+    :class="isDisable"
     :style="isAnimated ? fullHistory : displayHistory"
   >
     <div v-if="!isAnimated">
@@ -150,6 +151,7 @@ export default {
     leftPosition: Number,
     fullWidth: Number,
     displayAllHistory: Boolean,
+    couldLoadHistory: Boolean,
   },
   data() {
     return {
@@ -185,7 +187,7 @@ export default {
           if (this.nextPosition === 1) {
             setTimeout(() => (this.secondImage = undefined), 1000);
             this.firstPosition = 0;
-            this.nextPosition = 2
+            this.nextPosition = 2;
             this.secondPosition = this.secondPosition + 1;
             this.thirdPosition = this.thirdPosition + 1;
             this.forthPosition = this.forthPosition + 1;
@@ -213,7 +215,7 @@ export default {
           if (this.nextPosition === 3) {
             setTimeout(() => (this.forthImage = undefined), 1000);
             this.thirdPosition = 0;
-            this.nextPosition = 4
+            this.nextPosition = 4;
             this.firstPosition = this.firstPosition + 1;
             this.secondPosition = this.secondPosition + 1;
             this.forthPosition = this.forthPosition + 1;
@@ -267,11 +269,13 @@ export default {
       }
     },
     comeBackTo(historyElement) {
-      this.$router.push({
-        path: `/selector/${historyElement.decade}`,
-        query: { history: true, imageId: historyElement.imageId },
-      });
-      this.$emit("closeFullHistory");
+      if (this.couldLoad) {
+        this.$router.push({
+          path: `/selector/${historyElement.decade}`,
+          query: { history: true, imageId: historyElement.imageId },
+        });
+        this.$emit("closeFullHistory");
+      }
     },
     loadImages(historyElement) {
       const element = historyElement.slice(-3);
@@ -303,6 +307,9 @@ export default {
   computed: {
     isFullHistory() {
       return this.displayAllHistory;
+    },
+    couldLoad() {
+      return this.couldLoadHistory;
     },
     displayHistory() {
       return {
@@ -368,6 +375,11 @@ export default {
         "final-opacity": this.forthPosition === 3,
       };
     },
+    isDisable() {
+      return {
+        "disable-history": !this.couldLoad,
+      }
+    },
     ...mapGetters({
       currentHistory: "getHistory",
     }),
@@ -380,6 +392,10 @@ export default {
 </script>
 
 <style scoped>
+.disable-history {
+  opacity: 0.5;
+}
+
 .history-layout {
   display: block;
   background-color: black;

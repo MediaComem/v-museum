@@ -5,6 +5,7 @@
     :leftPosition="10"
     :fullWidth="windowWidth"
     :displayAllHistory="fullHistoryMode"
+    :couldLoadHistory="couldLoadHistory"
     @openFullHistory="fullHistoryMode = true"
     @closeFullHistory="fullHistoryMode = false"
   />
@@ -631,6 +632,7 @@ export default {
       if (this.$route.name === "selector") {
         if (this.$route.query.history !== undefined) {
           this.stopDisplayRelatedImages();
+          this.couldLoadHistory = false;
           // If the loading comes from history, setup the states
           this.nextDecade = this.$route.params.decade;
           this.currentDecade = this.$route.params.decade;
@@ -657,6 +659,7 @@ export default {
             this.rectangleWidth = this.thumbnailWidth() + 20;
             this.shouldRunCentralImageTransition = false;
             window.scrollTo(this.currentXPosition, this.currentYPosition);
+            this.couldLoadHistory = true;
             this.$store.dispatch("loadRelatedImages", {
               tags: this.data[this.currentIndex].tags,
               id: this.data[this.currentIndex].id,
@@ -808,6 +811,7 @@ export default {
       // History Part
       historyTimeout: undefined,
       fullHistoryMode: false,
+      couldLoadHistory: true,
     };
   },
   methods: {
@@ -866,6 +870,7 @@ export default {
         this.carouselHover = true;
         window.scrollTo(this.currentXPosition, this.currentYPosition);
       });
+      this.couldLoadHistory = true;
     },
     loadOnboarding() {
       this.$store.dispatch("updateLastVisitedElement", {
