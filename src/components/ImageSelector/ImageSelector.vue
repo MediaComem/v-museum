@@ -393,7 +393,7 @@
           <img
             v-if="data && data[currentIndex]"
             draggable="false"
-            class="carousel-image"
+            class="carousel-image-large"
             :src="data[currentIndex].imagePaths.large"
             :alt="data[currentIndex].id"
             @click="loadFocusImage(data[currentIndex].id)"
@@ -424,7 +424,7 @@
                   v-if="value && value.imagePaths"
                   class="carousel-image"
                   :ref="'image-' + index"
-                  :src="value.imagePaths.large"
+                  :src="value.imagePaths.medium"
                   :alt="value.id"
                 />
               </div>
@@ -1299,7 +1299,7 @@ export default {
           position: this.relatedImagesPosition[index].position,
         });
         this.$store.dispatch("loadSecondRelatedImages", {
-          tags: image.result.tags,
+          tags: image.result.tags ?? [],
           id: image.result.id,
           position: this.relatedImagesPosition[index].position,
         });

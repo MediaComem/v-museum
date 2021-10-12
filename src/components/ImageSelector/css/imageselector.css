@@ -9,10 +9,21 @@
 }
 
 .carousel-image {
-  object-fit: none; 
-  height: 100%; 
+  object-fit: cover;
+  height: 100%;
   width: 100%;
 }
+
+.carousel-image-large {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+  filter:blur(2px);
+  animation: reveal 1s forwards ease;
+
+}
+
+@keyframes reveal { from { filter:blur(2px); } to { filter:blur(0px); }  }
 
 .v-zoom {
   height: 100%;
