@@ -217,7 +217,6 @@ export default {
     loadDecade(decade) {
       this.$router.push({
         path: `/selector/${decade}`,
-        query: { comeFromOnboarding: true },
       });
     },
   },

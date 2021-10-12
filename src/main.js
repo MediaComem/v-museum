@@ -11,6 +11,13 @@ import router from "./router";
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
+  modules: [
+    "isLoadingImage",
+    "nextPageOffset",
+    "completionData",
+    "history",
+    "lastVisitedIndex",
+  ],
 });
 
 export const getters = {
@@ -35,9 +42,12 @@ export const getters = {
   getSecondRelatedTagsByPosition: (state) => (position) => {
     return state.secondRelatedTags.find((e) => e.position === position).tags;
   },
+  getRelatedImages: (state) => () => {
+    return state.relatedImages;
+  },
   getSecondRelatedImageById: (state) => (id) => {
-    return state.secondRelatedImages.find((e) => e.id === id)
-  }
+    return state.secondRelatedImages.find((e) => e.id === id);
+  },
 };
 
 export const mutations = {
@@ -53,10 +63,12 @@ export const mutations = {
         state.nextPageOffset.push({
           decade: payload.decade,
           page: payload.page,
+          pageView: payload.pageView,
         });
       } else {
         const nextPage = store.getters.getNextPageByDecade(payload.decade);
         nextPage.page = payload.page;
+        nextPage.pageView = payload.pageView;
       }
     }
     state.isLoadingImage = false;
@@ -79,6 +91,7 @@ export const mutations = {
         totalImages: payload.totalImages,
         maxVisitedIndex: 0,
         completion: 0,
+        maxNbPage: Math.ceil(payload.totalImages / 100),
       });
     }
   },
@@ -86,10 +99,12 @@ export const mutations = {
     const visited = store.getters.getVisitedIndexByDecade(payload.decade);
     if (visited) {
       visited.lastIndex = payload.index;
+      visited.lastId = payload.imageId;
     } else {
       state.lastVisitedIndex.push({
         decade: payload.decade,
         lastIndex: payload.index,
+        lastId: payload.imageId,
       });
     }
   },
@@ -101,6 +116,14 @@ export const mutations = {
   provideRelatedImages(state, relatedImages) {
     state.relatedImages = relatedImages;
   },
+  setRelatedImagePosition(state, information) {
+    const related = state.relatedImages.find(
+      (e) => e.result.id === information.id
+    );
+    if (related) {
+      related.position = information.position;
+    }
+  },
   provideSecondRelatedImages(state, relatedImages) {
     if (relatedImages.length === 0) {
       state.secondRelatedImages = [];
@@ -111,19 +134,21 @@ export const mutations = {
   setSecondRelatedTags(state, selectedTags) {
     if (selectedTags.length === 0) {
       state.secondRelatedTags = [];
-    }
-    else {
+    } else {
       state.secondRelatedTags.push(selectedTags);
     }
   },
   addHistoryElement(state, payload) {
     const isExist = state.history.find(
-      (e) => e.index === payload.index && e.decade === payload.decade
+      (e) => e.imageId === payload.imageId && e.decade === payload.decade
     );
     if (isExist === undefined) {
+      if (state.history.length === 100) {
+        state.history.shift();
+      }
       state.history.push({
         decade: payload.decade,
-        index: payload.index,
+        imageId: payload.imageId,
         data: payload.data,
       });
     }
@@ -138,6 +163,7 @@ export const actions = {
     context.commit("updateLastVisitedElement", {
       decade: payload.decade,
       index: payload.index,
+      imageId: payload.imageId,
     });
   },
   updateCompletion(context, payload) {
@@ -150,19 +176,41 @@ export const actions = {
   insertHistory(context, payload) {
     context.commit("addHistoryElement", {
       decade: payload.decade,
-      index: payload.index,
+      imageId: payload.imageId,
       data: payload.data,
     });
   },
-  initializeCarousel(context, { decade }) {
+  initializeCarousel(context, { decade, id }) {
     if (store.getters.getImagesByDecade(decade) === undefined) {
+      let skipIds = [];
+      if (id > 0) {
+        skipIds.push(id);
+        dataFetch.getImageById(id).then((result) => {
+          context.commit("setNextContext", {
+            images: result,
+            decade: decade,
+          });
+        });
+      }
+      let nextPage = store.getters.getNextPageByDecade(decade);
+      if (nextPage === undefined) {
+        nextPage = 1;
+      } else {
+        let completion = store.getters.getCompletionByDecade(decade);
+        if (completion !== undefined && nextPage.page <= completion.maxNbPage) {
+          nextPage = nextPage.page;
+        } else {
+          nextPage = 1;
+        }
+      }
       dataFetch
-        .getImages(decade, 1, [])
+        .getImages(decade, nextPage, skipIds)
         .then((result) => {
           context.commit("setNextContext", {
             images: result.images,
             decade: decade,
-            page: 2,
+            page: nextPage + 1,
+            pageView: 2,
           });
           context.commit("setCompletion", {
             year: decade,
@@ -189,10 +237,17 @@ export const actions = {
   loadNextContent(context, { decade, id }) {
     context.commit("loadingState", true);
     let nextPage = store.getters.getNextPageByDecade(decade);
+    let pageView = 1;
     if (nextPage === undefined) {
-      nextPage = 0;
+      nextPage = 1;
     } else {
-      nextPage = nextPage.page;
+      pageView = nextPage.pageView;
+      let completion = store.getters.getCompletionByDecade(decade);
+      if (completion !== undefined && nextPage.page <= completion.maxNbPage) {
+        nextPage = nextPage.page;
+      } else {
+        nextPage = 1;
+      }
     }
     if (id !== undefined) {
       dataFetch.getImageById(id).then((result) => {
@@ -206,23 +261,32 @@ export const actions = {
     if (skipIds === undefined) {
       skipIds = { ids: [] };
     }
-    dataFetch
-      .getImages(decade, nextPage, skipIds.ids)
-      .then((result) => {
-        if (result.images.length > 0) {
-          context.commit("setNextContext", {
-            images: result.images,
-            decade: decade,
-            page: nextPage + 1,
-          });
-        } else {
+    let completion = store.getters.getCompletionByDecade(decade);
+    if (completion !== undefined && pageView <= completion.maxNbPage) {
+      dataFetch
+        .getImages(decade, nextPage, skipIds.ids)
+        .then((result) => {
+          if (completion && nextPage === completion.maxNbPage) {
+            nextPage = 1;
+          }
+          if (result.images.length > 0) {
+            context.commit("setNextContext", {
+              images: result.images,
+              decade: decade,
+              page: nextPage + 1,
+              pageView: pageView + 1,
+            });
+          } else {
+            context.commit("loadingState", false);
+          }
+        })
+        .catch((err) => {
           context.commit("loadingState", false);
-        }
-      })
-      .catch((err) => {
-        context.commit("loadingState", false);
-        console.log(err);
-      });
+          console.log(err);
+        });
+    } else {
+      context.commit("loadingState", false);
+    }
   },
   loadRelatedImages(context, { tags, id }) {
     const relatedImages = [];
@@ -242,6 +306,12 @@ export const actions = {
 
     Promise.all(promises).then(() => {
       context.commit("provideRelatedImages", relatedImages);
+    });
+  },
+  setRelatedImagePosition(context, { id, position }) {
+    context.commit("setRelatedImagePosition", {
+      id: id,
+      position: position,
     });
   },
   removeSecondRelatedInformation(context) {
@@ -271,7 +341,10 @@ export const actions = {
         );
       });
 
-    context.commit("setSecondRelatedTags", {position: position, tags: selectedTags});
+    context.commit("setSecondRelatedTags", {
+      position: position,
+      tags: selectedTags,
+    });
 
     Promise.all(promises).then(() => {
       context.commit("provideSecondRelatedImages", {

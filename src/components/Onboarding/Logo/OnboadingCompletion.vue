@@ -53,6 +53,7 @@ export default {
     ...mapGetters({
       getCompletionByDecade: "getCompletionByDecade",
       getImagesByDecade: "getImagesByDecade",
+      getVisitedIndexByDecade: "getVisitedIndexByDecade",
     }),
   },
   mounted() {
@@ -63,10 +64,21 @@ export default {
       };
     }
 
+    const visited = this.getVisitedIndexByDecade(this.decade);
+    let lastId = 0;
+    if (visited !== undefined) {
+      lastId = visited.lastId;
+      this.$store.dispatch("insertSkipId", {
+        decade: this.decade,
+        id: lastId,
+      });
+    }
+
     const documents = this.getImagesByDecade(this.decade);
     if (documents === undefined) {
       this.$store.dispatch("initializeCarousel", {
         decade: this.decade,
+        id: lastId,
       });
     }
   },

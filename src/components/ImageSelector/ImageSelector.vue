@@ -59,6 +59,12 @@
     >
       <div ref="position0" :style="relatedImageDisplay1">
         <related-image
+          @click="
+            loadFocusImage(
+              relatedImagesPosition[0].image.result.id,
+              relatedImagesPosition[0].image.result
+            )
+          "
           :image="relatedImagesPosition[0]"
           :runTransition="carouselHover"
           :isTransitionExecuted="shouldRunRelatedImageTransition"
@@ -93,6 +99,12 @@
     >
       <div ref="position1" :style="relatedImageDisplay2">
         <related-image
+          @click="
+            loadFocusImage(
+              relatedImagesPosition[0].image.result.id,
+              relatedImagesPosition[1].image.result
+            )
+          "
           :image="relatedImagesPosition[1]"
           :runTransition="carouselHover"
           :isTransitionExecuted="shouldRunRelatedImageTransition"
@@ -127,6 +139,12 @@
     >
       <div ref="position2" :style="relatedImageDisplay3">
         <related-image
+          @click="
+            loadFocusImage(
+              relatedImagesPosition[0].image.result.id,
+              relatedImagesPosition[2].image.result
+            )
+          "
           :image="relatedImagesPosition[2]"
           :runTransition="carouselHover"
           :isTransitionExecuted="shouldRunRelatedImageTransition"
@@ -610,33 +628,41 @@ export default {
   components: { Rectangle, RelatedImage, Completion, History },
   watch: {
     $route: function() {
-      if (
-        this.$route.params.index !== undefined &&
-        this.$route.params.index != "" &&
-        this.$route.name === "selector"
-      ) {
+      if (this.$route.name === "selector") {
         if (this.$route.query.history !== undefined) {
           // If the loading comes from history, setup the states
           this.nextDecade = this.$route.params.decade;
           this.currentDecade = this.$route.params.decade;
           this.data = this.getImagesByDecade(this.$route.params.decade);
-          this.currentIndex = +this.$route.params.index;
-          this.relatedImagesPosition = [];
-          this.currentXPosition = this.defineLeftPositionCenterPage();
-          this.currentYPosition = this.defineTopPositionCenterPage();
-          this.carouselHover = true;
-          this.rectangleHeight = this.thumbnailHeight() + 20;
-          this.rectangleWidth = this.thumbnailWidth() + 20;
-          this.shouldRunCentralImageTransition = false;
-          window.scrollTo(this.currentXPosition, this.currentYPosition);
-          this.$store.dispatch("loadRelatedImages", {
-            tags: this.data.data[this.currentIndex].tags,
-            id: this.data.data[this.currentIndex].id,
-          });
-          this.setupPosition();
+          let index = -1;
+          if (this.data) {
+            this.data = this.data.data;
+            index = this.data.findIndex((e) => {
+              return e.id == this.$route.query.imageId;
+            });
+          }
+          if (index === -1) {
+            this.isInitialLoad = true;
+            this.idToFind = this.$route.query.imageId;
+            this.shouldFindIndex = true;
+            this.loadDataWithSkipId(this.currentDecade, this.idToFind);
+          } else {
+            this.currentIndex = index;
+            this.relatedImagesPosition = [];
+            this.currentXPosition = this.defineLeftPositionCenterPage();
+            this.currentYPosition = this.defineTopPositionCenterPage();
+            this.carouselHover = true;
+            this.rectangleHeight = this.thumbnailHeight() + 20;
+            this.rectangleWidth = this.thumbnailWidth() + 20;
+            this.shouldRunCentralImageTransition = false;
+            window.scrollTo(this.currentXPosition, this.currentYPosition);
+            this.$store.dispatch("loadRelatedImages", {
+              tags: this.data[this.currentIndex].tags,
+              id: this.data[this.currentIndex].id,
+            });
+            this.setupPosition();
+          }
         }
-        // Clean url
-        this.$router.push(`/selector/${this.nextDecade}`);
       }
     },
     // Watcher uses to manage new data in the store
@@ -697,7 +723,7 @@ export default {
         this.historyTimeout = setTimeout(() => {
           this.$store.dispatch("insertHistory", {
             decade: this.currentDecade,
-            index: this.currentIndex,
+            imageId: this.data[this.currentIndex].id,
             data: this.data[this.currentIndex].imagePaths.square,
           });
           this.endDisplay = true;
@@ -708,6 +734,7 @@ export default {
     currentDecade: function() {
       const completion = this.getCompletionByDecade(this.currentDecade);
       if (completion) {
+        this.originalCompletion = +completion.completion;
         this.totalIndex = +completion.totalImages;
         this.maxVisitedIndex = +completion.maxVisitedIndex;
       }
@@ -723,6 +750,7 @@ export default {
       data: undefined,
       totalIndex: 0,
       maxVisitedIndex: 0,
+      originalCompletion: 0,
       completion: 0,
       endDisplay: true,
       couldLoad: true,
@@ -796,18 +824,43 @@ export default {
       this.$nextTick(() => {
         const completion = this.getCompletionByDecade(this.currentDecade);
         if (completion) {
+          this.originalCompletion = +completion.completion;
           this.totalIndex = +completion.totalImages;
-          this.maxVisitedIndex = +completion.maxVisitedIndex;
+          this.maxVisitedIndex = this.currentIndex;
+
+          this.$store.dispatch("updateCompletion", {
+            decade: this.currentDecade,
+            completion: completion.completion,
+            maxVisitedIndex: this.currentIndex,
+          });
         }
-        this.isInitialLoad = false;
-        this.relatedImagesPosition = [];
-        if (this.data[this.currentIndex] && this.data[this.currentIndex].tags) {
+
+        const currentRelatedImages = this.getRelatedImages();
+
+        if (
+          currentRelatedImages &&
+          currentRelatedImages[0] &&
+          currentRelatedImages[0].originalId === this.data[this.currentIndex].id
+        ) {
+          currentRelatedImages.forEach((image) => {
+            this.relatedImagesPosition.push({
+              position: image.position,
+              image: image.result.images,
+              display: false,
+              hover: false,
+              isTarget: false,
+            });
+          });
+          this.displayRelatedImages(currentRelatedImages);
+        } else {
           this.$store.dispatch("loadRelatedImages", {
             tags: this.data[this.currentIndex].tags,
             id: this.data[this.currentIndex].id,
           });
           this.setupPosition();
         }
+
+        this.isInitialLoad = false;
         this.viewerImageMode = true;
         this.carouselHover = true;
         window.scrollTo(this.currentXPosition, this.currentYPosition);
@@ -817,56 +870,26 @@ export default {
       this.$store.dispatch("updateLastVisitedElement", {
         decade: this.currentDecade,
         index: this.currentIndex,
+        imageId: this.data[this.currentIndex].id,
       });
       this.$router.push({
         path: `/`,
         query: { decade: this.decade },
       });
     },
-    loadFocusImage(id) {
-      this.$router.push({
-        path: `/image/${id}`,
-        query: { image: JSON.stringify(this.data[this.currentIndex]) },
-      });
-    },
-    loadFromOnboarding(data) {
-      const visited = this.getVisitedIndexByDecade(this.currentDecade);
-      if (data === undefined) {
-        this.$store.dispatch("initializeCarousel", {
+    loadFocusImage(id, image) {
+      if (!this.isDrag) {
+        this.$store.dispatch("updateLastVisitedElement", {
           decade: this.currentDecade,
+          index: this.currentIndex,
+          imageId: this.data[this.currentIndex].id,
         });
-      } else {
-        this.data = data.data;
-        if (visited) {
-          this.currentIndex = visited.lastIndex;
-          if (this.currentIndex >= this.data.length - 100) {
-            this.$store.dispatch("loadNextContent", {
-              decade: this.currentDecade,
-            });
-          }
-          this.loadInitialData();
-        } else {
-          this.currentIndex = 0;
-          this.loadInitialData();
-        }
-      }
-    },
-    loadFromFocusPage(data, id) {
-      if (data === undefined) {
-        this.loadDataWithSkipId(this.currentDecade, id);
-      } else {
-        const newIndex = data.data.findIndex((e) => {
-          return e.id == id;
+        this.$router.push({
+          path: `/image/${id}`,
+          query: image
+            ? { image: JSON.stringify(image) }
+            : { image: JSON.stringify(this.data[this.currentIndex]) },
         });
-        if (newIndex !== -1) {
-          this.data = data.data;
-          this.currentIndex = newIndex;
-          this.loadInitialData();
-        } else {
-          this.idToFind = id;
-          this.shouldFindIndex = true;
-          this.loadDataWithSkipId(this.currentDecade, id);
-        }
       }
     },
     centerTarget(rectangle, relatedImage, isRelated, isHover) {
@@ -1003,6 +1026,7 @@ export default {
         this.centerTarget(thumbnail, rectangle, true, rectangle.hover);
       });
       if (this.moveToImageTimeout.length === 0 && !this.carouselHover) {
+        this.stopSecondRelatedDisplay();
         this.rectangleHeight = this.relatedThumbnailHeight() + 20;
         this.rectangleWidth = this.relatedThumbnailWidth() + 20;
       } else {
@@ -1012,14 +1036,12 @@ export default {
     },
     // Rectangle navigation
     startPosition() {
-      this.stopSecondRelatedDisplay();
       this.isDrag = true;
     },
     endPosition() {
       this.isDrag = false;
     },
     mouseWheel() {
-      this.stopSecondRelatedDisplay();
       if (!this.blockDrag) {
         this.checkCollision();
       } else {
@@ -1030,7 +1052,6 @@ export default {
       }
     },
     touchMove() {
-      this.stopSecondRelatedDisplay();
       if (this.isDrag && !this.blockDrag) {
         this.checkCollision();
       }
@@ -1085,9 +1106,10 @@ export default {
           this.currentIndex = this.currentIndex + 1;
           if (this.maxVisitedIndex < this.currentIndex) {
             this.maxVisitedIndex = this.currentIndex;
-            this.completion = Math.floor(
-              (this.maxVisitedIndex * 100) / this.totalIndex
-            );
+            this.completion =
+              this.originalCompletion +
+              Math.ceil((this.maxVisitedIndex * 100) / this.totalIndex);
+            this.completion = this.completion <= 100 ? this.completion : 100;
             this.$store.dispatch("updateCompletion", {
               decade: this.currentDecade,
               completion: this.completion,
@@ -1267,7 +1289,14 @@ export default {
     displayRelatedImages(images) {
       this.$store.dispatch("removeSecondRelatedInformation");
       images.forEach((image, index) => {
-        this.relatedImagesPosition[index].image = image;
+        if (this.relatedImagesPosition[index].image === undefined) {
+          this.relatedImagesPosition[index].image = image;
+        }
+
+        this.$store.dispatch("setRelatedImagePosition", {
+          id: image.result.id,
+          position: this.relatedImagesPosition[index].position,
+        });
         this.$store.dispatch("loadSecondRelatedImages", {
           tags: image.result.tags,
           id: image.result.id,
@@ -1361,7 +1390,7 @@ export default {
           this.shouldDisplayLoading = true;
           this.$store.dispatch("insertHistory", {
             decade: this.currentDecade,
-            index: this.currentIndex,
+            imageId: this.data[this.currentIndex].id,
             data: this.data[this.currentIndex].imagePaths.square,
           });
         }, 8000)
@@ -2253,6 +2282,7 @@ export default {
       getCompletionByDecade: "getCompletionByDecade",
       getVisitedIndexByDecade: "getVisitedIndexByDecade",
       getSecondRelatedTags: "getSecondRelatedTagsByPosition",
+      getRelatedImages: "getRelatedImages",
       getSecondRelatedImages: "getSecondRelatedImageById",
     }),
   },
@@ -2278,19 +2308,50 @@ export default {
 
     this.currentDecade = this.$route.params.decade;
     const data = this.getImagesByDecade(this.currentDecade);
-    const id = this.$route.query.id;
-    const comeFromOnboarding = this.$route.query.comeFromOnboarding;
 
-    if (id) {
-      this.loadFromFocusPage(data, id);
-    } else if (comeFromOnboarding) {
-      this.loadFromOnboarding(data);
-    } else if (data === undefined) {
+    const lastVisitiedElement = this.getVisitedIndexByDecade(
+      this.currentDecade
+    );
+
+    let id = 0;
+    let currentIndex = 0;
+
+    if (lastVisitiedElement) {
+      id = lastVisitiedElement.lastId;
+      currentIndex = lastVisitiedElement.lastIndex;
+    }
+
+    if (data === undefined) {
+      if (id > 0) {
+        this.$store.dispatch("insertSkipId", {
+          decade: this.currentDecade,
+          id: id,
+        });
+      }
       this.$store.dispatch("initializeCarousel", {
         decade: this.currentDecade,
+        id: id,
       });
     } else {
       this.data = data.data;
+      this.currentIndex = 0;
+      if (this.data[currentIndex] && this.data[currentIndex].id === id) {
+        this.currentIndex = currentIndex;
+      } else {
+        const searchIndex = this.data.findIndex((e) => {
+          return e.id == id;
+        });
+        if (searchIndex !== -1) {
+          this.currentIndex = searchIndex;
+        }
+      }
+
+      if (this.currentIndex >= this.data.length - 100) {
+        this.$store.dispatch("loadNextContent", {
+          decade: this.currentDecade,
+        });
+      }
+
       this.loadInitialData();
     }
   },

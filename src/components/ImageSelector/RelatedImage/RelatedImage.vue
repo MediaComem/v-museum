@@ -1,10 +1,10 @@
 <template>
   <img
-    v-if="this.image.display"
+    v-if="image.display"
     draggable="false"
     class="related-image"
     :class="{relatedImageBase: runTransition && !isTransitionExecuted}"
-    :src="this.image.image.result.imagePaths.large"
+    :src="image.image.result.imagePaths.large"
     :alt="image.image.result.id"
   />
 </template>

@@ -58,7 +58,7 @@
     <el-row v-if="storyCollection">
       <p>{{ currentIndex + 1 }} / {{ storyCollection.length }}</p>
     </el-row>
-    <el-row>
+    <el-row v-if="storyCollection && storyCollection.length > 1">
       <div style="display: flex; cursor: pointer" @click="previousImage()">
         <img class="svg-position" src="@/assets/fullimage/left_arrow.svg" />
         <p>&nbsp; Previous &nbsp;</p>
@@ -76,6 +76,9 @@
   <div class="page">
     <div id="viewer" class="viewer"></div>
   </div>
+  <div class="page page-image" v-if="displayImage && imageData">
+    <img :src="imageData.imagePaths.large" />
+  </div>
 </template>
 
 <script>
@@ -91,14 +94,18 @@ export default {
       vm.imageId = to.params.index;
       if (to.query.image) {
         vm.imageData = JSON.parse(to.query.image);
+        vm.from = from;
       }
     });
   },
   data() {
     return {
+      // Previous page URL
+      from: undefined,
       // ID of the image, used to search index position of the storyCollection.
       // And to send the identifier of the image in the slider views
       display: true,
+      displayImage: true,
       imageId: undefined,
       // Index of the current displayed image
       currentIndex: undefined,
@@ -144,8 +151,7 @@ export default {
     },
     backToCanvasView() {
       this.$router.push({
-        path: `/selector/${this.imageData.decade.slice(0, 3)}`,
-        query: { id: this.imageData.id },
+        path: `${this.from.fullPath}`,
       });
     },
     loadImagesByTitle() {
@@ -167,8 +173,10 @@ export default {
         if (this.viewer) {
           this.viewer.destroy();
         }
-
         this.openImage(image);
+        this.$nextTick(() => {
+          this.displayImage = false;
+        })
       });
     },
     openImage(image) {
@@ -203,7 +211,6 @@ export default {
       if (this.imageData.tags) {
         this.imageData.tags.forEach((tag) => this.tags.push(tag["@value"]));
       }
-      this.openImage(this.imageData.imagePaths.large);
       this.loadImagesByTitle();
       this.loadMedia();
     } else {
@@ -221,7 +228,9 @@ export default {
     }
   },
   unmounted() {
-    this.viewer.destroy();
+    if (this.viewer) {
+      this.viewer.destroy();
+    }
   },
 };
 </script>
@@ -344,6 +353,12 @@ span {
   width: 100vw;
   top: 0;
   position: absolute;
+}
+
+.page-image {
+  justify-content: center;
+  display: flex;
+  z-index: -1;
 }
 
 .viewer {

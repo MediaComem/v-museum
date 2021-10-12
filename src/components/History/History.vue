@@ -154,13 +154,13 @@ export default {
   data() {
     return {
       firstImage: undefined,
-      firstPosition: 0,
+      firstPosition: -1,
       secondImage: undefined,
-      secondPosition: 0,
+      secondPosition: -1,
       thirdImage: undefined,
-      thirdPosition: 0,
+      thirdPosition: -1,
       forthImage: undefined,
-      forthPosition: 0,
+      forthPosition: -1,
       nextPosition: 1,
       position: 0,
       isAnimated: false,
@@ -268,8 +268,8 @@ export default {
     },
     comeBackTo(historyElement) {
       this.$router.push({
-        path: `/selector/${historyElement.decade}/${historyElement.index}`,
-        query: { history: true },
+        path: `/selector/${historyElement.decade}`,
+        query: { history: true, imageId: historyElement.imageId },
       });
       this.$emit("closeFullHistory");
     },
