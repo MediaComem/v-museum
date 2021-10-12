@@ -630,6 +630,7 @@ export default {
     $route: function() {
       if (this.$route.name === "selector") {
         if (this.$route.query.history !== undefined) {
+          this.stopDisplayRelatedImages();
           // If the loading comes from history, setup the states
           this.nextDecade = this.$route.params.decade;
           this.currentDecade = this.$route.params.decade;
