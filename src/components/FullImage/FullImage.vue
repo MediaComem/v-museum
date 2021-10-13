@@ -206,7 +206,7 @@ export default {
       };
     },
   },
-  mounted() {
+  activated() {
     if (this.imageData) {
       if (this.imageData.tags) {
         this.imageData.tags.forEach((tag) => this.tags.push(tag["@value"]));
@@ -227,7 +227,7 @@ export default {
       });
     }
   },
-  unmounted() {
+  deactivated() {
     if (this.viewer) {
       this.viewer.destroy();
     }

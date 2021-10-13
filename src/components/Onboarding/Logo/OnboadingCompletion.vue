@@ -56,7 +56,7 @@ export default {
       getVisitedIndexByDecade: "getVisitedIndexByDecade",
     }),
   },
-  mounted() {
+  activated() {
     this.completion = this.getCompletionByDecade(this.decade);
     if (this.completion === undefined) {
       this.completion = {
