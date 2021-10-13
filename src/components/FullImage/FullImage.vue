@@ -208,7 +208,7 @@ export default {
       };
     },
   },
-  mounted() {
+  activated() {
     const { width } = useWindowSize();
     this.windowWidth = width;
     if (this.windowWidth <= 800) {
@@ -234,7 +234,7 @@ export default {
       });
     }
   },
-  unmounted() {
+  deactivated() {
     if (this.viewer) {
       this.viewer.destroy();
     }
