@@ -8,16 +8,17 @@
     :loop="false"
   >
     <el-carousel-item>
-      <div
-        ref="intro"
-        style="height: 100vh; overflow-y: scroll"
-      >
+      <div ref="intro" style="height: 100vh; overflow-y: scroll">
         <el-row :gutter="20" style="margin: 0;">
           <el-col :span="24" style="padding: 0;">
             <img class="first-image" src="@/assets/onboarding/first.png" />
           </el-col>
         </el-row>
-        <el-row :gutter="20" :justify="'center'" style="margin:5px">
+        <el-row
+          :gutter="20"
+          :justify="'center'"
+          style="margin:5px; text-align: center"
+        >
           <h1 class="page-title">{{ information.title }}</h1>
         </el-row>
         <el-row :gutter="20" :justify="'center'" style="margin:5px">
@@ -126,10 +127,10 @@
             </el-col>
           </el-row>
           <el-row>
-            <div style="height: 80vh; overflow: scroll">
-              <text class="collection-text-mobile collapse-text-align-mobile">
+            <div style="height: 85vh; overflow: scroll">
+              <p class="collection-text-mobile collapse-text-align-mobile">
                 {{ item.text }}
-              </text>
+              </p>
             </div>
           </el-row>
         </div>
@@ -207,12 +208,20 @@ export default {
   },
   methods: {
     previousSlide() {
-      this.$refs.slider.prev();
-      this.slide = this.slide - 1;
+      const animationDuration = this.isCollapse ? 300 : 0;
+      this.isCollapse = false;
+      setTimeout(() => {
+        this.$refs.slider.prev();
+        this.slide = this.slide - 1;
+      }, animationDuration);
     },
     nextSlide() {
-      this.slide = this.slide + 1;
-      this.$refs.slider.next();
+      const animationDuration = this.isCollapse ? 300 : 0;
+      this.isCollapse = false;
+      setTimeout(() => {
+        this.slide = this.slide + 1;
+        this.$refs.slider.next();
+      }, animationDuration);
     },
     loadDecade(decade) {
       this.$router.push({
@@ -283,14 +292,20 @@ h3 {
 
 @media only screen and (min-width: 300px) and (max-width: 699px) {
   .page-title {
-    font-size: 50px;
+    font-size: 40px;
     max-width: 60rem;
   }
 
   .page-subtitle {
-    font-size: 40px;
+    font-size: 30px;
     max-width: 60rem;
     text-align: center;
+  }
+
+  .text-title {
+    font-size: 20px;
+    text-align: left;
+    max-width: 35rem;
   }
 }
 
@@ -305,12 +320,12 @@ h3 {
     max-width: 60rem;
     text-align: center;
   }
-}
 
-.text-title {
-  font-size: 30px;
-  text-align: left;
-  max-width: 35rem;
+  .text-title {
+    font-size: 30px;
+    text-align: left;
+    max-width: 35rem;
+  }
 }
 
 .text {

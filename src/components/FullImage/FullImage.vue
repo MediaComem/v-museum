@@ -83,6 +83,7 @@
 
 <script>
 import OpenSeadragon from "openseadragon";
+import { useWindowSize } from "vue-window-size";
 
 import Infos from "./Infos.vue";
 import dataFetching from "../../api/dataFetching";
@@ -100,6 +101,7 @@ export default {
   },
   data() {
     return {
+      windowWidth: undefined,
       // Previous page URL
       from: undefined,
       // ID of the image, used to search index position of the storyCollection.
@@ -176,7 +178,7 @@ export default {
         this.openImage(image);
         this.$nextTick(() => {
           this.displayImage = false;
-        })
+        });
       });
     },
     openImage(image) {
@@ -207,6 +209,11 @@ export default {
     },
   },
   mounted() {
+    const { width } = useWindowSize();
+    this.windowWidth = width;
+    if (this.windowWidth <= 800) {
+      this.display = false;
+    }
     if (this.imageData) {
       if (this.imageData.tags) {
         this.imageData.tags.forEach((tag) => this.tags.push(tag["@value"]));
@@ -284,14 +291,52 @@ span {
   padding-top: 130px;
 }
 
-.information-manager {
-  width: 106px;
-  height: 53px;
-  z-index: 2;
-  position: relative;
-  left: 1vw;
-  top: 4vh;
-  background: white;
+@media only screen and (min-height: 1200px) {
+  .information-manager {
+    width: 106px;
+    height: 53px;
+    z-index: 2;
+    position: relative;
+    left: 1vw;
+    top: 4vh;
+    background: white;
+  }
+}
+
+@media only screen and (min-height: 900px)  and (max-height: 1199px)  {
+  .information-manager {
+    width: 106px;
+    height: 53px;
+    z-index: 2;
+    position: relative;
+    left: 1vw;
+    top: 6vh;
+    background: white;
+  }
+}
+
+@media only screen and (min-height: 700px)  and (max-height: 899px) {
+  .information-manager {
+    width: 106px;
+    height: 53px;
+    z-index: 2;
+    position: relative;
+    left: 1vw;
+    top: 8vh;
+    background: white;
+  }
+}
+
+@media only screen and (min-height: 300px) and (max-height: 699px) {
+  .information-manager {
+    width: 106px;
+    height: 53px;
+    z-index: 2;
+    position: relative;
+    left: 1vw;
+    top: 14vh;
+    background: white;
+  }
 }
 
 @media only screen and (min-width: 1200px) {
