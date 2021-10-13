@@ -925,7 +925,7 @@ export default {
             });
           });
           this.displayRelatedImages(currentRelatedImages);
-        } else {
+        } else if(this.data){
           this.$store.dispatch("loadRelatedImages", {
             tags: this.data[this.currentIndex].tags,
             id: this.data[this.currentIndex].id,
