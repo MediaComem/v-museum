@@ -633,6 +633,7 @@ export default {
         if (this.$route.query.history !== undefined) {
           this.stopDisplayRelatedImages();
           this.couldLoadHistory = false;
+          this.shouldRunRelatedImageTransition = false;
           // If the loading comes from history, setup the states
           this.nextDecade = this.$route.params.decade;
           this.currentDecade = this.$route.params.decade;
@@ -1312,7 +1313,7 @@ export default {
       // Setup the display animation
       this.$nextTick(() => {
         this.relatedImagesPosition.forEach((element, index) => {
-          if (this.carouselHover) {
+          if (this.carouselHover && !this.shouldRunRelatedImageTransition) {
             const animationDelay = 1000 + 2000 * index;
             this.displayRelatedImageTimeout.push(
               setTimeout(() => {
@@ -2318,6 +2319,11 @@ export default {
     const lastVisitiedElement = this.getVisitedIndexByDecade(
       this.currentDecade
     );
+
+    const currentRelatedImages = this.getRelatedImages();
+    if (currentRelatedImages) {
+      this.shouldRunRelatedImageTransition = true;
+    }
 
     let id = 0;
     let currentIndex = 0;
