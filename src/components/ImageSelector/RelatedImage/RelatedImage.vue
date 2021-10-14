@@ -3,7 +3,7 @@
     v-if="image.display"
     draggable="false"
     class="related-image"
-    :class="{relatedImageBase: runTransition && !isTransitionExecuted}"
+    :class="{relatedImageBase: runTransition && !isTransitionExecuted && state}"
     :src="image.image.result.imagePaths.large"
     :alt="image.image.result.id"
   />
@@ -15,6 +15,14 @@ export default {
     image: Object,
     runTransition: Boolean,
     isTransitionExecuted: Boolean,
+  },
+  data() {
+    return {
+      state: true,
+    }
+  },
+  activated() {
+    this.state = false;
   },
 };
 </script>
