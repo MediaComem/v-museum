@@ -1115,8 +1115,17 @@ export default {
     endPosition() {
       this.isDrag = false;
     },
-    mouseWheel() {
+    mouseWheel(event) {
       if (!this.blockDrag) {
+        const xMovement = this.currentXPosition + event.deltaX;
+        if (xMovement > 0 || xMovement < event.pageWidth) {
+          this.currentXPosition = xMovement;
+        }
+
+        const yMovement = this.currentYPosition + event.deltaY;
+        if (yMovement > 0 || yMovement < event.pageHeight) {
+          this.currentYPosition = yMovement;
+        }
         this.checkCollision();
       } else {
         window.scrollTo({
@@ -2363,9 +2372,6 @@ export default {
     }),
   },
   activated() {
-    this.currentXPosition = this.defineLeftPositionCenterPage();
-    this.currentYPosition = this.defineTopPositionCenterPage();
-    this.carouselHover = true;
     window.scrollTo({
       left: this.currentXPosition,
       top: this.currentYPosition,
