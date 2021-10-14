@@ -208,11 +208,17 @@ export default {
       };
     },
   },
-  mounted() {
+  activated() {
     const { width } = useWindowSize();
     this.windowWidth = width;
+    this.tags = [];
+    this.storyCollection = undefined;
+    this.currentIndex = undefined;
     if (this.windowWidth <= 800) {
       this.display = false;
+    }
+    else {
+      this.display = true;
     }
     if (this.imageData) {
       if (this.imageData.tags) {
@@ -234,7 +240,7 @@ export default {
       });
     }
   },
-  unmounted() {
+  deactivated() {
     if (this.viewer) {
       this.viewer.destroy();
     }

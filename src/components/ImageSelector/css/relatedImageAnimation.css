@@ -12,7 +12,6 @@
 }
 
 .removeRelatedImageBaseText {
-  display: block !important;
   animation: removeRelatedImageBaseAnimation 3s linear 0s normal forwards;
 }
 

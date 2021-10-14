@@ -318,45 +318,52 @@
         style="overflow: hidden;"
         :style="{ width: thumbnailWidth() + 20 + 'px' }"
       >
-        <p
+        <div
           v-if="
             relatedImagesPosition.length > 0 && relatedImagesPosition[0].image
           "
           class="image-information"
-          :class="{
-            removeRelatedImageBaseText:
-              relatedImagesPosition[0].display &&
-              !shouldRunRelatedImageTransition,
-          }"
-        >
-          {{ relatedImagesPosition[0].image.tag["@value"] }} &nbsp;
-        </p>
-        <p
+          >
+          <div
+            :class="{
+              removeRelatedImageBaseText:
+                relatedImagesPosition[0].display &&
+                !shouldRunRelatedImageTransition,
+            }"
+          >
+           {{ relatedImagesPosition[0].image.tag["@value"] }} &nbsp;
+          </div>
+        </div>
+        <div
           v-if="
             relatedImagesPosition.length > 1 && relatedImagesPosition[1].image
           "
-          class="image-information"
-          :class="{
-            removeRelatedImageBaseText:
-              relatedImagesPosition[1].display &&
-              !shouldRunRelatedImageTransition,
-          }"
-        >
-          {{ relatedImagesPosition[1].image.tag["@value"] }} &nbsp;
-        </p>
-        <p
+          class="image-information">
+          <div
+            :class="{
+              removeRelatedImageBaseText:
+                relatedImagesPosition[1].display &&
+                !shouldRunRelatedImageTransition,
+            }"
+          >
+           {{ relatedImagesPosition[1].image.tag["@value"] }} &nbsp;
+          </div>
+        </div>
+        <div
           v-if="
             relatedImagesPosition.length > 2 && relatedImagesPosition[2].image
           "
-          class="image-information"
-          :class="{
-            removeRelatedImageBaseText:
-              relatedImagesPosition[2].display &&
-              !shouldRunRelatedImageTransition,
-          }"
-        >
-          {{ relatedImagesPosition[2].image.tag["@value"] }} &nbsp;
-        </p>
+          class="image-information">
+          <div
+            :class="{
+              removeRelatedImageBaseText:
+                relatedImagesPosition[2].display &&
+                !shouldRunRelatedImageTransition,
+            }"
+          >
+            {{ relatedImagesPosition[2].image.tag["@value"] }} &nbsp;
+          </div>
+        </div>
       </div>
     </div>
     <div v-if="carouselHover && endDisplay" :style="imageInformationPosition">
@@ -539,42 +546,46 @@
     :style="secondImageInformationPosition"
   >
     <div
-      style="display: flex; overflow: hidden;"
+      style="overflow: hidden;"
       :style="{ width: thumbnailWidth() + 'px' }"
     >
-      <p
+      <div
         v-if="secondRelatedTagsElements.length > 0"
         class="image-information"
-        :class="{
+      >
+        <div :class="{
           removeRelatedImageBaseText:
             secondRelatedImagesPosition.length > 0 &&
-            secondRelatedImagesPosition[0].display,
-        }"
-      >
-        {{ secondRelatedTagsElements[0]["@value"] }} &nbsp;
-      </p>
-      <p
+            secondRelatedImagesPosition[0].display
+        }">
+          {{ secondRelatedTagsElements[0]["@value"] }} &nbsp;
+        </div>
+      </div>
+      <div
         v-if="secondRelatedTagsElements.length > 1"
         class="image-information"
-        :class="{
-          removeRelatedImageBaseText:
-            secondRelatedImagesPosition.length > 1 &&
-            secondRelatedImagesPosition[1].display,
-        }"
+
       >
-        {{ secondRelatedTagsElements[1]["@value"] }} &nbsp;
-      </p>
-      <p
+        <div :class="{
+          removeRelatedImageBaseText:
+            secondRelatedImagesPosition.length > 0 &&
+            secondRelatedImagesPosition[1].display
+        }">
+          {{ secondRelatedTagsElements[1]["@value"] }} &nbsp;
+        </div>
+      </div>
+      <div
         v-if="secondRelatedTagsElements.length > 2"
         class="image-information"
-        :class="{
-          removeRelatedImageBaseText:
-            secondRelatedImagesPosition.length > 2 &&
-            secondRelatedImagesPosition[2].display,
-        }"
       >
-        {{ secondRelatedTagsElements[2]["@value"] }} &nbsp;
-      </p>
+        <div :class="{
+            removeRelatedImageBaseText:
+              secondRelatedImagesPosition.length > 0 &&
+              secondRelatedImagesPosition[2].display
+        }">
+          {{ secondRelatedTagsElements[2]["@value"] }} &nbsp;
+        </div>
+      </div>
       <p v-if="shouldDisplayLoading" class="image-information loader-text">
         Loading
       </p>
@@ -816,6 +827,60 @@ export default {
     };
   },
   methods: {
+    refresh(decade) {
+      this.currentDecade = decade;
+      this.shouldRunRelatedImageTransition = false;
+      this.$store.dispatch("restartLoadingState");
+      this.stopDisplayRelatedImages();
+      const data = this.getImagesByDecade(this.currentDecade);
+
+      const lastVisitiedElement = this.getVisitedIndexByDecade(
+        this.currentDecade
+      );
+      const currentRelatedImages = this.getRelatedImages();
+      if (currentRelatedImages) {
+        this.shouldRunRelatedImageTransition = true;
+      }
+      let id = 0;
+      let currentIndex = 0;
+      if (lastVisitiedElement) {
+        id = lastVisitiedElement.lastId;
+        currentIndex = lastVisitiedElement.lastIndex;
+      }
+
+      if (data === undefined) {
+        if (id > 0) {
+          this.$store.dispatch("insertSkipId", {
+            decade: this.currentDecade,
+            id: id,
+          });
+        }
+        this.$store.dispatch("initializeCarousel", {
+          decade: this.currentDecade,
+          id: id,
+        });
+      } else {
+        this.data = data.data;
+        this.currentIndex = 0;
+        if (this.data[currentIndex] && this.data[currentIndex].id === id) {
+          this.currentIndex = currentIndex;
+        } else {
+          const searchIndex = this.data.findIndex((e) => {
+            return e.id == id;
+          });
+          if (searchIndex !== -1) {
+            this.currentIndex = searchIndex;
+          }
+        }
+
+        if (this.currentIndex >= this.data.length - 100) {
+          this.$store.dispatch("loadNextContent", {
+            decade: this.currentDecade,
+          });
+        }
+      }
+      this.loadInitialData();
+    },
     async loadDataWithSkipId(decade, id) {
       this.$store.dispatch("insertSkipId", {
         decade: decade,
@@ -848,6 +913,7 @@ export default {
           currentRelatedImages[0] &&
           currentRelatedImages[0].originalId === this.data[this.currentIndex].id
         ) {
+          this.shouldRunRelatedImageTransition = true;
           currentRelatedImages.forEach((image) => {
             this.relatedImagesPosition.push({
               position: image.position,
@@ -858,7 +924,8 @@ export default {
             });
           });
           this.displayRelatedImages(currentRelatedImages);
-        } else {
+        } else if (this.data) {
+          this.shouldRunRelatedImageTransition = false;
           this.$store.dispatch("loadRelatedImages", {
             tags: this.data[this.currentIndex].tags,
             id: this.data[this.currentIndex].id,
@@ -1098,6 +1165,9 @@ export default {
       return this.step > 290 && this.step < 310;
     },
     loadMoreContent(diffMaxIndexBeforeLoad) {
+      if (!this.data) {
+        return;
+      }
       if (
         this.currentIndex > this.data.length - diffMaxIndexBeforeLoad &&
         !this.isLoadingImage
@@ -1695,7 +1765,7 @@ export default {
         "user-select": "none",
       };
     },
-    imageInformationPositionTag() {
+   imageInformationPositionTag() {
       return {
         position: "absolute",
         top:
@@ -1719,9 +1789,8 @@ export default {
     },
     secondImageInformationPosition() {
       return {
-        height: "40px",
         position: "absolute",
-        top: this.newOriginY - 60 + "px",
+        top: this.newOriginY - 70 + "px",
         left: this.newOriginX + "px",
         display: "flex",
         width: this.thumbnailWidth() + 20 + "px",
@@ -2293,10 +2362,21 @@ export default {
       getSecondRelatedImages: "getSecondRelatedImageById",
     }),
   },
+  activated() {
+    this.currentXPosition = this.defineLeftPositionCenterPage();
+    this.currentYPosition = this.defineTopPositionCenterPage();
+    this.carouselHover = true;
+    window.scrollTo({
+      left: this.currentXPosition,
+      top: this.currentYPosition,
+    });
+    const decade = this.$route.params.decade;
+    if (this.currentDecade === decade) {
+      return;
+    }
+    this.refresh(decade);
+  },
   mounted() {
-    this.shouldRunRelatedImageTransition = false;
-    this.$store.dispatch("restartLoadingState");
-
     this.$refs.display.addEventListener(
       "DOMMouseScroll",
       this.mouseWheel,
@@ -2313,59 +2393,8 @@ export default {
     this.currentXPosition = this.defineLeftPositionCenterPage();
     this.currentYPosition = this.defineTopPositionCenterPage();
 
-    this.currentDecade = this.$route.params.decade;
-    const data = this.getImagesByDecade(this.currentDecade);
-
-    const lastVisitiedElement = this.getVisitedIndexByDecade(
-      this.currentDecade
-    );
-
-    const currentRelatedImages = this.getRelatedImages();
-    if (currentRelatedImages) {
-      this.shouldRunRelatedImageTransition = true;
-    }
-
-    let id = 0;
-    let currentIndex = 0;
-
-    if (lastVisitiedElement) {
-      id = lastVisitiedElement.lastId;
-      currentIndex = lastVisitiedElement.lastIndex;
-    }
-
-    if (data === undefined) {
-      if (id > 0) {
-        this.$store.dispatch("insertSkipId", {
-          decade: this.currentDecade,
-          id: id,
-        });
-      }
-      this.$store.dispatch("initializeCarousel", {
-        decade: this.currentDecade,
-        id: id,
-      });
-    } else {
-      this.data = data.data;
-      this.currentIndex = 0;
-      if (this.data[currentIndex] && this.data[currentIndex].id === id) {
-        this.currentIndex = currentIndex;
-      } else {
-        const searchIndex = this.data.findIndex((e) => {
-          return e.id == id;
-        });
-        if (searchIndex !== -1) {
-          this.currentIndex = searchIndex;
-        }
-      }
-
-      if (this.currentIndex >= this.data.length - 100) {
-        this.$store.dispatch("loadNextContent", {
-          decade: this.currentDecade,
-        });
-      }
-
-      this.loadInitialData();
-    }
+    const decade = this.$route.params.decade;
+    this.refresh(decade);
   },
 };
 </script>
