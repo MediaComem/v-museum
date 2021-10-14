@@ -214,6 +214,7 @@ export default {
     this.tags = [];
     this.storyCollection = undefined;
     this.currentIndex = undefined;
+    this.displayImage = true;
     if (this.windowWidth <= 800) {
       this.display = false;
     }
