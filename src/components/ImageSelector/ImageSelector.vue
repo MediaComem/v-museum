@@ -323,7 +323,7 @@
             relatedImagesPosition.length > 0 && relatedImagesPosition[0].image
           "
           class="image-information"
-          >
+        >
           <div
             :class="{
               removeRelatedImageBaseText:
@@ -331,14 +331,15 @@
                 !shouldRunRelatedImageTransition,
             }"
           >
-           {{ relatedImagesPosition[0].image.tag["@value"] }} &nbsp;
+            {{ relatedImagesPosition[0].image.tag["@value"] }} &nbsp;
           </div>
         </div>
         <div
           v-if="
             relatedImagesPosition.length > 1 && relatedImagesPosition[1].image
           "
-          class="image-information">
+          class="image-information"
+        >
           <div
             :class="{
               removeRelatedImageBaseText:
@@ -346,14 +347,15 @@
                 !shouldRunRelatedImageTransition,
             }"
           >
-           {{ relatedImagesPosition[1].image.tag["@value"] }} &nbsp;
+            {{ relatedImagesPosition[1].image.tag["@value"] }} &nbsp;
           </div>
         </div>
         <div
           v-if="
             relatedImagesPosition.length > 2 && relatedImagesPosition[2].image
           "
-          class="image-information">
+          class="image-information"
+        >
           <div
             :class="{
               removeRelatedImageBaseText:
@@ -545,32 +547,32 @@
     v-if="secondRelatedTagsElements.length > 0 && relatedOver"
     :style="secondImageInformationPosition"
   >
-    <div
-      style="overflow: hidden;"
-      :style="{ width: thumbnailWidth() + 'px' }"
-    >
+    <div style="overflow: hidden;" :style="{ width: thumbnailWidth() + 'px' }">
       <div
         v-if="secondRelatedTagsElements.length > 0"
         class="image-information"
       >
-        <div :class="{
-          removeRelatedImageBaseText:
-            secondRelatedImagesPosition.length > 0 &&
-            secondRelatedImagesPosition[0].display
-        }">
+        <div
+          :class="{
+            removeRelatedImageBaseText:
+              secondRelatedImagesPosition.length > 0 &&
+              secondRelatedImagesPosition[0].display,
+          }"
+        >
           {{ secondRelatedTagsElements[0]["@value"] }} &nbsp;
         </div>
       </div>
       <div
         v-if="secondRelatedTagsElements.length > 1"
         class="image-information"
-
       >
-        <div :class="{
-          removeRelatedImageBaseText:
-            secondRelatedImagesPosition.length > 0 &&
-            secondRelatedImagesPosition[1].display
-        }">
+        <div
+          :class="{
+            removeRelatedImageBaseText:
+              secondRelatedImagesPosition.length > 0 &&
+              secondRelatedImagesPosition[1].display,
+          }"
+        >
           {{ secondRelatedTagsElements[1]["@value"] }} &nbsp;
         </div>
       </div>
@@ -578,11 +580,13 @@
         v-if="secondRelatedTagsElements.length > 2"
         class="image-information"
       >
-        <div :class="{
+        <div
+          :class="{
             removeRelatedImageBaseText:
               secondRelatedImagesPosition.length > 0 &&
-              secondRelatedImagesPosition[2].display
-        }">
+              secondRelatedImagesPosition[2].display,
+          }"
+        >
           {{ secondRelatedTagsElements[2]["@value"] }} &nbsp;
         </div>
       </div>
@@ -829,7 +833,6 @@ export default {
   methods: {
     refresh(decade) {
       this.currentDecade = decade;
-      this.shouldRunRelatedImageTransition = false;
       this.$store.dispatch("restartLoadingState");
       this.stopDisplayRelatedImages();
       const data = this.getImagesByDecade(this.currentDecade);
@@ -879,9 +882,7 @@ export default {
           });
         }
       }
-
       this.loadInitialData();
-
     },
     async loadDataWithSkipId(decade, id) {
       this.$store.dispatch("insertSkipId", {
@@ -915,6 +916,7 @@ export default {
           currentRelatedImages[0] &&
           currentRelatedImages[0].originalId === this.data[this.currentIndex].id
         ) {
+          this.shouldRunRelatedImageTransition = true;
           currentRelatedImages.forEach((image) => {
             this.relatedImagesPosition.push({
               position: image.position,
@@ -925,7 +927,8 @@ export default {
             });
           });
           this.displayRelatedImages(currentRelatedImages);
-        } else if(this.data){
+        } else if (this.data) {
+          this.shouldRunRelatedImageTransition = false;
           this.$store.dispatch("loadRelatedImages", {
             tags: this.data[this.currentIndex].tags,
             id: this.data[this.currentIndex].id,
@@ -1765,7 +1768,7 @@ export default {
         "user-select": "none",
       };
     },
-   imageInformationPositionTag() {
+    imageInformationPositionTag() {
       return {
         position: "absolute",
         top:
@@ -2363,6 +2366,9 @@ export default {
     }),
   },
   activated() {
+    this.currentXPosition = this.defineLeftPositionCenterPage();
+    this.currentYPosition = this.defineTopPositionCenterPage();
+    this.carouselHover = true;
     window.scrollTo({
       left: this.currentXPosition,
       top: this.currentYPosition,
@@ -2392,7 +2398,6 @@ export default {
 
     const decade = this.$route.params.decade;
     this.refresh(decade);
-
   },
 };
 </script>
