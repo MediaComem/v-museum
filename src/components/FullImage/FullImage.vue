@@ -164,6 +164,14 @@ export default {
           this.currentIndex = this.storyCollection.findIndex((e) => {
             return e.id === this.imageId;
           });
+          if (this.currentIndex === -1) {
+            this.storyCollection.push(this.imageData);
+            this.currentIndex = this.storyCollection.findIndex((e) => {
+              return e.id === this.imageId;
+            });
+          }
+          console.log(this.storyCollection);
+          console.log(this.currentIndex);
           this.$store.dispatch("loadTotalImageByDecade", {
             decade: this.imageData.decade.slice(0, 3),
           });
@@ -217,8 +225,7 @@ export default {
     this.displayImage = true;
     if (this.windowWidth <= 800) {
       this.display = false;
-    }
-    else {
+    } else {
       this.display = true;
     }
     if (this.imageData) {
@@ -310,7 +317,7 @@ span {
   }
 }
 
-@media only screen and (min-height: 900px)  and (max-height: 1199px)  {
+@media only screen and (min-height: 900px) and (max-height: 1199px) {
   .information-manager {
     width: 106px;
     height: 53px;
@@ -322,7 +329,7 @@ span {
   }
 }
 
-@media only screen and (min-height: 700px)  and (max-height: 899px) {
+@media only screen and (min-height: 700px) and (max-height: 899px) {
   .information-manager {
     width: 106px;
     height: 53px;

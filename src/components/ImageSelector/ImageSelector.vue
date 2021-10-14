@@ -102,7 +102,7 @@
         <related-image
           @click="
             loadFocusImage(
-              relatedImagesPosition[0].image.result.id,
+              relatedImagesPosition[1].image.result.id,
               relatedImagesPosition[1].image.result
             )
           "
@@ -142,7 +142,7 @@
         <related-image
           @click="
             loadFocusImage(
-              relatedImagesPosition[0].image.result.id,
+              relatedImagesPosition[2].image.result.id,
               relatedImagesPosition[2].image.result
             )
           "
