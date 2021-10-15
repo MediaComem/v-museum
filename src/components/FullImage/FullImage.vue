@@ -170,8 +170,6 @@ export default {
               return e.id === this.imageId;
             });
           }
-          console.log(this.storyCollection);
-          console.log(this.currentIndex);
           this.$store.dispatch("loadTotalImageByDecade", {
             decade: this.imageData.decade.slice(0, 3),
           });

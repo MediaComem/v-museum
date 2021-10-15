@@ -824,6 +824,7 @@ export default {
       secondRelatedImageTimeout: [],
       secondRelatedTagsElements: [],
       secondRelatedImageInterval: undefined,
+      couldLoadSecondRelatedImage: true,
       // History Part
       historyTimeout: undefined,
       fullHistoryMode: false,
@@ -885,6 +886,15 @@ export default {
       }
       this.loadInitialData();
     },
+    checkIfSecondRelatedShouldRun() {
+      this.relatedImagesPosition.forEach((image) => {
+        if (image.hover && this.couldLoadSecondRelatedImage) {
+          this.secondRelatedImageInterval = this.waitAndLoadSecondRelatedImages(
+            image
+          );
+        }
+      });
+    },
     async loadDataWithSkipId(decade, id) {
       this.$store.dispatch("insertSkipId", {
         decade: decade,
@@ -945,15 +955,17 @@ export default {
       this.couldLoadHistory = true;
     },
     loadOnboarding() {
-      this.$store.dispatch("updateLastVisitedElement", {
-        decade: this.currentDecade,
-        index: this.currentIndex,
-        imageId: this.data[this.currentIndex].id,
-      });
-      this.$router.push({
-        path: `/`,
-        query: { decade: this.decade },
-      });
+      if (!this.isDrag) {
+        this.$store.dispatch("updateLastVisitedElement", {
+          decade: this.currentDecade,
+          index: this.currentIndex,
+          imageId: this.data[this.currentIndex].id,
+        });
+        this.$router.push({
+          path: `/`,
+          query: { decade: this.decade },
+        });
+      }
     },
     loadFocusImage(id, image) {
       if (!this.isDrag) {
@@ -968,7 +980,25 @@ export default {
             ? { image: JSON.stringify(image) }
             : { image: JSON.stringify(this.data[this.currentIndex]) },
         });
+        this.stopSecondRelatedDisplay();
       }
+    },
+    waitAndLoadSecondRelatedImages(relatedImage) {
+      return setInterval(() => {
+        const relatedImages = this.getSecondRelatedImages(
+          relatedImage.image.result.id
+        );
+        if (relatedImages) {
+          this.shouldDisplayLoading = true;
+          clearInterval(this.secondRelatedImageInterval);
+          this.loadSecondRelatedImages(
+            relatedImage.image.result.decade.slice(0, 3),
+            relatedImage.image.result.id,
+            relatedImages.images
+          );
+          this.shouldDisplayLoading = false;
+        }
+      }, 100);
     },
     centerTarget(rectangle, relatedImage, isRelated, isHover) {
       if (isHover) {
@@ -995,24 +1025,12 @@ export default {
               this.secondRelatedTagsElements = this.getSecondRelatedTags(
                 relatedImage.position
               );
-              this.secondRelatedImageInterval = setInterval(() => {
-                const relatedImages = this.getSecondRelatedImages(
-                  relatedImage.image.result.id
+              if (this.couldLoadSecondRelatedImage) {
+                this.couldLoadSecondRelatedImage = false;
+                this.secondRelatedImageInterval = this.waitAndLoadSecondRelatedImages(
+                  relatedImage
                 );
-                if (relatedImages) {
-                  this.shouldDisplayLoading = true;
-                  clearInterval(this.secondRelatedImageInterval);
-                  this.$router.push(
-                    `/selector/${relatedImage.image.result.decade.slice(0, 3)}`
-                  );
-                  this.loadSecondRelatedImages(
-                    relatedImage.image.result.decade.slice(0, 3),
-                    relatedImage.image.result.id,
-                    relatedImages.images
-                  );
-                  this.shouldDisplayLoading = false;
-                }
-              }, 100);
+              }
             }
           }, 200)
         );
@@ -1456,6 +1474,7 @@ export default {
           this.currentYPosition = this.defineTopPositionCenterPage();
           this.carouselHover = true;
           this.currentDecade = decade;
+          this.$router.push(`/selector/${this.currentDecade}`);
           if (newIndex !== -1) {
             this.currentIndex = newIndex;
             this.data = newData.data;
@@ -1519,13 +1538,15 @@ export default {
       });
     },
     stopSecondRelatedDisplay() {
-      this.secondRelatedTagsElements = [];
-      this.fullHistoryMode = false;
       this.secondRelatedImageTimeout.forEach((e) => clearTimeout(e));
+      clearInterval(this.secondRelatedImageInterval);
+      this.secondRelatedTagsElements = [];
       this.secondRelatedImageTimeout = [];
-      this.shouldRunCentralImageTransition = true;
       this.secondRelatedImagesPosition = [];
+      this.fullHistoryMode = false;
+      this.shouldRunCentralImageTransition = true;
       this.couldLoad = true;
+      this.couldLoadSecondRelatedImage = true;
     },
     speedSelection() {
       // Find the transition speed
@@ -2376,9 +2397,13 @@ export default {
     }),
   },
   activated() {
+    this.couldLoadSecondRelatedImage = true;
+    this.stopSecondRelatedDisplay();
     if (this.currentXPosition <= 30 || this.currentYPosition <= 30) {
       this.currentXPosition = this.defineLeftPositionCenterPage();
       this.currentYPosition = this.defineTopPositionCenterPage();
+      this.relatedImagesPosition.forEach(e => e.hover = false);
+      this.carouselHover = true;
     }
 
     window.scrollTo({
@@ -2387,6 +2412,7 @@ export default {
     });
     const decade = this.$route.params.decade;
     if (this.currentDecade === decade) {
+      this.checkIfSecondRelatedShouldRun();
       return;
     }
     this.refresh(decade);
