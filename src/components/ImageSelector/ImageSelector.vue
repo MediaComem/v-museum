@@ -789,6 +789,7 @@ export default {
       blockDrag: false,
       shouldStartRelatedImageSearch: false,
       shouldLoadRelatedImage: true,
+      clickTime: 0,
       // Information uses to manage the animations
       zoomingStep: 3,
       nbImageMove: 0,
@@ -968,7 +969,8 @@ export default {
       }
     },
     loadFocusImage(id, image) {
-      if (!this.isDrag) {
+      const diffTime = Date.now() - this.clickTime;
+      if (!this.isDrag && diffTime <= 300) {
         this.$store.dispatch("updateLastVisitedElement", {
           decade: this.currentDecade,
           index: this.currentIndex,
@@ -1132,6 +1134,7 @@ export default {
     },
     // Rectangle navigation
     startPosition() {
+      this.clickTime = Date.now();
       this.isDrag = true;
     },
     endPosition() {
