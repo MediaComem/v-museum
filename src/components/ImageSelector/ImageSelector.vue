@@ -969,6 +969,9 @@ export default {
       }
     },
     loadFocusImage(id, image) {
+      // This diff is used to know if the click should open the image or if it's a move click.
+      // 300 is based on few test. The loading image click takes between 70 and 150 ms so a margin has added
+      // for safety.
       const diffTime = Date.now() - this.clickTime;
       if (!this.isDrag && diffTime <= 300) {
         this.$store.dispatch("updateLastVisitedElement", {
