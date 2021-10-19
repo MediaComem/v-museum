@@ -153,6 +153,7 @@ export default {
     displayAllHistory: Boolean,
     couldLoadHistory: Boolean,
   },
+  emits: ['openFullHistory', 'closeFullHistory'],
   data() {
     return {
       firstImage: undefined,

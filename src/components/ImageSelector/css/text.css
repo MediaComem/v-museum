@@ -29,6 +29,7 @@
     .font-size-information {
       text-align: start;
       font-size: 15px;
+      text-overflow: ellipsis;
     }
   
     .image-information {
@@ -61,6 +62,7 @@
     .font-size-information {
       text-align: start;
       font-size: 15px;
+      text-overflow: ellipsis;
     }
   
     .image-information {
@@ -93,6 +95,7 @@
     .font-size-information {
       text-align: start;
       font-size: 15px;
+      text-overflow: ellipsis;
     }
   
     .image-information {
@@ -125,6 +128,7 @@
     .font-size-information {
       text-align: start;
       font-size: 11px;
+      text-overflow: ellipsis;
     }
   
     .image-information {

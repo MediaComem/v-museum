@@ -398,7 +398,7 @@
         removeRelatedImageBase: secondRelatedImagesPosition.length > 0,
       }"
     >
-      <div v-show="viewerImageMode" :style="componentSize">
+      <div v-if="viewerImageMode" :style="componentSize">
         <div ref="divCar" :style="imageViewerDisplay">
           <img
             v-if="data && data[currentIndex]"
@@ -825,7 +825,6 @@ export default {
       secondRelatedImageTimeout: [],
       secondRelatedTagsElements: [],
       secondRelatedImageInterval: undefined,
-      couldLoadSecondRelatedImage: true,
       // History Part
       historyTimeout: undefined,
       fullHistoryMode: false,
@@ -889,7 +888,7 @@ export default {
     },
     checkIfSecondRelatedShouldRun() {
       this.relatedImagesPosition.forEach((image) => {
-        if (image.hover && this.couldLoadSecondRelatedImage) {
+        if (image.hover) {
           this.secondRelatedImageInterval = this.waitAndLoadSecondRelatedImages(
             image
           );
@@ -989,19 +988,20 @@ export default {
       }
     },
     waitAndLoadSecondRelatedImages(relatedImage) {
+      clearInterval(this.secondRelatedImageInterval);
       return setInterval(() => {
         const relatedImages = this.getSecondRelatedImages(
           relatedImage.image.result.id
         );
         if (relatedImages) {
           this.shouldDisplayLoading = true;
-          clearInterval(this.secondRelatedImageInterval);
           this.loadSecondRelatedImages(
             relatedImage.image.result.decade.slice(0, 3),
             relatedImage.image.result.id,
             relatedImages.images
           );
           this.shouldDisplayLoading = false;
+          clearInterval(this.secondRelatedImageInterval);
         }
       }, 100);
     },
@@ -1030,12 +1030,9 @@ export default {
               this.secondRelatedTagsElements = this.getSecondRelatedTags(
                 relatedImage.position
               );
-              if (this.couldLoadSecondRelatedImage) {
-                this.couldLoadSecondRelatedImage = false;
-                this.secondRelatedImageInterval = this.waitAndLoadSecondRelatedImages(
-                  relatedImage
-                );
-              }
+              this.secondRelatedImageInterval = this.waitAndLoadSecondRelatedImages(
+                relatedImage
+              );
             }
           }, 200)
         );
@@ -1092,7 +1089,6 @@ export default {
       return false;
     },
     checkCollision() {
-      clearInterval(this.secondRelatedImageInterval);
       this.moveToImageTimeout.forEach(clearTimeout);
       this.moveToImageTimeout = [];
 
@@ -1552,7 +1548,6 @@ export default {
       this.fullHistoryMode = false;
       this.shouldRunCentralImageTransition = true;
       this.couldLoad = true;
-      this.couldLoadSecondRelatedImage = true;
     },
     speedSelection() {
       // Find the transition speed
@@ -1830,7 +1825,7 @@ export default {
     secondImageInformationPosition() {
       return {
         position: "absolute",
-        top: this.newOriginY - 70 + "px",
+        top: this.newOriginY - 90 + "px",
         left: this.newOriginX + "px",
         display: "flex",
         width: this.thumbnailWidth() + 20 + "px",
@@ -2403,7 +2398,6 @@ export default {
     }),
   },
   activated() {
-    this.couldLoadSecondRelatedImage = true;
     this.stopSecondRelatedDisplay();
     if (this.currentXPosition <= 30 || this.currentYPosition <= 30) {
       this.currentXPosition = this.defineLeftPositionCenterPage();
