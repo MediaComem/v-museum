@@ -228,6 +228,17 @@ export default {
         path: `/selector/${decade}`,
       });
     },
+    findAndUpdateDecade() {
+      if (this.decade) {
+      const index = this.information.collection.findIndex((e) => {
+        return e.decade == this.decade;
+      });
+      this.$nextTick(() => {
+        this.slide = index + 1;
+        this.$refs.slider.setActiveItem(index + 1);
+      });
+    }
+    }
   },
   computed: {
     isMobile() {
@@ -259,19 +270,14 @@ export default {
       };
     },
   },
+  activated() {
+    this.findAndUpdateDecade();
+  },
   mounted() {
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
-    if (this.decade) {
-      const index = this.information.collection.findIndex((e) => {
-        return e.decade == this.decade;
-      });
-      this.$nextTick(() => {
-        this.slide = index + 1;
-        this.$refs.slider.setActiveItem(index + 1);
-      });
-    }
+    this.findAndUpdateDecade();
   },
 };
 </script>

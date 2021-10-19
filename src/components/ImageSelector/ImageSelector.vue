@@ -971,7 +971,7 @@ export default {
         });
         this.$router.push({
           path: `/`,
-          query: { decade: this.decade },
+          query: { decade: this.currentDecade },
         });
       }
     },
