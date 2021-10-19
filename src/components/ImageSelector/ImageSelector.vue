@@ -436,6 +436,7 @@
                   :ref="'image-' + index"
                   :src="value.imagePaths.medium"
                   :alt="value.id"
+                  @load="imageLoaded(index)"
                 />
               </div>
             </li>
@@ -490,6 +491,7 @@
       @touchend="blockDrag = false"
     >
       <el-slider
+        v-loading="loadingNewDecade"
         v-show="carouselHover"
         :class="selectArrayDisplay"
         style="width: 42px"
@@ -829,9 +831,15 @@ export default {
       historyTimeout: undefined,
       fullHistoryMode: false,
       couldLoadHistory: true,
+      loadingNewDecade: false
     };
   },
   methods: {
+    imageLoaded(index) {
+      if (index === this.data.length -1) {
+        this.loadingNewDecade = false;
+      }
+    },
     refresh(decade) {
       this.currentDecade = decade;
       this.shouldRunRelatedImageTransition = false;
@@ -1482,12 +1490,12 @@ export default {
             this.data = newData.data;
           } else {
             this.data = this.getImagesByDecade(this.currentDecade).data;
+            this.loadingNewDecade = true;
             const id = this.data.findIndex((e) => {
               return e.id == nextId;
             });
             this.currentIndex = id;
           }
-
           this.shouldRunCentralImageTransition = false;
           window.scrollTo(this.currentXPosition, this.currentYPosition);
           this.$store.dispatch("removeSecondRelatedInformation");

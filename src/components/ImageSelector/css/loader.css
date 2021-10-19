@@ -1,3 +1,16 @@
+.el-loading-spinner .path {
+  stroke: rgba(30, 30, 30, 0.5);
+}
+.el-loading-spinner .circular {
+  padding: 11px;
+  width: 20px;
+  height: 20px;
+}
+
+.el-loading-mask {
+  background-color: initial;
+}
+
 .loading {
     background-color: white;
     z-index: 5;
