@@ -8,6 +8,7 @@
   >
     <rect width="240" height="69" rx="34.5" fill="black" />
     <completion
+      :viewBox="'-1.5 -2.21 3 4.5'"
       :decade="decade"
       :height="69"
       :width="69"
@@ -52,9 +53,10 @@ export default {
     ...mapGetters({
       getCompletionByDecade: "getCompletionByDecade",
       getImagesByDecade: "getImagesByDecade",
+      getVisitedIndexByDecade: "getVisitedIndexByDecade",
     }),
   },
-  mounted() {
+  activated() {
     this.completion = this.getCompletionByDecade(this.decade);
     if (this.completion === undefined) {
       this.completion = {
@@ -62,10 +64,21 @@ export default {
       };
     }
 
+    const visited = this.getVisitedIndexByDecade(this.decade);
+    let lastId = 0;
+    if (visited !== undefined) {
+      lastId = visited.lastId;
+      this.$store.dispatch("insertSkipId", {
+        decade: this.decade,
+        id: lastId,
+      });
+    }
+
     const documents = this.getImagesByDecade(this.decade);
     if (documents === undefined) {
       this.$store.dispatch("initializeCarousel", {
         decade: this.decade,
+        id: lastId,
       });
     }
   },
@@ -75,6 +88,6 @@ export default {
 <style scoped>
 .text {
   font-weight: normal;
-  stroke: lightgray;
+  fill: lightgray;
 }
 </style>

@@ -3,26 +3,27 @@
 }
 
 .related-image {
-  object-fit: none;
+  object-fit: cover;
   width: 100%;
   height: 100%;
 }
 
-.related-text {
-  margin-bottom: 0; 
-  font-size: 24px;
-  font-weight: normal;
-}
-
-.image-information {
-  margin: 0;
-}
-
 .carousel-image {
-  object-fit: none; 
-  height: 100%; 
+  object-fit: cover;
+  height: 100%;
   width: 100%;
 }
+
+.carousel-image-large {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+  filter:blur(2px);
+  animation: reveal 1s forwards ease;
+
+}
+
+@keyframes reveal { from { filter:blur(2px); } to { filter:blur(0px); }  }
 
 .v-zoom {
   height: 100%;
@@ -51,8 +52,8 @@
   -webkit-border-radius: 30px;
   border-radius: 30px;
 
-  background: url("../../assets/gui-chevron-up.png"),
-    url("../../assets/gui-chevron-down.png");
+  background: url("../../../assets/image-selector/gui-chevron-up.png"),
+    url("../../../assets/image-selector/gui-chevron-down.png");
   background-position-x: -1px, 12px;
   background-position-y: 5%, 95%;
   background-repeat: no-repeat, no-repeat;
@@ -76,8 +77,8 @@
   -webkit-border-radius: 30px;
   border-radius: 30px;
 
-  background: url("../../assets/gui-chevron-up.png"),
-    url("../../assets/gui-chevron-down.png");
+  background: url("../../../assets/image-selector/gui-chevron-up.png"),
+    url("../../../assets/image-selector/gui-chevron-down.png");
   background-position-x: 12px, 12px;
   background-position-y: 5%, 95%;
   background-repeat: no-repeat, no-repeat;
@@ -101,8 +102,8 @@
   -webkit-border-radius: 30px;
   border-radius: 30px;
 
-  background: url("../../assets/gui-chevron-up.png"),
-    url("../../assets/gui-chevron-down.png");
+  background: url("../../../assets/image-selector/gui-chevron-up.png"),
+    url("../../../assets/image-selector/gui-chevron-down.png");
   background-position-x: 12px, 1px;
   background-position-y: 5%, 95%;
   background-repeat: no-repeat, no-repeat;

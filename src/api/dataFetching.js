@@ -48,8 +48,6 @@ export default {
   },
 
   async getImages(decade, offset, skipIds) {
-    let queryParameterId = 2;
-
     const params = {
       params: {
         sort_by: "dcterms=identifier",
@@ -64,21 +62,21 @@ export default {
         page: offset,
       },
     };
-    skipIds.forEach((id) => {
-      params.params["property[" + queryParameterId + "][joiner]"] = "and";
-      params.params["property[" + queryParameterId + "][property]"] = "10";
-      params.params["property[" + queryParameterId + "][type]"] = "neq";
-      params.params["property[" + queryParameterId + "][text]"] = id;
-      queryParameterId = queryParameterId + 1;
-    });
-
     const { headers, data } = await axios.get(
       process.env.VUE_APP_FETCH_BASE,
       params
     );
+
+    let dataResult = parseImages(data);
+
+    skipIds.forEach((id) => {
+      let result = dataResult.filter(d => d.id !== id);
+      dataResult = result;
+    });
+
     return {
       totalImages: headers["omeka-s-total-results"],
-      images: parseImages(data),
+      images: dataResult,
     };
   },
 
@@ -100,23 +98,21 @@ export default {
     const params = {
       params: {
         fulltext_search: `"${tag["@value"]}"`,
-        "property[0][joiner]": "and",
-        "property[0][property]": 10,
-        "property[0][type]": "neq",
-        "property[0][text]": id,
+        per_page: 1000
       },
     };
 
-    const { headers } = await axios.get(process.env.VUE_APP_FETCH_BASE, params);
-
-    const totalImages = headers["omeka-s-total-results"];
-
-    params.params["per_page"] = 1;
-    params.params["page"] = Math.floor(Math.random() * totalImages);
-
     const { data } = await axios.get(process.env.VUE_APP_FETCH_BASE, params);
-    if (data.length > 0) {
-      return parseElement(data[0]);
+    if (data.length > 1) {
+      // take random image among 1000 with same tag
+      let idx = Math.floor(Math.random() * data.length);
+      let image = parseElement(data[idx]);
+      if (image.id !== id) {
+        return image
+      }
+      // bad luck we pick the current one, let's take next one
+      idx = (idx+1 % data.length);
+      return parseElement(data[idx]);
     }
     return undefined;
   },

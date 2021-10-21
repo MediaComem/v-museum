@@ -1,9 +1,10 @@
 <template>
   <img
-    v-if="this.image.display"
+    v-if="image.display"
     draggable="false"
-    class="relatedImageBase related-image"
-    :src="this.image.image.result.imagePaths.large"
+    class="related-image"
+    :class="{relatedImageBase: runTransition && !isTransitionExecuted && state}"
+    :src="image.image.result.imagePaths.large"
     :alt="image.image.result.id"
   />
 </template>
@@ -12,12 +13,22 @@
 export default {
   props: {
     image: Object,
+    runTransition: Boolean,
+    isTransitionExecuted: Boolean,
+  },
+  data() {
+    return {
+      state: true,
+    }
+  },
+  activated() {
+    this.state = false;
   },
 };
 </script>
 
 <style>
-@import "../imageselector.css";
-@import "../relatedImageAnimation.css";
+@import "../css/imageselector.css";
+@import "../css/relatedImageAnimation.css";
 @import "./relatedimage.css";
 </style>
