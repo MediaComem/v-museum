@@ -33,6 +33,7 @@ import { mapGetters, mapState } from "vuex";
 import Completion from "../../Completion/Completion.vue";
 export default {
   components: { Completion },
+  emits: ['loadDecade'],
   props: {
     decade: String,
   },
