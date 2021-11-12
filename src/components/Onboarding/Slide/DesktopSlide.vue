@@ -5,7 +5,7 @@
     :style="collapse"
     style="position: absolute; left: 0px; top: 0px; height: 100vh; overflow-y:scroll"
   >
-    <p class="collection-text collapse-text-align">{{ item.text }}</p>
+    <p class="collection-text collapse-text-align overflow">{{ item.text }}</p>
   </div>
   <logo style="position: absolute; left: 2vw; top: 2vh" />
   <arrow-up
