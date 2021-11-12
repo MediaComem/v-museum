@@ -10,6 +10,7 @@
       </div>
     </div>
     <svg
+      class="pointer"
       :width="size"
       :height="size"
       viewBox="0 0 60 60"
@@ -56,4 +57,5 @@ export default {
 
 <style scoped>
 @import "./arrow.css";
+@import "../onboarding.css";
 </style>

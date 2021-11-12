@@ -8,7 +8,7 @@
     :loop="false"
   >
     <el-carousel-item>
-      <div ref="intro" style="height: 100vh; overflow-y: scroll">
+      <div ref="intro" class="overflow" style="height: 100vh;">
         <el-row :gutter="20" style="margin: 0;">
           <el-col :span="24" style="padding: 0;">
             <img class="first-image" src="@/assets/onboarding/first.png" />
@@ -30,7 +30,7 @@
         <el-row :gutter="20" :justify="'center'" style="margin:5px">
           <p class="text">{{ information.body }}</p>
         </el-row>
-        <el-row :justify="'center'" style="padding-bottom: 10px">
+        <el-row :justify="'center'" style="padding-bottom: 5vh">
           <arrow-down
             style="justify-content: center"
             :text="undefined"
@@ -81,6 +81,7 @@
           </el-row>
           <el-row>
             <p
+              class="pointer"
               :class="
                 isFullSize ? 'collection-text' : 'collection-text-intermediary'
               "
@@ -91,7 +92,7 @@
           </el-row>
           <el-row style="height: 69px; width: 37vw">
             <onboarding-completion
-              class="completion-element"
+              class="completion-element pointer"
               :decade="item.decade"
               @click="loadDecade(item.decade)"
             />
@@ -283,6 +284,8 @@ export default {
 </script>
 
 <style scoped>
+@import "./onboarding.css";
+
 h1 {
   font-weight: normal;
 }
@@ -294,6 +297,11 @@ h2 {
 h3 {
   font-weight: normal;
   margin-bottom: 0;
+}
+
+.overflow {
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 @media only screen and (min-width: 300px) and (max-width: 699px) {
