@@ -8,38 +8,7 @@
     :loop="false"
   >
     <el-carousel-item>
-      <div ref="intro" class="overflow" style="height: 100vh;">
-        <el-row :gutter="20" style="margin: 0;">
-          <el-col :span="24" style="padding: 0;">
-            <img class="first-image" src="@/assets/onboarding/first.png" />
-          </el-col>
-        </el-row>
-        <el-row
-          :gutter="20"
-          :justify="'center'"
-          style="margin:5px; text-align: center"
-        >
-          <h1 class="page-title">{{ information.title }}</h1>
-        </el-row>
-        <el-row :gutter="20" :justify="'center'" style="margin:5px">
-          <h2 class="page-subtitle">{{ information.subtitle }}</h2>
-        </el-row>
-        <el-row :gutter="20" :justify="'center'" style="margin:5px">
-          <h3 class="text-title">{{ information.header }}</h3>
-        </el-row>
-        <el-row :gutter="20" :justify="'center'" style="margin:5px">
-          <p class="text">{{ information.body }}</p>
-        </el-row>
-        <el-row :justify="'center'" style="padding-bottom: 5vh">
-          <arrow-down
-            style="justify-content: center"
-            :text="undefined"
-            :isFull="true"
-            :isMobile="false"
-            @click="nextSlide()"
-          />
-        </el-row>
-      </div>
+      <introduction-slide :information="information" @next-slide="nextSlide()"/>
     </el-carousel-item>
 
     <el-carousel-item
@@ -187,10 +156,11 @@ import Logo from "./Logo/Logo.vue";
 import ArrowUp from "./Logo/ArrowUp.vue";
 import ArrowDown from "./Logo/ArrowDown.vue";
 import OnboardingCompletion from "./Logo/OnboadingCompletion.vue";
+import IntroductionSlide from "./Slide/IntroductionSlide.vue";
 
 export default {
   name: "Onboarding",
-  components: { Logo, ArrowUp, ArrowDown, OnboardingCompletion },
+  components: { Logo, ArrowUp, ArrowDown, OnboardingCompletion, IntroductionSlide },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.decade = from.params.decade;
@@ -286,68 +256,6 @@ export default {
 <style scoped>
 @import "./onboarding.css";
 
-h1 {
-  font-weight: normal;
-}
-
-h2 {
-  font-weight: normal;
-}
-
-h3 {
-  font-weight: normal;
-  margin-bottom: 0;
-}
-
-.overflow {
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-@media only screen and (min-width: 300px) and (max-width: 699px) {
-  .page-title {
-    font-size: 40px;
-    max-width: 60rem;
-  }
-
-  .page-subtitle {
-    font-size: 30px;
-    max-width: 60rem;
-    text-align: center;
-  }
-
-  .text-title {
-    font-size: 20px;
-    text-align: left;
-    max-width: 35rem;
-  }
-}
-
-@media only screen and (min-width: 700px) {
-  .page-title {
-    font-size: 74.1515px;
-    max-width: 60rem;
-  }
-
-  .page-subtitle {
-    font-size: 50px;
-    max-width: 60rem;
-    text-align: center;
-  }
-
-  .text-title {
-    font-size: 30px;
-    text-align: left;
-    max-width: 35rem;
-  }
-}
-
-.text {
-  font-size: 20px;
-  text-align: left;
-  max-width: 35rem;
-}
-
 .collection-position {
   width: 37vw;
   height: 80vh;
@@ -398,12 +306,6 @@ h3 {
 
 .padding {
   padding: 0;
-}
-
-.first-image {
-  width: 100vw;
-  height: 75vh;
-  object-fit: cover;
 }
 
 .image-display {
