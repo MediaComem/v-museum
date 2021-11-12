@@ -37,7 +37,7 @@
       <onboarding-completion
         class="completion-element pointer"
         :decade="item.decade"
-        @next-slide="$emit('loadDecade', item.decade)"
+        @load-decade="$emit('loadDecade', item.decade)"
       />
     </el-row>
   </div>

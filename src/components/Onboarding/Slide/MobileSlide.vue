@@ -47,7 +47,7 @@
     <onboarding-completion
       class="completion-element pointer"
       :decade="item.decade"
-      @click="$emit('loadDecade', item.decade)"
+      @load-decade="$emit('loadDecade', item.decade)"
     />
   </el-row>
   <el-row>

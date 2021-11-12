@@ -5,6 +5,7 @@
     viewBox="0 0 240 69"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    @click="$emit('loadDecade', decade)"
   >
     <rect width="240" height="69" rx="34.5" fill="black" />
     <completion
