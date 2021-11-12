@@ -13,7 +13,7 @@
     :isMobile="false"
     class="arrow-up"
     :text="index === 0 ? mainTitle : information.collection[index - 1]"
-    @click="$emit('previousSlide')"
+    @previous-slide="$emit('previousSlide')"
   />
   <div class="collection-position">
     <el-row>
@@ -38,7 +38,7 @@
       <onboarding-completion
         class="completion-element pointer"
         :decade="item.decade"
-        @click="$emit('loadDecade', item.decade)"
+        @next-slide="$emit('loadDecade', item.decade)"
       />
     </el-row>
   </div>
@@ -48,7 +48,7 @@
     :isMobile="false"
     :isFull="isFullSize"
     :text="information.collection[index + 1]"
-    @click="$emit('nextSlide')"
+    @next-slide="$emit('nextSlide')"
   />
 </template>
 

@@ -9,6 +9,7 @@
       </h1>
     </div>
     <svg
+      @click="$emit('nextSlide')"
       class="pointer"
       :width="size"
       :height="size"
@@ -33,6 +34,7 @@ export default {
     isMobile: Boolean,
     isFull: Boolean,
   },
+  emits: ['nextSlide'],
   computed: {
     textSize() {
       return {

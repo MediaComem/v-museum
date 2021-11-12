@@ -28,7 +28,7 @@
         :text="undefined"
         :isFull="true"
         :isMobile="false"
-        @click="$emit('nextSlide')"
+        @next-slide="$emit('nextSlide')"
       />
     </el-row>
   </div>
@@ -38,6 +38,7 @@
 import ArrowDown from "../Logo/ArrowDown.vue";
 export default {
   components: { ArrowDown },
+  emits: ['nextSlide'],
   props: {
     information: Object,
   },

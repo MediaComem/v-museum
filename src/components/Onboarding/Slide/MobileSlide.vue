@@ -36,7 +36,7 @@
     :isFull="false"
     class="arrow-up"
     :text="index === 0 ? mainTitle : information.collection[index - 1]"
-    @click="$emit('previousSlide')"
+    @previous-slide="$emit('previousSlide')"
   />
   <el-row>
     <h2 class="collection-title-mobile mobile-margin">
@@ -62,7 +62,7 @@
       :isMobile="true"
       :isFull="false"
       :text="information.collection[index + 1]"
-      @click="$emit('nextSlide')"
+      @next-slide="$emit('nextSlide')"
     />
   </el-row>
 </template>

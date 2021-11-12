@@ -16,6 +16,7 @@
       viewBox="0 0 60 60"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      @click="$emit('previousSlide')"
     >
       <circle cx="30" cy="30" r="28.5" stroke="#1C1C1C" stroke-width="3" />
       <path
@@ -34,6 +35,7 @@ export default {
     isMobile: Boolean,
     isFull: Boolean,
   },
+  emits: ['previousSlide'],
   computed: {
     textSize() {
       return {
