@@ -27,11 +27,10 @@
     </el-row>
     <el-row>
       <p
-        class="pointer"
         :class="isFullSize ? 'collection-text' : 'collection-text-intermediary'"
       >
         {{ item.text.slice(0, 180) }}
-        <a class="more-link" @click="isCollapse = !isCollapse">MORE</a>
+        <a class="more-link pointer" @click="isCollapse = !isCollapse">MORE</a>
       </p>
     </el-row>
     <el-row style="height: 69px; width: 37vw">

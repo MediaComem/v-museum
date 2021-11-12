@@ -15,6 +15,10 @@ h3 {
   cursor: pointer;
 }
 
+.pointer:hover {
+    opacity: 0.8;
+}
+
 .overflow {
   overflow-x: hidden;
   overflow-y: auto;
