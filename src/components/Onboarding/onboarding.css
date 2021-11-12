@@ -1,21 +1,47 @@
 h1 {
-    font-weight: normal;
-  }
-  
-  h2 {
-    font-weight: normal;
-  }
-  
-  h3 {
-    font-weight: normal;
-    margin-bottom: 0;
-  }
+  font-weight: normal;
+}
+
+h2 {
+  font-weight: normal;
+}
+
+h3 {
+  font-weight: normal;
+  margin-bottom: 0;
+}
 
 .pointer {
   cursor: pointer;
 }
 
 .overflow {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.collapse-transition {
+  transition: transform;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-out;
+}
+
+.arrow-up {
+  position: absolute;
+  top: 2vh;
+  width: 98vw;
+  justify-content: flex-end;
+}
+
+.more-link {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.padding {
+  padding: 0;
+}
+
+.el-carousel__item.is-animating {
+  transition: transform 0.5s ease-in-out;
+}

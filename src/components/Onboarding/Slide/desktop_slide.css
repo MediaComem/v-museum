@@ -1,0 +1,64 @@
+.collapse-text-align {
+  text-align: left;
+  position: absolute;
+  top: 20vh;
+  margin: 3vw;
+  max-width: 35em;
+}
+
+.image-display {
+  width: 57vw;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  z-index: -1;
+  object-fit: cover;
+}
+
+.collection-text {
+  font-size: 22px;
+  text-align: left;
+  max-width: 35em;
+}
+
+.collection-text-intermediary {
+  font-size: 18px;
+  text-align: left;
+  max-width: 35em;
+}
+
+.arrow-down {
+  position: absolute;
+  top: 90vh;
+  width: 98vw;
+  justify-content: flex-end;
+}
+
+.collection-title {
+  font-size: 50px;
+  text-align: left;
+  max-width: 35em;
+}
+
+.collection-title-intermediary {
+  font-size: 36px;
+  text-align: left;
+  max-width: 35em;
+}
+
+.completion-element {
+  position: absolute;
+  left: 0;
+}
+
+.collection-position {
+  width: 37vw;
+  height: 80vh;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  position: absolute;
+  left: 60vw;
+  top: 10vh;
+}

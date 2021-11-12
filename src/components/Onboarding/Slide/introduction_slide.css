@@ -1,0 +1,53 @@
+.first-image {
+  width: 100vw;
+  height: 75vh;
+  object-fit: cover;
+}
+
+.margin-text {
+    margin: 5px;
+}
+
+@media only screen and (min-width: 300px) and (max-width: 699px) {
+  .page-title {
+    font-size: 40px;
+    max-width: 60rem;
+  }
+
+  .page-subtitle {
+    font-size: 30px;
+    max-width: 60rem;
+    text-align: center;
+  }
+
+  .text-title {
+    font-size: 20px;
+    text-align: left;
+    max-width: 35rem;
+  }
+}
+
+@media only screen and (min-width: 700px) {
+  .page-title {
+    font-size: 74.1515px;
+    max-width: 60rem;
+  }
+
+  .page-subtitle {
+    font-size: 50px;
+    max-width: 60rem;
+    text-align: center;
+  }
+
+  .text-title {
+    font-size: 30px;
+    text-align: left;
+    max-width: 35rem;
+  }
+}
+
+.text {
+  font-size: 20px;
+  text-align: left;
+  max-width: 35rem;
+}

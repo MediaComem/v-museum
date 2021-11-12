@@ -1,0 +1,39 @@
+.collection-title-mobile {
+  font-size: 22px;
+  text-align: left;
+  max-width: 35em;
+}
+
+.collection-text-mobile {
+  font-size: 15px;
+  text-align: left;
+  max-width: 35em;
+}
+
+.arrow-down-mobile {
+  width: 98vw;
+  justify-content: flex-end;
+  position: absolute;
+  top: 95vh;
+}
+
+.collapse-text-align-mobile {
+  text-align: left;
+  margin: 3vw;
+  max-width: 35em;
+}
+
+.image-display-mobile {
+  width: 100vw;
+  height: 50vh;
+  object-fit: cover;
+}
+
+.completion-element-mobile {
+  height: 69px;
+}
+
+.mobile-margin {
+  margin-left: 3vw;
+  margin-right: 3vw;
+}
