@@ -49,7 +49,7 @@
     </el-row>
     <el-row>
       <p class="gray-text">
-        Key words
+        Keywords
       </p>
     </el-row>
     <el-row>
