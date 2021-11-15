@@ -4,7 +4,7 @@
   >
     <img
       src="@/assets/shared/cross.svg"
-      @click="$emit('backToCanvasView')"
+      @click="backToCanvasView()"
       style="width: 30px; height: 29px"
     />
   </div>
@@ -22,7 +22,15 @@ export default {
   emits: ["backToCanvasView", "changeDisplay"],
   props: {
     display: Boolean,
+    from: Object,
   },
+  methods: {
+      backToCanvasView() {
+      this.$router.push({
+        path: `${this.from.fullPath}`,
+      });
+    },
+  } 
 };
 </script>
 

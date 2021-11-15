@@ -98,7 +98,6 @@ export default {
       }, animationDuration);
     },
     loadDecade(decade) {
-      console.log("TEST")
       this.$router.push({
         path: `/selector/${decade}`,
       });

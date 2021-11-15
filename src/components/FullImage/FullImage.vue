@@ -1,7 +1,7 @@
 <template>
   <div class="information-manager" style="margin-left: 12px">
     <el-row>
-      <page-manager @backToCanvasView="backToCanvasView()" @changeDisplay="display = !display" :display="display"/>
+      <page-manager @changeDisplay="display = !display" :display="display" :from="from"/>
     </el-row>
   </div>
 
@@ -10,66 +10,7 @@
     class="information information-padding"
     :style="collapse"
   >
-    <el-row style="height: 1;"> </el-row>
-    <el-row>
-      <h1>
-        {{ this.imageData.title }}
-      </h1>
-    </el-row>
-    <el-row>
-      <p class="gray-text">Illustrator</p>
-    </el-row>
-    <el-row>
-      <h3>
-        {{ this.imageData.author }}
-      </h3>
-    </el-row>
-    <el-row>
-      <p class="gray-text">
-        Magazine Issue
-      </p>
-    </el-row>
-    <el-row>
-      <p>
-        {{ this.imageData.medium }}
-      </p>
-    </el-row>
-    <el-row>
-      <p class="gray-text">
-        Keywords
-      </p>
-    </el-row>
-    <el-row>
-      <p v-if="tags.length === 0" class="gray-text" style="text-align: left">
-        No related keyword
-      </p>
-      <p v-if="tags.length > 0" style="text-align: left">
-        {{ tags.join(", ") }}
-      </p>
-    </el-row>
-    <el-row v-if="storyCollection">
-      <p>{{ currentIndex + 1 }} / {{ storyCollection.length }}</p>
-    </el-row>
-    <el-row v-if="storyCollection && storyCollection.length > 1">
-      <div style="display: flex; cursor: pointer" @click="previousImage()">
-        <div>
-          <img
-            src="@/assets/fullimage/left_arrow.svg"
-          />
-        </div>
-        <p>&nbsp; Previous &nbsp;</p>
-      </div>
-      <p>|</p>
-      <div style="display: flex; cursor: pointer" @click="nextImage()">
-        <p>&nbsp; Next &nbsp;</p>
-        <div>
-          <img src="@/assets/fullimage/right_arrow.svg" />
-        </div>
-      </div>
-    </el-row>
-    <el-row style="height: auto; padding-bottom: 24px; max-height: 15vh">
-      <span>{{ this.imageData.description }}</span>
-    </el-row>
+    <data-information ref="information" @loadImage="loadImage" :imageData="imageData" :tags="tags" :storyCollection="storyCollection"/>
   </div>
   <div class="page">
     <div id="viewer" class="viewer"></div>
@@ -84,10 +25,11 @@ import OpenSeadragon from "openseadragon";
 import { useWindowSize } from "vue-window-size";
 
 import PageManager from "./Manager/PageManager.vue";
+import DataInformation from "./DataInformation/DataInformation.vue";
 import dataFetching from "../../api/dataFetching";
 
 export default {
-  components: { PageManager },
+  components: { PageManager, DataInformation },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.imageId = to.params.index;
@@ -107,8 +49,6 @@ export default {
       display: true,
       displayImage: true,
       imageId: undefined,
-      // Index of the current displayed image
-      currentIndex: undefined,
       // Represent the current image displayed with all its information
       imageData: undefined,
       tags: [],
@@ -119,24 +59,8 @@ export default {
     };
   },
   methods: {
-    previousImage() {
-      if (this.currentIndex > 0) {
-        this.currentIndex = this.currentIndex - 1;
-      } else {
-        this.currentIndex = this.storyCollection.length - 1;
-      }
-      this.loadImage();
-    },
-    nextImage() {
-      if (this.currentIndex < this.storyCollection.length - 1) {
-        this.currentIndex = this.currentIndex + 1;
-      } else {
-        this.currentIndex = 0;
-      }
-      this.loadImage();
-    },
-    loadImage() {
-      this.imageData = this.storyCollection[this.currentIndex];
+    loadImage(index) {
+      this.imageData = this.storyCollection[index];
       this.tags = [];
       if (this.imageData.tags) {
         this.imageData.tags.forEach((tag) => this.tags.push(tag["@value"]));
@@ -147,11 +71,6 @@ export default {
         this.$store.dispatch("loadTotalImageByDecade", {
           decade: this.imageData.decade.slice(0, 3),
         });
-      });
-    },
-    backToCanvasView() {
-      this.$router.push({
-        path: `${this.from.fullPath}`,
       });
     },
     loadImagesByTitle() {
@@ -168,6 +87,7 @@ export default {
               return e.id === this.imageId;
             });
           }
+          this.$refs.information.setupCurrentIndex(this.currentIndex);
           this.$store.dispatch("loadTotalImageByDecade", {
             decade: this.imageData.decade.slice(0, 3),
           });
@@ -251,51 +171,7 @@ export default {
   },
 };
 </script>
-
 <style scoped>
-h1 {
-  font-weight: normal;
-  font-size: 24px;
-  margin: 0;
-  padding-bottom: 1vh;
-}
-
-h2 {
-  font-weight: normal;
-  font-size: 18px;
-  color: gray;
-  margin: 0;
-}
-
-h3 {
-  font-weight: normal;
-  font-size: 18px;
-  margin: 0;
-  padding-bottom: 1vh;
-}
-
-p {
-  font-weight: normal;
-  font-size: 14px;
-  margin: 0;
-  padding-bottom: 1vh;
-}
-
-span {
-  font-weight: normal;
-  font-size: 16px;
-  margin: 0;
-}
-
-.open-information {
-  left: 1vw;
-  top: 1vh;
-  position: relative;
-  width: 20px;
-  height: 20px;
-  z-index: 1;
-}
-
 .information-padding {
   padding: 24px;
   padding-top: 130px;
@@ -419,10 +295,5 @@ span {
 .viewer {
   width: 100%;
   height: 100vh;
-}
-
-.gray-text {
-  padding: 0;
-  color: gray;
 }
 </style>
