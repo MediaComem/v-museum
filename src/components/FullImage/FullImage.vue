@@ -53,20 +53,31 @@
       </p>
     </el-row>
     <el-row>
-      <p style="text-align: left">{{ tags.join(", ") }}</p>
+      <p v-if="tags.length === 0" class="gray-text" style="text-align: left">
+        No related keyword
+      </p>
+      <p v-if="tags.length > 0" style="text-align: left">
+        {{ tags.join(", ") }}
+      </p>
     </el-row>
     <el-row v-if="storyCollection">
       <p>{{ currentIndex + 1 }} / {{ storyCollection.length }}</p>
     </el-row>
     <el-row v-if="storyCollection && storyCollection.length > 1">
       <div style="display: flex; cursor: pointer" @click="previousImage()">
-        <img class="svg-position" src="@/assets/fullimage/left_arrow.svg" />
+        <div>
+          <img
+            src="@/assets/fullimage/left_arrow.svg"
+          />
+        </div>
         <p>&nbsp; Previous &nbsp;</p>
       </div>
       <p>|</p>
       <div style="display: flex; cursor: pointer" @click="nextImage()">
         <p>&nbsp; Next &nbsp;</p>
-        <img class="svg-position" src="@/assets/fullimage/right_arrow.svg" />
+        <div>
+          <img src="@/assets/fullimage/right_arrow.svg" />
+        </div>
       </div>
     </el-row>
     <el-row style="height: auto; padding-bottom: 24px; max-height: 15vh">
@@ -421,10 +432,6 @@ span {
 .viewer {
   width: 100%;
   height: 100vh;
-}
-
-.svg-position {
-  margin-bottom: 13px;
 }
 
 .gray-text {
