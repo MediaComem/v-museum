@@ -1,20 +1,7 @@
 <template>
   <div class="information-manager" style="margin-left: 12px">
     <el-row>
-      <div
-        style="width: 53px; height: 53px; display: flex; justify-content: center; align-items: center;"
-      >
-        <img
-          src="@/assets/shared/cross.svg"
-          @click="backToCanvasView()"
-          style="width: 30px; height: 29px"
-        />
-      </div>
-      <div
-        style="width: 53px; height: 53px; display: flex; justify-content: center; align-items: center;"
-      >
-        <infos @click="display = !display" :display="display" />
-      </div>
+      <page-manager @backToCanvasView="backToCanvasView()" @changeDisplay="display = !display" :display="display"/>
     </el-row>
   </div>
 
@@ -96,11 +83,11 @@
 import OpenSeadragon from "openseadragon";
 import { useWindowSize } from "vue-window-size";
 
-import Infos from "./Infos.vue";
+import PageManager from "./Manager/PageManager.vue";
 import dataFetching from "../../api/dataFetching";
 
 export default {
-  components: { Infos },
+  components: { PageManager },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.imageId = to.params.index;
