@@ -39,7 +39,37 @@
 						</ul>
 					</section>
 					<section>
-						
+						<!-- Elements de style à déplacer ailleurs dès que ok avec Romain-->
+						<!-- Format des images à modifier directement à la source -->
+						<style>
+							* {
+							  box-sizing: border-box;
+							}
+							
+							.column {
+							  float: left;
+							  width: 33.33%;
+							  padding: 5px;
+							}
+							
+							/* Clearfix (clear floats) */
+							.row::after {
+							  content: "";
+							  clear: both;
+							  display: table;
+							}
+							</style>
+						<div class="row">
+							<div class="column">
+							  <img src="images/MEI_HEIG-VD_logotype_rouge-rvb.png" alt="Logo MEI" style="width:100%">
+							</div>
+							<div class="column">
+							  <img src="images/INSIT_HEIG-VD_logotype_rouge-rvb.png" alt="Logo INSIT" style="width:100%">
+							</div>
+							<div class="column">
+							  <img src="images/IICT_HEIG-VD_logotype_rouge-rvb.png" alt="Logo IICT" style="width:100%">
+							</div>
+						  </div>
 					</section>
 				</section>
 				<!-- Partie #2: Présentation du projet AR Standards -->
