@@ -24,7 +24,7 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   --r-heading-color: #222;
   --r-heading-line-height: 1.2;
   --r-heading-letter-spacing: normal;
-  --r-heading-text-transform: uppercase;
+  --r-heading-text-transform: none;
   --r-heading-text-shadow: none;
   --r-heading-font-weight: 600;
   --r-heading1-text-shadow: none;
@@ -296,6 +296,33 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
 
 .reveal img {
   margin: var(--r-block-margin) 0;
+}
+
+
+/*********************************************
+ * CUSTOM LAYOUT
+ *********************************************/
+.secondary {
+  position:absolute;
+  top: auto !important;
+  bottom:0;
+}
+
+.secondary h1,
+.secondary h2,
+.secondary h3,
+.secondary p {
+  left:0px;
+  text-align: justify;
+  margin-left:-300px;
+  padding-left:300px;
+}
+
+.secondary > span {
+  background-color: rgba(255,255,255,0.5);
+  display:block;
+  margin-left:-300px;
+  padding: 15px 0 5px 300px;
 }
 
 /*********************************************

@@ -79,13 +79,13 @@ export default {
 
 	// Disables the default reveal.js slide layout (scaling and centering)
 	// so that you can use custom CSS layout
-	disableLayout: false,
+	disableLayout: true,
 
 	// Enable the slide overview mode
 	overview: true,
 
 	// Vertical centering of slides
-	center: true,
+	center: false,
 
 	// Enables touch navigation on devices with touch input
 	touch: true,
