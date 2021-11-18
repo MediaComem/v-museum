@@ -308,16 +308,21 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   bottom:0;
 }
 
-.secondary > h1,
-.secondary > h2,
-.secondary > h3,
-.secondary > p {
+.secondary h1,
+.secondary h2,
+.secondary h3,
+.secondary p {
   left:0px;
   text-align: justify;
   margin-left:-300px;
   padding-left:300px;
-  background-color: rgba(255,255,255,0.5)
+}
 
+.secondary > span {
+  background-color: rgba(255,255,255,0.5);
+  display:block;
+  margin-left:-300px;
+  padding: 15px 0 5px 300px;
 }
 
 /*********************************************
