@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Mediamaps @ JRG21</title>
 
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
@@ -16,14 +16,14 @@
 	</head>
 	<body>
 		<div class="reveal">
-			<div class="slides">
+				<div class="slides">
 				<!-- Partie #1: Présentation de Mediamaps -->
 				<section>
 					<section>
-						<h1>Mediamaps</h1>
+						<h2>Mediamaps</h2>
 					</section>
-					<section>
-						<h2>Contexte:</h2>
+					<section data-background-image="images/HEIG-VD_logotype_rouge-rvb.png" data-background-size=10% data-background-position="10% 90%">
+						<h3>Contexte:</h3>
 						<ul>
 							<li>Groupe de recherche informel</li>
 							<li>Département <a href="https://heig-vd.ch/a-propos/heig-vd/organisation/departements/comem">COMEM+</a> de la <a href="https://heig-vd.ch/">HEIG-VD</a></li>
@@ -32,15 +32,126 @@
 						</ul>
 					</section>
 					<section>
-						<h2>Sujets de recherche:</h2>
+						<h3>Sujets de recherche:</h3>
 						<ul>
 							<li>Représentation cartographique et visualisation de donnée</li>
 							<li>Utilisation et développement des standards d'interopérabilité ( <a href="https://www.ogc.org/">OGC</a>, <a href="https://www.w3.org/">W3C</a>, <a href="https://iiif.io/">IIIF</a>  notamment)</li>
 							<li>Développements d'applications géospatiales (desktop, web, mobiles)</li>
 						</ul>
 					</section>
+					<section>
+						<!-- Elements de style à déplacer ailleurs dès que ok avec Romain-->
+						<!-- Format des images à modifier directement à la source -->
+						<style>
+							* {
+							  box-sizing: border-box;
+							}
+							
+							.column {
+							  float: left;
+							  width: 33.33%;
+							  padding: 5px;
+							}
+							
+							/* Clearfix (clear floats) */
+							.row::after {
+							  content: "";
+							  clear: both;
+							  display: table;
+							}
+							</style>
+						<div class="row">
+							<div class="column">
+							  <img src="images/MEI_HEIG-VD_logotype_rouge-rvb.png" alt="Logo MEI" style="width:100%">
+							</div>
+							<div class="column">
+							  <img src="images/INSIT_HEIG-VD_logotype_rouge-rvb.png" alt="Logo INSIT" style="width:100%">
+							</div>
+							<div class="column">
+							  <img src="images/IICT_HEIG-VD_logotype_rouge-rvb.png" alt="Logo IICT" style="width:100%">
+							</div>
+						  </div>
+					</section>
 				</section>
-				<section>Slide 2</section>
+				<!-- Partie #2: Présentation du projet AR topo -->
+				<section>
+					<section>
+						<h2>AR topo</h2>
+						<h3>État de l’art des normes et recommandations de la réalité augmentée pour la diffusion de géodonnées</h3>
+						<p>Dans un contexte où les XR (eXtended reality) sont en pleine expension, le projet AR Topo recense les normes et tentatives de standardisation de la  réalité augmentée au service des géodonnées.</p>
+						<p>Le résultat est un dossier d’une centaine de page présentant un état de l’art des normes et standards XR en 2019.</p>
+					</section>
+				</section>
+				<!-- Partie #3: Présentation du projet Symcore -->
+				<section>
+					<h2>Symcore</h2>
+					<h3>Standard international pour la représentation de données géographiques</h3>
+					<p>L’intéropérabilité des représentation cartographique est un enjeu majeur auquel Olivier Ertz (MEI - Mediamaps) et Erwan Bocher (CNRS) se sont adressés.</p>
+					<p>Après de nombreuses années de travail, SymCore est devenu le nouveau standard international de représentation de données géographiques, approuvé en 2020 par l’OGC.</p>
+				</section>
+				<!-- Partie #4: Présentation du projet Competenz Zentrum -->
+				<section>
+					<section>
+						<h2>Competenz Zentrum</h2>
+					</section>
+				</section>
+				<!-- Partie #5: Présentation du projet Smapshot -->
+				<section>
+					<section>
+						<h2>Smapshot</h2>
+						<h3>La machine à remonter le temps participative</h3>
+						<p>À l’époque, il n’y avait pas de GPS. Grâce à Smapshot, il est possible de <b>géolocaliser</b> des images d’archive en <b>3 dimensions</b>. Cela fait de Smapshot une véritable machine à remonter dans le temps.</p>
+						<p>Plus de 180’000 images ont déjà été référencées en 3 dimensions, grâce aux contributions de plus de 600 volontaires.</p>
+					</section>
+					<section>
+						<img src="images/smapshot.gif" alt="Animation Smapshot">
+					</section>
+				</section>
+				<!-- Partie #6: Présentation du projet Modos -->
+				<section>
+					<section>
+						<h2>Modos</h2>
+						<h3>Participation citoyenne pour la mobilité douce des seniors</h3>
+						<p>Le projet modos propose un framework de participation citoyenne pour la cartographie et la documentation des obstacles à la mobilité piétonne dans les villes.</p>
+						<p>L’objectif final est la mise à disposition d’un moteur de calcul d’itinéraires adaptés au profil de mobilité des utilisateurs-trices, en plus de mettre en évidence les zones de faible marchabilité à destination des pouvoirs publiques.</p>
+					</section>
+				</section>
+				<!-- Partie #7: Présentation du projet BioDiv AR -->
+				<section>
+					<section>
+						<h2>BioDiv AR</h2>
+						<h3>Promotion et découverte de la biodiversité grâce à la réalité augmentée</h3>
+						<p>Découvrir la biodiversité et se reconnecter à la nature, à l’aide de la technologie et de la réalité augmentée. C’est le défi relevé par le projet BioDiv AR, suite du projet BioSentiers.</p>
+					</section>
+					<section>
+						<video data-autoplay ="" src="videos/Biosentiers_Test.mp4"></video>
+					</section>
+				</section>
+				<!-- Partie #8: Présentation du projet Baremaps -->
+				<section>
+					<section>
+						<h2>Baremaps</h2>
+						<h3>Outil de création de tuiles vectorielles</h3>
+						<p>Créez et publiez des tuiles vectorielles sur la base d’OpenStreetMap et d’autres sources de données.</p>
+						<p>Baremaps redonne au cartographe le contrôle sur le contenu et le style de la carte, notamment grâce à une prévisualisation en direct dans le navigateur.</p>
+					</section>
+					<section>
+						<h2>Baremaps</h2>
+						<h3>Gestion de données à l’aide de postgis</h3>
+					</section>
+					<section>
+						<h2>Baremaps</h2>
+						<h3>Création de tileset</h3>
+					</section>
+					<section>
+						<h2>Baremaps</h2>
+						<h3>Création de styles</h3>
+					</section>
+					<section>
+						<h2>Baremaps</h2>
+						<h3>Sans limite de création ...</h3>
+					</section>
+				</section>
 			</div>
 		</div>
 

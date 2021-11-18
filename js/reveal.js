@@ -1434,7 +1434,7 @@ export default function( revealElement, options ) {
 		slideContent.formatEmbeddedContent();
 
 		// Start or stop embedded content depending on global config
-		if( config.autoPlayMedia === false ) {
+		if( config.autoPlayMedia === true ) {
 			slideContent.stopEmbeddedContent( currentSlide, { unloadIframes: false } );
 		}
 		else {
