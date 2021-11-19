@@ -1,3 +1,13 @@
+## Slideshow setup
+
+* `git clone` this wonderful slideshow
+* well... that was easy
+
+For development, just Run the project with your favorite code editor or live-server for hot-reload. 
+You can also staticaly open the index.html file, for development or presentation. 
+
+IMPORTANT NOTE : This slideshow contains video medias. Those are not publicly available. Please contact the owner of this repo to get those. Once obtained, the videos should be put on a folder named "videos" at the root of the project. 
+
 <p align="center">
   <a href="https://revealjs.com">
   <img src="https://hakim-static.s3.amazonaws.com/reveal-js/logo/v1/reveal-black-text.svg" alt="reveal.js" width="450">
