@@ -70,6 +70,13 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   font-weight: inherit;
 }
 
+section.present > .bg-white {
+  background-color: rgba(255,255,255,0.5);
+  display:block;
+  width:100%;
+  outline:solid 50px rgba(255,255,255,0.5) ;
+}
+
 /*********************************************
  * HEADERS
  *********************************************/
@@ -318,11 +325,12 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   padding-left:300px;
 }
 
-.secondary > span {
+.secondary > span.wide {
   background-color: rgba(255,255,255,0.5);
   display:block;
   margin-left:-300px;
   padding: 15px 0 5px 300px;
+  width:200%;
 }
 
 /*********************************************
