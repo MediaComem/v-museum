@@ -198,7 +198,7 @@ export default {
 	//           is present on the current slide or fragment
 	// - 1+:     All slides will progress automatically at the given interval
 	// - false:  No auto-sliding, even if data-autoslide is present
-	autoSlide: 1+,
+	autoSlide: 0,
 
 	// Stop auto-sliding after user input
 	autoSlideStoppable: true,
