@@ -30,7 +30,7 @@ export default {
 	controlsBackArrows: 'faded',
 
 	// Display a presentation progress bar
-	progress: true,
+	progress: false,
 
 	// Display the page number of the current slide
 	// - true:    Show slide number
@@ -198,7 +198,7 @@ export default {
 	//           is present on the current slide or fragment
 	// - 1+:     All slides will progress automatically at the given interval
 	// - false:  No auto-sliding, even if data-autoslide is present
-	autoSlide: 0,
+	autoSlide: 1000,
 
 	// Stop auto-sliding after user input
 	autoSlideStoppable: true,
@@ -217,7 +217,7 @@ export default {
 	// Opens links in an iframe preview overlay
 	// Add `data-preview-link` and `data-preview-link="false"` to customise each link
 	// individually
-	previewLinks: false,
+	previewLinks: true,
 
 	// Exposes the reveal.js API through window.postMessage
 	postMessage: true,
@@ -229,7 +229,7 @@ export default {
 	focusBodyOnPageVisibilityChange: true,
 
 	// Transition style
-	transition: 'slide', // none/fade/slide/convex/concave/zoom
+	transition: 'concave', // none/fade/slide/convex/concave/zoom
 
 	// Transition speed
 	transitionSpeed: 'default', // default/fast/slow
