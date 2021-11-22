@@ -3,8 +3,8 @@
 * `git clone` this wonderful slideshow
 * well... that was easy
 
-For development, just Run the project with your favorite code editor or live-server for hot-reload. 
-You can also staticaly open the index.html file, for development or presentation. 
+For development, run the project with your favorite code editor or live-server. Or run the index.html file directly (no hot-reload) 
+For presentation, run the project on localhost or open the index.html file on your browser. 
 
 IMPORTANT NOTE : This slideshow contains video medias. Those are not publicly available. Please contact the owner of this repo to get those. Once obtained, the videos should be put on a folder named "videos" at the root of the project. 
 

@@ -98,6 +98,11 @@
 					<section>
 						<video data-autoplay data-src="videos/SMAPSHOT_V3.mp4"></video>
 					</section>
+					<section class="bg-white" data-background-image="images/smapshot-1.png" data-background-opacity="0.5">
+						<h4>Smapshot</h4>
+						<h3>Distinctions</h3>
+						<p>🏆 Prix <a href="https://awards.dinacon.ch/fr/">DINAcon</a> "Open Data" 2021</p>
+					</section>
 					<section class="bg-white" data-background-image="images/smapshot-2.png" data-background-opacity="0.5">
 						<h4>Smapshot</h4>
 						<h3>En savoir plus</h3>
@@ -115,6 +120,11 @@
 					</section>
 					<section data-background-image="images/fullres/modos-1.jpg" data-background-opacity="0.3">
 						<video data-autoplay data-src="videos/MODOS_VOIX_OFF_MUSIC.mp4"></video>
+					</section>
+					<section class="bg-white" data-background-image="images/fullres/modos-2.png" data-background-opacity="0.5">
+						<h4>modos</h4>
+						<h3>Distinctions</h3>
+						<p class="r-fit-text">🏆 Label "Qualité de vie" 2021 - Fondation <a href="https://dallemolle.ch/">Dalle Molle</a></p>
 					</section>
 					<section class="bg-white" data-background-image="images/fullres/modos-2.png" data-background-opacity="0.5">
 						<h4>modos</h4>
@@ -148,15 +158,15 @@
 							<br/>Baremaps redonne au cartographe le contrôle sur le contenu et le style de la carte, notamment grâce à une prévisualisation en direct dans le navigateur.</p>
 					</section>
 					<section class="bg-white" data-background-size="80%" data-background-image="images/fullres/baremaps-screenshot.jpg" data-background-opacity ="0.8">
-						<span class="">
 							<h3>Baremaps</h3>
 							<p class="r-fit-text">Baremaps est un pipeline open source permettant de publier des tuiles vectorielles sur la base d’OpenStreetMap et d’autres sources de données (Création de styles, création de tileset, gestion des données avec PostGIS). L’outil redonne au cartographe le contrôle sur le contenu et le style de la carte. Les itérations de développement sont accélérées par prévisualisation en direct des modifications dans le navigateur. Le projet a reçu un soutien financier d’InnoSuisse et fait l’objet de collaborations avec l’industrie.</p>
-						</span>
 					</section>
-					<section>
+					<section class="bg-white" data-background-image="images/fullres/baremaps-1.png" data-background-size="110%" data-background-opacity ="0.8">
 						<h4>Baremaps</h4>
 						<h3>En savoir plus</h3>
 						<p><a href="https://www.baremaps.com/">↗ Site web du projet</a></p>
+						<p><a href="http://docs.opengeospatial.org/per/18-076.pdf">↗ OGC Vector Tiles Pilot</a></p>
+						<p><a href="http://docs.opengeospatial.org/per/17-041.pdf">↗ OGC Testbed-13</a></p>
 					</section>
 				</section>
 			</div>
@@ -172,11 +182,12 @@
 			// - https://revealjs.com/config/
 			Reveal.initialize({
 				hash: true,
-				autoSlide: 10000,
+				autoSlide: 15000,
 				progress:false,
 				touch:true,
 				autoPlayMedia:true,
 				transition:"slide",
+				previewLinks: true,
 				// Learn about plugins: https://revealjs.com/plugins/
 				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
 			});
