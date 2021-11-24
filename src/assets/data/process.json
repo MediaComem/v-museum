@@ -1,0 +1,10 @@
+[
+  {
+    "imageId": 70764,
+    "relatedImages": [
+      { "tag": "Cat", "imageId": 70755 },
+      { "tag": "Dog", "imageId": 70732 },
+      { "tag": "Fish", "imageId": 70678 }
+    ]
+  }
+]
