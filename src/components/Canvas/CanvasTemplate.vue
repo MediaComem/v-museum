@@ -1,5 +1,15 @@
 <template>
-  <div :style="pageSize" @mousewheel="updatePageSize">
+  <div
+    :style="pageSize"
+    @mousewheel="wheelMove"
+    @mousedown="startPosition"
+    @mouseup="endPosition"
+    @mouseleave="endPosition"
+    @mousemove="mouseMove"
+    @touchstart="startPosition"
+    @touchend="endPosition"
+    @touchmove="touchMove"
+  >
     <rectangle
       :width="425"
       :height="650"
@@ -50,6 +60,9 @@ export default {
       centralImageTopPosition: 0,
       centralImageLeftPosition: 0,
       nextPositions: [],
+      isDrag: false,
+      currentXPosition: 0,
+      currentYPosition: 0,
     };
   },
   methods: {
@@ -58,28 +71,79 @@ export default {
         .sort(() => Math.random() - 0.5)
         .slice(0, 3);
     },
-    updatePageSize(event) {
-      if (event.deltaY < 0 && event.offsetY < this.windowHeight) {
-        this.pageHeight = this.pageHeight - event.deltaY;
-        this.centralImageTopPosition =
-          this.centralImageTopPosition - event.deltaY;
+    startPosition() {
+      this.isDrag = true;
+    },
+    endPosition() {
+      this.isDrag = false;
+    },
+    touchMove() {
+      if (this.isDrag) {
+        // TODO: Collision analysis
       }
-      if (
-        event.deltaY > 0 &&
-        event.offsetY > this.pageHeight - this.windowHeight
-      ) {
-        this.pageHeight = this.pageHeight + event.deltaY;
+    },
+    mouseMove(event) {
+      if (this.isDrag) {
+        // The movement is inversed due to the fact that sign of each movements are inversed between mousewhell and mouse move.
+        this.updatePageSize(
+          -event.movementX,
+          -event.movementY,
+          this.currentXPosition,
+          this.currentYPosition
+        );
+        this.move(event);
       }
-      if (event.deltaX < 0 && event.offsetX > this.windowWidth) {
-        this.pageWidth = this.pageWidth - event.deltaX;
-        this.centralImageLeftPosition =
-          this.centralImageLeftPosition - event.deltaX;
+    },
+    wheelMove(event) {
+      // Calculate the mouse movement and apply it on the current position
+      const xMovement = this.currentXPosition + event.deltaX;
+      const yMovement = this.currentYPosition + event.deltaY;
+      this.updateCurrentPosition(xMovement, yMovement);
+
+      this.updatePageSize(
+        event.deltaX,
+        event.deltaY,
+        event.offsetX,
+        event.offsetY
+      );
+    },
+    move(event) {
+      // Calculate the mouse movement and apply it on the current position
+      const xMovement = this.currentXPosition - event.movementX;
+      const yMovement = this.currentYPosition - event.movementY;
+      this.updateCurrentPosition(xMovement, yMovement);
+
+      // Move
+      window.scrollTo({
+        left: this.currentXPosition,
+        top: this.currentYPosition,
+      });
+    },
+    updateCurrentPosition(newXPosition, newYPosition) {
+      // Ensure that the scroll is in the page
+      if (newXPosition > 0 || newXPosition < this.pageWidth) {
+        this.currentXPosition = newXPosition;
       }
-      if (
-        event.deltaX > 0 &&
-        event.offsetX > this.pageWidth - this.windowWidth
-      ) {
-        this.pageWidth = this.pageWidth + event.deltaX;
+      // Ensure that the scroll is in the page
+      if (newYPosition > 0 || newYPosition < this.pageHeight) {
+        this.currentYPosition = newYPosition;
+      }
+    },
+    updatePageSize(deltaX, deltaY, offsetX, offsetY) {
+      // The four next block discovered the movement direction and modify the page size if necessary and also the position of the image if necessary
+      if (deltaY < 0 && offsetY < this.windowHeight) {
+        this.pageHeight = this.pageHeight - deltaY;
+        this.centralImageTopPosition = this.centralImageTopPosition - deltaY;
+      }
+      if (deltaY > 0 && offsetY > this.pageHeight - this.windowHeight) {
+        this.pageHeight = this.pageHeight + deltaY;
+      }
+      if (deltaX < 0 && offsetX > this.windowWidth) {
+        this.pageWidth = this.pageWidth - deltaX;
+        this.centralImageLeftPosition = this.centralImageLeftPosition - deltaX;
+      }
+      if (deltaX > 0 && offsetX > this.pageWidth - this.windowWidth) {
+        this.pageWidth = this.pageWidth + deltaX;
       }
     },
   },
@@ -99,12 +163,18 @@ export default {
     this.windowHeight = height;
     this.windowWidth = width;
 
+    // Default page size set to two times the current windows size
     this.pageHeight = 2 * this.windowHeight;
     this.pageWidth = 2 * this.windowWidth;
 
+    // Find the middle of the page to insert the first image
     this.centralImageTopPosition = this.pageHeight / 2 - 300;
     this.centralImageLeftPosition = this.pageWidth / 2 - 200;
 
+    this.currentXPosition = this.centralImageLeftPosition;
+    this.currentYPosition = this.centralImageTopPosition;
+  },
+  activated() {
     window.scrollTo({
       left: this.centralImageTopPosition,
       top: this.centralImageLeftPosition,
