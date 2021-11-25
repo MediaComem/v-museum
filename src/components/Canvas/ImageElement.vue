@@ -35,10 +35,10 @@
 <script>
 import dataFetch from "../../api/dataFetching";
 import {
-  thumbnailHeight,
   thumbnailWidth,
-  relatedThumbnailHeight,
   relatedThumbnailWidth,
+  getImageWidth,
+  getImageHeight
 } from "./image_management_service";
 
 export default {
@@ -78,14 +78,10 @@ export default {
       };
     },
     getImageHeight() {
-      return this.hasFocus
-        ? thumbnailHeight(this.imageFactor)
-        : relatedThumbnailHeight(this.imageFactor);
+      return getImageHeight(this.hasFocus, this.imageFactor);
     },
     getImageWidth() {
-      return this.hasFocus
-        ? thumbnailWidth(this.imageFactor)
-        : relatedThumbnailWidth(this.imageFactor);
+      return getImageWidth(this.hasFocus, this.imageFactor);
     },
   },
   mounted() {

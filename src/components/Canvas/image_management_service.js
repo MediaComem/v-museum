@@ -33,10 +33,24 @@ const relatedThumbnailWidth = (factor) => {
   return 8 * 4 * factor;
 }
 
+const getImageHeight = (hasFocus, imageFactor) => {
+  return hasFocus
+    ? thumbnailHeight(imageFactor)
+    : relatedThumbnailHeight(imageFactor);
+}
+
+const getImageWidth = (hasFocus, imageFactor) => {
+  return hasFocus
+    ? thumbnailWidth(imageFactor)
+    : relatedThumbnailWidth(imageFactor);
+}
+
 export {
   getFactor,
   thumbnailHeight,
   thumbnailWidth,
   relatedThumbnailHeight,
-  relatedThumbnailWidth
+  relatedThumbnailWidth,
+  getImageHeight,
+  getImageWidth
 } 

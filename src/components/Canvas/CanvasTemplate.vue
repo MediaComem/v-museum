@@ -10,12 +10,11 @@
     @touchend="endPosition"
     @touchmove="touchMove"
   >
-    <rectangle
-      :width="425"
-      :height="650"
+    <focus-rectangle
       :offsetX="windowWidth"
       :offsetY="windowHeight"
-      ref="rectangle"
+      :hasFocus="true"
+      :imageFactor="getFactorImage"
     />
     <image-element
       :imagePosition="{
@@ -41,7 +40,7 @@
 <script>
 import ImageElement from "./ImageElement.vue";
 import ImagesBlock from "./ImagesBlock.vue";
-import Rectangle from "../ImageSelector/Rectangle.vue";
+import FocusRectangle from "./FocusRectangle.vue";
 
 import { useWindowSize } from "vue-window-size";
 
@@ -50,7 +49,7 @@ import relatedImage from "../../assets/data/process.json";
 import { getFactor } from "./image_management_service";
 
 export default {
-  components: { ImagesBlock, ImageElement, Rectangle },
+  components: { ImagesBlock, ImageElement, FocusRectangle },
   data() {
     return {
       potentialPositions: [1, 2, 3, 4, 5, 6],
