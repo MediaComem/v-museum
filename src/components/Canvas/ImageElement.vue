@@ -1,6 +1,6 @@
 <template>
   <div :style="position" v-if="imageData">
-    <p v-if="isTop && !hasFocus" :class="justification" :style="textWidth">
+    <p v-if="isTop && !hasFocus" :class="textJustification" :style="textWidth">
       {{ tag }}
     </p>
     <img
@@ -8,11 +8,11 @@
       :height="getImageHeight"
       :width="getImageWidth"
     />
-    <p v-if="!isTop && !hasFocus" :class="justification" :style="textWidth">
+    <p v-if="!isTop && !hasFocus" :class="textJustification" :style="textWidth">
       {{ tag }}
     </p>
     <div v-if="hasFocus" :style="textWidth">
-      <div class="left">
+      <div class="text_left">
         <p>
           Illustration: &nbsp;
         </p>
@@ -20,7 +20,7 @@
           {{ imageData.author }}
         </p>
       </div>
-      <div class="left">
+      <div class="text_left">
         <p>
           Story: &nbsp;
         </p>
@@ -57,10 +57,10 @@ export default {
     };
   },
   computed: {
-    justification() {
+    textJustification() {
       return {
-        left: this.isLeft,
-        right: !this.isLeft,
+        text_left: this.isLeft,
+        text_right: !this.isLeft,
       };
     },
     position() {
@@ -95,12 +95,12 @@ export default {
 </script>
 
 <style scoped>
-.left {
+.text_left {
   display: flex;
   justify-content: flex-start;
 }
 
-.right {
+.text_right {
   display: flex;
   justify-content: flex-end;
 }
