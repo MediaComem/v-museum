@@ -1,20 +1,22 @@
 <template>
   <div v-for="(relateImage, index) in relatedImages" :key="index">
     <image-element
-      :imageHeight="imageHeight"
-      :imageWidth="imageWidth"
       :imagePosition="calculatePositions(index)"
       :isTop="true"
       :isLeft="false"
       :hasFocus="false"
       :tag="relateImage.tag"
       :imageId="relateImage.imageId"
+      :imageFactor="imageFactor"
     />
   </div>
 </template>
 
 <script>
 import ImageElement from "./ImageElement.vue";
+
+import { thumbnailHeight, thumbnailWidth } from "./image_management_service";
+
 export default {
   components: { ImageElement },
   props: {
@@ -22,12 +24,11 @@ export default {
     currentLeftPosition: Number,
     relatedImages: Array,
     nextPosition: Array,
+    imageFactor: Number,
   },
   data() {
     return {
       newImagePositions: [],
-      imageHeight: 600,
-      imageWidth: 400,
     };
   },
   methods: {
@@ -36,33 +37,33 @@ export default {
       switch (positionNumber) {
         case 1:
           return {
-            top: this.currentTopPosition - 1.5 * this.imageHeight,
-            left: this.currentLeftPosition - 1.5 * this.imageWidth,
+            top: this.currentTopPosition - 1.5 * thumbnailHeight(this.imageFactor),
+            left: this.currentLeftPosition - 1.5 * thumbnailWidth(this.imageFactor),
           };
         case 2:
           return {
             top: this.currentTopPosition,
-            left: this.currentLeftPosition - 1.5 * this.imageWidth,
+            left: this.currentLeftPosition - 1.5 * thumbnailWidth(this.imageFactor),
           };
         case 3:
           return {
-            top: this.currentTopPosition + 1.5 * this.imageHeight,
-            left: this.currentLeftPosition - 1.5 * this.imageWidth,
+            top: this.currentTopPosition + 1.5 * thumbnailHeight(this.imageFactor),
+            left: this.currentLeftPosition - 1.5 * thumbnailWidth(this.imageFactor),
           };
         case 4:
           return {
-            top: this.currentTopPosition - 1.5 * this.imageHeight,
-            left: this.currentLeftPosition + 1.5 * this.imageWidth,
+            top: this.currentTopPosition - 1.5 * thumbnailHeight(this.imageFactor),
+            left: this.currentLeftPosition + 1.5 * thumbnailWidth(this.imageFactor),
           };
         case 5:
           return {
             top: this.currentTopPosition,
-            left: this.currentLeftPosition + 1.5 * this.imageWidth,
+            left: this.currentLeftPosition + 1.5 * thumbnailWidth(this.imageFactor),
           };
         case 6:
           return {
-            top: this.currentTopPosition + 1.5 * this.imageHeight,
-            left: this.currentLeftPosition + 1.5 * this.imageWidth,
+            top: this.currentTopPosition + 1.5 * thumbnailHeight(this.imageFactor),
+            left: this.currentLeftPosition + 1.5 * thumbnailWidth(this.imageFactor),
           };
       }
     },

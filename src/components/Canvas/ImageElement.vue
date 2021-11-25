@@ -5,8 +5,8 @@
     </p>
     <img
       :src="imageData.imagePaths.large"
-      :height="imageHeight"
-      :width="imageWidth"
+      :height="getImageHeight"
+      :width="getImageWidth"
     />
     <p v-if="!isTop && !hasFocus" :class="justification" :style="textWidth">
       {{ tag }}
@@ -34,17 +34,22 @@
 
 <script>
 import dataFetch from "../../api/dataFetching";
+import {
+  thumbnailHeight,
+  thumbnailWidth,
+  relatedThumbnailHeight,
+  relatedThumbnailWidth,
+} from "./image_management_service";
 
 export default {
   props: {
-    imageHeight: Number,
-    imageWidth: Number,
     imagePosition: Object,
     isTop: Boolean,
     isLeft: Boolean,
     hasFocus: Boolean,
     tag: String,
     imageId: Number,
+    imageFactor: Number,
   },
   data() {
     return {
@@ -67,8 +72,20 @@ export default {
     },
     textWidth() {
       return {
-        width: this.imageWidth + "px",
+        width: this.hasFocus
+          ? thumbnailWidth(this.imageFactor) + "px"
+          : relatedThumbnailWidth(this.imageFactor) + "px",
       };
+    },
+    getImageHeight() {
+      return this.hasFocus
+        ? thumbnailHeight(this.imageFactor)
+        : relatedThumbnailHeight(this.imageFactor);
+    },
+    getImageWidth() {
+      return this.hasFocus
+        ? thumbnailWidth(this.imageFactor)
+        : relatedThumbnailWidth(this.imageFactor);
     },
   },
   mounted() {

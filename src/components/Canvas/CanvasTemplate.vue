@@ -18,8 +18,6 @@
       ref="rectangle"
     />
     <image-element
-      :imageHeight="600"
-      :imageWidth="400"
       :imagePosition="{
         top: centralImageTopPosition,
         left: centralImageLeftPosition,
@@ -28,12 +26,14 @@
       :isLeft="false"
       :hasFocus="true"
       :imageId="relatedImages[0].imageId"
+      :imageFactor="getFactorImage"
     />
     <images-block
       :relatedImages="relatedImages[0].relatedImages"
       :currentLeftPosition="centralImageLeftPosition"
       :currentTopPosition="centralImageTopPosition"
       :nextPosition="generateNextPositions"
+      :imageFactor="getFactorImage"
     />
   </div>
 </template>
@@ -46,6 +46,8 @@ import Rectangle from "../ImageSelector/Rectangle.vue";
 import { useWindowSize } from "vue-window-size";
 
 import relatedImage from "../../assets/data/process.json";
+
+import { getFactor } from "./image_management_service";
 
 export default {
   components: { ImagesBlock, ImageElement, Rectangle },
@@ -151,6 +153,9 @@ export default {
     generateNextPositions() {
       return this.getNextPositions();
     },
+    getFactorImage() {
+        return getFactor(this.windowHeight, this.windowWidth);
+    },
     pageSize() {
       return {
         height: this.pageHeight + "px",
@@ -173,11 +178,10 @@ export default {
 
     this.currentXPosition = this.centralImageLeftPosition;
     this.currentYPosition = this.centralImageTopPosition;
-  },
-  activated() {
+
     window.scrollTo({
-      left: this.centralImageTopPosition,
-      top: this.centralImageLeftPosition,
+      left: this.currentXPosition,
+      top: this.currentYPosition,
     });
   },
 };
