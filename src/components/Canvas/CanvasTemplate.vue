@@ -9,25 +9,29 @@
     @touchstart="startPosition"
     @touchend="endPosition"
     @touchmove="touchMove"
+    :ref="'page'"
   >
     <focus-rectangle
+      :ref="'rectangle'"
       :offsetX="windowWidth"
       :offsetY="windowHeight"
-      :hasFocus="true"
+      :focus="true"
       :imageFactor="getFactorImage"
     />
     <image-element
+      :ref="'image-element'"
       :imagePosition="{
         top: centralImageTopPosition,
         left: centralImageLeftPosition,
       }"
       :isTop="true"
       :isLeft="false"
-      :hasFocus="true"
+      :focus="true"
       :imageId="relatedImages[0].imageId"
       :imageFactor="getFactorImage"
     />
     <images-block
+      :ref="'image-block'"
       :relatedImages="relatedImages[0].relatedImages"
       :currentLeftPosition="centralImageLeftPosition"
       :currentTopPosition="centralImageTopPosition"
@@ -80,7 +84,7 @@ export default {
     },
     touchMove() {
       if (this.isDrag) {
-        // TODO: Collision analysis
+        this.checkCollision();
       }
     },
     mouseMove(event) {
@@ -93,6 +97,7 @@ export default {
           this.currentYPosition
         );
         this.move(event);
+        this.checkCollision();
       }
     },
     wheelMove(event) {
@@ -107,6 +112,7 @@ export default {
         event.offsetX,
         event.offsetY
       );
+      this.checkCollision();
     },
     move(event) {
       // Calculate the mouse movement and apply it on the current position
@@ -119,6 +125,81 @@ export default {
         left: this.currentXPosition,
         top: this.currentYPosition,
       });
+    },
+    checkCollision() {
+      // Retrieve current center window position in the page
+      const currentCenterLeftPosition =
+        -this.$refs["page"].getBoundingClientRect().x + this.windowWidth / 2;
+      const currentCenterTopPosition =
+        -this.$refs["page"].getBoundingClientRect().y + this.windowHeight / 2;
+      // retrieve the center image positions in the page
+      const currentImageLeftPositionString = this.$refs["image-element"]
+        .position.left;
+      const currentCenterImageLeftPosition = +currentImageLeftPositionString.substring(
+        0,
+        currentImageLeftPositionString.length - 2
+      );
+      const currentImageTopPositionString = this.$refs["image-element"].position
+        .top;
+      const currentCenterImageTopPosition = +currentImageTopPositionString.substring(
+        0,
+        currentImageTopPositionString.length - 2
+      );
+      this.collisionAnalysis(
+        currentCenterLeftPosition,
+        currentCenterTopPosition,
+        currentCenterImageLeftPosition,
+        currentCenterImageTopPosition,
+        this.$refs["image-element"]
+      );
+      // Analysis of each related images
+      for (let i = 0; i <= 2; i++) {
+        // Retrieve current image position in the page
+        const currentImageLeftPositionString = this.$refs["image-block"].$refs[
+          "image-element-" + i
+        ].position.left;
+        const currentImageLeftPosition = +currentImageLeftPositionString.substring(
+          0,
+          currentImageLeftPositionString.length - 2
+        );
+        const currentImageTopPositionString = this.$refs["image-block"].$refs[
+          "image-element-" + i
+        ].position.top;
+        const currentImageTopPosition = +currentImageTopPositionString.substring(
+          0,
+          currentImageTopPositionString.length - 2
+        );
+        this.collisionAnalysis(
+          currentCenterLeftPosition,
+          currentCenterTopPosition,
+          currentImageLeftPosition,
+          currentImageTopPosition,
+          this.$refs["image-block"].$refs["image-element-" + i]
+        );
+      }
+    },
+    collisionAnalysis(
+      currentCenterLeftPosition,
+      currentCenterTopPosition,
+      currentImageLeftPosition,
+      currentImageTopPosition,
+      focusElement
+    ) {
+      // Compare the position of an image with the current center window position
+      // The number if arbitrary defined to have a margin between the center of the window and the
+      // center of the image.
+      if (
+        currentImageLeftPosition - 200 <= currentCenterLeftPosition &&
+        currentImageLeftPosition + 200 >= currentCenterLeftPosition &&
+        currentImageTopPosition - 200 <= currentCenterTopPosition &&
+        currentImageTopPosition + 200 >= currentCenterTopPosition
+      ) {
+        focusElement.hasFocus = true;
+        
+        window.scrollTo({ left: currentImageLeftPosition, top: currentImageTopPosition, behavior: "smooth" });
+      } else {
+        focusElement.hasFocus = false;
+      }
     },
     updateCurrentPosition(newXPosition, newYPosition) {
       // Ensure that the scroll is in the page
@@ -153,7 +234,7 @@ export default {
       return this.getNextPositions();
     },
     getFactorImage() {
-        return getFactor(this.windowHeight, this.windowWidth);
+      return getFactor(this.windowHeight, this.windowWidth);
     },
     pageSize() {
       return {
@@ -179,8 +260,8 @@ export default {
     this.currentYPosition = this.centralImageTopPosition;
 
     window.scrollTo({
-      left: this.currentXPosition,
-      top: this.currentYPosition,
+      left: -this.currentXPosition,
+      top: -this.currentYPosition,
     });
   },
 };
