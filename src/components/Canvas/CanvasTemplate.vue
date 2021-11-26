@@ -50,7 +50,11 @@ import { useWindowSize } from "vue-window-size";
 
 import relatedImage from "../../assets/data/process.json";
 
-import { getFactor, thumbnailWidth, thumbnailHeight } from "./image_management_service";
+import {
+  getFactor,
+  thumbnailWidth,
+  thumbnailHeight,
+} from "./image_management_service";
 
 export default {
   components: { ImagesBlock, ImageElement, FocusRectangle },
@@ -70,6 +74,7 @@ export default {
       currentXPosition: 0,
       currentYPosition: 0,
       nextPositions: [],
+      currentFocus: [],
     };
   },
   methods: {
@@ -124,6 +129,7 @@ export default {
       });
     },
     checkCollision() {
+      this.currentFocus = [];
       // Retrieve current center window position in the page
       const currentCenterLeftPosition =
         -this.$refs["page"].getBoundingClientRect().x + this.windowWidth / 2;
@@ -174,6 +180,7 @@ export default {
           this.$refs["image-block"].$refs["image-element-" + i]
         );
       }
+      this.$refs["rectangle"].hasFocus = this.currentFocus.includes(true);
     },
     collisionAnalysis(
       currentCenterLeftPosition,
@@ -192,17 +199,31 @@ export default {
         currentImageTopPosition + 200 >= currentCenterTopPosition
       ) {
         focusElement.hasFocus = true;
+        this.currentFocus.push(true);
         const factor = getFactor(this.windowHeight, this.windowWidth);
         // The calculation works as following:
-        // Current image position (provide at the top left of the window)
-        // remove the half of the window size
-        // move half of the image size to center the image in the window
-        // move half of margin of the focus rectangle.
-        const newLeftPosition = currentImageLeftPosition - this.windowWidth / 2 + thumbnailWidth(factor) / 2 - 10;
-        const newTopPosition = currentImageTopPosition - this.windowHeight / 2 + thumbnailHeight(factor) / 2 - 10;
-        window.scrollTo({ left: newLeftPosition, top: newTopPosition, behavior: "smooth" });
+        // 1) Current image position (provide at the top left of the window)
+        // 2) remove the half of the window size
+        // 3) move half of the image size to center the image in the window
+        // 4) move half of margin of the focus
+        const newLeftPosition =
+          currentImageLeftPosition -
+          this.windowWidth / 2 +
+          thumbnailWidth(factor) / 2 -
+          10;
+        const newTopPosition =
+          currentImageTopPosition -
+          this.windowHeight / 2 +
+          thumbnailHeight(factor) / 2 -
+          10;
+        window.scrollTo({
+          left: newLeftPosition,
+          top: newTopPosition,
+          behavior: "smooth",
+        });
       } else {
         focusElement.hasFocus = false;
+        this.currentFocus.push(false);
       }
     },
     updateCurrentPosition(newXPosition, newYPosition) {
@@ -216,7 +237,8 @@ export default {
       }
     },
     updatePageSize(deltaX, deltaY, offsetX, offsetY) {
-      // The four next block discovered the movement direction and modify the page size if necessary and also the position of the image if necessary
+      // The four next block discovered the movement direction and modify the page size if necessary and also the position
+      // of the image if necessary
       if (deltaY < 0 && offsetY < this.windowHeight) {
         this.pageHeight = this.pageHeight - deltaY;
         this.centralImageTopPosition = this.centralImageTopPosition - deltaY;
@@ -239,7 +261,7 @@ export default {
     },
     pageSize() {
       return {
-        position: 'absolute',
+        position: "absolute",
         height: this.pageHeight + "px",
         width: this.pageWidth + "px",
       };
@@ -258,16 +280,20 @@ export default {
     this.pageHeight = 2 * this.windowHeight;
     this.pageWidth = 2 * this.windowWidth;
 
+    const factor = getFactor(this.windowHeight, this.windowWidth);
+
     // Find the middle of the page to insert the first image
-    this.centralImageTopPosition = this.pageHeight / 2 - 300;
-    this.centralImageLeftPosition = this.pageWidth / 2 - 200;
+    this.centralImageTopPosition =
+      this.pageHeight / 2 - thumbnailHeight(factor) / 2;
+    this.centralImageLeftPosition =
+      this.pageWidth / 2 - thumbnailWidth(factor) / 2;
 
     this.currentXPosition = this.centralImageLeftPosition;
     this.currentYPosition = this.centralImageTopPosition;
 
     window.scrollTo({
       left: this.currentXPosition,
-      top: -this.currentYPosition,
+      top: this.currentYPosition,
     });
   },
 };
