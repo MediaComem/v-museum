@@ -50,7 +50,7 @@ import { useWindowSize } from "vue-window-size";
 
 import relatedImage from "../../assets/data/process.json";
 
-import { getFactor } from "./image_management_service";
+import { getFactor, thumbnailWidth, thumbnailHeight } from "./image_management_service";
 
 export default {
   components: { ImagesBlock, ImageElement, FocusRectangle },
@@ -195,8 +195,15 @@ export default {
         currentImageTopPosition + 200 >= currentCenterTopPosition
       ) {
         focusElement.hasFocus = true;
-        
-        window.scrollTo({ left: currentImageLeftPosition, top: currentImageTopPosition, behavior: "smooth" });
+        const factor = getFactor(this.windowHeight, this.windowWidth);
+        // The calculation works as following:
+        // Current image position (provide at the top left of the window)
+        // remove the half of the window size
+        // move half of the image size to center the image in the window
+        // move half of margin of the focus rectangle.
+        const newLeftPosition = currentImageLeftPosition - this.windowWidth / 2 + thumbnailWidth(factor) / 2 - 10;
+        const newTopPosition = currentImageTopPosition - this.windowHeight / 2 + thumbnailHeight(factor) / 2 - 10;
+        window.scrollTo({ left: newLeftPosition, top: newTopPosition, behavior: "smooth" });
       } else {
         focusElement.hasFocus = false;
       }
@@ -238,6 +245,7 @@ export default {
     },
     pageSize() {
       return {
+        position: 'absolute',
         height: this.pageHeight + "px",
         width: this.pageWidth + "px",
       };
@@ -260,7 +268,7 @@ export default {
     this.currentYPosition = this.centralImageTopPosition;
 
     window.scrollTo({
-      left: -this.currentXPosition,
+      left: this.currentXPosition,
       top: -this.currentYPosition,
     });
   },
