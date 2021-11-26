@@ -54,6 +54,8 @@ import {
   getFactor,
   thumbnailWidth,
   thumbnailHeight,
+  relatedThumbnailWidth,
+  relatedThumbnailHeight,
 } from "./image_management_service";
 
 export default {
@@ -73,6 +75,7 @@ export default {
       currentXPosition: 0,
       currentYPosition: 0,
       currentFocus: [],
+      focusMoveTimeout: undefined,
     };
   },
   methods: {
@@ -133,6 +136,8 @@ export default {
     },
     checkCollision() {
       this.currentFocus = [];
+      clearTimeout(this.focusMoveTimeout);
+      this.focusMoveTimeout = undefined;
       // Retrieve current center window position in the page
       const currentCenterLeftPosition =
         -this.$refs["page"].getBoundingClientRect().x + this.windowWidth / 2;
@@ -183,6 +188,7 @@ export default {
           this.$refs["image-block"].$refs["image-element-" + i]
         );
       }
+      // Manage size of the focus rectangle
       this.$refs["rectangle"].hasFocus = this.currentFocus.includes(true);
     },
     collisionAnalysis(
@@ -192,18 +198,20 @@ export default {
       currentImageTopPosition,
       focusElement
     ) {
+      const factor = getFactor(this.windowHeight, this.windowWidth);
       // Compare the position of an image with the current center window position
       // The number if arbitrary defined to have a margin between the center of the window and the
       // center of the image.
       if (
-        currentImageLeftPosition - 200 <= currentCenterLeftPosition &&
-        currentImageLeftPosition + 200 >= currentCenterLeftPosition &&
-        currentImageTopPosition - 200 <= currentCenterTopPosition &&
-        currentImageTopPosition + 200 >= currentCenterTopPosition
+        currentImageLeftPosition <= currentCenterLeftPosition &&
+        currentImageLeftPosition + relatedThumbnailWidth(factor) >=
+          currentCenterLeftPosition &&
+        currentImageTopPosition <= currentCenterTopPosition &&
+        currentImageTopPosition + relatedThumbnailHeight(factor) >=
+          currentCenterTopPosition
       ) {
         focusElement.hasFocus = true;
         this.currentFocus.push(true);
-        const factor = getFactor(this.windowHeight, this.windowWidth);
         // The calculation works as following:
         // 1) Current image position (provide at the top left of the window)
         // 2) remove the half of the window size
@@ -219,11 +227,13 @@ export default {
           this.windowHeight / 2 +
           thumbnailHeight(factor) / 2 -
           10;
-        window.scrollTo({
-          left: newLeftPosition,
-          top: newTopPosition,
-          behavior: "smooth",
-        });
+        this.focusMoveTimeout = setTimeout(() => {
+          window.scrollTo({
+            left: newLeftPosition,
+            top: newTopPosition,
+            behavior: "smooth",
+          });
+        }, 200);
       } else {
         focusElement.hasFocus = false;
         this.currentFocus.push(false);
