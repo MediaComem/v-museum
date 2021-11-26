@@ -4,6 +4,7 @@
       {{ tag }}
     </p>
     <img
+      :ref="'image'"
       :src="imageData.imagePaths.large"
       :height="imageHeight"
       :width="imageWidth"
@@ -46,7 +47,7 @@ export default {
     imagePosition: Object,
     isTop: Boolean,
     isLeft: Boolean,
-    hasFocus: Boolean,
+    focus: Boolean,
     tag: String,
     imageId: Number,
     imageFactor: Number,
@@ -54,6 +55,7 @@ export default {
   data() {
     return {
       imageData: undefined,
+      hasFocus: this.focus,
     };
   },
   computed: {

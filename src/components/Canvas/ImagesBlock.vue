@@ -1,10 +1,11 @@
 <template>
   <div v-for="(relateImage, index) in relatedImages" :key="index">
     <image-element
+      :ref="'image-element-' + index"
       :imagePosition="calculatePositions(index)"
       :isTop="true"
       :isLeft="false"
-      :hasFocus="false"
+      :focus="false"
       :tag="relateImage.tag"
       :imageId="relateImage.imageId"
       :imageFactor="imageFactor"

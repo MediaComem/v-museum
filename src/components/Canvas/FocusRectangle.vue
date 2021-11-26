@@ -69,10 +69,15 @@ export default {
   props: {
     offsetX: Number,
     offsetY: Number,
-    hasFocus: Boolean,
+    focus: Boolean,
     imageFactor: Number,
   },
   name: "FocusRectangle",
+  data() {
+    return {
+      hasFocus: this.focus,
+    }
+  },
   computed: {
     getTopPosition() {
       return (this.offsetY - getImageHeight(this.hasFocus, this.imageFactor)) / 2 + "px";
