@@ -74,7 +74,9 @@ export default {
       isDrag: false,
       currentXPosition: 0,
       currentYPosition: 0,
+      // Array of focus elements to manage the rectangle focus
       currentFocus: [],
+      // Variable used to stop the centering of an image in case of moving in the page
       focusMoveTimeout: undefined,
     };
   },
@@ -156,6 +158,7 @@ export default {
         0,
         currentImageTopPositionString.length - 2
       );
+      // Check collision
       this.collisionAnalysis(
         currentCenterLeftPosition,
         currentCenterTopPosition,
@@ -180,6 +183,7 @@ export default {
           0,
           currentImageTopPositionString.length - 2
         );
+        // Check collision
         this.collisionAnalysis(
           currentCenterLeftPosition,
           currentCenterTopPosition,
@@ -302,12 +306,10 @@ export default {
 
     this.currentXPosition = this.centralImageLeftPosition;
     this.currentYPosition = this.centralImageTopPosition;
-
-    window.scrollTo({
-      left: this.currentXPosition,
-      top: this.currentYPosition,
-    });
   },
+  activated() {
+    window.scrollTo(this.currentXPosition, this.currentYPosition);
+  }
 };
 </script>
 
