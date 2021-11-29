@@ -1,24 +1,24 @@
 <template>
   <svg
-    :width="getImageWidth"
-    :height="getImageHeight"
-    :style="{ top: getTopPosition, left: getLeftPosition }"
+    :width="imageWidth"
+    :height="imageHeight"
+    :style="{ top: topPosition, left: leftPosition }"
   >
     <line x1="0" y1="0" :x2="20" y2="0" stroke="black" stroke-width="2" />
     <line x1="0" y1="0" x2="0" y2="20" stroke="black" stroke-width="2" />
 
     <line
-      :x1="getImageWidth - 20"
+      :x1="imageWidth - 20"
       y1="0"
-      :x2="getImageWidth"
+      :x2="imageWidth"
       y2="0"
       stroke="black"
       stroke-width="2"
     />
     <line
-      :x1="getImageWidth"
+      :x1="imageWidth"
       y1="0"
-      :x2="getImageWidth"
+      :x2="imageWidth"
       y2="20"
       stroke="black"
       stroke-width="2"
@@ -26,34 +26,34 @@
 
     <line
       x1="0"
-      :y1="getImageHeight - 20"
+      :y1="imageHeight - 20"
       x2="0"
-      :y2="getImageHeight"
+      :y2="imageHeight"
       stroke="black"
       stroke-width="2"
     />
     <line
       x1="0"
-      :y1="getImageHeight"
+      :y1="imageHeight"
       x2="20"
-      :y2="getImageHeight"
+      :y2="imageHeight"
       stroke="black"
       stroke-width="2"
     />
 
     <line
-      :x1="getImageWidth"
-      :y1="getImageHeight - 20"
-      :x2="getImageWidth"
-      :y2="getImageHeight"
+      :x1="imageWidth"
+      :y1="imageHeight - 20"
+      :x2="imageWidth"
+      :y2="imageHeight"
       stroke="black"
       stroke-width="2"
     />
     <line
-      :x1="getImageWidth - 20"
-      :y1="getImageHeight"
-      :x2="getImageWidth"
-      :y2="getImageHeight"
+      :x1="imageWidth - 20"
+      :y1="imageHeight"
+      :x2="imageWidth"
+      :y2="imageHeight"
       stroke="black"
       stroke-width="2"
     />
@@ -79,16 +79,16 @@ export default {
     }
   },
   computed: {
-    getTopPosition() {
+    topPosition() {
       return (this.offsetY - getImageHeight(this.hasFocus, this.imageFactor)) / 2 + "px";
     },
-    getLeftPosition() {
+    leftPosition() {
       return (this.offsetX - getImageWidth(this.hasFocus, this.imageFactor)) / 2 + "px";
     },
-    getImageHeight() {
+    imageHeight() {
       return getImageHeight(this.hasFocus, this.imageFactor) + 20;
     },
-    getImageWidth() {
+    imageWidth() {
       return getImageWidth(this.hasFocus, this.imageFactor) + 20;
     },
   },
