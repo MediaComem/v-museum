@@ -5,8 +5,8 @@
     </p>
     <img
       :src="imageData.imagePaths.large"
-      :height="getImageHeight"
-      :width="getImageWidth"
+      :height="imageHeight"
+      :width="imageWidth"
     />
     <p v-if="!isTop && !hasFocus" :class="textJustification" :style="textWidth">
       {{ tag }}
@@ -77,10 +77,10 @@ export default {
           : relatedThumbnailWidth(this.imageFactor) + "px",
       };
     },
-    getImageHeight() {
+    imageHeight() {
       return getImageHeight(this.hasFocus, this.imageFactor);
     },
-    getImageWidth() {
+    imageWidth() {
       return getImageWidth(this.hasFocus, this.imageFactor);
     },
   },

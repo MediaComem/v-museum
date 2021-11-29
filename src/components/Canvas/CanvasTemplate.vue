@@ -14,7 +14,7 @@
       :offsetX="windowWidth"
       :offsetY="windowHeight"
       :hasFocus="true"
-      :imageFactor="getFactorImage"
+      :imageFactor="imageFactor"
     />
     <image-element
       :imagePosition="{
@@ -24,15 +24,15 @@
       :isTop="true"
       :isLeft="false"
       :hasFocus="true"
-      :imageId="relatedImages[0].imageId"
-      :imageFactor="getFactorImage"
+      :imageId="firstId"
+      :imageFactor="imageFactor"
     />
     <images-block
-      :relatedImages="relatedImages[0].relatedImages"
+      :relatedImages="relatedImages[firstId]"
       :currentLeftPosition="centralImageLeftPosition"
       :currentTopPosition="centralImageTopPosition"
-      :nextPosition="generateNextPositions"
-      :imageFactor="getFactorImage"
+      :nextPosition="nextPositions"
+      :imageFactor="imageFactor"
     />
   </div>
 </template>
@@ -52,6 +52,8 @@ export default {
   components: { ImagesBlock, ImageElement, FocusRectangle },
   data() {
     return {
+      // Should be replaced when we come from onboarding view.
+      firstId: 70764,
       potentialPositions: [1, 2, 3, 4, 5, 6],
       relatedImages: relatedImage,
       windowHeight: 0,
@@ -60,18 +62,13 @@ export default {
       pageWidth: 0,
       centralImageTopPosition: 0,
       centralImageLeftPosition: 0,
-      nextPositions: [],
       isDrag: false,
       currentXPosition: 0,
       currentYPosition: 0,
+      nextPositions: [],
     };
   },
   methods: {
-    getNextPositions() {
-      return this.potentialPositions
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3);
-    },
     startPosition() {
       this.isDrag = true;
     },
@@ -149,11 +146,8 @@ export default {
     },
   },
   computed: {
-    generateNextPositions() {
-      return this.getNextPositions();
-    },
-    getFactorImage() {
-        return getFactor(this.windowHeight, this.windowWidth);
+    imageFactor() {
+      return getFactor(this.windowHeight, this.windowWidth);
     },
     pageSize() {
       return {
@@ -166,6 +160,10 @@ export default {
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
+
+    this.nextPositions = this.potentialPositions
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
 
     // Default page size set to two times the current windows size
     this.pageHeight = 2 * this.windowHeight;
