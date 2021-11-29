@@ -9,6 +9,8 @@
       </h1>
     </div>
     <svg
+      @click="$emit('nextSlide')"
+      class="pointer"
       :width="size"
       :height="size"
       viewBox="0 0 60 60"
@@ -32,6 +34,7 @@ export default {
     isMobile: Boolean,
     isFull: Boolean,
   },
+  emits: ['nextSlide'],
   computed: {
     textSize() {
       return {
@@ -55,4 +58,5 @@ export default {
 
 <style scoped>
 @import "./arrow.css";
+@import "../onboarding.css";
 </style>
