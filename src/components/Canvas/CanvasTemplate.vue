@@ -33,10 +33,10 @@
     <images-block
       :ref="'image-block'"
       :relatedImages="relatedImages[firstId]"
+      :imageFactor="imageFactor"
       :currentLeftPosition="centralImageLeftPosition"
       :currentTopPosition="centralImageTopPosition"
       :nextPosition="nextPositions"
-      :imageFactor="imageFactor"
     />
   </div>
 </template>
