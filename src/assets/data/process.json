@@ -1,0 +1,12 @@
+{
+  "70764": [
+    { "tag": "Cat", "imageId": 70755 },
+    { "tag": "Dog", "imageId": 70732 },
+    { "tag": "Fish", "imageId": 70678 }
+  ],
+  "70765": [
+    { "tag": "Cat", "imageId": 70755 },
+    { "tag": "Dog", "imageId": 70732 },
+    { "tag": "Fish", "imageId": 70678 }
+  ]
+}
