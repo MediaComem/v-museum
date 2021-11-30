@@ -19,10 +19,11 @@
       :focus="true"
     />
     <image-element
+      v-if="firstImageEnable"
       :ref="'image-element'"
       :imagePosition="{
-        top: centralImageTopPosition,
-        left: centralImageLeftPosition,
+        top: firstBlockCentralImageTopPosition,
+        left: firstBlockCentralImageLeftPosition,
       }"
       :isTop="true"
       :isLeft="false"
@@ -31,12 +32,21 @@
       :imageFactor="imageFactor"
     />
     <images-block
-      :ref="'image-block'"
+      :ref="'image-block-1'"
       :relatedImages="relatedImages[firstId]"
       :imageFactor="imageFactor"
-      :currentLeftPosition="centralImageLeftPosition"
-      :currentTopPosition="centralImageTopPosition"
-      :nextPosition="nextPositions"
+      :currentLeftPosition="firstBlockCentralImageLeftPosition"
+      :currentTopPosition="firstBlockCentralImageTopPosition"
+      :nextPosition="firstBlockPositions"
+    />
+    <images-block
+      v-if="secondBlockPositions.length > 0"
+      :ref="'image-block-2'"
+      :relatedImages="relatedImages[70765]"
+      :imageFactor="imageFactor"
+      :currentLeftPosition="secondBlockCentralImageLeftPosition"
+      :currentTopPosition="secondBlockCentralImageTopPosition"
+      :nextPosition="secondBlockPositions"
     />
   </div>
 </template>
@@ -58,24 +68,34 @@ import {
   relatedThumbnailHeight,
 } from "./image_management_service";
 
+import { generatePosition } from "./positions_management_service";
+
 export default {
   components: { ImagesBlock, ImageElement, FocusRectangle },
   data() {
     return {
       // Should be replaced when we come from onboarding view.
       firstId: 70764,
-      potentialPositions: [1, 2, 3, 4, 5, 6],
+      // Images management part
       relatedImages: relatedImage,
+      firstBlockPositions: [],
+      secondBlockPositions: [],
+      currentCentralImageId: 70764,
+      nextCentralImageId: 0,
+      // Display management part
+      firstImageEnable: true,
       windowHeight: 0,
       windowWidth: 0,
       pageHeight: 0,
       pageWidth: 0,
-      centralImageTopPosition: 0,
-      centralImageLeftPosition: 0,
+      firstBlockCentralImageTopPosition: 0,
+      firstBlockCentralImageLeftPosition: 0,
+      secondBlockCentralImageTopPosition: 0,
+      secondBlockCentralImageLeftPosition: 0,
+      // Movement management part
       isDrag: false,
       currentXPosition: 0,
       currentYPosition: 0,
-      nextPositions: [],
       // Array of focus elements to manage the rectangle focus
       currentFocus: [],
       // Variable used to stop the centering of an image in case of moving in the page
@@ -157,6 +177,7 @@ export default {
       );
       // Check collision
       this.collisionAnalysis(
+        this.currentCentralImageId,
         currentCenterLeftPosition,
         currentCenterTopPosition,
         currentCenterImageLeftPosition,
@@ -166,33 +187,35 @@ export default {
       // Analysis of each related images
       for (let i = 0; i <= 2; i++) {
         // Retrieve current image position in the page
-        const currentImageLeftPositionString = this.$refs["image-block"].$refs[
-          "image-element-" + i
-        ].position.left;
+        const currentImageLeftPositionString = this.$refs["image-block-1"]
+          .$refs["image-element-" + i].position.left;
         const currentImageLeftPosition = +currentImageLeftPositionString.substring(
           0,
           currentImageLeftPositionString.length - 2
         );
-        const currentImageTopPositionString = this.$refs["image-block"].$refs[
+        const currentImageTopPositionString = this.$refs["image-block-1"].$refs[
           "image-element-" + i
         ].position.top;
         const currentImageTopPosition = +currentImageTopPositionString.substring(
           0,
           currentImageTopPositionString.length - 2
         );
+        const imageId = this.$refs["image-block-1"].$refs["image-element-" + i].imageId;
         // Check collision
         this.collisionAnalysis(
+          imageId,
           currentCenterLeftPosition,
           currentCenterTopPosition,
           currentImageLeftPosition,
           currentImageTopPosition,
-          this.$refs["image-block"].$refs["image-element-" + i]
+          this.$refs["image-block-1"].$refs["image-element-" + i]
         );
       }
       // Manage size of the focus rectangle
       this.$refs["rectangle"].hasFocus = this.currentFocus.includes(true);
     },
     collisionAnalysis(
+      imageId,
       currentCenterLeftPosition,
       currentCenterTopPosition,
       currentImageLeftPosition,
@@ -234,6 +257,12 @@ export default {
             top: newTopPosition,
             behavior: "smooth",
           });
+          if (this.currentCentralImageId != imageId && this.nextCentralImageId != imageId) {
+            this.nextCentralImageId = imageId;
+            this.secondBlockCentralImageTopPosition = newTopPosition;
+            this.secondBlockCentralImageLeftPosition = newLeftPosition;
+            this.secondBlockPositions = generatePosition();
+          }
         }, 200);
       } else {
         focusElement.hasFocus = false;
@@ -255,14 +284,16 @@ export default {
       // of the image if necessary
       if (deltaY < 0 && offsetY < this.windowHeight) {
         this.pageHeight = this.pageHeight - deltaY;
-        this.centralImageTopPosition = this.centralImageTopPosition - deltaY;
+        this.firstBlockCentralImageTopPosition = this.firstBlockCentralImageTopPosition - deltaY;
+        this.secondBlockCentralImageTopPosition = this.secondBlockCentralImageTopPosition - deltaY;
       }
       if (deltaY > 0 && offsetY > this.pageHeight - this.windowHeight) {
         this.pageHeight = this.pageHeight + deltaY;
       }
       if (deltaX < 0 && offsetX > this.windowWidth) {
         this.pageWidth = this.pageWidth - deltaX;
-        this.centralImageLeftPosition = this.centralImageLeftPosition - deltaX;
+        this.firstBlockCentralImageLeftPosition = this.firstBlockCentralImageLeftPosition - deltaX;
+        this.secondBlockCentralImageLeftPosition = this.secondBlockCentralImageLeftPosition - deltaX;
       }
       if (deltaX > 0 && offsetX > this.pageWidth - this.windowWidth) {
         this.pageWidth = this.pageWidth + deltaX;
@@ -286,9 +317,7 @@ export default {
     this.windowHeight = height;
     this.windowWidth = width;
 
-    this.nextPositions = this.potentialPositions
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 3);
+    this.firstBlockPositions = generatePosition();
 
     // Default page size set to two times the current windows size
     this.pageHeight = 2 * this.windowHeight;
@@ -297,17 +326,17 @@ export default {
     const factor = getFactor(this.windowHeight, this.windowWidth);
 
     // Find the middle of the page to insert the first image
-    this.centralImageTopPosition =
+    this.firstBlockCentralImageTopPosition =
       this.pageHeight / 2 - thumbnailHeight(factor) / 2;
-    this.centralImageLeftPosition =
+    this.firstBlockCentralImageLeftPosition =
       this.pageWidth / 2 - thumbnailWidth(factor) / 2;
 
-    this.currentXPosition = this.centralImageLeftPosition;
-    this.currentYPosition = this.centralImageTopPosition;
+    this.currentXPosition = this.firstBlockCentralImageLeftPosition;
+    this.currentYPosition = this.firstBlockCentralImageTopPosition;
   },
   activated() {
     window.scrollTo(this.currentXPosition, this.currentYPosition);
-  }
+  },
 };
 </script>
 
