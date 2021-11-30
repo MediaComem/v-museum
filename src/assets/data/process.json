@@ -8,5 +8,15 @@
     { "tag": "Cat", "imageId": 70755 },
     { "tag": "Dog", "imageId": 70732 },
     { "tag": "Fish", "imageId": 70678 }
+  ],
+  "70732": [
+    { "tag": "Cat", "imageId": 70755 },
+    { "tag": "Dog", "imageId": 70732 },
+    { "tag": "Fish", "imageId": 70678 }
+  ],
+  "70678": [
+    { "tag": "Cat", "imageId": 70755 },
+    { "tag": "Dog", "imageId": 70732 },
+    { "tag": "Fish", "imageId": 70678 }
   ]
 }
