@@ -28,13 +28,13 @@
       :isTop="true"
       :isLeft="false"
       :focus="true"
-      :imageId="firstId"
+      :imageId="70764"
       :imageFactor="imageFactor"
     />
     <images-block
       v-if="firstBlockPositions.length > 0"
       :ref="'image-block-1'"
-      :relatedImages="relatedImages[firstId]"
+      :relatedImages="relatedImages[70764]"
       :imageFactor="imageFactor"
       :currentLeftPosition="firstBlockCentralImageLeftPosition"
       :currentTopPosition="firstBlockCentralImageTopPosition"
@@ -43,7 +43,7 @@
     <images-block
       v-if="secondBlockPositions.length > 0"
       :ref="'image-block-2'"
-      :relatedImages="relatedImages[70765]"
+      :relatedImages="relatedImages[70755]"
       :imageFactor="imageFactor"
       :currentLeftPosition="secondBlockCentralImageLeftPosition"
       :currentTopPosition="secondBlockCentralImageTopPosition"
@@ -52,7 +52,7 @@
     <images-block
       v-if="thirdBlockPositions.length > 0"
       :ref="'image-block-3'"
-      :relatedImages="relatedImages[firstId]"
+      :relatedImages="relatedImages[70732]"
       :imageFactor="imageFactor"
       :currentLeftPosition="thirdBlockCentralImageLeftPosition"
       :currentTopPosition="thirdBlockCentralImageTopPosition"
@@ -84,8 +84,6 @@ export default {
   components: { ImagesBlock, ImageElement, FocusRectangle },
   data() {
     return {
-      // Should be replaced when we come from onboarding view.
-      firstId: 70764,
       // Images management part
       relatedImages: relatedImage,
       firstBlockPositions: [],
@@ -291,28 +289,31 @@ export default {
             switch (this.currentBlock) {
               case 1:
                 this.secondCentralImageId = imageId;
-                this.secondBlockCentralImageTopPosition = newTopPosition;
-                this.secondBlockCentralImageLeftPosition = newLeftPosition;
+                this.secondBlockCentralImageTopPosition = currentImageTopPosition;
+                this.secondBlockCentralImageLeftPosition = currentImageLeftPosition;
                 this.secondBlockPositions = generatePosition();
                 this.currentBlock = 2;
                 this.thirdBlockPositions = [];
+                this.thirdCentralImageId = 0;
                 break;
               case 2:
                 this.thirdCentralImageId = imageId;
-                this.thirdBlockCentralImageTopPosition = newTopPosition;
-                this.thirdBlockCentralImageLeftPosition = newLeftPosition;
-                this.thridBlockPositions = generatePosition();
+                this.thirdBlockCentralImageTopPosition = currentImageTopPosition;
+                this.thirdBlockCentralImageLeftPosition = currentImageLeftPosition;
+                this.thirdBlockPositions = generatePosition();
                 this.currentBlock = 3;
                 this.firstBlockPositions = [];
+                this.firstCentralImageId = 0;
                 break;
               case 3:
                 this.firstImageEnable = false;
                 this.firstCentralImageId = imageId;
-                this.firstBlockCentralImageTopPosition = newTopPosition;
-                this.firstBlockCentralImageLeftPosition = newLeftPosition;
+                this.firstBlockCentralImageTopPosition = currentImageTopPosition;
+                this.firstBlockCentralImageLeftPosition = currentImageLeftPosition;
                 this.firstBlockPositions = generatePosition();
                 this.currentBlock = 1;
                 this.secondBlockPositions = [];
+                this.secondCentralImageId = 0;
             }
           }
         }, 200);

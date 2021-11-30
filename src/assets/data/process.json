@@ -4,19 +4,14 @@
     { "tag": "Dog", "imageId": 70732 },
     { "tag": "Fish", "imageId": 70678 }
   ],
-  "70765": [
-    { "tag": "Cat", "imageId": 70755 },
-    { "tag": "Dog", "imageId": 70732 },
-    { "tag": "Fish", "imageId": 70678 }
+  "70755": [
+    { "tag": "A", "imageId": 70756 },
+    { "tag": "B", "imageId": 70733 },
+    { "tag": "C", "imageId": 70679 }
   ],
   "70732": [
-    { "tag": "Cat", "imageId": 70755 },
-    { "tag": "Dog", "imageId": 70732 },
-    { "tag": "Fish", "imageId": 70678 }
-  ],
-  "70678": [
-    { "tag": "Cat", "imageId": 70755 },
-    { "tag": "Dog", "imageId": 70732 },
-    { "tag": "Fish", "imageId": 70678 }
+    { "tag": "+", "imageId": 70757 },
+    { "tag": "-", "imageId": 70734 },
+    { "tag": "X", "imageId": 70680 }
   ]
 }
