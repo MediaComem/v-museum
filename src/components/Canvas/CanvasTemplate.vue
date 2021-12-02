@@ -268,6 +268,7 @@ export default {
           });
           if (this.imageBlockController.length === 2) {
             this.firstImageEnable = false;
+            this.initialImageId = 0;
             this.imageBlockController.shift();
           }
           if (imageId !== this.initialImageId) {
