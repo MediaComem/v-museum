@@ -160,7 +160,8 @@ export default {
           currentCenterLeftPosition,
           currentCenterTopPosition,
           this.$refs,
-          "image-element"
+          "image-element",
+          0
         );
       }
 
@@ -176,7 +177,8 @@ export default {
               currentCenterLeftPosition,
               currentCenterTopPosition,
               currentImageBlock.$refs,
-              "image-element-" + j
+              "image-element-" + j,
+              currentImageBlock.nextPosition[j]
             );
           }
         }
@@ -189,7 +191,8 @@ export default {
       currentCenterLeftPosition,
       currentCenterTopPosition,
       refToAnalyze,
-      ref
+      ref,
+      imagePosition
     ) {
       const imageToAnalyze = refToAnalyze[ref];
       if (imageToAnalyze) {
@@ -209,12 +212,13 @@ export default {
         const imageId = imageToAnalyze.imageId;
         // Check collision
         this.collisionAnalysis(
-          imageId ? imageId : this.firstCentralImageId,
+          imageId,
           currentCenterLeftPosition,
           currentCenterTopPosition,
           imageToAnalyzeImageLeftPosition,
           imageToAnalyzeImageTopPosition,
-          refToAnalyze[ref]
+          refToAnalyze[ref],
+          imagePosition
         );
       }
     },
@@ -224,7 +228,8 @@ export default {
       currentCenterTopPosition,
       currentImageLeftPosition,
       currentImageTopPosition,
-      focusElement
+      focusElement,
+      imagePosition
     ) {
       const factor = getFactor(this.windowHeight, this.windowWidth);
       // Compare the position of an image with the current center window position
@@ -265,14 +270,16 @@ export default {
             this.firstImageEnable = false;
             this.imageBlockController.shift();
           }
-          this.imageBlockController.push(
-            new ImageBlock(
-              currentImageTopPosition,
-              currentImageLeftPosition,
-              generatePosition(),
-              this.relatedImages[imageId]
-            )
-          );
+          if (imageId !== this.initialImageId) {
+            this.imageBlockController.push(
+              new ImageBlock(
+                currentImageTopPosition,
+                currentImageLeftPosition,
+                generatePosition(imagePosition),
+                this.relatedImages[imageId]
+              )
+            );
+          }
         }, 200);
       } else {
         focusElement.hasFocus = false;
@@ -347,7 +354,7 @@ export default {
       new ImageBlock(
         firstBlockCentralImageTopPosition,
         firstBlockCentralImageLeftPosition,
-        generatePosition(),
+        generatePosition(0),
         this.relatedImages[this.initialImageId]
       )
     );
