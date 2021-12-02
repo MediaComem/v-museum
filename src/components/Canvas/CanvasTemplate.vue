@@ -2,12 +2,12 @@
   <div
     :style="pageSize"
     @mousewheel="wheelMove"
-    @mousedown="startPosition"
-    @mouseup="endPosition"
-    @mouseleave="endPosition"
+    @mousedown="moveClickEnable"
+    @mouseup="moveClickDisable"
+    @mouseleave="moveClickDisable"
     @mousemove="mouseMove"
-    @touchstart="startPosition"
-    @touchend="endPosition"
+    @touchstart="moveClickEnable"
+    @touchend="moveClickDisable"
     @touchmove="touchMove"
     :ref="'page'"
   >
@@ -18,6 +18,7 @@
       :imageFactor="imageFactor"
       :focus="true"
     />
+    <!-- This is the initial central image that will disable after two related movements -->
     <image-element
       v-if="firstImageEnable"
       :ref="'image-element'"
@@ -69,7 +70,7 @@ export default {
   components: { ImageElement, ImagesBlock, FocusRectangle },
   data() {
     return {
-      // Images management part
+      // Data in the JSON file to find images
       relatedImages: relatedImage,
       // Display management part
       initialImageId: 3,
@@ -90,10 +91,10 @@ export default {
     };
   },
   methods: {
-    startPosition() {
+    moveClickEnable() {
       this.isDrag = true;
     },
-    endPosition() {
+    moveClickDisable() {
       this.isDrag = false;
     },
     touchMove() {
@@ -114,6 +115,18 @@ export default {
         this.checkCollision();
       }
     },
+    move(event) {
+      // Calculate the mouse movement and apply it on the current position
+      const xMovement = this.currentXPosition - event.movementX;
+      const yMovement = this.currentYPosition - event.movementY;
+      this.updateCurrentPosition(xMovement, yMovement);
+
+      // Move
+      window.scrollTo({
+        left: this.currentXPosition,
+        top: this.currentYPosition,
+      });
+    },
     wheelMove(event) {
       // Calculate the mouse movement and apply it on the current position
       const xMovement = this.currentXPosition + event.deltaX;
@@ -128,20 +141,11 @@ export default {
       );
       this.checkCollision();
     },
-    move(event) {
-      // Calculate the mouse movement and apply it on the current position
-      const xMovement = this.currentXPosition - event.movementX;
-      const yMovement = this.currentYPosition - event.movementY;
-      this.updateCurrentPosition(xMovement, yMovement);
-
-      // Move
-      window.scrollTo({
-        left: this.currentXPosition,
-        top: this.currentYPosition,
-      });
-    },
     checkCollision() {
+      // Reset the focus to have version of this analyzis.
       this.currentFocus = [];
+      // In case of a collision was detected and we continue the movement, reset the timeout that
+      // enable new related images and center the screen.
       clearTimeout(this.focusMoveTimeout);
       this.focusMoveTimeout = undefined;
       // Retrieve current center window position in the page
@@ -149,12 +153,14 @@ export default {
         -this.$refs["page"].getBoundingClientRect().x + this.windowWidth / 2;
       const currentCenterTopPosition =
         -this.$refs["page"].getBoundingClientRect().y + this.windowHeight / 2;
-        
+
       // Initial central image analyzis
       if (this.firstImageEnable) {
-        this.initialImageAnalyzis(
+        this.imageCollisionAnalyzis(
           currentCenterLeftPosition,
-          currentCenterTopPosition
+          currentCenterTopPosition,
+          this.$refs,
+          "image-element"
         );
       }
 
@@ -166,32 +172,12 @@ export default {
         if (currentImageBlock) {
           const nbElementsInBlock = Object.keys(currentImageBlock.$refs).length;
           for (let j = 0; j < nbElementsInBlock; j++) {
-            const currentImageElement =
-              currentImageBlock.$refs["image-element-" + j];
-            if (currentImageElement) {
-              const currentImageLeftPositionString =
-                currentImageElement.position.left;
-              const currentImageLeftPosition = +currentImageLeftPositionString.substring(
-                0,
-                currentImageLeftPositionString.length - 2
-              );
-              const currentImageTopPositionString =
-                currentImageElement.position.top;
-              const currentImageTopPosition = +currentImageTopPositionString.substring(
-                0,
-                currentImageTopPositionString.length - 2
-              );
-              const imageId = currentImageElement.imageId;
-              // Check collision
-              this.collisionAnalysis(
-                imageId,
-                currentCenterLeftPosition,
-                currentCenterTopPosition,
-                currentImageLeftPosition,
-                currentImageTopPosition,
-                currentImageElement
-              );
-            }
+            this.imageCollisionAnalyzis(
+              currentCenterLeftPosition,
+              currentCenterTopPosition,
+              currentImageBlock.$refs,
+              "image-element-" + j
+            );
           }
         }
       }
@@ -199,28 +185,36 @@ export default {
       // Manage size of the focus rectangle
       this.$refs["rectangle"].hasFocus = this.currentFocus.includes(true);
     },
-    initialImageAnalyzis(currentCenterLeftPosition, currentCenterTopPosition) {
-      const initialCentralImage = this.$refs["image-element"];
-      if (initialCentralImage) {
-        const currentImageLeftPositionString =
-          initialCentralImage.position.left;
-        const currentCenterImageLeftPosition = +currentImageLeftPositionString.substring(
+    imageCollisionAnalyzis(
+      currentCenterLeftPosition,
+      currentCenterTopPosition,
+      refToAnalyze,
+      ref
+    ) {
+      const imageToAnalyze = refToAnalyze[ref];
+      if (imageToAnalyze) {
+        const imageToAnalyzeLeftPositionWithPixel =
+          imageToAnalyze.position.left;
+        // Remove px chars and convert to number
+        const imageToAnalyzeImageLeftPosition = +imageToAnalyzeLeftPositionWithPixel.substring(
           0,
-          currentImageLeftPositionString.length - 2
+          imageToAnalyzeLeftPositionWithPixel.length - 2
         );
-        const currentImageTopPositionString = initialCentralImage.position.top;
-        const currentCenterImageTopPosition = +currentImageTopPositionString.substring(
+        const imageToAnalyzeTopPositionWithPixel = imageToAnalyze.position.top;
+        // Remove px chars and convert to number
+        const imageToAnalyzeImageTopPosition = +imageToAnalyzeTopPositionWithPixel.substring(
           0,
-          currentImageTopPositionString.length - 2
+          imageToAnalyzeTopPositionWithPixel.length - 2
         );
+        const imageId = imageToAnalyze.imageId;
         // Check collision
         this.collisionAnalysis(
-          this.firstCentralImageId,
+          imageId ? imageId : this.firstCentralImageId,
           currentCenterLeftPosition,
           currentCenterTopPosition,
-          currentCenterImageLeftPosition,
-          currentCenterImageTopPosition,
-          this.$refs["image-element"]
+          imageToAnalyzeImageLeftPosition,
+          imageToAnalyzeImageTopPosition,
+          refToAnalyze[ref]
         );
       }
     },
