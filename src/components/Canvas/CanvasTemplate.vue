@@ -28,7 +28,7 @@
       }"
       :isTop="true"
       :isLeft="false"
-      :focus="true"
+      :focus="initialImageFocus.hasFocus"
       :imageId="initialImageId"
       :imageFactor="imageFactor"
     />
@@ -74,6 +74,7 @@ export default {
       relatedImages: relatedImage,
       // Display management part
       initialImageId: 3,
+      initialImageFocus: { hasFocus: false },
       imageBlockController: [],
       firstImageEnable: true,
       windowHeight: 0,
@@ -161,6 +162,7 @@ export default {
           currentCenterTopPosition,
           this.$refs,
           "image-element",
+          this.initialImageFocus,
           0
         );
       }
@@ -178,6 +180,7 @@ export default {
               currentCenterTopPosition,
               currentImageBlock.$refs,
               "image-element-" + j,
+              this.imageBlockController[i].relatedImages[j],
               currentImageBlock.nextPosition[j]
             );
           }
@@ -192,6 +195,7 @@ export default {
       currentCenterTopPosition,
       refToAnalyze,
       ref,
+      focusElement,
       imagePosition
     ) {
       const imageToAnalyze = refToAnalyze[ref];
@@ -217,7 +221,7 @@ export default {
           currentCenterTopPosition,
           imageToAnalyzeImageLeftPosition,
           imageToAnalyzeImageTopPosition,
-          refToAnalyze[ref],
+          focusElement,
           imagePosition
         );
       }

@@ -5,7 +5,7 @@
       :imagePosition="calculatePositions(index)"
       :isTop="true"
       :isLeft="false"
-      :focus="false"
+      :focus="relateImage.hasFocus"
       :tag="relateImage.tag"
       :imageId="relateImage.imageId"
       :imageFactor="imageFactor"

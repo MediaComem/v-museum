@@ -55,10 +55,12 @@ export default {
   data() {
     return {
       imageData: undefined,
-      hasFocus: this.focus,
     };
   },
   computed: {
+    hasFocus() {
+      return this.focus;
+    },
     textJustification() {
       return {
         text_left: this.isLeft,

@@ -3,7 +3,7 @@ const removeConstraintPositions = (currentPosition) => {
     case 1:
       return [1, 2, 3, 4, 5];
     case 2:
-      return [1, 2, 4, 5, 6];
+      return [1, 2, 3, 4, 6];
     case 3:
       return [1, 2, 3, 5, 6];
     case 4:
