@@ -18,19 +18,19 @@
       :imageFactor="imageFactor"
       :focus="true"
     />
-    <!--image-element
+    <image-element
       v-if="firstImageEnable"
       :ref="'image-element'"
       :imagePosition="{
-        top: firstBlockCentralImageTopPosition,
-        left: firstBlockCentralImageLeftPosition,
+        top: imageBlockController[0].centralImageTopPosition,
+        left: imageBlockController[0].centralImageLeftPosition,
       }"
       :isTop="true"
       :isLeft="false"
       :focus="true"
-      :imageId="3"
+      :imageId="initialImageId"
       :imageFactor="imageFactor"
-    /-->
+    />
     <div v-for="(imageBlock, index) in imageBlockController" :key="index">
       <images-block
         :ref="'image-block-' + index"
@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import ImageElement from "./ImageElement.vue";
 import ImagesBlock from "./ImagesBlock.vue";
 import FocusRectangle from "./FocusRectangle.vue";
 
@@ -65,12 +66,13 @@ import { generatePosition } from "./positions_management_service";
 import ImageBlock from "../../models/ImageBlock";
 
 export default {
-  components: { ImagesBlock, FocusRectangle },
+  components: { ImageElement, ImagesBlock, FocusRectangle },
   data() {
     return {
       // Images management part
       relatedImages: relatedImage,
       // Display management part
+      initialImageId: 3,
       imageBlockController: [],
       firstImageEnable: true,
       windowHeight: 0,
@@ -147,30 +149,14 @@ export default {
         -this.$refs["page"].getBoundingClientRect().x + this.windowWidth / 2;
       const currentCenterTopPosition =
         -this.$refs["page"].getBoundingClientRect().y + this.windowHeight / 2;
-      // retrieve the center image positions in the page
-      /*const initialCentralImage = this.$refs["image-element"];
-      if (initialCentralImage) {
-        const currentImageLeftPositionString =
-          initialCentralImage.position.left;
-        const currentCenterImageLeftPosition = +currentImageLeftPositionString.substring(
-          0,
-          currentImageLeftPositionString.length - 2
-        );
-        const currentImageTopPositionString = initialCentralImage.position.top;
-        const currentCenterImageTopPosition = +currentImageTopPositionString.substring(
-          0,
-          currentImageTopPositionString.length - 2
-        );
-        // Check collision
-        this.collisionAnalysis(
-          this.firstCentralImageId,
+        
+      // Initial central image analyzis
+      if (this.firstImageEnable) {
+        this.initialImageAnalyzis(
           currentCenterLeftPosition,
-          currentCenterTopPosition,
-          currentCenterImageLeftPosition,
-          currentCenterImageTopPosition,
-          this.$refs["image-element"]
+          currentCenterTopPosition
         );
-      }*/
+      }
 
       // Analysis of each related images
       // first loop to analyze each blocks
@@ -212,6 +198,31 @@ export default {
 
       // Manage size of the focus rectangle
       this.$refs["rectangle"].hasFocus = this.currentFocus.includes(true);
+    },
+    initialImageAnalyzis(currentCenterLeftPosition, currentCenterTopPosition) {
+      const initialCentralImage = this.$refs["image-element"];
+      if (initialCentralImage) {
+        const currentImageLeftPositionString =
+          initialCentralImage.position.left;
+        const currentCenterImageLeftPosition = +currentImageLeftPositionString.substring(
+          0,
+          currentImageLeftPositionString.length - 2
+        );
+        const currentImageTopPositionString = initialCentralImage.position.top;
+        const currentCenterImageTopPosition = +currentImageTopPositionString.substring(
+          0,
+          currentImageTopPositionString.length - 2
+        );
+        // Check collision
+        this.collisionAnalysis(
+          this.firstCentralImageId,
+          currentCenterLeftPosition,
+          currentCenterTopPosition,
+          currentCenterImageLeftPosition,
+          currentCenterImageTopPosition,
+          this.$refs["image-element"]
+        );
+      }
     },
     collisionAnalysis(
       imageId,
@@ -257,6 +268,7 @@ export default {
             behavior: "smooth",
           });
           if (this.imageBlockController.length === 2) {
+            this.firstImageEnable = false;
             this.imageBlockController.shift();
           }
           this.imageBlockController.push(
@@ -342,7 +354,7 @@ export default {
         firstBlockCentralImageTopPosition,
         firstBlockCentralImageLeftPosition,
         generatePosition(),
-        this.relatedImages[3]
+        this.relatedImages[this.initialImageId]
       )
     );
 
