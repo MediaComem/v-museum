@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100vh">
-    <full-tag-header />
+    <full-tag-header :tag="'Fly'"/>
     <full-tag-page :tags="tags['Fly']" />
   </div>
 </template>

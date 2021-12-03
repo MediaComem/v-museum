@@ -381,7 +381,7 @@
       <div @click="loadOnboarding()" style="z-index: 1;">
         <p class="return-position">
           {{ currentDecade + "0" }}
-          <img src="@/assets/image-selector/vector.png" />
+          <img src="@/assets/shared/vector.png" />
           &nbsp;
         </p>
       </div>
