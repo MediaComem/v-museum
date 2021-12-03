@@ -43,6 +43,9 @@ export default {
 .image-size {
     width: 25vw;
     height: 30vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .overflow {
