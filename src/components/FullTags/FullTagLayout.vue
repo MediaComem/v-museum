@@ -1,7 +1,7 @@
 <template>
-  <div style="height: 100vh">
-    <full-tag-header :tag="'Fly'"/>
-    <full-tag-page :tags="tags['Fly']" />
+  <div class="page-size">
+    <full-tag-header :tag="tagValue"/>
+    <full-tag-page :tags="tags[tagValue]" />
   </div>
 </template>
 
@@ -16,9 +16,15 @@ export default {
   data() {
     return {
       tags: tags,
+      tagValue: "Fly",
     };
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.page-size {
+    height: 100vh;
+    width: 100vw;
+}
+</style>
