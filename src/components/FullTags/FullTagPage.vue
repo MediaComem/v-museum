@@ -1,7 +1,9 @@
 <template>
   <div class="canvas-size overflow">
-    <div v-for="(image, index) in imageUrls" :key="index">
-      <img :src="image.url" />
+    <div v-for="(image, index) in imageUrls.length" :key="index">
+      <div class="image-size">
+        <img :src="imageUrls[index].url" />
+      </div>
     </div>
   </div>
 </template>
@@ -22,7 +24,7 @@ export default {
     this.tags.forEach((id) => {
       dataFetch.getImageById(id).then((data) => {
         if (data.length > 0) {
-          this.imageUrls.push({id: id, url: data[0].imagePaths.square});
+          this.imageUrls.push({ id: id, url: data[0].imagePaths.square });
         }
       });
     });
@@ -34,11 +36,17 @@ export default {
 .canvas-size {
   height: 90vh;
   background: black;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.image-size {
+    width: 25vw;
+    height: 30vh;
 }
 
 .overflow {
   overflow-x: hidden;
   overflow-y: auto;
 }
-
 </style>
