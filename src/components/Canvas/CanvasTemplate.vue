@@ -33,14 +33,16 @@
       :imageFactor="imageFactor"
     />
     <div v-for="(imageBlock, index) in imageBlockController" :key="index">
-      <images-block
-        :ref="'image-block-' + index"
-        :relatedImages="imageBlock.relatedImages"
-        :imageFactor="imageFactor"
-        :currentLeftPosition="imageBlock.centralImageLeftPosition"
-        :currentTopPosition="imageBlock.centralImageTopPosition"
-        :nextPosition="imageBlock.imagePositions"
-      />
+      <div>
+        <images-block
+          :ref="'image-block-' + index"
+          :relatedImages="imageBlock.relatedImages"
+          :imageFactor="imageFactor"
+          :currentLeftPosition="imageBlock.centralImageLeftPosition"
+          :currentTopPosition="imageBlock.centralImageTopPosition"
+          :nextPosition="imageBlock.imagePositions"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -270,11 +272,6 @@ export default {
             top: newTopPosition,
             behavior: "smooth",
           });
-          if (this.imageBlockController.length === 2) {
-            this.firstImageEnable = false;
-            this.initialImageId = 0;
-            this.imageBlockController.shift();
-          }
           if (imageId !== this.initialImageId) {
             this.imageBlockController.push(
               new ImageBlock(
@@ -284,6 +281,11 @@ export default {
                 this.relatedImages[imageId]
               )
             );
+            if (this.imageBlockController.length > 3) {
+              this.firstImageEnable = false;
+              this.initialImageId = 0;
+              this.imageBlockController.shift();
+            }
           }
         }, 200);
       } else {
@@ -373,4 +375,12 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.disappear {
+  display: none;
+}
+
+.last_block {
+  opacity: 0.5;
+}
+</style>
