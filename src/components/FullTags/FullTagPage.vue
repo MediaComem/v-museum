@@ -12,21 +12,33 @@
 import dataFetch from "../../api/dataFetching";
 
 export default {
+  methods: {
+    loadMoreImages() {
+      for (let i = 2; i < this.nbPage; i++) {
+        dataFetch.getImagesByTag(this.tag, i).then((images) => {
+          this.imageUrls = this.imageUrls.concat(images);
+        });
+      }
+    },
+  },
   props: {
-    tags: Array,
+    tag: String,
   },
   data() {
     return {
       imageUrls: [],
+      nbPage: 0,
     };
   },
   created() {
-    this.tags.forEach((id) => {
-      dataFetch.getImageById(id).then((data) => {
-        if (data.length > 0) {
-          this.imageUrls.push({ id: id, url: data[0].imagePaths.square });
-        }
-      });
+    // Get the 25 first images
+    dataFetch.getImagesByTag(this.tag, 1).then((images) => {
+      this.imageUrls = images;
+    });
+    // Load all others
+    dataFetch.getNbPagePerTag(this.tag).then((nbPage) => {
+      this.nbPage = Math.ceil(nbPage / 25);
+      this.loadMoreImages();
     });
   },
 };
@@ -41,11 +53,11 @@ export default {
 }
 
 .image-size {
-    width: 25vw;
-    height: 30vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 25vw;
+  height: 30vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .overflow {

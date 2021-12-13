@@ -1,7 +1,7 @@
 <template>
   <div class="page-size">
     <full-tag-header :tag="tagValue"/>
-    <full-tag-page :tags="tags[tagValue]" />
+    <full-tag-page :tag="tagValue" />
   </div>
 </template>
 
@@ -9,13 +9,10 @@
 import FullTagHeader from "./FullTagHeader.vue";
 import FullTagPage from "./FullTagPage.vue";
 
-import tags from "../../assets/data/tags.json";
-
 export default {
   components: { FullTagHeader, FullTagPage },
   data() {
     return {
-      tags: tags,
       tagValue: "Fly",
     };
   },
