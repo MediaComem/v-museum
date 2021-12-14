@@ -1,10 +1,12 @@
 <template>
   <div class="canvas-size overflow">
-    <div v-for="(image, index) in imageUrls.length" :key="index">
-      <div class="image-size">
-        <img :src="imageUrls[index].url" />
+    <ul v-infinite-scroll="loadMoreImages" class="canvas-display">
+      <div v-for="(image, index) in imageUrls" :key="index">
+        <div class="image-size">
+          <img :src="image.url" />
+        </div>
       </div>
-    </div>
+    </ul>
   </div>
 </template>
 
@@ -14,8 +16,9 @@ import dataFetch from "../../api/dataFetching";
 export default {
   methods: {
     loadMoreImages() {
-      for (let i = 2; i < this.nbPage; i++) {
-        dataFetch.getImagesByTag(this.tag, i).then((images) => {
+      this.currentPage = this.currentPage + 1;
+      if (this.currentPage <= this.nbPage) {
+        dataFetch.getImagesByTag(this.tag, this.currentPage).then((images) => {
           this.imageUrls = this.imageUrls.concat(images);
         });
       }
@@ -27,18 +30,18 @@ export default {
   data() {
     return {
       imageUrls: [],
+      currentPage: 1,
       nbPage: 0,
     };
   },
   created() {
     // Get the 25 first images
-    dataFetch.getImagesByTag(this.tag, 1).then((images) => {
+    dataFetch.getImagesByTag(this.tag, this.currentPage).then((images) => {
       this.imageUrls = images;
     });
     // Load all others
     dataFetch.getNbPagePerTag(this.tag).then((nbPage) => {
       this.nbPage = Math.ceil(nbPage / 25);
-      this.loadMoreImages();
     });
   },
 };
@@ -48,8 +51,12 @@ export default {
 .canvas-size {
   height: 90vh;
   background: black;
+}
+
+.canvas-display {
   display: flex;
   flex-wrap: wrap;
+  width: 100vw;
 }
 
 .image-size {
