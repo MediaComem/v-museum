@@ -39,10 +39,19 @@ import {
   thumbnailWidth,
   relatedThumbnailWidth,
   getImageWidth,
-  getImageHeight
+  getImageHeight,
 } from "./image_management_service";
 
 export default {
+  watch: {
+    imageId: function(newVal) {
+      dataFetch.getImageById(newVal).then((data) => {
+        if (data.length > 0) {
+          this.imageData = data[0];
+        }
+      });
+    },
+  },
   props: {
     imagePosition: Object,
     isTop: Boolean,

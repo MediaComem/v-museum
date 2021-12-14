@@ -36,11 +36,8 @@
       <div>
         <images-block
           :ref="'image-block-' + index"
-          :relatedImages="imageBlock.relatedImages"
+          :imageBlock="imageBlock"
           :imageFactor="imageFactor"
-          :currentLeftPosition="imageBlock.centralImageLeftPosition"
-          :currentTopPosition="imageBlock.centralImageTopPosition"
-          :nextPosition="imageBlock.imagePositions"
         />
       </div>
     </div>
@@ -183,7 +180,7 @@ export default {
               currentImageBlock.$refs,
               "image-element-" + j,
               this.imageBlockController[i].relatedImages[j],
-              currentImageBlock.nextPosition[j]
+              this.imageBlockController[i].imagePositions[j]
             );
           }
         }
@@ -281,7 +278,7 @@ export default {
                 this.relatedImages[imageId]
               )
             );
-            if (this.imageBlockController.length > 3) {
+            if (this.imageBlockController.length > 2) {
               this.firstImageEnable = false;
               this.initialImageId = 0;
               this.imageBlockController.shift();
