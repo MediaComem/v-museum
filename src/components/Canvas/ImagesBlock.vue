@@ -29,6 +29,8 @@ export default {
   data() {
     return {
       newImagePositions: [],
+      // Small factor uses to simulate a small shift in the related alignement.
+      smallShiftFactor: Math.random() * (1 - 0.75) + 0.75,
     };
   },
   methods: {
@@ -38,42 +40,42 @@ export default {
         case 1:
           return {
             top:
-              this.imageBlock.centralImageTopPosition - 1.5 * thumbnailHeight(this.imageFactor),
+              this.imageBlock.centralImageTopPosition - 1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
             left:
-              this.imageBlock.centralImageLeftPosition - 1.5 * thumbnailWidth(this.imageFactor),
+              this.imageBlock.centralImageLeftPosition - 1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
           };
         case 2:
           return {
             top: this.imageBlock.centralImageTopPosition,
             left:
-              this.imageBlock.centralImageLeftPosition - 1.5 * thumbnailWidth(this.imageFactor),
+              this.imageBlock.centralImageLeftPosition - 1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
           };
         case 3:
           return {
             top:
-              this.imageBlock.centralImageTopPosition + 1.5 * thumbnailHeight(this.imageFactor),
+              this.imageBlock.centralImageTopPosition + 1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
             left:
-              this.imageBlock.centralImageLeftPosition - 1.5 * thumbnailWidth(this.imageFactor),
+              this.imageBlock.centralImageLeftPosition - 1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
           };
         case 4:
           return {
             top:
-              this.imageBlock.centralImageTopPosition - 1.5 * thumbnailHeight(this.imageFactor),
+              this.imageBlock.centralImageTopPosition - 1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
             left:
-              this.imageBlock.centralImageLeftPosition + 1.5 * thumbnailWidth(this.imageFactor),
+              this.imageBlock.centralImageLeftPosition + 1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
           };
         case 5:
           return {
             top: this.imageBlock.centralImageTopPosition,
             left:
-              this.imageBlock.centralImageLeftPosition + 1.5 * thumbnailWidth(this.imageFactor),
+              this.imageBlock.centralImageLeftPosition + 1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
           };
         case 6:
           return {
             top:
-              this.imageBlock.centralImageTopPosition + 1.5 * thumbnailHeight(this.imageFactor),
+              this.imageBlock.centralImageTopPosition + 1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
             left:
-              this.imageBlock.centralImageLeftPosition + 1.5 * thumbnailWidth(this.imageFactor),
+              this.imageBlock.centralImageLeftPosition + 1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
           };
       }
     },
