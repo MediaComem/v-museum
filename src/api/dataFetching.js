@@ -20,6 +20,14 @@ const parseElement = (element) => {
   );
 };
 
+const parseImagesByTag = (data) => {
+  const images = [];
+  data.forEach((element) => {
+    images.push({id: element["dcterms:identifier"][0]["@value"], url: element["thumbnail_display_urls"]["square"]})
+  })
+  return images;
+};
+
 const parseImages = (data) => {
   const images = [];
   data.forEach((element) => {
@@ -115,6 +123,33 @@ export default {
       return parseElement(data[idx]);
     }
     return undefined;
+  },
+
+  async getNbPagePerTag(tag) {
+    const params = {
+      params: {
+        "property[0][joiner]": "and",
+        "property[0][property]": 14,
+        "property[0][type]": "eq",
+        "property[0][text]": tag,
+      }
+    }
+    const { headers } = await axios.get(process.env.VUE_APP_FETCH_BASE, params);
+    return headers["omeka-s-total-results"];
+  },
+
+  async getImagesByTag(tag, step) {
+    const params = {
+      params: {
+        "property[0][joiner]": "and",
+        "property[0][property]": 14,
+        "property[0][type]": "eq",
+        "property[0][text]": tag,
+        page: step
+      }
+    }
+    const { data } = await axios.get(process.env.VUE_APP_FETCH_BASE, params);
+    return parseImagesByTag(data);
   },
 
   async getImagesByTitle(title) {
