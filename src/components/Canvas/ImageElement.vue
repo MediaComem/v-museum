@@ -45,6 +45,7 @@ import {
 export default {
   watch: {
     imageId: function(newVal) {
+      this.imageData = undefined;
       dataFetch.getImageById(newVal).then((data) => {
         if (data.length > 0) {
           this.imageData = data[0];
