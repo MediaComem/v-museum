@@ -1,14 +1,16 @@
 <template>
-  <div v-for="(relateImage, index) in imageBlock.relatedImages" :key="index">
+  <div v-for="(relatedImage, index) in imageBlock.relatedImages" :key="index">
     <image-element
+      v-if="relatedImage"
       :ref="'image-element-' + index"
       :imagePosition="calculatePositions(index)"
       :isTop="true"
       :isLeft="false"
-      :focus="relateImage.hasFocus"
-      :tag="relateImage.tag"
-      :imageId="relateImage.imageId"
+      :focus="relatedImage.hasFocus"
+      :tag="relatedImage.tag"
+      :imageId="relatedImage.imageId"
       :imageFactor="imageFactor"
+      :class="{'last_block': isFull && currentGlobalPosition === 0 && relatedImage.imageId !== imageBlock.oldCentralImage && !relatedImage.hasFocus}"
     />
   </div>
 </template>
@@ -25,6 +27,8 @@ export default {
   props: {
     imageBlock: ImageBlock,
     imageFactor: Number,
+    currentGlobalPosition: Number,
+    isFull: Boolean,
   },
   data() {
     return {
@@ -83,4 +87,6 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+@import "./canvas.css";
+</style>

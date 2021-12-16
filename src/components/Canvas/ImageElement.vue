@@ -109,6 +109,8 @@ export default {
 </script>
 
 <style scoped>
+@import "./canvas.css";
+
 .text_left {
   display: flex;
   justify-content: flex-start;

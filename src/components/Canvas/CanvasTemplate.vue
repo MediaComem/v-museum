@@ -31,6 +31,7 @@
       :focus="initialImageFocus.hasFocus"
       :imageId="initialImageId"
       :imageFactor="imageFactor"
+      :class="getOpacity"
     />
     <div v-for="(imageBlock, index) in imageBlockController" :key="index">
       <div>
@@ -38,6 +39,8 @@
           :ref="'image-block-' + index"
           :imageBlock="imageBlock"
           :imageFactor="imageFactor"
+          :currentGlobalPosition="index"
+          :isFull="imageBlockController.length === maxArraySize"
         />
       </div>
     </div>
@@ -74,6 +77,7 @@ export default {
     return {
       // Data in the JSON file to find images
       relatedImages: relatedImage,
+      maxArraySize: 2,
       // Display management part
       initialImageId: 3,
       initialImageFocus: { hasFocus: false },
@@ -287,6 +291,10 @@ export default {
                 imagePosition,
                 this.relatedImages[imageId]
               );
+              const oldBlock = this.imageBlockController[changeSelected.index];
+              if (oldBlock) {
+                oldBlock.oldCentralImage = imageId;
+              }
             } else if (newSelectedImage(imageId, this.imageBlockController)) {
               this.insertElement(
                 imageId,
@@ -298,6 +306,10 @@ export default {
               if (this.imageBlockController.length > 2) {
                 this.firstImageEnable = false;
                 this.imageBlockController.shift();
+              }
+              const oldBlock = this.imageBlockController[0];
+              if (oldBlock) {
+                oldBlock.oldCentralImage = imageId;
               }
             }
           }
@@ -351,6 +363,7 @@ export default {
       this.imageBlockController.push(
         new ImageBlock(
           imageId,
+          0,
           centralTopImagePosition,
           centralLeftImagePosition,
           generatePosition(currentPosition),
@@ -370,6 +383,11 @@ export default {
         width: this.pageWidth + "px",
       };
     },
+    getOpacity() {
+      return {
+        'last_block': this.imageBlockController.length > 1 && !this.initialImageFocus.hasFocus,
+      }
+    }
   },
   created() {
     const { width, height } = useWindowSize();
@@ -406,11 +424,5 @@ export default {
 </script>
 
 <style scoped>
-.disappear {
-  display: none;
-}
-
-.last_block {
-  opacity: 0.5;
-}
+@import "./canvas.css";
 </style>
