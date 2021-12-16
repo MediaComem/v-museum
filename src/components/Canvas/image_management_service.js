@@ -45,6 +45,32 @@ const getImageWidth = (hasFocus, imageFactor) => {
     : relatedThumbnailWidth(imageFactor);
 }
 
+const shouldInsert = (potentialImage, relatedImages) => {
+  return !relatedImages.find(e => e.centralId === potentialImage) !== undefined;
+}
+
+const newSelectedImage = (potentialImage, relatedImages) => {
+  return relatedImages.find(e => e.centralId === potentialImage) === undefined;
+}
+
+const changeSelectedImage = (potentialImage, relatedImages) => {
+  const result = relatedImages.find(e => e.centralId === potentialImage) === undefined;
+  const removeIndex = relatedImages.findIndex(e => e.relatedImages.find(t => t.imageId === potentialImage));
+  if (result && removeIndex !== relatedImages.length - 1 && relatedImages.length > 1){
+    return {
+      shouldChange: true,
+      index: removeIndex
+    }
+  }
+  else {
+    return {
+      shouldChange: false,
+      index: -1
+    }
+  }
+  
+}
+
 export {
   getFactor,
   thumbnailHeight,
@@ -52,5 +78,8 @@ export {
   relatedThumbnailHeight,
   relatedThumbnailWidth,
   getImageHeight,
-  getImageWidth
+  getImageWidth,
+  shouldInsert,
+  newSelectedImage,
+  changeSelectedImage
 } 

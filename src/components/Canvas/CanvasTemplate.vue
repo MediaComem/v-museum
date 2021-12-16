@@ -59,6 +59,9 @@ import {
   thumbnailHeight,
   relatedThumbnailWidth,
   relatedThumbnailHeight,
+  shouldInsert,
+  newSelectedImage,
+  changeSelectedImage,
 } from "./image_management_service";
 
 import { generatePosition } from "./positions_management_service";
@@ -269,19 +272,33 @@ export default {
             top: newTopPosition,
             behavior: "smooth",
           });
-          if (imageId !== this.initialImageId) {
-            this.imageBlockController.push(
-              new ImageBlock(
+          if (shouldInsert(imageId, this.imageBlockController)) {
+            const changeSelected = changeSelectedImage(
+              imageId,
+              this.imageBlockController
+            );
+            if (changeSelected.shouldChange) {
+              // Index + 1 because we know which one is the current but we must remove the next one.
+              this.imageBlockController.splice(changeSelected.index + 1, 1);
+              this.insertElement(
+                imageId,
                 currentImageTopPosition,
                 currentImageLeftPosition,
-                generatePosition(imagePosition),
+                imagePosition,
                 this.relatedImages[imageId]
-              )
-            );
-            if (this.imageBlockController.length > 2) {
-              this.firstImageEnable = false;
-              this.initialImageId = 0;
-              this.imageBlockController.shift();
+              );
+            } else if (newSelectedImage(imageId, this.imageBlockController)) {
+              this.insertElement(
+                imageId,
+                currentImageTopPosition,
+                currentImageLeftPosition,
+                imagePosition,
+                this.relatedImages[imageId]
+              );
+              if (this.imageBlockController.length > 2) {
+                this.firstImageEnable = false;
+                this.imageBlockController.shift();
+              }
             }
           }
         }, 200);
@@ -324,6 +341,23 @@ export default {
         this.pageWidth = this.pageWidth + deltaX;
       }
     },
+    insertElement(
+      imageId,
+      centralTopImagePosition,
+      centralLeftImagePosition,
+      currentPosition,
+      relatedImages
+    ) {
+      this.imageBlockController.push(
+        new ImageBlock(
+          imageId,
+          centralTopImagePosition,
+          centralLeftImagePosition,
+          generatePosition(currentPosition),
+          relatedImages
+        )
+      );
+    },
   },
   computed: {
     imageFactor() {
@@ -354,13 +388,12 @@ export default {
     const firstBlockCentralImageLeftPosition =
       this.pageWidth / 2 - thumbnailWidth(factor) / 2;
 
-    this.imageBlockController.push(
-      new ImageBlock(
-        firstBlockCentralImageTopPosition,
-        firstBlockCentralImageLeftPosition,
-        generatePosition(0),
-        this.relatedImages[this.initialImageId]
-      )
+    this.insertElement(
+      this.initialImageId,
+      firstBlockCentralImageTopPosition,
+      firstBlockCentralImageLeftPosition,
+      0,
+      this.relatedImages[this.initialImageId]
     );
 
     this.currentXPosition = firstBlockCentralImageLeftPosition;

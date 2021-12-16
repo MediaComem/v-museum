@@ -1,7 +1,8 @@
 import RelatedImage from "./RelatedImage";
 
 export default class ImageBlock {
-    constructor(centralImageTopPosition, centralImageLeftPosition, imagePositions, relatedImages) {
+    constructor(centralId, centralImageTopPosition, centralImageLeftPosition, imagePositions, relatedImages) {
+        this.centralId = centralId;
         this.centralImageTopPosition = centralImageTopPosition;
         this.centralImageLeftPosition = centralImageLeftPosition;
         this.imagePositions = imagePositions;
