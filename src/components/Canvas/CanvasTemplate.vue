@@ -18,9 +18,8 @@
       :imageFactor="imageFactor"
       :focus="true"
     />
-    <!-- This is the initial central image that will disable after two related movements -->
+    <!-- This is the initial central image that changes over the time -->
     <image-element
-      v-if="firstImageEnable"
       :ref="'image-element'"
       :imagePosition="{
         top: imageBlockController[0].centralImageTopPosition,
@@ -29,7 +28,7 @@
       :isTop="true"
       :isLeft="false"
       :focus="initialImageFocus.hasFocus"
-      :imageId="initialImageId"
+      :imageId="imageBlockController[0].centralId"
       :imageFactor="imageFactor"
       :class="getOpacity"
     />
@@ -82,7 +81,6 @@ export default {
       initialImageId: 3,
       initialImageFocus: { hasFocus: false },
       imageBlockController: [],
-      firstImageEnable: true,
       windowHeight: 0,
       windowWidth: 0,
       pageHeight: 0,
@@ -162,16 +160,14 @@ export default {
         -this.$refs["page"].getBoundingClientRect().y + this.windowHeight / 2;
 
       // Initial central image analyzis
-      if (this.firstImageEnable) {
-        this.imageCollisionAnalyzis(
-          currentCenterLeftPosition,
-          currentCenterTopPosition,
-          this.$refs,
-          "image-element",
-          this.initialImageFocus,
-          0
-        );
-      }
+      this.imageCollisionAnalyzis(
+        currentCenterLeftPosition,
+        currentCenterTopPosition,
+        this.$refs,
+        "image-element",
+        this.initialImageFocus,
+        0
+      );
 
       // Analysis of each related images
       // first loop to analyze each blocks
@@ -304,7 +300,6 @@ export default {
                 this.relatedImages[imageId]
               );
               if (this.imageBlockController.length > 2) {
-                this.firstImageEnable = false;
                 this.imageBlockController.shift();
               }
               const oldBlock = this.imageBlockController[0];
@@ -385,9 +380,11 @@ export default {
     },
     getOpacity() {
       return {
-        'last_block': this.imageBlockController.length > 1 && !this.initialImageFocus.hasFocus,
-      }
-    }
+        last_block:
+          this.imageBlockController.length > 1 &&
+          !this.initialImageFocus.hasFocus,
+      };
+    },
   },
   created() {
     const { width, height } = useWindowSize();
@@ -413,6 +410,8 @@ export default {
       0,
       this.relatedImages[this.initialImageId]
     );
+
+    this.imageBlockController[0].oldCentralImage = this.initialImageId;
 
     this.currentXPosition = firstBlockCentralImageLeftPosition;
     this.currentYPosition = firstBlockCentralImageTopPosition;
