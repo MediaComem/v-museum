@@ -63,8 +63,8 @@ import {
   relatedThumbnailWidth,
   relatedThumbnailHeight,
   shouldInsert,
-  newSelectedImage,
-  changeSelectedImage,
+  isNewSelectedImage,
+  isChangeSelectedImage,
 } from "./image_management_service";
 
 import { generatePosition } from "./positions_management_service";
@@ -79,8 +79,9 @@ export default {
       relatedImages: relatedImage,
       maxArraySize: 2,
       // Display management part
+      // The two following parameters will remove when the navigation will implement
       initialImageId: 3,
-      centralImageTag: "Fly",
+      initialCentralTag: "Fly",
       initialImageFocus: { hasFocus: false },
       imageBlockController: [],
       windowHeight: 0,
@@ -274,71 +275,86 @@ export default {
             top: newTopPosition,
             behavior: "smooth",
           });
-          if (shouldInsert(imageId, this.imageBlockController)) {
-            const changeSelected = changeSelectedImage(
-              imageId,
-              this.imageBlockController
-            );
-            if (changeSelected.shouldChange) {
-              let oldBlock = this.imageBlockController[0];
-              let oldTag = "";
-              if (oldBlock) {
-                const index = oldBlock.relatedImages.findIndex(
-                  (e) => e.imageId === oldBlock.oldCentralImage
-                );
-                oldTag = oldBlock.relatedImages[index].tag;
-              }
-              // Index + 1 because we know which one is the current but we must remove the next one.
-              this.imageBlockController.splice(changeSelected.index + 1, 1);
-              this.insertElement(
-                imageId,
-                currentImageTopPosition,
-                currentImageLeftPosition,
-                imagePosition,
-                this.relatedImages[imageId]
-              );
-              oldBlock = this.imageBlockController[changeSelected.index];
-              if (oldBlock) {
-                if (oldTag.length !== 0) {
-                  oldBlock.oldCentralImageTag = oldTag;
-                }
-                oldBlock.oldCentralImage = imageId;
-              }
-            } else if (newSelectedImage(imageId, this.imageBlockController)) {
-              let oldBlock = this.imageBlockController[0];
-              let oldTag = "";
-              if (oldBlock) {
-                const index = oldBlock.relatedImages.findIndex(
-                  (e) => e.imageId === oldBlock.oldCentralImage
-                );
-                if (index !== -1) {
-                  oldTag = oldBlock.relatedImages[index].tag;
-                }
-              }
-              this.insertElement(
-                imageId,
-                currentImageTopPosition,
-                currentImageLeftPosition,
-                imagePosition,
-                this.relatedImages[imageId]
-              );
-
-              if (this.imageBlockController.length > 2) {
-                this.imageBlockController.shift();
-              }
-              oldBlock = this.imageBlockController[0];
-              if (oldBlock) {
-                if (oldTag.length !== 0) {
-                  oldBlock.oldCentralImageTag = oldTag;
-                }
-                oldBlock.oldCentralImage = imageId;
-              }
-            }
-          }
+          this.insertionManagement(imageId, currentImageTopPosition, currentImageLeftPosition, imagePosition);
         }, 200);
       } else {
         focusElement.hasFocus = false;
         this.currentFocus.push(false);
+      }
+    },
+    // This method analyzes the state of the canvas and insert the new block when and where it's necessary
+    insertionManagement(imageId, currentImageTopPosition, currentImageLeftPosition, imagePosition) {
+      // First, check if it's necessary to do something.
+      if (shouldInsert(imageId, this.imageBlockController)) {
+        // Second, check if it's a image of another block or the current one
+        const shouldChangeSelectedImage = isChangeSelectedImage(
+          imageId,
+          this.imageBlockController
+        );
+        // If it is another one, replace the current block by the new one
+        if (shouldChangeSelectedImage.shouldChange) {
+          // This part is used to find the tag for the central image
+          let oldImageBlock = this.imageBlockController[0];
+          let oldTag = "";
+          if (oldImageBlock) {
+            const index = oldImageBlock.relatedImages.findIndex(
+              (e) => e.imageId === oldImageBlock.oldCentralImage
+            );
+            oldTag = oldImageBlock.relatedImages[index].tag;
+          }
+          // Index + 1 because we know which one is the current but we must remove the next one.
+          this.imageBlockController.splice(shouldChangeSelectedImage.index + 1, 1);
+          this.insertBlock(
+            imageId,
+            currentImageTopPosition,
+            currentImageLeftPosition,
+            imagePosition,
+            this.relatedImages[imageId]
+          );
+          // Keep track of the central image id to use it when the block disappear
+          // Store in the block the tag of the old central image
+          oldImageBlock = this.imageBlockController[shouldChangeSelectedImage.index];
+          if (oldImageBlock) {
+            if (oldTag.length !== 0) {
+              oldImageBlock.oldCentralImageTag = oldTag;
+            }
+            oldImageBlock.oldCentralImage = imageId;
+          }
+        } 
+        // Finally, check if it's a new block is needed and load it.
+        else if (isNewSelectedImage(imageId, this.imageBlockController)) {
+          // This part is used to find the tag for the central image
+          let oldImageBlock = this.imageBlockController[0];
+          let oldTag = "";
+          if (oldImageBlock) {
+            const index = oldImageBlock.relatedImages.findIndex(
+              (e) => e.imageId === oldImageBlock.oldCentralImage
+            );
+            if (index !== -1) {
+              oldTag = oldImageBlock.relatedImages[index].tag;
+            }
+          }
+          this.insertBlock(
+            imageId,
+            currentImageTopPosition,
+            currentImageLeftPosition,
+            imagePosition,
+            this.relatedImages[imageId]
+          );
+          // Remove first block in case of there are three blocks in the array
+          if (this.imageBlockController.length > 2) {
+            this.imageBlockController.shift();
+          }
+          // Keep track of the central image id to use it when the block disappear
+          // Store in the block the tag of the old central image
+          oldImageBlock = this.imageBlockController[0];
+          if (oldImageBlock) {
+            if (oldTag.length !== 0) {
+              oldImageBlock.oldCentralImageTag = oldTag;
+            }
+            oldImageBlock.oldCentralImage = imageId;
+          }
+        }
       }
     },
     updateCurrentPosition(newXPosition, newYPosition) {
@@ -375,7 +391,7 @@ export default {
         this.pageWidth = this.pageWidth + deltaX;
       }
     },
-    insertElement(
+    insertBlock(
       imageId,
       centralTopImagePosition,
       centralLeftImagePosition,
@@ -430,14 +446,14 @@ export default {
     const firstBlockCentralImageLeftPosition =
       this.pageWidth / 2 - thumbnailWidth(factor) / 2;
 
-    this.insertElement(
+    this.insertBlock(
       this.initialImageId,
       firstBlockCentralImageTopPosition,
       firstBlockCentralImageLeftPosition,
       0,
       this.relatedImages[this.initialImageId]
     );
-    this.imageBlockController[0].oldCentralImageTag = this.centralImageTag;
+    this.imageBlockController[0].oldCentralImageTag = this.initialCentralTag;
     this.imageBlockController[0].oldCentralImage = this.initialImageId;
 
     this.currentXPosition = firstBlockCentralImageLeftPosition;

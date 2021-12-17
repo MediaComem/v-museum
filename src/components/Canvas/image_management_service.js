@@ -46,16 +46,16 @@ const getImageWidth = (hasFocus, imageFactor) => {
 }
 
 const shouldInsert = (potentialImage, relatedImages) => {
-  return !relatedImages.find(e => e.centralId === potentialImage) !== undefined;
+  return !relatedImages.find(block => block.centralId === potentialImage) !== undefined;
 }
 
-const newSelectedImage = (potentialImage, relatedImages) => {
-  return relatedImages.find(e => e.centralId === potentialImage) === undefined;
+const isNewSelectedImage = (potentialImage, relatedImages) => {
+  return relatedImages.find(block => block.centralId === potentialImage) === undefined;
 }
 
-const changeSelectedImage = (potentialImage, relatedImages) => {
-  const result = relatedImages.find(e => e.centralId === potentialImage) === undefined;
-  const removeIndex = relatedImages.findIndex(e => e.relatedImages.find(t => t.imageId === potentialImage));
+const isChangeSelectedImage = (potentialImage, relatedImages) => {
+  const result = relatedImages.find(block => block.centralId === potentialImage) === undefined;
+  const removeIndex = relatedImages.findIndex(block => block.relatedImages.find(relatedImage => relatedImage.imageId === potentialImage));
   if (result && removeIndex !== relatedImages.length - 1 && relatedImages.length > 1){
     return {
       shouldChange: true,
@@ -80,6 +80,6 @@ export {
   getImageHeight,
   getImageWidth,
   shouldInsert,
-  newSelectedImage,
-  changeSelectedImage
+  isNewSelectedImage,
+  isChangeSelectedImage
 } 
