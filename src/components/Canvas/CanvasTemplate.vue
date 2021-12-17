@@ -30,6 +30,7 @@
       :focus="initialImageFocus.hasFocus"
       :imageId="imageBlockController[0].centralId"
       :imageFactor="imageFactor"
+      :tag="imageBlockController[0].oldCentralImageTag"
       :class="getOpacity"
     />
     <div v-for="(imageBlock, index) in imageBlockController" :key="index">
@@ -79,6 +80,7 @@ export default {
       maxArraySize: 2,
       // Display management part
       initialImageId: 3,
+      centralImageTag: "Fly",
       initialImageFocus: { hasFocus: false },
       imageBlockController: [],
       windowHeight: 0,
@@ -278,6 +280,14 @@ export default {
               this.imageBlockController
             );
             if (changeSelected.shouldChange) {
+              let oldBlock = this.imageBlockController[0];
+              let oldTag = "";
+              if (oldBlock) {
+                const index = oldBlock.relatedImages.findIndex(
+                  (e) => e.imageId === oldBlock.oldCentralImage
+                );
+                oldTag = oldBlock.relatedImages[index].tag;
+              }
               // Index + 1 because we know which one is the current but we must remove the next one.
               this.imageBlockController.splice(changeSelected.index + 1, 1);
               this.insertElement(
@@ -287,11 +297,24 @@ export default {
                 imagePosition,
                 this.relatedImages[imageId]
               );
-              const oldBlock = this.imageBlockController[changeSelected.index];
+              oldBlock = this.imageBlockController[changeSelected.index];
               if (oldBlock) {
+                if (oldTag.length !== 0) {
+                  oldBlock.oldCentralImageTag = oldTag;
+                }
                 oldBlock.oldCentralImage = imageId;
               }
             } else if (newSelectedImage(imageId, this.imageBlockController)) {
+              let oldBlock = this.imageBlockController[0];
+              let oldTag = "";
+              if (oldBlock) {
+                const index = oldBlock.relatedImages.findIndex(
+                  (e) => e.imageId === oldBlock.oldCentralImage
+                );
+                if (index !== -1) {
+                  oldTag = oldBlock.relatedImages[index].tag;
+                }
+              }
               this.insertElement(
                 imageId,
                 currentImageTopPosition,
@@ -299,11 +322,15 @@ export default {
                 imagePosition,
                 this.relatedImages[imageId]
               );
+
               if (this.imageBlockController.length > 2) {
                 this.imageBlockController.shift();
               }
-              const oldBlock = this.imageBlockController[0];
+              oldBlock = this.imageBlockController[0];
               if (oldBlock) {
+                if (oldTag.length !== 0) {
+                  oldBlock.oldCentralImageTag = oldTag;
+                }
                 oldBlock.oldCentralImage = imageId;
               }
             }
@@ -410,7 +437,7 @@ export default {
       0,
       this.relatedImages[this.initialImageId]
     );
-
+    this.imageBlockController[0].oldCentralImageTag = this.centralImageTag;
     this.imageBlockController[0].oldCentralImage = this.initialImageId;
 
     this.currentXPosition = firstBlockCentralImageLeftPosition;
