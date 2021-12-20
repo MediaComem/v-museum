@@ -111,9 +111,8 @@ export default {
       }, animationDuration);
     },
     loadDecade(decade) {
-      this.$router.push({
-        path: `/selector/${decade}`,
-      });
+      // TODO: Load tag view
+      console.log(decade);
     },
     findAndUpdateDecade() {
       if (this.decade) {
