@@ -34,7 +34,7 @@
       </p>
     </el-row>
     <el-row style="height: 69px; width: 37vw">
-      <onboarding-completion
+      <documents-information
         class="completion-element pointer"
         :decade="item.decade"
         @load-decade="$emit('loadDecade', item.decade)"
@@ -54,9 +54,9 @@
 import Logo from "../Logo/Logo.vue";
 import ArrowUp from "../Logo/ArrowUp.vue";
 import ArrowDown from "../Logo/ArrowDown.vue";
-import OnboardingCompletion from "../Logo/OnboadingCompletion.vue";
+import DocumentsInformation from "../Logo/DocumentsInformation.vue";
 export default {
-  components: { Logo, ArrowUp, ArrowDown, OnboardingCompletion },
+  components: { Logo, ArrowUp, ArrowDown, DocumentsInformation },
   emits: ['loadDecade', 'previousSlide', 'nextSlide'],
   props: {
     index: Number,

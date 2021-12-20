@@ -31,19 +31,11 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapGetters } from "vuex";
 export default {
   emits: ["loadDecade"],
   props: {
     decade: String,
-  },
-  watch: {
-    completionData: {
-      handler() {
-        this.completion = this.getCompletionByDecade(this.decade);
-      },
-      deep: true,
-    },
   },
   data() {
     return {
@@ -51,11 +43,8 @@ export default {
     };
   },
   computed: {
-    ...mapState(["completionData"]),
     ...mapGetters({
       getCompletionByDecade: "getCompletionByDecade",
-      getImagesByDecade: "getImagesByDecade",
-      getVisitedIndexByDecade: "getVisitedIndexByDecade",
     }),
   },
   activated() {
@@ -64,24 +53,6 @@ export default {
       this.completion = {
         completion: 0,
       };
-    }
-
-    const visited = this.getVisitedIndexByDecade(this.decade);
-    let lastId = 0;
-    if (visited !== undefined) {
-      lastId = visited.lastId;
-      this.$store.dispatch("insertSkipId", {
-        decade: this.decade,
-        id: lastId,
-      });
-    }
-
-    const documents = this.getImagesByDecade(this.decade);
-    if (documents === undefined) {
-      this.$store.dispatch("initializeCarousel", {
-        decade: this.decade,
-        id: lastId,
-      });
     }
   },
 };

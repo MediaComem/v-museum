@@ -44,7 +44,7 @@
     </h2>
   </el-row>
   <el-row class="completion-element-mobile mobile-margin">
-    <onboarding-completion
+    <documents-information
       class="completion-element pointer"
       :decade="item.decade"
       @load-decade="$emit('loadDecade', item.decade)"
@@ -69,10 +69,10 @@
 <script>
 import ArrowUp from "../Logo/ArrowUp.vue";
 import ArrowDown from "../Logo/ArrowDown.vue";
-import OnboardingCompletion from "../Logo/OnboadingCompletion.vue";
+import DocumentsInformation from "../Logo/DocumentsInformation.vue";
 
 export default {
-  components: { ArrowUp, ArrowDown, OnboardingCompletion },
+  components: { ArrowUp, ArrowDown, DocumentsInformation },
   emits: ["loadDecade", "previousSlide", "nextSlide"],
   props: {
     index: Number,
