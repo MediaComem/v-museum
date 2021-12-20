@@ -26,6 +26,7 @@
           :item="item"
           :isFullSize="isFullSize"
           :mainTitle="mainTitle"
+          :allTagText="allTagText"
           @load-decade="loadDecade"
           @previous-slide="previousSlide()"
           @next-slide="nextSlide()"
@@ -39,11 +40,20 @@
           :item="item"
           :isFullSize="isFullSize"
           :mainTitle="mainTitle"
+          :allTagText="allTagText"
           @load-decade="loadDecade"
           @previous-slide="previousSlide()"
           @next-slide="nextSlide()"
         />
       </div>
+    </el-carousel-item>
+    <el-carousel-item>
+      <tags-slide
+        :isFullSize="isFullSize"
+        :isMobile="isMobile"
+        :arrowText="information.collection[information.collection.length - 1]"
+        @previous-slide="previousSlide()"
+      />
     </el-carousel-item>
   </el-carousel>
 </template>
@@ -54,6 +64,7 @@ import { useWindowSize } from "vue-window-size";
 import IntroductionSlide from "./Slide/IntroductionSlide.vue";
 import DesktopSlide from "./Slide/DesktopSlide.vue";
 import MobileSlide from "./Slide/MobileSlide.vue";
+import TagsSlide from "./Slide/TagsSlide.vue";
 
 import text from "@/assets/onboarding/text.json";
 
@@ -63,6 +74,7 @@ export default {
     IntroductionSlide,
     DesktopSlide,
     MobileSlide,
+    TagsSlide,
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -72,6 +84,7 @@ export default {
   data() {
     return {
       mainTitle: { title: "INTRODUCTION" },
+      allTagText: { title: "ALL TAGS" },
       information: text,
       isCollapse: false,
       slide: 0,

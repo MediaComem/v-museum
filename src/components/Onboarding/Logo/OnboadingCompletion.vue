@@ -8,21 +8,23 @@
     @click="$emit('loadDecade', decade)"
   >
     <rect width="240" height="69" rx="34.5" fill="black" />
-    <completion
-      :viewBox="'-1.5 -2.21 3 4.5'"
-      :decade="decade"
-      :height="69"
-      :width="69"
-      :topPosition="10"
-      :leftPosition="5"
-      :emptyColor="'gray'"
-      :completeColor="'lightgray'"
-    />
-    <text v-if="completion" class="text-completion" x="70" y="30" font-size="14">
-      {{ completion.totalImages }} Documents
+    <text
+      v-if="completion"
+      class="text-completion"
+      x="30"
+      y="30"
+      font-size="14"
+    >
+      {{ decade }}
     </text>
-    <text v-if="completion" class="text-completion" x="70" y="50" font-size="14">
-      {{ completion.completion }}% discovered
+    <text
+      v-if="completion"
+      class="text-completion"
+      x="30"
+      y="50"
+      font-size="14"
+    >
+      {{ completion.totalImages }} Documents
     </text>
     <path d="M208.75 43.3205L223.75 34.6603L208.75 26" stroke="white" />
   </svg>
@@ -30,10 +32,8 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import Completion from "../../Completion/Completion.vue";
 export default {
-  components: { Completion },
-  emits: ['loadDecade'],
+  emits: ["loadDecade"],
   props: {
     decade: String,
   },

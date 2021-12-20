@@ -1,12 +1,13 @@
 <template>
   <div class="display">
     <div v-if="text">
-      <h1 :class="textSize">
-        {{ text.title.slice(0, 10) }}
-      </h1>
-      <h1 :class="textSize">
-        {{ text.title.slice(11, 180) }}
-      </h1>
+      <div v-if="text.title === 'ALL TAGS'">
+        <h1 :class="textSize">{{ text.title }}</h1>
+      </div>
+      <div v-else>
+        <h1 :class="textSize">{{ text.title.slice(0, 10) }}</h1>
+        <h1 :class="textSize">{{ text.title.slice(11, 180) }}</h1>
+      </div>
     </div>
     <svg
       @click="$emit('nextSlide')"

@@ -42,11 +42,10 @@
     </el-row>
   </div>
   <arrow-down
-    v-if="index !== information.collection.length - 1"
     class="arrow-down"
     :isMobile="false"
     :isFull="isFullSize"
-    :text="information.collection[index + 1]"
+    :text="index === information.collection.length - 1 ? allTagText : information.collection[index + 1]"
     @next-slide="$emit('nextSlide')"
   />
 </template>
@@ -64,6 +63,7 @@ export default {
     item: Object,
     isFullSize: Boolean,
     mainTitle: Object,
+    allTagText: Object,
     information: Object,
   },
   data() {
