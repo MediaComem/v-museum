@@ -53,6 +53,7 @@
         :isMobile="isMobile"
         :arrowText="information.collection[information.collection.length - 1]"
         @previous-slide="previousSlide()"
+        @load-decade="loadDecade"
       />
     </el-carousel-item>
   </el-carousel>
@@ -110,9 +111,11 @@ export default {
         this.$refs.slider.next();
       }, animationDuration);
     },
-    loadDecade(decade) {
-      // TODO: Load tag view
-      console.log(decade);
+    loadDecade(tag) {
+      this.$router.push({
+        path: `/full_tag`,
+        query: { tag: JSON.stringify(tag) },
+      });
     },
     findAndUpdateDecade() {
       if (this.decade) {

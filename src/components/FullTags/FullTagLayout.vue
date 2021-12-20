@@ -1,6 +1,6 @@
 <template>
   <div class="page-size">
-    <full-tag-header :tag="tagValue"/>
+    <full-tag-header :tag="tagValue" />
     <full-tag-page :tag="tagValue" />
   </div>
 </template>
@@ -11,6 +11,11 @@ import FullTagPage from "./FullTagPage.vue";
 
 export default {
   components: { FullTagHeader, FullTagPage },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.tagValue = JSON.parse(to.query.tag);
+    });
+  },
   data() {
     return {
       tagValue: "Fly",
@@ -21,7 +26,7 @@ export default {
 
 <style scoped>
 .page-size {
-    height: 100vh;
-    width: 100vw;
+  height: 100vh;
+  width: 100vw;
 }
 </style>

@@ -14,7 +14,25 @@
 import dataFetch from "../../api/dataFetching";
 
 export default {
+  watch: {
+    tag: function() {
+      this.currentPage = 1;
+      this.nbPage = 0;
+      this.imageUrls = [];
+      this.loadInitialImages();
+    },
+  },
   methods: {
+    loadInitialImages() {
+      // Get the 25 first images
+      dataFetch.getImagesByTag(this.tag, this.currentPage).then((images) => {
+        this.imageUrls = images;
+      });
+      // Load all others
+      dataFetch.getNbPagePerTag(this.tag).then((nbPage) => {
+        this.nbPage = Math.ceil(nbPage / 25);
+      });
+    },
     loadMoreImages() {
       this.currentPage = this.currentPage + 1;
       if (this.currentPage <= this.nbPage) {
@@ -33,16 +51,6 @@ export default {
       currentPage: 1,
       nbPage: 0,
     };
-  },
-  created() {
-    // Get the 25 first images
-    dataFetch.getImagesByTag(this.tag, this.currentPage).then((images) => {
-      this.imageUrls = images;
-    });
-    // Load all others
-    dataFetch.getNbPagePerTag(this.tag).then((nbPage) => {
-      this.nbPage = Math.ceil(nbPage / 25);
-    });
   },
 };
 </script>
