@@ -45,7 +45,7 @@
   </el-row>
   <el-row class="completion-element-mobile mobile-margin">
     <documents-information
-      class="completion-element pointer"
+      class="completion-element clickable"
       :decade="item.decade"
       @load-decade="$emit('loadDecade', item.decade)"
     />
@@ -103,4 +103,5 @@ export default {
 <style scoped>
 @import "../onboarding.css";
 @import "./mobile_slide.css";
+@import "../../shared/pointer.css";
 </style>

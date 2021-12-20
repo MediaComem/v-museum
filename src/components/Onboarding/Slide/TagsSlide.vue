@@ -2,7 +2,7 @@
   <div class="title">
     <h1 class="justify-text">TAGS</h1>
     <arrow-up
-      class="justify-arrow"
+      class="justify-arrow clickable"
       :isFull="isFullSize"
       :isMobile="isMobile"
       :text="arrowText"
@@ -11,7 +11,7 @@
   </div>
   <div class="canvas-display overflow">
     <div v-for="(tag, index) in tags.tags.sort()" :key="index" class="border">
-      <div class="display-element" @click="$emit('loadDecade', tag)">
+      <div class="display-element clickable" @click="$emit('loadDecade', tag)">
         <p :class="fontSize">{{ tag }}</p>
       </div>
     </div>
@@ -48,6 +48,8 @@ export default {
 </script>
 
 <style scoped>
+@import "../../shared/pointer.css";
+
 .title {
   height: 10vh;
   width: 100vw;

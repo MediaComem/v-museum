@@ -30,12 +30,12 @@
         :class="isFullSize ? 'collection-text' : 'collection-text-intermediary'"
       >
         {{ item.text.slice(0, 180) }}
-        <a class="more-link pointer" @click="isCollapse = !isCollapse">MORE</a>
+        <a class="more-link clickable" @click="isCollapse = !isCollapse">MORE</a>
       </p>
     </el-row>
     <el-row style="height: 69px; width: 37vw">
       <documents-information
-        class="completion-element pointer"
+        class="completion-element clickable"
         :decade="item.decade"
         @load-decade="$emit('loadDecade', item.decade)"
       />
@@ -87,4 +87,5 @@ export default {
 <style scoped>
 @import "../onboarding.css";
 @import "./desktop_slide.css";
+@import "../../shared/pointer.css";
 </style>
