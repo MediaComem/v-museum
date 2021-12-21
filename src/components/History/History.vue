@@ -12,7 +12,7 @@
         @click="sendOpenFullHistory()"
       >
         <p class="history-value">{{ currentHistory.length }}</p>
-      </div>
+      </div> 
       <div v-if="currentHistory.length <= 2">
         <div>
           <div
@@ -272,8 +272,8 @@ export default {
     comeBackTo(historyElement) {
       if (this.couldLoad) {
         this.$router.push({
-          path: `/selector/${historyElement.decade}`,
-          query: { history: true, imageId: historyElement.imageId },
+          path: `/canvas`,
+          query: { imageId: JSON.stringify(historyElement.imageId) },
         });
         this.$emit("closeFullHistory");
       }
