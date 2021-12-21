@@ -1,4 +1,14 @@
 <template>
+  <!-- History Part-->
+  <history
+    :topPosition="windowHeight - 63"
+    :leftPosition="10"
+    :fullWidth="windowWidth"
+    :displayAllHistory="fullHistoryMode"
+    :couldLoadHistory="true"
+    @openFullHistory="fullHistoryMode = true"
+    @closeFullHistory="fullHistoryMode = false"
+  />
   <div
     :style="pageSize"
     @mousewheel="wheelMove"
@@ -51,6 +61,7 @@
 import ImageElement from "./ImageElement.vue";
 import ImagesBlock from "./ImagesBlock.vue";
 import FocusRectangle from "./FocusRectangle.vue";
+import History from "../History/History.vue";
 
 import { useWindowSize } from "vue-window-size";
 
@@ -72,7 +83,13 @@ import { generatePosition } from "./positions_management_service";
 import ImageBlock from "../../models/ImageBlock";
 
 export default {
-  components: { ImageElement, ImagesBlock, FocusRectangle },
+  components: { ImageElement, ImagesBlock, FocusRectangle, History },
+  beforeRouteUpdate(to) {
+      if (to.query.imageId) {
+        this.initialImageId = JSON.parse(to.query.imageId);
+        this.loadInitialImage();
+      }
+  },
   data() {
     return {
       // Data in the JSON file to find images
@@ -88,6 +105,7 @@ export default {
       windowWidth: 0,
       pageHeight: 0,
       pageWidth: 0,
+      fullHistoryMode: false,
       // Movement management part
       isDrag: false,
       currentXPosition: 0,
@@ -150,6 +168,7 @@ export default {
       this.checkCollision();
     },
     checkCollision() {
+      this.fullHistoryMode = false;
       // Reset the focus to have version of this analyzis.
       this.currentFocus = [];
       // In case of a collision was detected and we continue the movement, reset the timeout that
@@ -275,7 +294,12 @@ export default {
             top: newTopPosition,
             behavior: "smooth",
           });
-          this.insertionManagement(imageId, currentImageTopPosition, currentImageLeftPosition, imagePosition);
+          this.insertionManagement(
+            imageId,
+            currentImageTopPosition,
+            currentImageLeftPosition,
+            imagePosition
+          );
         }, 200);
       } else {
         focusElement.hasFocus = false;
@@ -283,7 +307,12 @@ export default {
       }
     },
     // This method analyzes the state of the canvas and insert the new block when and where it's necessary
-    insertionManagement(imageId, currentImageTopPosition, currentImageLeftPosition, imagePosition) {
+    insertionManagement(
+      imageId,
+      currentImageTopPosition,
+      currentImageLeftPosition,
+      imagePosition
+    ) {
       // First, check if it's necessary to do something.
       if (shouldInsert(imageId, this.imageBlockController)) {
         // Second, check if it's a image of another block or the current one
@@ -303,7 +332,10 @@ export default {
             oldTag = oldImageBlock.relatedImages[index].tag;
           }
           // Index + 1 because we know which one is the current but we must remove the next one.
-          this.imageBlockController.splice(shouldChangeSelectedImage.index + 1, 1);
+          this.imageBlockController.splice(
+            shouldChangeSelectedImage.index + 1,
+            1
+          );
           this.insertBlock(
             imageId,
             currentImageTopPosition,
@@ -313,14 +345,16 @@ export default {
           );
           // Keep track of the central image id to use it when the block disappear
           // Store in the block the tag of the old central image
-          oldImageBlock = this.imageBlockController[shouldChangeSelectedImage.index];
+          oldImageBlock = this.imageBlockController[
+            shouldChangeSelectedImage.index
+          ];
           if (oldImageBlock) {
             if (oldTag.length !== 0) {
               oldImageBlock.oldCentralImageTag = oldTag;
             }
             oldImageBlock.oldCentralImage = imageId;
           }
-        } 
+        }
         // Finally, check if it's a new block is needed and load it.
         else if (isNewSelectedImage(imageId, this.imageBlockController)) {
           // This part is used to find the tag for the central image
@@ -391,6 +425,30 @@ export default {
         this.pageWidth = this.pageWidth + deltaX;
       }
     },
+    loadInitialImage() {
+      this.imageBlockController = [];
+      const factor = getFactor(this.windowHeight, this.windowWidth);
+
+      // Find the middle of the page to insert the first image
+      const firstBlockCentralImageTopPosition =
+        this.pageHeight / 2 - thumbnailHeight(factor) / 2;
+      const firstBlockCentralImageLeftPosition =
+        this.pageWidth / 2 - thumbnailWidth(factor) / 2;
+
+      this.insertBlock(
+        this.initialImageId,
+        firstBlockCentralImageTopPosition,
+        firstBlockCentralImageLeftPosition,
+        0,
+        this.relatedImages[this.initialImageId]
+      );
+      this.imageBlockController[0].oldCentralImageTag = this.initialCentralTag;
+      this.imageBlockController[0].oldCentralImage = this.initialImageId;
+
+      this.currentXPosition = firstBlockCentralImageLeftPosition;
+      this.currentYPosition = firstBlockCentralImageTopPosition;
+      window.scrollTo(this.currentXPosition, this.currentYPosition);
+    },
     insertBlock(
       imageId,
       centralTopImagePosition,
@@ -408,6 +466,9 @@ export default {
           relatedImages
         )
       );
+      this.$store.dispatch("insertHistory", {
+        imageId: imageId,
+      });
     },
   },
   computed: {
@@ -438,26 +499,7 @@ export default {
     this.pageHeight = 2 * this.windowHeight;
     this.pageWidth = 2 * this.windowWidth;
 
-    const factor = getFactor(this.windowHeight, this.windowWidth);
-
-    // Find the middle of the page to insert the first image
-    const firstBlockCentralImageTopPosition =
-      this.pageHeight / 2 - thumbnailHeight(factor) / 2;
-    const firstBlockCentralImageLeftPosition =
-      this.pageWidth / 2 - thumbnailWidth(factor) / 2;
-
-    this.insertBlock(
-      this.initialImageId,
-      firstBlockCentralImageTopPosition,
-      firstBlockCentralImageLeftPosition,
-      0,
-      this.relatedImages[this.initialImageId]
-    );
-    this.imageBlockController[0].oldCentralImageTag = this.initialCentralTag;
-    this.imageBlockController[0].oldCentralImage = this.initialImageId;
-
-    this.currentXPosition = firstBlockCentralImageLeftPosition;
-    this.currentYPosition = firstBlockCentralImageTopPosition;
+    this.loadInitialImage();
   },
   activated() {
     window.scrollTo(this.currentXPosition, this.currentYPosition);
