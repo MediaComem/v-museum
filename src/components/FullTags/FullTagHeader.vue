@@ -21,6 +21,7 @@ export default {
     loadOnboarding() {
       this.$router.push({
         path: `/`,
+        query: {tag: JSON.stringify(this.tag)}
       });
     },
   },

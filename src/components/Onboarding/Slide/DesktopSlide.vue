@@ -36,8 +36,8 @@
     <el-row style="height: 69px; width: 37vw">
       <documents-information
         class="completion-element clickable"
-        :decade="item.decade"
-        @load-decade="$emit('loadDecade', item.decade)"
+        :tag="item.tag"
+        @load-tag-view="$emit('loadTagView', item.tag)"
       />
     </el-row>
   </div>
@@ -57,7 +57,7 @@ import ArrowDown from "../Logo/ArrowDown.vue";
 import DocumentsInformation from "../Logo/DocumentsInformation.vue";
 export default {
   components: { Logo, ArrowUp, ArrowDown, DocumentsInformation },
-  emits: ['loadDecade', 'previousSlide', 'nextSlide'],
+  emits: ['loadTagView', 'previousSlide', 'nextSlide'],
   props: {
     index: Number,
     item: Object,

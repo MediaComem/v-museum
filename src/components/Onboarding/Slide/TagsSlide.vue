@@ -11,7 +11,7 @@
   </div>
   <div class="canvas-display overflow">
     <div v-for="(tag, index) in tags.tags.sort()" :key="index" class="border">
-      <div class="display-element clickable" @click="$emit('loadDecade', tag)">
+      <div class="display-element clickable" @click="$emit('loadTagView', tag)">
         <p :class="fontSize">{{ tag }}</p>
       </div>
     </div>
@@ -25,7 +25,7 @@ import tags from "@/assets/onboarding/tags.json";
 import ArrowUp from "../Logo/ArrowUp.vue";
 export default {
   components: { ArrowUp },
-  emits: ["previousSlide", "loadDecade"],
+  emits: ["previousSlide", "loadTagView"],
   props: {
     isFullSize: Boolean,
     isMobile: Boolean,
