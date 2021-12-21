@@ -1,7 +1,7 @@
 <template>
   <div class="page-size">
-    <full-tag-header :tag="tagValue" />
-    <full-tag-page :tag="tagValue" />
+    <full-tag-header :tag="tagValue.tag" />
+    <full-tag-page :tag="tagValue.tag" />
   </div>
 </template>
 
@@ -18,7 +18,7 @@ export default {
   },
   data() {
     return {
-      tagValue: "Fly",
+      tagValue: "",
     };
   },
 };

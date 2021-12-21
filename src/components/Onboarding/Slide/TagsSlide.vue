@@ -10,9 +10,9 @@
     />
   </div>
   <div class="canvas-display overflow">
-    <div v-for="(tag, index) in tags.tags.sort()" :key="index" class="border">
+    <div v-for="(tag, index) in tags.tags.sort((a, b) => a.tag.localeCompare(b.tag))" :key="index" class="border">
       <div class="display-element clickable" @click="$emit('loadTagView', tag)">
-        <p :class="fontSize">{{ tag }}</p>
+        <p :class="fontSize">{{ tag.tag }} • {{ tag.totalImage }}</p>
       </div>
     </div>
   </div>
