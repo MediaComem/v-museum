@@ -1,6 +1,6 @@
 <template>
   <div :style="position" v-if="imageData">
-    <p v-if="isTop && !hasFocus" :class="textJustification" :style="textWidth">
+    <p v-if="isTop && !focus" :class="textJustification" :style="textWidth">
       {{ tag }}
     </p>
     <img
@@ -9,10 +9,10 @@
       :height="imageHeight"
       :width="imageWidth"
     />
-    <p v-if="!isTop && !hasFocus" :class="textJustification" :style="textWidth">
+    <p v-if="!isTop && !focus" :class="textJustification" :style="textWidth">
       {{ tag }}
     </p>
-    <div v-if="hasFocus" :style="textWidth">
+    <div v-if="focus" :style="textWidth">
       <div class="text_left">
         <p>
           Illustration: &nbsp;
@@ -68,9 +68,6 @@ export default {
     };
   },
   computed: {
-    hasFocus() {
-      return this.focus;
-    },
     textJustification() {
       return {
         text_left: this.isLeft,
@@ -86,16 +83,16 @@ export default {
     },
     textWidth() {
       return {
-        width: this.hasFocus
+        width: this.focus
           ? thumbnailWidth(this.imageFactor) + "px"
           : relatedThumbnailWidth(this.imageFactor) + "px",
       };
     },
     imageHeight() {
-      return getImageHeight(this.hasFocus, this.imageFactor);
+      return getImageHeight(this.focus, this.imageFactor);
     },
     imageWidth() {
-      return getImageWidth(this.hasFocus, this.imageFactor);
+      return getImageWidth(this.focus, this.imageFactor);
     },
   },
   mounted() {

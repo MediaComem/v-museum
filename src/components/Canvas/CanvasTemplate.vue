@@ -16,7 +16,7 @@
       :offsetX="windowWidth"
       :offsetY="windowHeight"
       :imageFactor="imageFactor"
-      :focus="true"
+      :focus="rectangleFocus"
     />
     <!-- This is the initial central image that changes over the time -->
     <image-element
@@ -94,7 +94,8 @@ export default {
       currentYPosition: 0,
       currentCenterLeftPosition: 0,
       currentCenterTopPosition: 0,
-      // Array of focus elements to manage the rectangle focus
+      // Focus management part
+      rectangleFocus: true,
       imageHasFocus: false,
       // Variable used to stop the centering of an image in case of moving in the page
       focusMoveTimeout: undefined,
@@ -191,7 +192,7 @@ export default {
       }
 
       // Manage size of the focus rectangle
-      this.$refs["rectangle"].hasFocus = this.imageHasFocus;
+      this.rectangleFocus = this.imageHasFocus;
     },
     imageCollisionAnalyzis(refToAnalyze, ref, focusElement, imagePosition) {
       const imageToAnalyze = refToAnalyze[ref];
