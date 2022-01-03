@@ -167,8 +167,7 @@ export default {
 
       // Initial central image analyzis
       this.imageCollisionAnalyzis(
-        this.$refs,
-        "image-element",
+        this.$refs["image-element"],
         this.initialImageFocus,
         0
       );
@@ -182,8 +181,7 @@ export default {
           const nbElementsInBlock = Object.keys(currentImageBlock.$refs).length;
           for (let j = 0; j < nbElementsInBlock; j++) {
             this.imageCollisionAnalyzis(
-              currentImageBlock.$refs,
-              "image-element-" + j,
+              currentImageBlock.$refs["image-element-" + j],
               this.imageBlocks[i].relatedImages[j],
               this.imageBlocks[i].imagePositions[j]
             );
@@ -194,8 +192,10 @@ export default {
       // Manage size of the focus rectangle
       this.rectangleFocus = this.imageHasFocus;
     },
-    imageCollisionAnalyzis(refToAnalyze, ref, focusElement, imagePosition) {
-      const imageToAnalyze = refToAnalyze[ref];
+    imageCollisionAnalyzis(imageToAnalyze, focusElement, imagePosition) {
+      console.log(imageToAnalyze);
+      console.log(focusElement);
+      console.log(imagePosition)
       if (imageToAnalyze) {
         const imageToAnalyzeLeftPositionWithPixel =
           imageToAnalyze.position.left;
