@@ -149,6 +149,7 @@ export const mutations = {
       state.history.push({
         imageId: payload.imageId,
         data: payload.data,
+        tag: payload.tag
       });
     }
   },
@@ -178,6 +179,7 @@ export const actions = {
         context.commit("addHistoryElement", {
           imageId: payload.imageId,
           data: data[0].imagePaths.square,
+          tag: payload.tag
         });
       }      
     })

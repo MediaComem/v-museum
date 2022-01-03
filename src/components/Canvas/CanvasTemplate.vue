@@ -5,7 +5,6 @@
     :leftPosition="10"
     :fullWidth="windowWidth"
     :displayAllHistory="fullHistoryMode"
-    :couldLoadHistory="true"
     @openFullHistory="fullHistoryMode = true"
     @closeFullHistory="fullHistoryMode = false"
   />
@@ -87,6 +86,9 @@ export default {
   beforeRouteUpdate(to) {
       if (to.query.imageId) {
         this.initialImageId = JSON.parse(to.query.imageId);
+        if (to.query.tag) {
+          this.initialCentralTag = JSON.parse(to.query.tag);
+        }
         this.loadInitialImage();
       }
   },
@@ -238,6 +240,7 @@ export default {
           imageToAnalyzeTopPositionWithPixel.length - 2
         );
         const imageId = imageToAnalyze.imageId;
+        const tag = imageToAnalyze.tag;
         // Check collision
         this.collisionAnalysis(
           imageId,
@@ -246,7 +249,8 @@ export default {
           imageToAnalyzeImageLeftPosition,
           imageToAnalyzeImageTopPosition,
           focusElement,
-          imagePosition
+          imagePosition,
+          tag
         );
       }
     },
@@ -257,7 +261,8 @@ export default {
       currentImageLeftPosition,
       currentImageTopPosition,
       focusElement,
-      imagePosition
+      imagePosition,
+      tag
     ) {
       const factor = getFactor(this.windowHeight, this.windowWidth);
       // Compare the position of an image with the current center window position
@@ -298,7 +303,8 @@ export default {
             imageId,
             currentImageTopPosition,
             currentImageLeftPosition,
-            imagePosition
+            imagePosition,
+            tag
           );
         }, 200);
       } else {
@@ -311,7 +317,8 @@ export default {
       imageId,
       currentImageTopPosition,
       currentImageLeftPosition,
-      imagePosition
+      imagePosition,
+      tag
     ) {
       // First, check if it's necessary to do something.
       if (shouldInsert(imageId, this.imageBlockController)) {
@@ -341,7 +348,8 @@ export default {
             currentImageTopPosition,
             currentImageLeftPosition,
             imagePosition,
-            this.relatedImages[imageId]
+            this.relatedImages[imageId],
+            tag
           );
           // Keep track of the central image id to use it when the block disappear
           // Store in the block the tag of the old central image
@@ -373,7 +381,8 @@ export default {
             currentImageTopPosition,
             currentImageLeftPosition,
             imagePosition,
-            this.relatedImages[imageId]
+            this.relatedImages[imageId],
+            tag
           );
           // Remove first block in case of there are three blocks in the array
           if (this.imageBlockController.length > 2) {
@@ -440,7 +449,8 @@ export default {
         firstBlockCentralImageTopPosition,
         firstBlockCentralImageLeftPosition,
         0,
-        this.relatedImages[this.initialImageId]
+        this.relatedImages[this.initialImageId],
+        this.initialCentralTag
       );
       this.imageBlockController[0].oldCentralImageTag = this.initialCentralTag;
       this.imageBlockController[0].oldCentralImage = this.initialImageId;
@@ -454,7 +464,8 @@ export default {
       centralTopImagePosition,
       centralLeftImagePosition,
       currentPosition,
-      relatedImages
+      relatedImages,
+      imageTag
     ) {
       this.imageBlockController.push(
         new ImageBlock(
@@ -468,6 +479,7 @@ export default {
       );
       this.$store.dispatch("insertHistory", {
         imageId: imageId,
+        tag: imageTag
       });
     },
   },
