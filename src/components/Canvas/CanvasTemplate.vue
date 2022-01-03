@@ -5,7 +5,6 @@
     :leftPosition="10"
     :fullWidth="windowWidth"
     :displayAllHistory="fullHistoryMode"
-    :couldLoadHistory="true"
     @openFullHistory="fullHistoryMode = true"
     @closeFullHistory="fullHistoryMode = false"
   />
@@ -81,10 +80,13 @@ import ImageBlock from "../../models/ImageBlock";
 export default {
   components: { ImageElement, ImagesBlock, FocusRectangle, History },
   beforeRouteUpdate(to) {
-    if (to.query.imageId) {
-      this.initialImageId = JSON.parse(to.query.imageId);
-      this.loadInitialImage();
-    }
+      if (to.query.imageId) {
+        this.initialImageId = JSON.parse(to.query.imageId);
+        if (to.query.tag) {
+          this.initialCentralTag = JSON.parse(to.query.tag);
+        }
+        this.loadInitialImage();
+      }
   },
   data() {
     return {
@@ -225,6 +227,7 @@ export default {
           imageToAnalyzeTopPositionWithPixel.length - 2
         );
         const imageId = imageToAnalyze.imageId;
+        const tag = imageToAnalyze.tag;
         // Check collision
         this.collisionAnalysis(
           imageId,
@@ -232,11 +235,12 @@ export default {
             top: imageToAnalyzeImageTopPosition,
             left: imageToAnalyzeImageLeftPosition,
           },
-          focusElement
+          focusElement,
+          tag
         );
       }
     },
-    collisionAnalysis(imageId, currentImagePosition, focusElement) {
+    collisionAnalysis(imageId, currentImagePosition, focusElement, tag) {
       const factor = getFactor(this.windowHeight, this.windowWidth);
       // Compare the position of an image with the current center window position
       // The number if arbitrary defined to have a margin between the center of the window and the
@@ -275,7 +279,8 @@ export default {
           this.insertionManagement(
             imageId,
             currentImagePosition,
-            focusElement.position
+            focusElement.position,
+            tag
           );
         }, 200);
       } else {
@@ -283,7 +288,7 @@ export default {
       }
     },
     // This method analyzes the state of the canvas and insert the new block when and where it's necessary
-    insertionManagement(imageId, currentImagePosition, imagePosition) {
+    insertionManagement(imageId, currentImagePosition, imagePosition, tag) {
       // First, check if it's necessary to do something.
       if (isNewSelectedImage(imageId, this.imageBlocks)) {
         // Second, check if it's a image of another block or the current one
@@ -308,7 +313,8 @@ export default {
             imageId,
             currentImagePosition,
             imagePosition,
-            this.relatedImages[imageId]
+            this.relatedImages[imageId],
+            tag
           );
           // Keep track of the central image id to use it when the block disappear
           // Store in the block the tag of the old central image
@@ -337,7 +343,8 @@ export default {
             imageId,
             currentImagePosition,
             imagePosition,
-            this.relatedImages[imageId]
+            this.relatedImages[imageId],
+            tag
           );
           // Remove first block in case of there are three blocks in the array
           if (this.imageBlocks.length > 2) {
@@ -406,7 +413,8 @@ export default {
           left: firstBlockCentralImageLeftPosition,
         },
         0,
-        this.relatedImages[this.initialImageId]
+        this.relatedImages[this.initialImageId],
+        this.initialCentralTag
       );
       this.imageBlocks[0].oldCentralImageTag = this.initialCentralTag;
       this.imageBlocks[0].oldCentralImage = this.initialImageId;
@@ -414,7 +422,7 @@ export default {
       this.currentXPosition = firstBlockCentralImageLeftPosition;
       this.currentYPosition = firstBlockCentralImageTopPosition;
     },
-    insertBlock(imageId, currentImagePosition, currentPosition, relatedImages) {
+    insertBlock(imageId, currentImagePosition, currentPosition, relatedImages, imageTag) {
       this.imageBlocks.push(
         new ImageBlock(
           imageId,
@@ -426,6 +434,7 @@ export default {
       );
       this.$store.dispatch("insertHistory", {
         imageId: imageId,
+        tag: imageTag
       });
     },
   },
