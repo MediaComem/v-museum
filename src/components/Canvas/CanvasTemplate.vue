@@ -210,28 +210,25 @@ export default {
         // Check collision
         this.collisionAnalysis(
           imageId,
-          imageToAnalyzeImageLeftPosition,
-          imageToAnalyzeImageTopPosition,
+          {
+            top: imageToAnalyzeImageTopPosition,
+            left: imageToAnalyzeImageLeftPosition,
+          },
           focusElement
         );
       }
     },
-    collisionAnalysis(
-      imageId,
-      currentImageLeftPosition,
-      currentImageTopPosition,
-      focusElement
-    ) {
+    collisionAnalysis(imageId, currentImagePosition, focusElement) {
       const factor = getFactor(this.windowHeight, this.windowWidth);
       // Compare the position of an image with the current center window position
       // The number if arbitrary defined to have a margin between the center of the window and the
       // center of the image.
       if (
-        currentImageLeftPosition <= this.currentCenterLeftPosition &&
-        currentImageLeftPosition + relatedThumbnailWidth(factor) >=
+        currentImagePosition.left <= this.currentCenterLeftPosition &&
+        currentImagePosition.left + relatedThumbnailWidth(factor) >=
           this.currentCenterLeftPosition &&
-        currentImageTopPosition <= this.currentCenterTopPosition &&
-        currentImageTopPosition + relatedThumbnailHeight(factor) >=
+        currentImagePosition.top <= this.currentCenterTopPosition &&
+        currentImagePosition.top + relatedThumbnailHeight(factor) >=
           this.currentCenterTopPosition
       ) {
         focusElement.hasFocus = true;
@@ -242,12 +239,12 @@ export default {
         // 3) move half of the image size to center the image in the window
         // 4) move half of margin of the focus
         const newLeftPosition =
-          currentImageLeftPosition -
+          currentImagePosition.left -
           this.windowWidth / 2 +
           thumbnailWidth(factor) / 2 -
           10;
         const newTopPosition =
-          currentImageTopPosition -
+          currentImagePosition.top -
           this.windowHeight / 2 +
           thumbnailHeight(factor) / 2 -
           10;
@@ -259,8 +256,7 @@ export default {
           });
           this.insertionManagement(
             imageId,
-            currentImageTopPosition,
-            currentImageLeftPosition,
+            currentImagePosition,
             focusElement.position
           );
         }, 200);
@@ -269,12 +265,7 @@ export default {
       }
     },
     // This method analyzes the state of the canvas and insert the new block when and where it's necessary
-    insertionManagement(
-      imageId,
-      currentImageTopPosition,
-      currentImageLeftPosition,
-      imagePosition
-    ) {
+    insertionManagement(imageId, currentImagePosition, imagePosition) {
       // First, check if it's necessary to do something.
       if (shouldInsert(imageId, this.imageBlocks)) {
         // Second, check if it's a image of another block or the current one
@@ -297,8 +288,7 @@ export default {
           this.imageBlocks.splice(shouldChangeSelectedImage.index + 1, 1);
           this.insertBlock(
             imageId,
-            currentImageTopPosition,
-            currentImageLeftPosition,
+            currentImagePosition,
             imagePosition,
             this.relatedImages[imageId]
           );
@@ -327,8 +317,7 @@ export default {
           }
           this.insertBlock(
             imageId,
-            currentImageTopPosition,
-            currentImageLeftPosition,
+            currentImagePosition,
             imagePosition,
             this.relatedImages[imageId]
           );
@@ -382,18 +371,12 @@ export default {
         this.pageWidth = this.pageWidth + deltaX;
       }
     },
-    insertBlock(
-      imageId,
-      centralTopImagePosition,
-      centralLeftImagePosition,
-      currentPosition,
-      relatedImages
-    ) {
+    insertBlock(imageId, currentImagePosition, currentPosition, relatedImages) {
       this.imageBlocks.push(
         new ImageBlock(
           imageId,
           0,
-          { top: centralTopImagePosition, left: centralLeftImagePosition },
+          currentImagePosition,
           generatePosition(currentPosition),
           relatedImages
         )
@@ -437,8 +420,10 @@ export default {
 
     this.insertBlock(
       this.initialImageId,
-      firstBlockCentralImageTopPosition,
-      firstBlockCentralImageLeftPosition,
+      {
+        top: firstBlockCentralImageTopPosition,
+        left: firstBlockCentralImageLeftPosition,
+      },
       0,
       this.relatedImages[this.initialImageId]
     );
