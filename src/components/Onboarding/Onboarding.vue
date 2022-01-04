@@ -27,7 +27,7 @@
           :isFullSize="isFullSize"
           :mainTitle="mainTitle"
           :allTagText="allTagText"
-          @load-decade="loadDecade"
+          @load-tag-view="loadTagView"
           @previous-slide="previousSlide()"
           @next-slide="nextSlide()"
         />
@@ -41,7 +41,7 @@
           :isFullSize="isFullSize"
           :mainTitle="mainTitle"
           :allTagText="allTagText"
-          @load-decade="loadDecade"
+          @load-tag-view="loadTagView"
           @previous-slide="previousSlide()"
           @next-slide="nextSlide()"
         />
@@ -53,6 +53,7 @@
         :isMobile="isMobile"
         :arrowText="information.collection[information.collection.length - 1]"
         @previous-slide="previousSlide()"
+        @load-tag-view="loadTagView"
       />
     </el-carousel-item>
   </el-carousel>
@@ -78,7 +79,9 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      vm.decade = from.params.decade;
+      if (from.query.tag) {
+        vm.tag = JSON.parse(from.query.tag);
+      }
     });
   },
   data() {
@@ -88,7 +91,7 @@ export default {
       information: text,
       isCollapse: false,
       slide: 0,
-      decade: undefined,
+      tag: undefined,
       windowHeight: undefined,
       windowWidth: undefined,
     };
@@ -110,15 +113,21 @@ export default {
         this.$refs.slider.next();
       }, animationDuration);
     },
-    loadDecade(decade) {
-      // TODO: Load tag view
-      console.log(decade);
+    loadTagView(tag) {
+      this.$router.push({
+        path: `/full_tag`,
+        query: { tag: JSON.stringify(tag) },
+      });
     },
-    findAndUpdateDecade() {
-      if (this.decade) {
-        const index = this.information.collection.findIndex((e) => {
-          return e.decade == this.decade;
+    findAndUpdateTag() {
+      if (this.tag) {
+        let index = 0;
+        index = this.information.collection.findIndex((e) => {
+          return e.tag == this.tag;
         });
+        if (index === -1) {
+          index = this.information.collection.length;
+        }
         this.$nextTick(() => {
           this.slide = index + 1;
           this.$refs.slider.setActiveItem(index + 1);
@@ -135,13 +144,13 @@ export default {
     },
   },
   activated() {
-    this.findAndUpdateDecade();
+    this.findAndUpdateTag();
   },
   mounted() {
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
-    this.findAndUpdateDecade();
+    this.findAndUpdateTag();
   },
 };
 </script>

@@ -30,14 +30,14 @@
         :class="isFullSize ? 'collection-text' : 'collection-text-intermediary'"
       >
         {{ item.text.slice(0, 180) }}
-        <a class="more-link pointer" @click="isCollapse = !isCollapse">MORE</a>
+        <a class="more-link clickable" @click="isCollapse = !isCollapse">MORE</a>
       </p>
     </el-row>
     <el-row style="height: 69px; width: 37vw">
       <documents-information
-        class="completion-element pointer"
-        :decade="item.decade"
-        @load-decade="$emit('loadDecade', item.decade)"
+        class="completion-element clickable"
+        :tag="item.tag"
+        @load-tag-view="$emit('loadTagView', item.tag)"
       />
     </el-row>
   </div>
@@ -57,7 +57,7 @@ import ArrowDown from "../Logo/ArrowDown.vue";
 import DocumentsInformation from "../Logo/DocumentsInformation.vue";
 export default {
   components: { Logo, ArrowUp, ArrowDown, DocumentsInformation },
-  emits: ['loadDecade', 'previousSlide', 'nextSlide'],
+  emits: ['loadTagView', 'previousSlide', 'nextSlide'],
   props: {
     index: Number,
     item: Object,
@@ -87,4 +87,5 @@ export default {
 <style scoped>
 @import "../onboarding.css";
 @import "./desktop_slide.css";
+@import "../../shared/pointer.css";
 </style>

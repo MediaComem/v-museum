@@ -10,7 +10,7 @@
       </div>
     </div>
     <svg
-      class="pointer"
+      class="clickable"
       :width="size"
       :height="size"
       viewBox="0 0 60 60"
@@ -60,4 +60,5 @@ export default {
 <style scoped>
 @import "./arrow.css";
 @import "../onboarding.css";
+@import "../../shared/pointer.css";
 </style>

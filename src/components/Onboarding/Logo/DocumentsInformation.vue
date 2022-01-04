@@ -5,7 +5,7 @@
     viewBox="0 0 240 69"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    @click="$emit('loadDecade', decade)"
+    @click="$emit('loadTagView', tag)"
   >
     <rect width="240" height="69" rx="34.5" fill="black" />
     <text
@@ -15,7 +15,7 @@
       y="30"
       font-size="14"
     >
-      {{ decade }}
+      {{ tag }}
     </text>
     <text
       v-if="completion"
@@ -33,9 +33,9 @@
 <script>
 import { mapGetters } from "vuex";
 export default {
-  emits: ["loadDecade"],
+  emits: ["loadTagView"],
   props: {
-    decade: String,
+    tag: String,
   },
   data() {
     return {

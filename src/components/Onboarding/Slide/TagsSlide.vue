@@ -2,7 +2,7 @@
   <div class="title">
     <h1 class="justify-text">TAGS</h1>
     <arrow-up
-      class="justify-arrow"
+      class="justify-arrow clickable"
       :isFull="isFullSize"
       :isMobile="isMobile"
       :text="arrowText"
@@ -10,9 +10,9 @@
     />
   </div>
   <div class="canvas-display overflow">
-    <div v-for="(tag, index) in tags.tags.sort()" :key="index" class="border">
-      <div class="display-element">
-        <p :class="fontSize">{{ tag }}</p>
+    <div v-for="(tag, index) in tags.tags.sort((a, b) => a.tag.localeCompare(b.tag))" :key="index" class="border">
+      <div class="display-element clickable" @click="$emit('loadTagView', tag)">
+        <p :class="fontSize">{{ tag.tag }} • {{ tag.totalImage }}</p>
       </div>
     </div>
   </div>
@@ -25,7 +25,7 @@ import tags from "@/assets/onboarding/tags.json";
 import ArrowUp from "../Logo/ArrowUp.vue";
 export default {
   components: { ArrowUp },
-  emits: ["previousSlide"],
+  emits: ["previousSlide", "loadTagView"],
   props: {
     isFullSize: Boolean,
     isMobile: Boolean,
@@ -48,6 +48,8 @@ export default {
 </script>
 
 <style scoped>
+@import "../../shared/pointer.css";
+
 .title {
   height: 10vh;
   width: 100vw;

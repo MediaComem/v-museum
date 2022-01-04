@@ -45,9 +45,9 @@
   </el-row>
   <el-row class="completion-element-mobile mobile-margin">
     <documents-information
-      class="completion-element pointer"
-      :decade="item.decade"
-      @load-decade="$emit('loadDecade', item.decade)"
+      class="completion-element clickable"
+      :tag="item.tag"
+      @load-tag-view="$emit('loadTagView', item.tag)"
     />
   </el-row>
   <el-row>
@@ -73,7 +73,7 @@ import DocumentsInformation from "../Logo/DocumentsInformation.vue";
 
 export default {
   components: { ArrowUp, ArrowDown, DocumentsInformation },
-  emits: ["loadDecade", "previousSlide", "nextSlide"],
+  emits: ["loadTagView", "previousSlide", "nextSlide"],
   props: {
     index: Number,
     item: Object,
@@ -103,4 +103,5 @@ export default {
 <style scoped>
 @import "../onboarding.css";
 @import "./mobile_slide.css";
+@import "../../shared/pointer.css";
 </style>

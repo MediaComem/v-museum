@@ -1,0 +1,11 @@
+.clickable {
+    cursor: pointer;
+}
+
+.clickable:hover {
+    opacity: 0.8;
+}
+
+.navigation-pointer {
+    cursor: all-scroll;
+}
