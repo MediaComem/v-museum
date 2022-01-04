@@ -1,6 +1,6 @@
 <template>
   <div :style="position" v-if="imageData">
-    <p v-if="isTop && !hasFocus" :class="textJustification" :style="textWidth">
+    <p v-if="isTop && !focus" :class="textJustification" :style="textWidth">
       {{ tag }}
     </p>
     <img
@@ -9,10 +9,10 @@
       :height="imageHeight"
       :width="imageWidth"
     />
-    <p v-if="!isTop && !hasFocus" :class="textJustification" :style="textWidth">
+    <p v-if="!isTop && !focus" :class="textJustification" :style="textWidth">
       {{ tag }}
     </p>
-    <div v-if="hasFocus" :style="textWidth">
+    <div v-if="focus" :style="textWidth">
       <div class="text_left">
         <p>
           Illustration: &nbsp;
@@ -39,10 +39,20 @@ import {
   thumbnailWidth,
   relatedThumbnailWidth,
   getImageWidth,
-  getImageHeight
+  getImageHeight,
 } from "./image_management_service";
 
 export default {
+  watch: {
+    imageId: function(newVal) {
+      this.imageData = undefined;
+      dataFetch.getImageById(newVal).then((data) => {
+        if (data.length > 0) {
+          this.imageData = data[0];
+        }
+      });
+    },
+  },
   props: {
     imagePosition: Object,
     isTop: Boolean,
@@ -55,7 +65,6 @@ export default {
   data() {
     return {
       imageData: undefined,
-      hasFocus: this.focus,
     };
   },
   computed: {
@@ -74,16 +83,16 @@ export default {
     },
     textWidth() {
       return {
-        width: this.hasFocus
+        width: this.focus
           ? thumbnailWidth(this.imageFactor) + "px"
           : relatedThumbnailWidth(this.imageFactor) + "px",
       };
     },
     imageHeight() {
-      return getImageHeight(this.hasFocus, this.imageFactor);
+      return getImageHeight(this.focus, this.imageFactor);
     },
     imageWidth() {
-      return getImageWidth(this.hasFocus, this.imageFactor);
+      return getImageWidth(this.focus, this.imageFactor);
     },
   },
   mounted() {
@@ -97,6 +106,8 @@ export default {
 </script>
 
 <style scoped>
+@import "./canvas.css";
+
 .text_left {
   display: flex;
   justify-content: flex-start;

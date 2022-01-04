@@ -73,23 +73,18 @@ export default {
     imageFactor: Number,
   },
   name: "FocusRectangle",
-  data() {
-    return {
-      hasFocus: this.focus,
-    }
-  },
   computed: {
     topPosition() {
-      return (this.offsetY - getImageHeight(this.hasFocus, this.imageFactor)) / 2 + "px";
+      return (this.offsetY - getImageHeight(this.focus, this.imageFactor)) / 2 + "px";
     },
     leftPosition() {
-      return (this.offsetX - getImageWidth(this.hasFocus, this.imageFactor)) / 2 + "px";
+      return (this.offsetX - getImageWidth(this.focus, this.imageFactor)) / 2 + "px";
     },
     imageHeight() {
-      return getImageHeight(this.hasFocus, this.imageFactor) + 20;
+      return getImageHeight(this.focus, this.imageFactor) + 20;
     },
     imageWidth() {
-      return getImageWidth(this.hasFocus, this.imageFactor) + 20;
+      return getImageWidth(this.focus, this.imageFactor) + 20;
     },
   },
 };
