@@ -45,10 +45,6 @@ const getImageWidth = (hasFocus, imageFactor) => {
     : relatedThumbnailWidth(imageFactor);
 }
 
-const shouldInsert = (potentialImage, relatedImages) => {
-  return !relatedImages.find(block => block.centralId === potentialImage) !== undefined;
-}
-
 const isNewSelectedImage = (potentialImage, relatedImages) => {
   return relatedImages.find(block => block.centralId === potentialImage) === undefined;
 }
@@ -79,7 +75,6 @@ export {
   relatedThumbnailWidth,
   getImageHeight,
   getImageWidth,
-  shouldInsert,
   isNewSelectedImage,
   isChangeSelectedImage
 } 

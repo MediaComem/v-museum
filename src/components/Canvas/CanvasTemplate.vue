@@ -59,7 +59,6 @@ import {
   thumbnailHeight,
   relatedThumbnailWidth,
   relatedThumbnailHeight,
-  shouldInsert,
   isNewSelectedImage,
   isChangeSelectedImage,
 } from "./image_management_service";
@@ -267,7 +266,7 @@ export default {
     // This method analyzes the state of the canvas and insert the new block when and where it's necessary
     insertionManagement(imageId, currentImagePosition, imagePosition) {
       // First, check if it's necessary to do something.
-      if (shouldInsert(imageId, this.imageBlocks)) {
+      if (isNewSelectedImage(imageId, this.imageBlocks)) {
         // Second, check if it's a image of another block or the current one
         const shouldChangeSelectedImage = isChangeSelectedImage(
           imageId,
