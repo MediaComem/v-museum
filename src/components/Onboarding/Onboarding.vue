@@ -26,7 +26,8 @@
           :item="item"
           :isFullSize="isFullSize"
           :mainTitle="mainTitle"
-          @load-decade="loadDecade"
+          :allTagText="allTagText"
+          @load-tag-view="loadTagView"
           @previous-slide="previousSlide()"
           @next-slide="nextSlide()"
         />
@@ -39,11 +40,21 @@
           :item="item"
           :isFullSize="isFullSize"
           :mainTitle="mainTitle"
-          @load-decade="loadDecade"
+          :allTagText="allTagText"
+          @load-tag-view="loadTagView"
           @previous-slide="previousSlide()"
           @next-slide="nextSlide()"
         />
       </div>
+    </el-carousel-item>
+    <el-carousel-item>
+      <tags-slide
+        :isFullSize="isFullSize"
+        :isMobile="isMobile"
+        :arrowText="information.collection[information.collection.length - 1]"
+        @previous-slide="previousSlide()"
+        @load-tag-view="loadTagView"
+      />
     </el-carousel-item>
   </el-carousel>
 </template>
@@ -54,6 +65,7 @@ import { useWindowSize } from "vue-window-size";
 import IntroductionSlide from "./Slide/IntroductionSlide.vue";
 import DesktopSlide from "./Slide/DesktopSlide.vue";
 import MobileSlide from "./Slide/MobileSlide.vue";
+import TagsSlide from "./Slide/TagsSlide.vue";
 
 import text from "@/assets/onboarding/text.json";
 
@@ -63,19 +75,23 @@ export default {
     IntroductionSlide,
     DesktopSlide,
     MobileSlide,
+    TagsSlide,
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      vm.decade = from.params.decade;
+      if (from.query.tag) {
+        vm.tag = JSON.parse(from.query.tag);
+      }
     });
   },
   data() {
     return {
       mainTitle: { title: "INTRODUCTION" },
+      allTagText: { title: "ALL TAGS" },
       information: text,
       isCollapse: false,
       slide: 0,
-      decade: undefined,
+      tag: undefined,
       windowHeight: undefined,
       windowWidth: undefined,
     };
@@ -97,16 +113,21 @@ export default {
         this.$refs.slider.next();
       }, animationDuration);
     },
-    loadDecade(decade) {
+    loadTagView(tag) {
       this.$router.push({
-        path: `/selector/${decade}`,
+        path: `/full_tag`,
+        query: { tag: JSON.stringify(tag) },
       });
     },
-    findAndUpdateDecade() {
-      if (this.decade) {
-        const index = this.information.collection.findIndex((e) => {
-          return e.decade == this.decade;
+    findAndUpdateTag() {
+      if (this.tag) {
+        let index = 0;
+        index = this.information.collection.findIndex((e) => {
+          return e.tag == this.tag;
         });
+        if (index === -1) {
+          index = this.information.collection.length;
+        }
         this.$nextTick(() => {
           this.slide = index + 1;
           this.$refs.slider.setActiveItem(index + 1);
@@ -123,13 +144,13 @@ export default {
     },
   },
   activated() {
-    this.findAndUpdateDecade();
+    this.findAndUpdateTag();
   },
   mounted() {
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
-    this.findAndUpdateDecade();
+    this.findAndUpdateTag();
   },
 };
 </script>

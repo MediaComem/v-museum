@@ -44,10 +44,10 @@
     </h2>
   </el-row>
   <el-row class="completion-element-mobile mobile-margin">
-    <onboarding-completion
-      class="completion-element pointer"
-      :decade="item.decade"
-      @load-decade="$emit('loadDecade', item.decade)"
+    <documents-information
+      class="completion-element clickable"
+      :tag="item.tag"
+      @load-tag-view="$emit('loadTagView', item.tag)"
     />
   </el-row>
   <el-row>
@@ -58,10 +58,9 @@
   </el-row>
   <el-row class="arrow-down-mobile">
     <arrow-down
-      v-if="index !== information.collection.length - 1"
       :isMobile="true"
       :isFull="false"
-      :text="information.collection[index + 1]"
+      :text="index === information.collection.length - 1 ? allTagText : information.collection[index + 1]"
       @next-slide="$emit('nextSlide')"
     />
   </el-row>
@@ -70,16 +69,17 @@
 <script>
 import ArrowUp from "../Logo/ArrowUp.vue";
 import ArrowDown from "../Logo/ArrowDown.vue";
-import OnboardingCompletion from "../Logo/OnboadingCompletion.vue";
+import DocumentsInformation from "../Logo/DocumentsInformation.vue";
 
 export default {
-  components: { ArrowUp, ArrowDown, OnboardingCompletion },
-  emits: ["loadDecade", "previousSlide", "nextSlide"],
+  components: { ArrowUp, ArrowDown, DocumentsInformation },
+  emits: ["loadTagView", "previousSlide", "nextSlide"],
   props: {
     index: Number,
     item: Object,
     isFullSize: Boolean,
     mainTitle: Object,
+    allTagText: Object,
     information: Object,
   },
   data() {
@@ -103,4 +103,5 @@ export default {
 <style scoped>
 @import "../onboarding.css";
 @import "./mobile_slide.css";
+@import "../../shared/pointer.css";
 </style>

@@ -30,23 +30,22 @@
         :class="isFullSize ? 'collection-text' : 'collection-text-intermediary'"
       >
         {{ item.text.slice(0, 180) }}
-        <a class="more-link pointer" @click="isCollapse = !isCollapse">MORE</a>
+        <a class="more-link clickable" @click="isCollapse = !isCollapse">MORE</a>
       </p>
     </el-row>
     <el-row style="height: 69px; width: 37vw">
-      <onboarding-completion
-        class="completion-element pointer"
-        :decade="item.decade"
-        @load-decade="$emit('loadDecade', item.decade)"
+      <documents-information
+        class="completion-element clickable"
+        :tag="item.tag"
+        @load-tag-view="$emit('loadTagView', item.tag)"
       />
     </el-row>
   </div>
   <arrow-down
-    v-if="index !== information.collection.length - 1"
     class="arrow-down"
     :isMobile="false"
     :isFull="isFullSize"
-    :text="information.collection[index + 1]"
+    :text="index === information.collection.length - 1 ? allTagText : information.collection[index + 1]"
     @next-slide="$emit('nextSlide')"
   />
 </template>
@@ -55,15 +54,16 @@
 import Logo from "../Logo/Logo.vue";
 import ArrowUp from "../Logo/ArrowUp.vue";
 import ArrowDown from "../Logo/ArrowDown.vue";
-import OnboardingCompletion from "../Logo/OnboadingCompletion.vue";
+import DocumentsInformation from "../Logo/DocumentsInformation.vue";
 export default {
-  components: { Logo, ArrowUp, ArrowDown, OnboardingCompletion },
-  emits: ['loadDecade', 'previousSlide', 'nextSlide'],
+  components: { Logo, ArrowUp, ArrowDown, DocumentsInformation },
+  emits: ['loadTagView', 'previousSlide', 'nextSlide'],
   props: {
     index: Number,
     item: Object,
     isFullSize: Boolean,
     mainTitle: Object,
+    allTagText: Object,
     information: Object,
   },
   data() {
@@ -87,4 +87,5 @@ export default {
 <style scoped>
 @import "../onboarding.css";
 @import "./desktop_slide.css";
+@import "../../shared/pointer.css";
 </style>
