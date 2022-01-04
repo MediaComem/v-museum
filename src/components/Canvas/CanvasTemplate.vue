@@ -21,10 +21,7 @@
     <!-- This is the initial central image that changes over the time -->
     <image-element
       :ref="'image-element'"
-      :imagePosition="{
-        top: imageBlocks[0].centralImageTopPosition,
-        left: imageBlocks[0].centralImageLeftPosition,
-      }"
+      :imagePosition="imageBlocks[0].centralImagePosition"
       :isTop="true"
       :isLeft="false"
       :focus="initialImageFocus.hasFocus"
@@ -40,7 +37,7 @@
           :imageBlock="imageBlock"
           :imageFactor="imageFactor"
           :currentGlobalPosition="index"
-          :isFull="imageBlocks.length === maxArraySize"
+          :allBlockFill="imageBlocks.length === maxArraySize"
         />
       </div>
     </div>
@@ -396,8 +393,7 @@ export default {
         new ImageBlock(
           imageId,
           0,
-          centralTopImagePosition,
-          centralLeftImagePosition,
+          { top: centralTopImagePosition, left: centralLeftImagePosition },
           generatePosition(currentPosition),
           relatedImages
         )

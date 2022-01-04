@@ -10,7 +10,13 @@
       :tag="relatedImage.tag"
       :imageId="relatedImage.imageId"
       :imageFactor="imageFactor"
-      :class="{'last_block': isFull && currentGlobalPosition === 0 && relatedImage.imageId !== imageBlock.oldCentralImage && !relatedImage.hasFocus}"
+      :class="{
+        last_block:
+          allBlockFill &&
+          currentGlobalPosition === 0 &&
+          relatedImage.imageId !== imageBlock.oldCentralImage &&
+          !relatedImage.hasFocus,
+      }"
     />
   </div>
 </template>
@@ -28,7 +34,7 @@ export default {
     imageBlock: ImageBlock,
     imageFactor: Number,
     currentGlobalPosition: Number,
-    isFull: Boolean,
+    allBlockFill: Boolean,
   },
   data() {
     return {
@@ -43,42 +49,52 @@ export default {
         case 1:
           return {
             top:
-              this.imageBlock.centralImageTopPosition - 1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
+              this.imageBlock.centralImagePosition.top -
+              1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
             left:
-              this.imageBlock.centralImageLeftPosition - 1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+              this.imageBlock.centralImagePosition.left -
+              1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
           };
         case 2:
           return {
-            top: this.imageBlock.centralImageTopPosition,
+            top: this.imageBlock.centralImagePosition.top,
             left:
-              this.imageBlock.centralImageLeftPosition - 1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+              this.imageBlock.centralImagePosition.left -
+              1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
           };
         case 3:
           return {
             top:
-              this.imageBlock.centralImageTopPosition + 1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
+              this.imageBlock.centralImagePosition.top +
+              1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
             left:
-              this.imageBlock.centralImageLeftPosition - 1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+              this.imageBlock.centralImagePosition.left -
+              1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
           };
         case 4:
           return {
             top:
-              this.imageBlock.centralImageTopPosition - 1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
+              this.imageBlock.centralImagePosition.top -
+              1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
             left:
-              this.imageBlock.centralImageLeftPosition + 1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+              this.imageBlock.centralImagePosition.left +
+              1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
           };
         case 5:
           return {
-            top: this.imageBlock.centralImageTopPosition,
+            top: this.imageBlock.centralImagePosition.top,
             left:
-              this.imageBlock.centralImageLeftPosition + 1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+              this.imageBlock.centralImagePosition.left +
+              1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
           };
         case 6:
           return {
             top:
-              this.imageBlock.centralImageTopPosition + 1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
+              this.imageBlock.centralImagePosition.top +
+              1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
             left:
-              this.imageBlock.centralImageLeftPosition + 1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+              this.imageBlock.centralImagePosition.left +
+              1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
           };
       }
     },
