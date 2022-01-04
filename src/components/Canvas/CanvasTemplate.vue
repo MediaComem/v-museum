@@ -352,8 +352,8 @@ export default {
       if (deltaY < 0 && offsetY < this.windowHeight) {
         this.pageHeight = this.pageHeight - deltaY;
         this.imageBlocks.forEach((imageBlock) => {
-          imageBlock.centralImageTopPosition =
-            imageBlock.centralImageTopPosition - deltaY;
+          imageBlock.centralImagePosition.top =
+            imageBlock.centralImagePosition.top - deltaY;
         });
       }
       if (deltaY > 0 && offsetY > this.pageHeight - this.windowHeight) {
@@ -362,8 +362,8 @@ export default {
       if (deltaX < 0 && offsetX > this.windowWidth) {
         this.pageWidth = this.pageWidth - deltaX;
         this.imageBlocks.forEach((imageBlock) => {
-          imageBlock.centralImageLeftPosition =
-            imageBlock.centralImageLeftPosition - deltaX;
+          imageBlock.centralImagePosition.left =
+            imageBlock.centralImagePosition.left - deltaX;
         });
       }
       if (deltaX > 0 && offsetX > this.pageWidth - this.windowWidth) {
