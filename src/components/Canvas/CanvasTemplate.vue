@@ -82,7 +82,7 @@ export default {
       // The two following parameters will remove when the navigation will implement
       initialImageId: 3,
       initialCentralTag: "Fly",
-      initialImageFocus: { hasFocus: false },
+      initialImageFocus: { hasFocus: false, position: 0 },
       imageBlocks: [],
       windowHeight: 0,
       windowWidth: 0,
@@ -154,7 +154,7 @@ export default {
     },
     checkCollision() {
       // Reset the focus to have version of this analyzis.
-      this.imageHasFocus = false
+      this.imageHasFocus = false;
       // In case of a collision was detected and we continue the movement, reset the timeout that
       // enable new related images and center the screen.
       clearTimeout(this.focusMoveTimeout);
@@ -166,10 +166,11 @@ export default {
         -this.$refs["page"].getBoundingClientRect().y + this.windowHeight / 2;
 
       // Initial central image analyzis
+      // param 1: div to check position collistion
+      // param 2: image vue element including (focus state, position)
       this.imageCollisionAnalyzis(
         this.$refs["image-element"],
-        this.initialImageFocus,
-        0
+        this.initialImageFocus
       );
 
       // Analysis of each related images
@@ -180,6 +181,8 @@ export default {
         if (currentImageBlock) {
           const nbElementsInBlock = Object.keys(currentImageBlock.$refs).length;
           for (let j = 0; j < nbElementsInBlock; j++) {
+            // param 1: div to check position collistion
+            // param 2: image vue element including (focus state, position)
             this.imageCollisionAnalyzis(
               currentImageBlock.$refs["image-element-" + j],
               this.imageBlocks[i].relatedImages[j]
@@ -294,10 +297,7 @@ export default {
             oldTag = oldImageBlock.relatedImages[index].tag;
           }
           // Index + 1 because we know which one is the current but we must remove the next one.
-          this.imageBlocks.splice(
-            shouldChangeSelectedImage.index + 1,
-            1
-          );
+          this.imageBlocks.splice(shouldChangeSelectedImage.index + 1, 1);
           this.insertBlock(
             imageId,
             currentImageTopPosition,
@@ -307,9 +307,7 @@ export default {
           );
           // Keep track of the central image id to use it when the block disappear
           // Store in the block the tag of the old central image
-          oldImageBlock = this.imageBlocks[
-            shouldChangeSelectedImage.index
-          ];
+          oldImageBlock = this.imageBlocks[shouldChangeSelectedImage.index];
           if (oldImageBlock) {
             if (oldTag.length !== 0) {
               oldImageBlock.oldCentralImageTag = oldTag;
@@ -420,8 +418,7 @@ export default {
     getOpacity() {
       return {
         last_block:
-          this.imageBlocks.length > 1 &&
-          !this.initialImageFocus.hasFocus,
+          this.imageBlocks.length > 1 && !this.initialImageFocus.hasFocus,
       };
     },
   },
