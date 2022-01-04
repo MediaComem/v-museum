@@ -271,8 +271,8 @@ export default {
       this.$router.push({
         path: `/canvas`,
         query: {
-          imageId: JSON.stringify(historyElement.imageId),
-          tag: JSON.stringify(historyElement.tag),
+          imageId: encodeURIComponent(historyElement.imageId),
+          tag: encodeURIComponent(historyElement.tag),
         },
       });
       this.$emit("closeFullHistory");
