@@ -6,10 +6,9 @@ export default class ImageBlock {
         this.oldCentralImage = oldCentralImage;
         this.centralImageTopPosition = centralImageTopPosition;
         this.centralImageLeftPosition = centralImageLeftPosition;
-        this.imagePositions = imagePositions;
         this.relatedImages = [];
-        relatedImages.forEach(relatedImage => {
-            this.relatedImages.push(new RelatedImage(relatedImage));
+        relatedImages.forEach((relatedImage, index) => {
+            this.relatedImages.push(new RelatedImage(relatedImage, imagePositions[index]));
         })
     }
   }

@@ -182,8 +182,7 @@ export default {
           for (let j = 0; j < nbElementsInBlock; j++) {
             this.imageCollisionAnalyzis(
               currentImageBlock.$refs["image-element-" + j],
-              this.imageBlocks[i].relatedImages[j],
-              this.imageBlocks[i].imagePositions[j]
+              this.imageBlocks[i].relatedImages[j]
             );
           }
         }
@@ -192,10 +191,7 @@ export default {
       // Manage size of the focus rectangle
       this.rectangleFocus = this.imageHasFocus;
     },
-    imageCollisionAnalyzis(imageToAnalyze, focusElement, imagePosition) {
-      console.log(imageToAnalyze);
-      console.log(focusElement);
-      console.log(imagePosition)
+    imageCollisionAnalyzis(imageToAnalyze, focusElement) {
       if (imageToAnalyze) {
         const imageToAnalyzeLeftPositionWithPixel =
           imageToAnalyze.position.left;
@@ -216,8 +212,7 @@ export default {
           imageId,
           imageToAnalyzeImageLeftPosition,
           imageToAnalyzeImageTopPosition,
-          focusElement,
-          imagePosition
+          focusElement
         );
       }
     },
@@ -225,8 +220,7 @@ export default {
       imageId,
       currentImageLeftPosition,
       currentImageTopPosition,
-      focusElement,
-      imagePosition
+      focusElement
     ) {
       const factor = getFactor(this.windowHeight, this.windowWidth);
       // Compare the position of an image with the current center window position
@@ -267,7 +261,7 @@ export default {
             imageId,
             currentImageTopPosition,
             currentImageLeftPosition,
-            imagePosition
+            focusElement.position
           );
         }, 200);
       } else {

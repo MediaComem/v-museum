@@ -3,7 +3,7 @@
     <image-element
       v-if="relatedImage"
       :ref="'image-element-' + index"
-      :imagePosition="calculatePositions(index)"
+      :imagePosition="calculatePositions(relatedImage)"
       :isTop="true"
       :isLeft="false"
       :focus="relatedImage.hasFocus"
@@ -38,9 +38,8 @@ export default {
     };
   },
   methods: {
-    calculatePositions(index) {
-      const positionNumber = this.imageBlock.imagePositions[index];
-      switch (positionNumber) {
+    calculatePositions(relatedImage) {
+      switch (relatedImage.position) {
         case 1:
           return {
             top:
