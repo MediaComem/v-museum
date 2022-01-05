@@ -15,7 +15,7 @@
       <div @click="loadTagView" class="return-element">
         <img
           src="@/assets/shared/vector.png"
-          style="height: 24px, width: 24px"
+          class="image-size"
         />
         <h2>{{ initialCentralTag }}</h2>
       </div>
@@ -462,18 +462,4 @@ export default {
 
 <style scoped>
 @import "./canvas.css";
-
-.return {
-  display: flex;
-  height: 29px;
-  width: 50vw;
-  position: fixed;
-  top: 3vh;
-  left: 3vw;
-}
-
-.return-element {
-  display: flex;
-  align-items: center;
-}
 </style>
