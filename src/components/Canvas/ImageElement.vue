@@ -8,6 +8,7 @@
       :src="imageData.imagePaths.large"
       :height="imageHeight"
       :width="imageWidth"
+      @click="loadFullImageView()"
     />
     <p v-if="!isTop && !focus" :class="textJustification" :style="textWidth">
       {{ tag }}
@@ -66,6 +67,14 @@ export default {
     return {
       imageData: undefined,
     };
+  },
+  methods: {
+    loadFullImageView() {
+      this.$router.push({
+        path: `/image/${this.imageData.id}`,
+        query: {image: JSON.stringify(this.imageData)}
+      });
+    },
   },
   computed: {
     textJustification() {
