@@ -14,7 +14,6 @@ export default {
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.tagValue = decodeURIComponent(to.query.tag);
-      console.log(vm.tagValue);
     });
   },
   data() {
