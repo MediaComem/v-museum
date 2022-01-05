@@ -13,10 +13,7 @@
   >
     <div class="return">
       <div @click="loadTagView" class="return-element">
-        <img
-          src="@/assets/shared/vector.png"
-          class="image-size"
-        />
+        <img src="@/assets/shared/vector.png" class="image-size" />
         <h2>{{ initialCentralTag }}</h2>
       </div>
     </div>
@@ -81,9 +78,13 @@ export default {
   components: { ImageElement, ImagesBlock, FocusRectangle },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      vm.initialImageId = +decodeURIComponent(to.query.imageId);
-      vm.initialCentralTag = decodeURIComponent(to.query.tag);
-      vm.loadInitialImage();
+      if (to.query.imageId) {
+        vm.initialImageId = +decodeURIComponent(to.query.imageId);
+        if (to.query.tag) {
+          vm.initialCentralTag = decodeURIComponent(to.query.tag);
+        }
+        vm.loadInitialImage();
+      }
     });
   },
   data() {
