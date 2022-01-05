@@ -123,7 +123,7 @@ export default {
       if (this.tag) {
         let index = 0;
         index = this.information.collection.findIndex((e) => {
-          return e.tag == this.tag;
+          return e.tag.tag == this.tag;
         });
         if (index === -1) {
           index = this.information.collection.length;
