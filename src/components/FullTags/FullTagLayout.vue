@@ -1,7 +1,7 @@
 <template>
   <div class="page-size">
-    <full-tag-header :tag="tagValue.tag" />
-    <full-tag-page :tag="tagValue.tag" />
+    <full-tag-header :tag="tagValue" />
+    <full-tag-page :tag="tagValue" />
   </div>
 </template>
 
@@ -13,7 +13,8 @@ export default {
   components: { FullTagHeader, FullTagPage },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      vm.tagValue = JSON.parse(to.query.tag);
+      vm.tagValue = decodeURIComponent(to.query.tag);
+      console.log(vm.tagValue);
     });
   },
   data() {
