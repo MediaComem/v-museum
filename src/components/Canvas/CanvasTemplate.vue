@@ -11,6 +11,15 @@
     @touchmove="touchMove"
     :ref="'page'"
   >
+    <div class="return">
+      <div @click="loadTagView" class="return-element">
+        <img
+          src="@/assets/shared/vector.png"
+          style="height: 24px, width: 24px"
+        />
+        <h2>{{ initialCentralTag }}</h2>
+      </div>
+    </div>
     <focus-rectangle
       :ref="'rectangle'"
       :offsetX="windowWidth"
@@ -20,6 +29,7 @@
     />
     <!-- This is the initial central image that changes over the time -->
     <image-element
+      v-if="imageBlocks[0]"
       :ref="'image-element'"
       :imagePosition="imageBlocks[0].centralImagePosition"
       :isTop="true"
@@ -69,6 +79,13 @@ import ImageBlock from "../../models/ImageBlock";
 
 export default {
   components: { ImageElement, ImagesBlock, FocusRectangle },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.initialImageId = +decodeURIComponent(to.query.imageId);
+      vm.initialCentralTag = decodeURIComponent(to.query.tag);
+      vm.loadInitialImage();
+    });
+  },
   data() {
     return {
       // Data in the JSON file to find images
@@ -98,6 +115,12 @@ export default {
     };
   },
   methods: {
+    loadTagView() {
+      this.$router.push({
+        path: `/full_tag`,
+        query: { tag: encodeURIComponent(this.initialCentralTag) },
+      });
+    },
     moveClickEnable() {
       this.isDrag = true;
     },
@@ -370,6 +393,28 @@ export default {
         this.pageWidth = this.pageWidth + deltaX;
       }
     },
+    loadInitialImage() {
+      this.imageBlocks = [];
+      const factor = getFactor(this.windowHeight, this.windowWidth);
+      // Find the middle of the page to insert the first image
+      const firstBlockCentralImageTopPosition =
+        this.pageHeight / 2 - thumbnailHeight(factor) / 2;
+      const firstBlockCentralImageLeftPosition =
+        this.pageWidth / 2 - thumbnailWidth(factor) / 2;
+      this.insertBlock(
+        this.initialImageId,
+        {
+          top: firstBlockCentralImageTopPosition,
+          left: firstBlockCentralImageLeftPosition,
+        },
+        0,
+        this.relatedImages[this.initialImageId]
+      );
+      this.imageBlocks[0].oldCentralImageTag = this.initialCentralTag;
+      this.imageBlocks[0].oldCentralImage = this.initialImageId;
+      this.currentXPosition = firstBlockCentralImageLeftPosition;
+      this.currentYPosition = firstBlockCentralImageTopPosition;
+    },
     insertBlock(imageId, currentImagePosition, currentPosition, relatedImages) {
       this.imageBlocks.push(
         new ImageBlock(
@@ -408,29 +453,6 @@ export default {
     // Default page size set to two times the current windows size
     this.pageHeight = 2 * this.windowHeight;
     this.pageWidth = 2 * this.windowWidth;
-
-    const factor = getFactor(this.windowHeight, this.windowWidth);
-
-    // Find the middle of the page to insert the first image
-    const firstBlockCentralImageTopPosition =
-      this.pageHeight / 2 - thumbnailHeight(factor) / 2;
-    const firstBlockCentralImageLeftPosition =
-      this.pageWidth / 2 - thumbnailWidth(factor) / 2;
-
-    this.insertBlock(
-      this.initialImageId,
-      {
-        top: firstBlockCentralImageTopPosition,
-        left: firstBlockCentralImageLeftPosition,
-      },
-      0,
-      this.relatedImages[this.initialImageId]
-    );
-    this.imageBlocks[0].oldCentralImageTag = this.initialCentralTag;
-    this.imageBlocks[0].oldCentralImage = this.initialImageId;
-
-    this.currentXPosition = firstBlockCentralImageLeftPosition;
-    this.currentYPosition = firstBlockCentralImageTopPosition;
   },
   activated() {
     window.scrollTo(this.currentXPosition, this.currentYPosition);
@@ -440,4 +462,18 @@ export default {
 
 <style scoped>
 @import "./canvas.css";
+
+.return {
+  display: flex;
+  height: 29px;
+  width: 50vw;
+  position: fixed;
+  top: 3vh;
+  left: 3vw;
+}
+
+.return-element {
+  display: flex;
+  align-items: center;
+}
 </style>

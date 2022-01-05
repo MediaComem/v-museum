@@ -3,7 +3,7 @@
     <ul v-infinite-scroll="loadMoreImages" class="canvas-display">
       <div v-for="(image, index) in imageUrls" :key="index">
         <div class="image-size">
-          <img :src="image.url" />
+          <img :src="image.url" @click="loadImage(image.id)"/>
         </div>
       </div>
     </ul>
@@ -23,6 +23,12 @@ export default {
     },
   },
   methods: {
+    loadImage(imageId) {
+      this.$router.push({
+        path: `/canvas`,
+        query: {imageId: encodeURIComponent(imageId), tag: encodeURIComponent(this.tag)}
+      });
+    },
     loadInitialImages() {
       // Get the 25 first images
       dataFetch.getImagesByTag(this.tag, this.currentPage).then((images) => {
