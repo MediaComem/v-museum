@@ -125,7 +125,7 @@ ul {
   justify-content: center;
 }
 
-@media only screen and (min-width: 300px) and (max-width: 699px) {
+@media only screen and (min-width: 300px) and (max-width: 799px) {
   .image-canvas {
     width: 200px;
     height: 200px;
