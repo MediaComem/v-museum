@@ -22,7 +22,10 @@
   >
     <div class="return">
       <div @click="loadTagView" class="return-element">
-        <img src="@/assets/shared/vector.png" class="image-size" />
+        <img
+          src="@/assets/shared/vector.png"
+          class="image-size"
+        />
         <h2>{{ initialCentralTag }}</h2>
       </div>
     </div>
@@ -94,6 +97,18 @@ export default {
       }
       this.loadInitialImage();
     }
+  },
+
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (to.query.imageId) {
+        vm.initialImageId = +decodeURIComponent(to.query.imageId);
+        if (to.query.tag) {
+          vm.initialCentralTag = decodeURIComponent(to.query.tag);
+        }
+        vm.loadInitialImage();
+      }
+    });
   },
   data() {
     return {
