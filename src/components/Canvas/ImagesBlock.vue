@@ -4,12 +4,11 @@
       v-if="relatedImage"
       :ref="'image-element-' + index"
       :imagePosition="calculatePositions(relatedImage)"
-      :isTop="true"
-      :isLeft="false"
       :focus="relatedImage.hasFocus"
       :tag="relatedImage.tag"
       :imageId="relatedImage.imageId"
       :imageFactor="imageFactor"
+      :blockPosition="relatedImage.position"
       :class="{
         last_block:
           allBlockFill &&

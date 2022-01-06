@@ -41,12 +41,11 @@
       v-if="imageBlocks[0]"
       :ref="'image-element'"
       :imagePosition="imageBlocks[0].centralImagePosition"
-      :isTop="true"
-      :isLeft="false"
       :focus="initialImageFocus.hasFocus"
       :imageId="imageBlocks[0].centralId"
       :imageFactor="imageFactor"
       :tag="imageBlocks[0].oldCentralImageTag"
+      :blockPosition="imageBlocks[0].oldBlockPosition"
       :class="getOpacity"
     />
     <div v-for="(imageBlock, index) in imageBlocks" :key="index">
@@ -438,6 +437,7 @@ export default {
       );
       this.imageBlocks[0].oldCentralImageTag = this.initialCentralTag;
       this.imageBlocks[0].oldCentralImage = this.initialImageId;
+      this.imageBlocks[0].oldBlockPosition = 3;
 
       this.currentXPosition = firstBlockCentralImageLeftPosition;
       this.currentYPosition = firstBlockCentralImageTopPosition;

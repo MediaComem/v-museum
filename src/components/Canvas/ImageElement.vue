@@ -56,12 +56,11 @@ export default {
   },
   props: {
     imagePosition: Object,
-    isTop: Boolean,
-    isLeft: Boolean,
     focus: Boolean,
     tag: String,
     imageId: Number,
     imageFactor: Number,
+    blockPosition: Number,
   },
   data() {
     return {
@@ -77,10 +76,13 @@ export default {
     },
   },
   computed: {
+    isTop() {
+      return this.blockPosition === 3 || this.blockPosition === 6;
+    },
     textJustification() {
       return {
-        text_left: this.isLeft,
-        text_right: !this.isLeft,
+        text_left: this.blockPosition === 4 || this.blockPosition === 5 || this.blockPosition === 6,
+        text_right: this.blockPosition === 1 || this.blockPosition === 2 || this.blockPosition === 3,
       };
     },
     position() {
