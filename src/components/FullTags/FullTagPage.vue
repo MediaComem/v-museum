@@ -1,10 +1,16 @@
 <template>
   <div class="canvas-size overflow">
     <div v-if="imageUrls.length === 0" class="loader central-loader-position" />
-    <ul v-infinite-scroll="loadMoreImages" infinite-scroll-distance="1000" class="canvas-display">
-      <div v-for="(image, index) in imageUrls" :key="index">
-        <div class="image-size">
-          <img :src="image.url" @click="loadImage(image.id)" />
+    <ul v-infinite-scroll="loadMoreImages" infinite-scroll-distance="1000">
+      <div class="canvas-display">
+        <div v-for="(image, index) in imageUrls" :key="index">
+          <div class="image-canvas">
+            <img
+              :src="image.url"
+              @click="loadImage(image.id)"
+              class="image-size"
+            />
+          </div>
         </div>
       </div>
     </ul>
@@ -83,6 +89,10 @@ p {
   color: white;
 }
 
+ul {
+  padding: 0;
+}
+
 .canvas-size {
   height: 81vh;
   background: black;
@@ -97,17 +107,41 @@ p {
 }
 
 .canvas-display {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
-  width: 100vw;
+  justify-content: center;
 }
 
-.image-size {
-  width: 25vw;
-  height: 30vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+@media only screen and (min-width: 300px) and (max-width: 699px) {
+  .image-canvas {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .image-size {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+  }
+}
+
+@media only screen and (min-width: 800px) {
+  .image-canvas {
+    width: 400px;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .image-size {
+    width: 300px;
+    height: 300px;
+    object-fit: contain;
+  }
 }
 
 .overflow {
