@@ -36,7 +36,7 @@
     <el-row style="height: 69px; width: 37vw">
       <documents-information
         class="completion-element clickable"
-        :tag="item.tag"
+        :tagInfos="item.tag"
         @load-tag-view="$emit('loadTagView', item.tag)"
       />
     </el-row>
