@@ -1,6 +1,10 @@
 <template>
   <div class="canvas-size overflow">
     <div v-if="imageUrls.length === 0" class="loader central-loader-position" />
+    <div
+      v-if="imageUrls.length === 0"
+      class="rotated-half-circle central-loader-position"
+    />
     <ul v-infinite-scroll="loadMoreImages" infinite-scroll-distance="1000">
       <div class="canvas-display">
         <div v-for="(image, index) in imageUrls" :key="index">
@@ -17,7 +21,14 @@
   </div>
   <div class="footer-canvas">
     <div v-if="imageUrls.length > 0">
-      <div v-if="isMoreImagesLoading" class="loader footer-loader-position" />
+      <div class="footer-loader-position">
+        <div v-if="isMoreImagesLoading" class="loader" style="position: absolute" />
+        <div
+          v-if="isMoreImagesLoading"
+          class="rotated-half-circle"
+        />
+      </div>
+
       <p>{{ imageUrls.length }} / {{ totalImages }}</p>
     </div>
   </div>
@@ -152,12 +163,10 @@ ul {
 }
 
 .loader {
-  border: 1px solid #f3f3f3; /* Light grey */
-  border-top: 1px solid #3498db; /* Blue */
+  border: 1px solid white;
   border-radius: 50%;
   width: 16px;
   height: 16px;
-  animation: spin 2s linear infinite;
 }
 
 .central-loader-position {
@@ -169,6 +178,17 @@ ul {
 .footer-loader-position {
   position: relative;
   left: 1vw;
+}
+
+.rotated-half-circle {
+  width: 14px;
+  height: 14px;
+  border: 2px solid white;
+  border-radius: 50%;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: spin 2s linear infinite;
 }
 
 @keyframes spin {
