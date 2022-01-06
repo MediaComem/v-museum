@@ -8,7 +8,7 @@
             <img
               :src="image.url"
               @click="loadImage(image.id)"
-              class="image-size"
+              class="image-size clickable"
             />
           </div>
         </div>
@@ -83,6 +83,8 @@ export default {
 </script>
 
 <style scoped>
+@import "../shared/pointer.css";
+
 p {
   margin: 0;
   margin-top: 1vh;

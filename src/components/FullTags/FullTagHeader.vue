@@ -1,7 +1,7 @@
 <template>
   <el-row class="display-element">
     <el-col :span="1" class="align-element justify-browser">
-      <img class="clickable" src="@/assets/shared/vector.png" @click="loadOnboarding()" />
+      <img class="return-size clickable" src="@/assets/shared/Vector.svg" @click="loadOnboarding()" />
     </el-col>
     <el-col :span="3" class="align-element justify-text">
       <h2 class="clickable" @click="loadOnboarding()">Home</h2>
@@ -58,5 +58,10 @@ h2 {
 
 .justify-text {
   justify-content: flex-start;
+}
+
+.return-size {
+  width: 24px;
+  height: 21px;
 }
 </style>
