@@ -10,7 +10,13 @@
     />
   </div>
   <div class="canvas-display overflow">
-    <div v-for="(tag, index) in tags.tags.sort((a, b) => a.tag.localeCompare(b.tag))" :key="index" class="border">
+    <div
+      v-for="(tag, index) in tags.tags.sort((a, b) =>
+        a.tag.localeCompare(b.tag)
+      )"
+      :key="index"
+      class="border"
+    >
       <div class="display-element clickable" @click="$emit('loadTagView', tag)">
         <p :class="fontSize">{{ tag.tag }} • {{ tag.totalImage }}</p>
       </div>
@@ -52,11 +58,12 @@ export default {
 
 .title {
   height: 10vh;
-  width: 100vw;
+  width: 96vw;
   padding-left: 2vw;
   padding-right: 2vw;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
 }
 
 .justify-arrow {
@@ -70,19 +77,32 @@ export default {
 }
 
 .canvas-display {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
   width: 96vw;
   height: 90vh;
   padding-left: 2vw;
   padding-right: 2vw;
+  justify-content: center;
+  align-items: center;
 }
 
-.display-element {
-  width: 23vw;
-  display: flex;
-  justify-content: left;
-  align-items: center;
+@media only screen and (min-width: 300px) and (max-width: 999px) {
+  .display-element {
+    width: 32vw;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+  }
+}
+
+@media only screen and (min-width: 800px) {
+  .display-element {
+    width: 23vw;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+  }
 }
 
 .desktop-font {
