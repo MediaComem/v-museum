@@ -87,7 +87,16 @@ export default {
   align-items: center;
 }
 
-@media only screen and (min-width: 300px) and (max-width: 999px) {
+@media only screen and (min-width: 300px) and (max-width: 436px) {
+  .display-element {
+    width: 48vw;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+  }
+}
+
+@media only screen and (min-width: 437px) and (max-width: 999px) {
   .display-element {
     width: 32vw;
     display: flex;
