@@ -5,7 +5,7 @@
     viewBox="0 0 240 69"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    @click="$emit('loadTagView', tag)"
+    @click="$emit('loadTagView', tagInfos)"
   >
     <rect width="240" height="69" rx="34.5" fill="black" />
     <text
@@ -14,7 +14,7 @@
       y="30"
       font-size="14"
     >
-      {{ tag.tag }}
+      {{ tagInfos.tag }}
     </text>
     <text
       class="text-completion"
@@ -22,7 +22,7 @@
       y="50"
       font-size="14"
     >
-      {{ tag.totalImage }} Documents
+      {{ tagInfos.totalImage }} Documents
     </text>
     <path d="M208.75 43.3205L223.75 34.6603L208.75 26" stroke="white" />
   </svg>
@@ -32,7 +32,7 @@
 export default {
   emits: ["loadTagView"],
   props: {
-    tag: Object,
+    tagInfos: Object,
   },
 };
 </script>
