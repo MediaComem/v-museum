@@ -1,32 +1,33 @@
 <template>
   <div :style="position" v-if="imageData">
-    <p v-if="isTop && !focus" :class="textJustification" :style="textWidth">
+    <p v-if="isTop && !focus" class="related-text" :class="textJustification" :style="textWidth">
       {{ tag }}
     </p>
     <img
       :ref="'image'"
+      class="relatedImageBase"
       :src="imageData.imagePaths.large"
       :height="imageHeight"
       :width="imageWidth"
       @click="loadFullImageView()"
     />
-    <p v-if="!isTop && !focus" :class="textJustification" :style="textWidth">
+    <p v-if="!isTop && !focus" class="related-text" :class="textJustification" :style="textWidth">
       {{ tag }}
     </p>
     <div v-if="focus" :style="textWidth">
       <div class="text_left">
-        <p>
+        <p class="font-size-information">
           Illustration: &nbsp;
         </p>
-        <p>
+        <p class="font-size-information">
           {{ imageData.author }}
         </p>
       </div>
       <div class="text_left">
-        <p>
+        <p class="font-size-information">
           Story: &nbsp;
         </p>
-        <p>
+        <p class="font-size-information">
           {{ imageData.title }}
         </p>
       </div>
@@ -41,7 +42,7 @@ import {
   relatedThumbnailWidth,
   getImageWidth,
   getImageHeight,
-} from "./image_management_service";
+} from "./service/image_management_service";
 
 export default {
   watch: {
@@ -117,15 +118,7 @@ export default {
 </script>
 
 <style scoped>
-@import "./canvas.css";
-
-.text_left {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.text_right {
-  display: flex;
-  justify-content: flex-end;
-}
+@import "./css/canvas.css";
+@import "./css/text.css";
+@import "./css/relatedImageAnimation.css";
 </style>

@@ -25,7 +25,7 @@ import ImageElement from "./ImageElement.vue";
 
 import ImageBlock from "../../models/ImageBlock";
 
-import { thumbnailHeight, thumbnailWidth } from "./image_management_service";
+import { thumbnailHeight, thumbnailWidth } from "./service/image_management_service";
 
 export default {
   components: { ImageElement },
@@ -102,5 +102,5 @@ export default {
 </script>
 
 <style scoped>
-@import "./canvas.css";
+@import "./css/canvas.css";
 </style>

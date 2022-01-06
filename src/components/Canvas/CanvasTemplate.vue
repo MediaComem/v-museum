@@ -80,9 +80,9 @@ import {
   relatedThumbnailHeight,
   isNewSelectedImage,
   isChangeSelectedImage,
-} from "./image_management_service";
+} from "./service/image_management_service";
 
-import { generatePosition } from "./positions_management_service";
+import { generatePosition } from "./service/positions_management_service";
 
 import ImageBlock from "../../models/ImageBlock";
 
@@ -499,5 +499,5 @@ export default {
 </script>
 
 <style scoped>
-@import "./canvas.css";
+@import "./css/canvas.css";
 </style>
