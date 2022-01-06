@@ -1,7 +1,7 @@
 <template>
   <div class="canvas-size overflow">
     <div v-if="imageUrls.length === 0" class="loader central-loader-position" />
-    <ul v-infinite-scroll="loadMoreImages" class="canvas-display">
+    <ul v-infinite-scroll="loadMoreImages" infinite-scroll-distance="1000" class="canvas-display">
       <div v-for="(image, index) in imageUrls" :key="index">
         <div class="image-size">
           <img :src="image.url" @click="loadImage(image.id)" />
@@ -51,9 +51,9 @@ export default {
       });
     },
     loadMoreImages() {
-      this.isMoreImagesLoading = true;
       this.currentPage = this.currentPage + 1;
       if (this.currentPage <= this.nbPage) {
+        this.isMoreImagesLoading = true;
         dataFetch.getImagesByTag(this.tag, this.currentPage).then((images) => {
           this.imageUrls = this.imageUrls.concat(images);
           this.isMoreImagesLoading = false;
