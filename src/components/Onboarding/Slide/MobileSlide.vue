@@ -46,7 +46,7 @@
   <el-row class="completion-element-mobile mobile-margin">
     <documents-information
       class="completion-element clickable"
-      :tag="item.tag"
+      :tagInfos="item.tag"
       @load-tag-view="$emit('loadTagView', item.tag)"
     />
   </el-row>

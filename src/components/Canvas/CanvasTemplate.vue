@@ -20,6 +20,15 @@
     @touchmove="touchMove"
     :ref="'page'"
   >
+    <div class="return">
+      <div @click="loadTagView" class="return-element">
+        <img
+          src="@/assets/shared/vector.png"
+          class="image-size"
+        />
+        <h2>{{ initialCentralTag }}</h2>
+      </div>
+    </div>
     <focus-rectangle
       :ref="'rectangle'"
       :offsetX="windowWidth"
@@ -29,6 +38,7 @@
     />
     <!-- This is the initial central image that changes over the time -->
     <image-element
+      v-if="imageBlocks[0]"
       :ref="'image-element'"
       :imagePosition="imageBlocks[0].centralImagePosition"
       :isTop="true"
@@ -81,12 +91,24 @@ export default {
   components: { ImageElement, ImagesBlock, FocusRectangle, History },
   beforeRouteUpdate(to) {
     if (to.query.imageId) {
-      this.initialImageId = decodeURIComponent(to.query.imageId);
+      this.initialImageId = +decodeURIComponent(to.query.imageId);
       if (to.query.tag) {
         this.initialCentralTag = decodeURIComponent(to.query.tag);
       }
       this.loadInitialImage();
     }
+  },
+
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (to.query.imageId) {
+        vm.initialImageId = +decodeURIComponent(to.query.imageId);
+        if (to.query.tag) {
+          vm.initialCentralTag = decodeURIComponent(to.query.tag);
+        }
+        vm.loadInitialImage();
+      }
+    });
   },
   data() {
     return {
@@ -118,6 +140,12 @@ export default {
     };
   },
   methods: {
+    loadTagView() {
+      this.$router.push({
+        path: `/full_tag`,
+        query: { tag: encodeURIComponent(this.initialCentralTag) },
+      });
+    },
     moveClickEnable() {
       this.isDrag = true;
     },
@@ -393,7 +421,6 @@ export default {
     loadInitialImage() {
       this.imageBlocks = [];
       const factor = getFactor(this.windowHeight, this.windowWidth);
-
       // Find the middle of the page to insert the first image
       const firstBlockCentralImageTopPosition =
         this.pageHeight / 2 - thumbnailHeight(factor) / 2;

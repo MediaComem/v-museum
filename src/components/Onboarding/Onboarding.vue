@@ -80,7 +80,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       if (from.query.tag) {
-        vm.tag = JSON.parse(from.query.tag);
+        vm.tag = decodeURIComponent(from.query.tag);
       }
     });
   },
@@ -116,14 +116,14 @@ export default {
     loadTagView(tag) {
       this.$router.push({
         path: `/full_tag`,
-        query: { tag: JSON.stringify(tag) },
+        query: { tag: encodeURIComponent(tag.tag) },
       });
     },
     findAndUpdateTag() {
       if (this.tag) {
         let index = 0;
         index = this.information.collection.findIndex((e) => {
-          return e.tag == this.tag;
+          return e.tag.tag == this.tag;
         });
         if (index === -1) {
           index = this.information.collection.length;
