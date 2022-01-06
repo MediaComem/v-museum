@@ -85,6 +85,7 @@ import { generatePosition } from "./positions_management_service";
 import ImageBlock from "../../models/ImageBlock";
 
 export default {
+<<<<<<< HEAD
   components: { ImageElement, ImagesBlock, FocusRectangle, History },
   beforeRouteUpdate(to) {
     if (to.query.imageId) {
@@ -94,6 +95,19 @@ export default {
       }
       this.loadInitialImage();
     }
+=======
+  components: { ImageElement, ImagesBlock, FocusRectangle },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (to.query.imageId) {
+        vm.initialImageId = +decodeURIComponent(to.query.imageId);
+        if (to.query.tag) {
+          vm.initialCentralTag = decodeURIComponent(to.query.tag);
+        }
+        vm.loadInitialImage();
+      }
+    });
+>>>>>>> a34c1e60965c53632185e8d9cc03ce35967cad36
   },
   data() {
     return {
@@ -411,9 +425,14 @@ export default {
         this.pageHeight / 2 - thumbnailHeight(factor) / 2;
       const firstBlockCentralImageLeftPosition =
         this.pageWidth / 2 - thumbnailWidth(factor) / 2;
+<<<<<<< HEAD
 
       this.insertBlock(
         { imageId: this.initialImageId, tag: this.initialCentralTag },
+=======
+      this.insertBlock(
+        this.initialImageId,
+>>>>>>> a34c1e60965c53632185e8d9cc03ce35967cad36
         {
           top: firstBlockCentralImageTopPosition,
           left: firstBlockCentralImageLeftPosition,
@@ -423,6 +442,7 @@ export default {
       );
       this.imageBlocks[0].oldCentralImageTag = this.initialCentralTag;
       this.imageBlocks[0].oldCentralImage = this.initialImageId;
+<<<<<<< HEAD
 
       this.currentXPosition = firstBlockCentralImageLeftPosition;
       this.currentYPosition = firstBlockCentralImageTopPosition;
@@ -433,6 +453,12 @@ export default {
       currentPosition,
       relatedImages
     ) {
+=======
+      this.currentXPosition = firstBlockCentralImageLeftPosition;
+      this.currentYPosition = firstBlockCentralImageTopPosition;
+    },
+    insertBlock(imageId, currentImagePosition, currentPosition, relatedImages) {
+>>>>>>> a34c1e60965c53632185e8d9cc03ce35967cad36
       this.imageBlocks.push(
         new ImageBlock(
           imageToAnalyze.imageId,
@@ -474,8 +500,11 @@ export default {
     // Default page size set to two times the current windows size
     this.pageHeight = 2 * this.windowHeight;
     this.pageWidth = 2 * this.windowWidth;
+<<<<<<< HEAD
 
     this.loadInitialImage();
+=======
+>>>>>>> a34c1e60965c53632185e8d9cc03ce35967cad36
   },
   activated() {
     window.scrollTo(this.currentXPosition, this.currentYPosition);
