@@ -2,7 +2,6 @@
   <div
     v-if="!isFullHistory"
     class="history-layout open-animation"
-    :class="isDisable"
     :style="isAnimated ? fullHistory : displayHistory"
   >
     <div v-if="!isAnimated">
@@ -151,9 +150,8 @@ export default {
     leftPosition: Number,
     fullWidth: Number,
     displayAllHistory: Boolean,
-    couldLoadHistory: Boolean,
   },
-  emits: ['openFullHistory', 'closeFullHistory'],
+  emits: ["openFullHistory", "closeFullHistory"],
   data() {
     return {
       firstImage: undefined,
@@ -270,13 +268,14 @@ export default {
       }
     },
     comeBackTo(historyElement) {
-      if (this.couldLoad) {
-        this.$router.push({
-          path: `/selector/${historyElement.decade}`,
-          query: { history: true, imageId: historyElement.imageId },
-        });
-        this.$emit("closeFullHistory");
-      }
+      this.$router.push({
+        path: `/canvas`,
+        query: {
+          imageId: encodeURIComponent(historyElement.imageId),
+          tag: encodeURIComponent(historyElement.tag),
+        },
+      });
+      this.$emit("closeFullHistory");
     },
     loadImages(historyElement) {
       const element = historyElement.slice(-3);
@@ -308,9 +307,6 @@ export default {
   computed: {
     isFullHistory() {
       return this.displayAllHistory;
-    },
-    couldLoad() {
-      return this.couldLoadHistory;
     },
     displayHistory() {
       return {
@@ -375,11 +371,6 @@ export default {
         "first-image-opacity": this.forthPosition === 2,
         "final-opacity": this.forthPosition === 3,
       };
-    },
-    isDisable() {
-      return {
-        "disable-history": !this.couldLoad,
-      }
     },
     ...mapGetters({
       currentHistory: "getHistory",

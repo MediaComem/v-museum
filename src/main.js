@@ -140,16 +140,16 @@ export const mutations = {
   },
   addHistoryElement(state, payload) {
     const isExist = state.history.find(
-      (e) => e.imageId === payload.imageId && e.decade === payload.decade
+      (e) => e.imageId === payload.imageId
     );
     if (isExist === undefined) {
       if (state.history.length === 100) {
         state.history.shift();
       }
       state.history.push({
-        decade: payload.decade,
         imageId: payload.imageId,
         data: payload.data,
+        tag: payload.tag
       });
     }
   },
@@ -174,11 +174,16 @@ export const actions = {
     });
   },
   insertHistory(context, payload) {
-    context.commit("addHistoryElement", {
-      decade: payload.decade,
-      imageId: payload.imageId,
-      data: payload.data,
-    });
+    dataFetch.getImageById(payload.imageId).then((data) => {
+      if (data.length > 0) {
+        context.commit("addHistoryElement", {
+          imageId: payload.imageId,
+          data: data[0].imagePaths.square,
+          tag: payload.tag
+        });
+      }      
+    })
+    
   },
   initializeCarousel(context, { decade, id }) {
     if (store.getters.getImagesByDecade(decade) === undefined) {
