@@ -1,6 +1,11 @@
 <template>
   <div :style="position" v-if="imageData">
-    <p v-if="isTop && !focus" class="related-text" :class="[textJustification, imageAppearAnimation]" :style="textWidth">
+    <p
+      v-if="isTop && !focus"
+      class="related-text"
+      :class="[textJustification, imageAppearAnimation]"
+      :style="textWidth"
+    >
       {{ tag }}
     </p>
     <img
@@ -10,9 +15,15 @@
       :src="imageData.imagePaths.large"
       :height="imageHeight"
       :width="imageWidth"
-      @click="loadFullImageView()"
+      @mousedown="clickDuration = Date.now()"
+      @mouseup="loadFullImageView()"
     />
-    <p v-if="!isTop && !focus" class="related-text" :class="[textJustification, imageAppearAnimation]" :style="textWidth">
+    <p
+      v-if="!isTop && !focus"
+      class="related-text"
+      :class="[textJustification, imageAppearAnimation]"
+      :style="textWidth"
+    >
       {{ tag }}
     </p>
     <div v-if="focus" :style="textWidth">
@@ -69,14 +80,18 @@ export default {
     return {
       imageData: undefined,
       shouldRunAnimation: true,
+      clickDuration: 0,
     };
   },
   methods: {
     loadFullImageView() {
-      this.$router.push({
-        path: `/image/${this.imageData.id}`,
-        query: {image: JSON.stringify(this.imageData)}
-      });
+      const diffTime = Date.now() - this.clickDuration;
+      if (diffTime < 300) {
+        this.$router.push({
+          path: `/image/${this.imageData.id}`,
+          query: { image: JSON.stringify(this.imageData) },
+        });
+      }
     },
   },
   computed: {
@@ -85,15 +100,21 @@ export default {
     },
     textJustification() {
       return {
-        text_left: this.blockPosition === 4 || this.blockPosition === 5 || this.blockPosition === 6,
-        text_right: this.blockPosition === 1 || this.blockPosition === 2 || this.blockPosition === 3,
+        text_left:
+          this.blockPosition === 4 ||
+          this.blockPosition === 5 ||
+          this.blockPosition === 6,
+        text_right:
+          this.blockPosition === 1 ||
+          this.blockPosition === 2 ||
+          this.blockPosition === 3,
       };
     },
     imageAppearAnimation() {
       return {
-        'related-text': this.shouldRunAnimation,
-      }
-    }, 
+        "related-text": this.shouldRunAnimation,
+      };
+    },
     position() {
       return {
         position: "absolute",
