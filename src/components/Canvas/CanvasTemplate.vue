@@ -19,11 +19,12 @@
     @touchend="moveClickDisable"
     @touchmove="touchMove"
     :ref="'page'"
+    class="navigation-pointer"
   >
     <div class="return">
-      <div @click="loadTagView" class="return-element">
+      <div @click="loadTagView" class="return-element clickable">
         <img
-          src="@/assets/shared/vector.png"
+          src="@/assets/shared/Vector.svg"
           class="image-size"
         />
         <h2>{{ initialCentralTag }}</h2>
@@ -500,4 +501,5 @@ export default {
 
 <style scoped>
 @import "./css/canvas.css";
+@import "../shared/pointer.css";
 </style>

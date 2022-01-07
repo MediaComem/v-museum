@@ -1,17 +1,18 @@
 <template>
   <div :style="position" v-if="imageData">
-    <p v-if="isTop && !focus" :class="[textJustification, imageAppearAnimation]" :style="textWidth">
+    <p v-if="isTop && !focus" class="related-text" :class="[textJustification, imageAppearAnimation]" :style="textWidth">
       {{ tag }}
     </p>
     <img
       :ref="'image'"
-      class="relatedImageBase"
+      draggable="false"
+      class="relatedImageBase clickable"
       :src="imageData.imagePaths.large"
       :height="imageHeight"
       :width="imageWidth"
       @click="loadFullImageView()"
     />
-    <p v-if="!isTop && !focus" class="" :class="textJustification" :style="textWidth">
+    <p v-if="!isTop && !focus" class="related-text" :class="[textJustification, imageAppearAnimation]" :style="textWidth">
       {{ tag }}
     </p>
     <div v-if="focus" :style="textWidth">
@@ -128,4 +129,5 @@ export default {
 @import "./css/canvas.css";
 @import "./css/text.css";
 @import "./css/relatedImageAnimation.css";
+@import "../shared/pointer.css";
 </style>
