@@ -1,6 +1,6 @@
 <template>
   <div :style="position" v-if="imageData">
-    <p v-if="isTop && !focus" class="related-text" :class="textJustification" :style="textWidth">
+    <p v-if="isTop && !focus" :class="[textJustification, imageAppearAnimation]" :style="textWidth">
       {{ tag }}
     </p>
     <img
@@ -11,7 +11,7 @@
       :width="imageWidth"
       @click="loadFullImageView()"
     />
-    <p v-if="!isTop && !focus" class="related-text" :class="textJustification" :style="textWidth">
+    <p v-if="!isTop && !focus" class="" :class="textJustification" :style="textWidth">
       {{ tag }}
     </p>
     <div v-if="focus" :style="textWidth">
@@ -47,6 +47,7 @@ import {
 export default {
   watch: {
     imageId: function(newVal) {
+      this.shouldRunAnimation = false;
       this.imageData = undefined;
       dataFetch.getImageById(newVal).then((data) => {
         if (data.length > 0) {
@@ -66,6 +67,7 @@ export default {
   data() {
     return {
       imageData: undefined,
+      shouldRunAnimation: true,
     };
   },
   methods: {
@@ -86,6 +88,11 @@ export default {
         text_right: this.blockPosition === 1 || this.blockPosition === 2 || this.blockPosition === 3,
       };
     },
+    imageAppearAnimation() {
+      return {
+        'related-text': this.shouldRunAnimation,
+      }
+    }, 
     position() {
       return {
         position: "absolute",
