@@ -1,13 +1,13 @@
 <template>
   <el-row class="display-element">
     <el-col :span="1" class="align-element justify-browser">
-      <img class="clickable" src="@/assets/shared/vector.png" @click="loadOnboarding()" />
+      <img class="return-size clickable" src="@/assets/shared/Vector.svg" @click="loadOnboarding()" />
     </el-col>
     <el-col :span="3" class="align-element justify-text">
-      <h2 class="clickable" @click="loadOnboarding()">Browse</h2>
+      <h2 class="clickable" @click="loadOnboarding()">Home</h2>
     </el-col>
     <el-col :span="6" :offset="5" class="tag-display">
-      <h1>{{ tag }}</h1>
+      <h2>{{ tag }}</h2>
     </el-col>
   </el-row>
 </template>
@@ -30,6 +30,10 @@ export default {
 
 <style scoped>
 @import "../shared/pointer.css";
+
+h2 {
+  font-size: 24px;
+}
 
 .display-element {
   height: 10vh;
@@ -54,5 +58,10 @@ export default {
 
 .justify-text {
   justify-content: flex-start;
+}
+
+.return-size {
+  width: 24px;
+  height: 21px;
 }
 </style>
