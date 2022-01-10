@@ -62,6 +62,8 @@ const isChangeSelectedImage = (potentialImage, relatedImages) => {
 const getIndexBaseOnState = (currentState) => {
   if (currentState === 0) {
     return 1;
+  } else if (currentState === 1) {
+    return 2;
   } else {
     return 0;
   }

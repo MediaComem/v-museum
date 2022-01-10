@@ -96,7 +96,11 @@ export default {
   },
   computed: {
     isTop() {
-      return this.blockPosition === 3 || this.blockPosition === 6;
+      return (
+        this.blockPosition === 0 ||
+        this.blockPosition === 3 ||
+        this.blockPosition === 6
+      );
     },
     textJustification() {
       return {
@@ -105,6 +109,7 @@ export default {
           this.blockPosition === 5 ||
           this.blockPosition === 6,
         text_right:
+          this.blockPosition === 0 ||
           this.blockPosition === 1 ||
           this.blockPosition === 2 ||
           this.blockPosition === 3,

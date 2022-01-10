@@ -4,6 +4,7 @@ export default class RelatedImage {
         this.tag = relatedImage.tag;
         this.hasFocus = false;
         this.position = position;
+        this.wasSelected = false;
     }
   }
   

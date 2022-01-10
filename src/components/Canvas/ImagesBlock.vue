@@ -25,7 +25,10 @@ import ImageElement from "./ImageElement.vue";
 
 import ImageBlock from "../../models/ImageBlock";
 
-import { thumbnailHeight, thumbnailWidth } from "./service/image_management_service";
+import {
+  thumbnailHeight,
+  thumbnailWidth,
+} from "./service/image_management_service";
 
 export default {
   components: { ImageElement },
@@ -94,6 +97,11 @@ export default {
             left:
               this.imageBlock.centralImagePosition.left +
               1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+          };
+        default:
+          return {
+            top: this.imageBlock.centralImagePosition.top,
+            left: this.imageBlock.centralImagePosition.left,
           };
       }
     },
