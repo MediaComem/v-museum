@@ -64,7 +64,7 @@
 import {
   getImageHeight,
   getImageWidth
-} from "./image_management_service";
+} from "./service/image_management_service";
 export default {
   props: {
     offsetX: Number,

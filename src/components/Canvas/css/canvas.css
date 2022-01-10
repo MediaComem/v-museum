@@ -1,14 +1,11 @@
-.last_block {
-  opacity: 0.5;
-}
-
 .return {
   display: flex;
   height: 29px;
-  width: 50vw;
+  width: auto;
   position: fixed;
-  top: 3vh;
-  left: 3vw;
+  top: 25px;
+  left: 29px;
+  z-index: 11;
 }
 
 .return-element {
@@ -17,6 +14,7 @@
 }
 
 .image-size {
-  height: 11px;
-  width: 12px;
+  height: 24px;
+  width: 24px;
+  margin-right: 5px;
 }

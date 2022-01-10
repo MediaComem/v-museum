@@ -19,11 +19,12 @@
     @touchend="moveClickDisable"
     @touchmove="touchMove"
     :ref="'page'"
+    class="navigation-pointer"
   >
     <div class="return">
-      <div @click="loadTagView" class="return-element">
+      <div @click="loadTagView" class="return-element clickable">
         <img
-          src="@/assets/shared/vector.png"
+          src="@/assets/shared/Vector.svg"
           class="image-size"
         />
         <h2>{{ initialCentralTag }}</h2>
@@ -41,12 +42,11 @@
       v-if="imageBlocks[0]"
       :ref="'image-element'"
       :imagePosition="imageBlocks[0].centralImagePosition"
-      :isTop="true"
-      :isLeft="false"
       :focus="initialImageFocus.hasFocus"
       :imageId="imageBlocks[0].centralId"
       :imageFactor="imageFactor"
       :tag="imageBlocks[0].oldCentralImageTag"
+      :blockPosition="imageBlocks[0].oldBlockPosition"
       :class="getOpacity"
     />
     <div v-for="(imageBlock, index) in imageBlocks" :key="index">
@@ -81,9 +81,9 @@ import {
   relatedThumbnailHeight,
   isNewSelectedImage,
   isChangeSelectedImage,
-} from "./image_management_service";
+} from "./service/image_management_service";
 
-import { generatePosition } from "./positions_management_service";
+import { generatePosition } from "./service/positions_management_service";
 
 import ImageBlock from "../../models/ImageBlock";
 
@@ -438,6 +438,7 @@ export default {
       );
       this.imageBlocks[0].oldCentralImageTag = this.initialCentralTag;
       this.imageBlocks[0].oldCentralImage = this.initialImageId;
+      this.imageBlocks[0].oldBlockPosition = 3;
 
       this.currentXPosition = firstBlockCentralImageLeftPosition;
       this.currentYPosition = firstBlockCentralImageTopPosition;
@@ -499,5 +500,6 @@ export default {
 </script>
 
 <style scoped>
-@import "./canvas.css";
+@import "./css/canvas.css";
+@import "../shared/pointer.css";
 </style>

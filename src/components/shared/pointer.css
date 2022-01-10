@@ -1,3 +1,7 @@
+.clickable-without-hover {
+    cursor: pointer;
+}
+
 .clickable {
     cursor: pointer;
 }

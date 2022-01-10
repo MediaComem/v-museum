@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="!isFullHistory"
-    class="history-layout open-animation"
+    class="history-layout open-animation clickable-without-hover"
     :style="isAnimated ? fullHistory : displayHistory"
   >
     <div v-if="!isAnimated">
@@ -117,7 +117,7 @@
     </div>
   </div>
 
-  <div v-if="isFullHistory" class="history-layout" :style="fullHistory">
+  <div v-if="isFullHistory" class="history-layout clickable-without-hover" :style="fullHistory">
     <div class="left-arrow" @click="leftMove()" />
     <div class="full-history-display">
       <div v-for="(value, index) in currentHistory" :key="index">
@@ -384,6 +384,8 @@ export default {
 </script>
 
 <style scoped>
+@import "../shared/pointer.css";
+
 .disable-history {
   opacity: 0.5;
 }

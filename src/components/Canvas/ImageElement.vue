@@ -1,32 +1,45 @@
 <template>
   <div :style="position" v-if="imageData">
-    <p v-if="isTop && !focus" :class="textJustification" :style="textWidth">
+    <p
+      v-if="isTop && !focus"
+      class="related-text"
+      :class="[textJustification, imageAppearAnimation]"
+      :style="textWidth"
+    >
       {{ tag }}
     </p>
     <img
       :ref="'image'"
+      draggable="false"
+      class="relatedImageBase clickable"
       :src="imageData.imagePaths.large"
       :height="imageHeight"
       :width="imageWidth"
-      @click="loadFullImageView()"
+      @mousedown="clickDuration = Date.now()"
+      @mouseup="loadFullImageView()"
     />
-    <p v-if="!isTop && !focus" :class="textJustification" :style="textWidth">
+    <p
+      v-if="!isTop && !focus"
+      class="related-text"
+      :class="[textJustification, imageAppearAnimation]"
+      :style="textWidth"
+    >
       {{ tag }}
     </p>
     <div v-if="focus" :style="textWidth">
       <div class="text_left">
-        <p>
+        <p class="font-size-information">
           Illustration: &nbsp;
         </p>
-        <p>
+        <p class="font-size-information">
           {{ imageData.author }}
         </p>
       </div>
       <div class="text_left">
-        <p>
+        <p class="font-size-information">
           Story: &nbsp;
         </p>
-        <p>
+        <p class="font-size-information">
           {{ imageData.title }}
         </p>
       </div>
@@ -41,11 +54,12 @@ import {
   relatedThumbnailWidth,
   getImageWidth,
   getImageHeight,
-} from "./image_management_service";
+} from "./service/image_management_service";
 
 export default {
   watch: {
     imageId: function(newVal) {
+      this.shouldRunAnimation = false;
       this.imageData = undefined;
       dataFetch.getImageById(newVal).then((data) => {
         if (data.length > 0) {
@@ -56,31 +70,49 @@ export default {
   },
   props: {
     imagePosition: Object,
-    isTop: Boolean,
-    isLeft: Boolean,
     focus: Boolean,
     tag: String,
     imageId: Number,
     imageFactor: Number,
+    blockPosition: Number,
   },
   data() {
     return {
       imageData: undefined,
+      shouldRunAnimation: true,
+      clickDuration: 0,
     };
   },
   methods: {
     loadFullImageView() {
-      this.$router.push({
-        path: `/image/${this.imageData.id}`,
-        query: {image: JSON.stringify(this.imageData)}
-      });
+      const diffTime = Date.now() - this.clickDuration;
+      if (diffTime < 300) {
+        this.$router.push({
+          path: `/image/${this.imageData.id}`,
+          query: { image: JSON.stringify(this.imageData) },
+        });
+      }
     },
   },
   computed: {
+    isTop() {
+      return this.blockPosition === 3 || this.blockPosition === 6;
+    },
     textJustification() {
       return {
-        text_left: this.isLeft,
-        text_right: !this.isLeft,
+        text_left:
+          this.blockPosition === 4 ||
+          this.blockPosition === 5 ||
+          this.blockPosition === 6,
+        text_right:
+          this.blockPosition === 1 ||
+          this.blockPosition === 2 ||
+          this.blockPosition === 3,
+      };
+    },
+    imageAppearAnimation() {
+      return {
+        "related-text": this.shouldRunAnimation,
       };
     },
     position() {
@@ -115,15 +147,8 @@ export default {
 </script>
 
 <style scoped>
-@import "./canvas.css";
-
-.text_left {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.text_right {
-  display: flex;
-  justify-content: flex-end;
-}
+@import "./css/canvas.css";
+@import "./css/text.css";
+@import "./css/relatedImageAnimation.css";
+@import "../shared/pointer.css";
 </style>
