@@ -11,11 +11,7 @@
       :imageFactor="imageFactor"
       :blockPosition="relatedImage.position"
       :class="{
-        last_block:
-          allBlockFill &&
-          currentGlobalPosition === 0 &&
-          relatedImage.imageId !== imageBlock.oldCentralImage &&
-          !relatedImage.hasFocus,
+        last_block: blockInsertionState && !relatedImage.hasFocus,
       }"
     />
   </div>
@@ -37,7 +33,7 @@ export default {
     imageBlock: ImageBlock,
     imageFactor: Number,
     currentGlobalPosition: Number,
-    allBlockFill: Boolean,
+    blockInsertionState: Boolean,
   },
   data() {
     return {

@@ -41,7 +41,7 @@
           :imageBlock="imageBlock"
           :imageFactor="imageFactor"
           :currentGlobalPosition="index"
-          :allBlockFill="imageBlocks.length === maxArraySize"
+          :blockInsertionState="index !== currentInsertionState"
         />
       </div>
     </div>
@@ -66,7 +66,7 @@ import {
   isNewSelectedImage,
   isChangeSelectedImage,
   getIndexBaseOnState,
-  getPreviousIndexBaseOnState
+  getPreviousIndexBaseOnState,
 } from "./service/image_management_service";
 
 import { generatePosition } from "./service/positions_management_service";
@@ -394,6 +394,8 @@ export default {
       }
     },
     loadInitialImage() {
+      this.currentInsertionState = 1;
+      this.centralImageIndex = 0;
       this.imageBlocks = [];
       const factor = getFactor(this.windowHeight, this.windowWidth);
       // Find the middle of the page to insert the first image
