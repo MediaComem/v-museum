@@ -65,7 +65,7 @@ import {
   relatedThumbnailHeight,
   isNewSelectedImage,
   isChangeSelectedImage,
-  getIndexBaseOnState,
+  getNextIndexBaseOnState,
   getPreviousIndexBaseOnState,
 } from "./service/image_management_service";
 
@@ -318,7 +318,7 @@ export default {
         else if (isNewSelectedImage(imageToAnalyze.imageId, this.imageBlocks)) {
           // Replace the old block by the new one
           if (this.imageBlocks.length >= this.maxArraySize) {
-            this.currentInsertionState = getIndexBaseOnState(
+            this.currentInsertionState = getNextIndexBaseOnState(
               this.currentInsertionState
             );
             this.imageBlocks[this.currentInsertionState] = this.insertBlock(
@@ -345,12 +345,12 @@ export default {
             this.currentInsertionState = this.currentInsertionState + 1;
           }
           // Take the oldest block and remove the not selected image so all the images that weren't central.
-          const block = this.$refs[
-            "image-block-" + getIndexBaseOnState(this.currentInsertionState)
+          const oldestBlock = this.$refs[
+            "image-block-" + getNextIndexBaseOnState(this.currentInsertionState)
           ];
-          const nbElementsInBlock = Object.keys(block.$refs).length;
+          const nbElementsInBlock = Object.keys(oldestBlock.$refs).length;
           for (let j = 0; j < nbElementsInBlock; j++) {
-            const imageElement = block.$refs["image-element-" + j];
+            const imageElement = oldestBlock.$refs["image-element-" + j];
             if (!imageElement.wasSelected) {
               imageElement.imageData = undefined;
             }
@@ -407,7 +407,6 @@ export default {
       this.imageBlocks.push(
         new ImageBlock(
           0,
-          0,
           {
             top: firstBlockCentralImageTopPosition,
             left: firstBlockCentralImageLeftPosition,
@@ -420,11 +419,10 @@ export default {
       this.imageBlocks[0].relatedImages.push(
         new RelatedImage(
           { imageId: this.centralImageId, tag: this.initialCentralTag },
-          0
+          0,
+          true
         )
       );
-
-      this.imageBlocks[0].relatedImages[0].wasSelected = true;
 
       this.imageBlocks.push(
         this.insertBlock(
@@ -454,7 +452,6 @@ export default {
 
       return new ImageBlock(
         imageToAnalyze.imageId,
-        0,
         currentImagePosition,
         generatePosition(currentPosition),
         relatedImages

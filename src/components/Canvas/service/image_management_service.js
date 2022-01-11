@@ -59,7 +59,7 @@ const isChangeSelectedImage = (potentialImage, relatedImages) => {
   );
 };
 
-const getIndexBaseOnState = (currentState) => {
+const getNextIndexBaseOnState = (currentState) => {
   if (currentState === 0) {
     return 1;
   } else if (currentState === 1) {
@@ -91,6 +91,6 @@ export {
   getImageWidth,
   isNewSelectedImage,
   isChangeSelectedImage,
-  getIndexBaseOnState,
+  getNextIndexBaseOnState,
   getPreviousIndexBaseOnState,
 };
