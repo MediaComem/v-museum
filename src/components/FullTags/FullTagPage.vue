@@ -66,7 +66,7 @@ export default {
         fileName = fileName.replace("/", "");
       }
       axios
-        .get(window.location.origin + "/fulltag/" + fileName + ".json")
+        .get(window.location.origin + process.env.VUE_APP_FULLTAG_LINK + fileName + ".json")
         .then((result) => {
           this.data = result.data;
           this.imageUrls = this.data.slice(0, 100);
