@@ -5,13 +5,17 @@
       v-if="imageUrls.length === 0"
       class="rotated-half-circle central-loader-position"
     />
-    <ul v-infinite-scroll="loadMoreImages" infinite-scroll-distance="1000">
+    <ul
+      v-infinite-scroll="loadMoreImages"
+      :infinite-scroll-disabled="disableScroll"
+      :infinite-scroll-distance="200"
+    >
       <div class="canvas-display">
         <div v-for="(image, index) in imageUrls" :key="index">
           <div class="image-canvas">
             <img
               :src="image.url"
-              @click="loadImage(image.id)"
+              @click="loadImage(image.imageId)"
               class="image-size clickable"
             />
           </div>
@@ -22,26 +26,26 @@
   <div class="footer-canvas">
     <div v-if="imageUrls.length > 0">
       <div class="footer-loader-position">
-        <div v-if="isMoreImagesLoading" class="loader" style="position: absolute" />
         <div
           v-if="isMoreImagesLoading"
-          class="rotated-half-circle"
+          class="loader"
+          style="position: absolute"
         />
+        <div v-if="isMoreImagesLoading" class="rotated-half-circle" />
       </div>
 
-      <p>{{ imageUrls.length }} / {{ totalImages }}</p>
+      <p>{{ imageUrls.length }} / {{ data.length }}</p>
     </div>
   </div>
 </template>
 
 <script>
-import dataFetch from "../../api/dataFetching";
+import axios from "axios";
 
 export default {
   watch: {
     tag: function() {
-      this.currentPage = 1;
-      this.nbPage = 0;
+      this.disableScroll = true;
       this.imageUrls = [];
       this.loadInitialImages();
     },
@@ -57,24 +61,25 @@ export default {
       });
     },
     loadInitialImages() {
-      // Get the 25 first images
-      dataFetch.getImagesByTag(this.tag, this.currentPage).then((images) => {
-        this.imageUrls = images;
-      });
-      // Load all others
-      dataFetch.getNbPagePerTag(this.tag).then((nbPage) => {
-        this.totalImages = nbPage;
-        this.nbPage = Math.ceil(nbPage / 25);
-      });
+      let fileName = this.tag;
+      if (fileName.includes("/")) {
+        fileName = fileName.replace("/", "");
+      }
+      axios
+        .get(window.location.origin + "/fulltag/" + fileName + ".json")
+        .then((result) => {
+          this.data = result.data;
+          this.imageUrls = this.data.slice(0, 100);
+          this.disableScroll = false;
+        });
     },
     loadMoreImages() {
-      this.currentPage = this.currentPage + 1;
-      if (this.currentPage <= this.nbPage) {
+      if (this.imageUrls.length < this.data.length) {
         this.isMoreImagesLoading = true;
-        dataFetch.getImagesByTag(this.tag, this.currentPage).then((images) => {
-          this.imageUrls = this.imageUrls.concat(images);
-          this.isMoreImagesLoading = false;
-        });
+        this.imageUrls = this.imageUrls.concat(
+          this.data.slice(this.imageUrls.length, this.imageUrls.length + 100)
+        );
+        this.isMoreImagesLoading = false;
       }
     },
   },
@@ -83,10 +88,9 @@ export default {
   },
   data() {
     return {
+      data: undefined,
       imageUrls: [],
-      currentPage: 1,
-      nbPage: 0,
-      totalImages: 0,
+      disableScroll: true,
       isMoreImagesLoading: false,
     };
   },
