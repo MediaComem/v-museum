@@ -5,6 +5,7 @@
       :ref="'image-element-' + index"
       :imagePosition="calculatePositions(relatedImage)"
       :focus="relatedImage.hasFocus"
+      :wasSelected="relatedImage.wasSelected"
       :tag="relatedImage.tag"
       :imageId="relatedImage.imageId"
       :imageFactor="imageFactor"

@@ -71,6 +71,7 @@ export default {
   props: {
     imagePosition: Object,
     focus: Boolean,
+    wasSelected: Boolean,
     tag: String,
     imageId: Number,
     imageFactor: Number,

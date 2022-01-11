@@ -69,6 +69,18 @@ const getIndexBaseOnState = (currentState) => {
   }
 };
 
+const getPreviousIndexBaseOnState = (currentState) => {
+  if (currentState === 0) {
+    return 2;
+  }
+  else if (currentState === 1) {
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
+
 export {
   getFactor,
   thumbnailHeight,
@@ -80,4 +92,5 @@ export {
   isNewSelectedImage,
   isChangeSelectedImage,
   getIndexBaseOnState,
+  getPreviousIndexBaseOnState,
 };
