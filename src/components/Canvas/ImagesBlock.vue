@@ -5,16 +5,13 @@
       :ref="'image-element-' + index"
       :imagePosition="calculatePositions(relatedImage)"
       :focus="relatedImage.hasFocus"
+      :wasSelected="relatedImage.wasSelected"
       :tag="relatedImage.tag"
       :imageId="relatedImage.imageId"
       :imageFactor="imageFactor"
       :blockPosition="relatedImage.position"
       :class="{
-        last_block:
-          allBlockFill &&
-          currentGlobalPosition === 0 &&
-          relatedImage.imageId !== imageBlock.oldCentralImage &&
-          !relatedImage.hasFocus,
+        last_block: blockInsertionState && !relatedImage.hasFocus,
       }"
     />
   </div>
@@ -25,7 +22,10 @@ import ImageElement from "./ImageElement.vue";
 
 import ImageBlock from "../../models/ImageBlock";
 
-import { thumbnailHeight, thumbnailWidth } from "./service/image_management_service";
+import {
+  thumbnailHeight,
+  thumbnailWidth,
+} from "./service/image_management_service";
 
 export default {
   components: { ImageElement },
@@ -33,7 +33,7 @@ export default {
     imageBlock: ImageBlock,
     imageFactor: Number,
     currentGlobalPosition: Number,
-    allBlockFill: Boolean,
+    blockInsertionState: Boolean,
   },
   data() {
     return {
@@ -94,6 +94,11 @@ export default {
             left:
               this.imageBlock.centralImagePosition.left +
               1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+          };
+        default:
+          return {
+            top: this.imageBlock.centralImagePosition.top,
+            left: this.imageBlock.centralImagePosition.left,
           };
       }
     },

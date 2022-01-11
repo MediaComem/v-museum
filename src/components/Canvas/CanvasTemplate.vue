@@ -23,10 +23,7 @@
   >
     <div class="return">
       <div @click="loadTagView" class="return-element clickable">
-        <img
-          src="@/assets/shared/Vector.svg"
-          class="image-size"
-        />
+        <img src="@/assets/shared/Vector.svg" class="image-size" />
         <h2>{{ initialCentralTag }}</h2>
       </div>
     </div>
@@ -37,18 +34,6 @@
       :imageFactor="imageFactor"
       :focus="rectangleFocus"
     />
-    <!-- This is the initial central image that changes over the time -->
-    <image-element
-      v-if="imageBlocks[0]"
-      :ref="'image-element'"
-      :imagePosition="imageBlocks[0].centralImagePosition"
-      :focus="initialImageFocus.hasFocus"
-      :imageId="imageBlocks[0].centralId"
-      :imageFactor="imageFactor"
-      :tag="imageBlocks[0].oldCentralImageTag"
-      :blockPosition="imageBlocks[0].oldBlockPosition"
-      :class="getOpacity"
-    />
     <div v-for="(imageBlock, index) in imageBlocks" :key="index">
       <div>
         <images-block
@@ -56,7 +41,7 @@
           :imageBlock="imageBlock"
           :imageFactor="imageFactor"
           :currentGlobalPosition="index"
-          :allBlockFill="imageBlocks.length === maxArraySize"
+          :blockInsertionState="index !== currentInsertionState"
         />
       </div>
     </div>
@@ -64,14 +49,13 @@
 </template>
 
 <script>
-import ImageElement from "./ImageElement.vue";
 import ImagesBlock from "./ImagesBlock.vue";
 import FocusRectangle from "./FocusRectangle.vue";
 import History from "../History/History.vue";
 
 import { useWindowSize } from "vue-window-size";
 
-import relatedImage from "../../assets/data/process.json";
+import relatedImageData from "../../assets/data/process.json";
 
 import {
   getFactor,
@@ -81,17 +65,20 @@ import {
   relatedThumbnailHeight,
   isNewSelectedImage,
   isChangeSelectedImage,
+  getNextIndexBaseOnState,
+  getPreviousIndexBaseOnState,
 } from "./service/image_management_service";
 
 import { generatePosition } from "./service/positions_management_service";
 
 import ImageBlock from "../../models/ImageBlock";
+import RelatedImage from "../../models/RelatedImage";
 
 export default {
-  components: { ImageElement, ImagesBlock, FocusRectangle, History },
+  components: { ImagesBlock, FocusRectangle, History },
   beforeRouteUpdate(to) {
     if (to.query.imageId) {
-      this.initialImageId = +decodeURIComponent(to.query.imageId);
+      this.centralImageId = +decodeURIComponent(to.query.imageId);
       if (to.query.tag) {
         this.initialCentralTag = decodeURIComponent(to.query.tag);
       }
@@ -102,7 +89,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       if (to.query.imageId) {
-        vm.initialImageId = +decodeURIComponent(to.query.imageId);
+        vm.centralImageId = +decodeURIComponent(to.query.imageId);
         if (to.query.tag) {
           vm.initialCentralTag = decodeURIComponent(to.query.tag);
         }
@@ -113,19 +100,20 @@ export default {
   data() {
     return {
       // Data in the JSON file to find images
-      relatedImages: relatedImage,
-      maxArraySize: 2,
+      relatedImages: relatedImageData,
+      maxArraySize: 3,
       // Display management part
       // The two following parameters will remove when the navigation will implement
-      initialImageId: 3,
+      centralImageId: 3,
       initialCentralTag: "Fly",
-      initialImageFocus: { hasFocus: false, position: 0 },
       imageBlocks: [],
       windowHeight: 0,
       windowWidth: 0,
       pageHeight: 0,
       pageWidth: 0,
       fullHistoryMode: false,
+      currentInsertionState: 1,
+      centralImageIndex: 0,
       // Movement management part
       isDrag: false,
       currentXPosition: 0,
@@ -210,14 +198,6 @@ export default {
       this.currentCenterTopPosition =
         -this.$refs["page"].getBoundingClientRect().y + this.windowHeight / 2;
 
-      // Initial central image analyzis
-      // param 1: div to check position collistion
-      // param 2: image vue element including (focus state, position)
-      this.imageCollisionAnalyzis(
-        this.$refs["image-element"],
-        this.initialImageFocus
-      );
-
       // Analysis of each related images
       // first loop to analyze each blocks
       // Second loop to analyze each images in the block
@@ -278,6 +258,7 @@ export default {
         currentImagePosition.top + relatedThumbnailHeight(factor) >=
           this.currentCenterTopPosition
       ) {
+        focusElement.wasSelected = true;
         focusElement.hasFocus = true;
         this.imageHasFocus = true;
         // The calculation works as following:
@@ -316,72 +297,66 @@ export default {
       // First, check if it's necessary to do something.
       if (isNewSelectedImage(imageToAnalyze.imageId, this.imageBlocks)) {
         // Second, check if it's a image of another block or the current one
-        const shouldChangeSelectedImage = isChangeSelectedImage(
-          imageToAnalyze.imageId,
-          this.imageBlocks
-        );
         // If it is another one, replace the current block by the new one
-        if (shouldChangeSelectedImage.shouldChange) {
-          // This part is used to find the tag for the central image
-          let oldImageBlock = this.imageBlocks[0];
-          let oldTag = "";
-          if (oldImageBlock) {
-            const index = oldImageBlock.relatedImages.findIndex(
-              (e) => e.imageId === oldImageBlock.oldCentralImage
-            );
-            oldTag = oldImageBlock.relatedImages[index].tag;
-          }
-          // Index + 1 because we know which one is the current but we must remove the next one.
-          this.imageBlocks.splice(shouldChangeSelectedImage.index + 1, 1);
-          this.insertBlock(
+
+        if (
+          isChangeSelectedImage(
+            imageToAnalyze.imageId,
+            this.imageBlocks[this.centralImageIndex].relatedImages
+          ) &&
+          this.imageBlocks.length > 1
+        ) {
+          // Replace the needed block
+          this.imageBlocks[this.currentInsertionState] = this.insertBlock(
             imageToAnalyze,
             currentImagePosition,
             imagePosition,
             this.relatedImages[imageToAnalyze.imageId]
           );
-          // Keep track of the central image id to use it when the block disappear
-          // Store in the block the tag of the old central image
-          oldImageBlock = this.imageBlocks[shouldChangeSelectedImage.index];
-          if (oldImageBlock) {
-            if (oldTag.length !== 0) {
-              oldImageBlock.oldCentralImageTag = oldTag;
-            }
-            oldImageBlock.oldCentralImage = imageToAnalyze.imageId;
-          }
         }
         // Finally, check if it's a new block is needed and load it.
         else if (isNewSelectedImage(imageToAnalyze.imageId, this.imageBlocks)) {
-          // This part is used to find the tag for the central image
-          let oldImageBlock = this.imageBlocks[0];
-          let oldTag = "";
-          if (oldImageBlock) {
-            const index = oldImageBlock.relatedImages.findIndex(
-              (e) => e.imageId === oldImageBlock.oldCentralImage
+          // Replace the old block by the new one
+          if (this.imageBlocks.length >= this.maxArraySize) {
+            this.currentInsertionState = getNextIndexBaseOnState(
+              this.currentInsertionState
             );
-            if (index !== -1) {
-              oldTag = oldImageBlock.relatedImages[index].tag;
-            }
+            this.imageBlocks[this.currentInsertionState] = this.insertBlock(
+              imageToAnalyze,
+              currentImagePosition,
+              imagePosition,
+              this.relatedImages[imageToAnalyze.imageId]
+            );
+            this.centralImageIndex = getPreviousIndexBaseOnState(
+              this.currentInsertionState
+            );
           }
-          this.insertBlock(
-            imageToAnalyze,
-            currentImagePosition,
-            imagePosition,
-            this.relatedImages[imageToAnalyze.imageId]
-          );
-          // Remove first block in case of there are three blocks in the array
-          if (this.imageBlocks.length > 2) {
-            this.imageBlocks.shift();
+          // In case of the image block is not full, just add one more block
+          else {
+            this.imageBlocks.push(
+              this.insertBlock(
+                imageToAnalyze,
+                currentImagePosition,
+                imagePosition,
+                this.relatedImages[imageToAnalyze.imageId]
+              )
+            );
+            this.centralImageIndex = this.centralImageIndex + 1;
+            this.currentInsertionState = this.currentInsertionState + 1;
           }
-          // Keep track of the central image id to use it when the block disappear
-          // Store in the block the tag of the old central image
-          oldImageBlock = this.imageBlocks[0];
-          if (oldImageBlock) {
-            if (oldTag.length !== 0) {
-              oldImageBlock.oldCentralImageTag = oldTag;
+          // Take the oldest block and remove the not selected image so all the images that weren't central.
+          const oldestBlock = this.$refs[
+            "image-block-" + getNextIndexBaseOnState(this.currentInsertionState)
+          ];
+          const nbElementsInBlock = Object.keys(oldestBlock.$refs).length;
+          for (let j = 0; j < nbElementsInBlock; j++) {
+            const imageElement = oldestBlock.$refs["image-element-" + j];
+            if (!imageElement.wasSelected) {
+              imageElement.imageData = undefined;
             }
-            oldImageBlock.oldCentralImage = imageToAnalyze.imageId;
           }
         }
+        this.centralImageId = imageToAnalyze.imageId;
       }
     },
     updateCurrentPosition(newXPosition, newYPosition) {
@@ -419,6 +394,8 @@ export default {
       }
     },
     loadInitialImage() {
+      this.currentInsertionState = 1;
+      this.centralImageIndex = 0;
       this.imageBlocks = [];
       const factor = getFactor(this.windowHeight, this.windowWidth);
       // Find the middle of the page to insert the first image
@@ -427,18 +404,37 @@ export default {
       const firstBlockCentralImageLeftPosition =
         this.pageWidth / 2 - thumbnailWidth(factor) / 2;
 
-      this.insertBlock(
-        { imageId: this.initialImageId, tag: this.initialCentralTag },
-        {
-          top: firstBlockCentralImageTopPosition,
-          left: firstBlockCentralImageLeftPosition,
-        },
-        0,
-        this.relatedImages[this.initialImageId]
+      this.imageBlocks.push(
+        new ImageBlock(
+          0,
+          {
+            top: firstBlockCentralImageTopPosition,
+            left: firstBlockCentralImageLeftPosition,
+          },
+          0,
+          []
+        )
       );
-      this.imageBlocks[0].oldCentralImageTag = this.initialCentralTag;
-      this.imageBlocks[0].oldCentralImage = this.initialImageId;
-      this.imageBlocks[0].oldBlockPosition = 3;
+
+      this.imageBlocks[0].relatedImages.push(
+        new RelatedImage(
+          { imageId: this.centralImageId, tag: this.initialCentralTag },
+          0,
+          true
+        )
+      );
+
+      this.imageBlocks.push(
+        this.insertBlock(
+          { imageId: this.centralImageId, tag: this.initialCentralTag },
+          {
+            top: firstBlockCentralImageTopPosition,
+            left: firstBlockCentralImageLeftPosition,
+          },
+          0,
+          this.relatedImages[this.centralImageId]
+        )
+      );
 
       this.currentXPosition = firstBlockCentralImageLeftPosition;
       this.currentYPosition = firstBlockCentralImageTopPosition;
@@ -449,19 +445,17 @@ export default {
       currentPosition,
       relatedImages
     ) {
-      this.imageBlocks.push(
-        new ImageBlock(
-          imageToAnalyze.imageId,
-          0,
-          currentImagePosition,
-          generatePosition(currentPosition),
-          relatedImages
-        )
-      );
       this.$store.dispatch("insertHistory", {
         imageId: imageToAnalyze.imageId,
         tag: imageToAnalyze.tag,
       });
+
+      return new ImageBlock(
+        imageToAnalyze.imageId,
+        currentImagePosition,
+        generatePosition(currentPosition),
+        relatedImages
+      );
     },
   },
   computed: {
@@ -475,12 +469,6 @@ export default {
         width: this.pageWidth + "px",
       };
     },
-    getOpacity() {
-      return {
-        last_block:
-          this.imageBlocks.length > 1 && !this.initialImageFocus.hasFocus,
-      };
-    },
   },
   created() {
     const { width, height } = useWindowSize();
@@ -490,8 +478,6 @@ export default {
     // Default page size set to two times the current windows size
     this.pageHeight = 2 * this.windowHeight;
     this.pageWidth = 2 * this.windowWidth;
-
-    this.loadInitialImage();
   },
   activated() {
     window.scrollTo(this.currentXPosition, this.currentYPosition);
