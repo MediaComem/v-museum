@@ -10,14 +10,10 @@
   />
   <div
     :style="pageSize"
-    @mousewheel="wheelMove"
     @mousedown="moveClickEnable"
     @mouseup="moveClickDisable"
     @mouseleave="moveClickDisable"
     @mousemove="mouseMove"
-    @touchstart="moveClickEnable"
-    @touchend="moveClickDisable"
-    @touchmove="touchMove"
     :ref="'page'"
     class="navigation-pointer"
   >
@@ -125,6 +121,7 @@ export default {
       imageHasFocus: false,
       // Variable used to stop the centering of an image in case of moving in the page
       focusMoveTimeout: undefined,
+      lastScroll: { x: 0, y: 0 },
     };
   },
   methods: {
@@ -140,22 +137,9 @@ export default {
     moveClickDisable() {
       this.isDrag = false;
     },
-    touchMove() {
-      if (this.isDrag) {
-        this.checkCollision();
-      }
-    },
     mouseMove(event) {
       if (this.isDrag) {
-        // The movement is inversed due to the fact that sign of each movements are inversed between mousewhell and mouse move.
-        this.updatePageSize(
-          -event.movementX,
-          -event.movementY,
-          this.currentXPosition,
-          this.currentYPosition
-        );
         this.move(event);
-        this.checkCollision();
       }
     },
     move(event) {
@@ -170,20 +154,23 @@ export default {
         top: this.currentYPosition,
       });
     },
-    wheelMove(event) {
-      // Calculate the mouse movement and apply it on the current position
-      const xMovement = this.currentXPosition + event.deltaX;
-      const yMovement = this.currentYPosition + event.deltaY;
-      this.updateCurrentPosition(xMovement, yMovement);
-
+    scrollMove() {
+      const currentScrollX = window.scrollX;
+      const currentScrollY = window.scrollY;
+      this.updateCurrentPosition(currentScrollX, currentScrollY);
+      const diffScrollX = currentScrollX - this.lastScroll.x;
+      const diffScrollY = currentScrollY - this.lastScroll.y;
       this.updatePageSize(
-        event.deltaX,
-        event.deltaY,
-        event.offsetX,
-        event.offsetY
+        diffScrollX,
+        diffScrollY,
+        currentScrollX,
+        currentScrollY
       );
+      this.lastScroll.x = currentScrollX;
+      this.lastScroll.y = currentScrollY;
       this.checkCollision();
     },
+
     checkCollision() {
       this.fullHistoryMode = false;
       // Reset the focus to have version of this analyzis.
@@ -379,21 +366,22 @@ export default {
             imageBlock.centralImagePosition.top - deltaY;
         });
       }
-      if (deltaY > 0 && offsetY > this.pageHeight - this.windowHeight) {
+      if (deltaY > 0 && offsetY > this.pageHeight / 2) {
         this.pageHeight = this.pageHeight + deltaY;
       }
-      if (deltaX < 0 && offsetX > this.windowWidth) {
+      if (deltaX < 0 && offsetX < this.windowWidth) {
         this.pageWidth = this.pageWidth - deltaX;
         this.imageBlocks.forEach((imageBlock) => {
           imageBlock.centralImagePosition.left =
             imageBlock.centralImagePosition.left - deltaX;
         });
       }
-      if (deltaX > 0 && offsetX > this.pageWidth - this.windowWidth) {
+      if (deltaX > 0 && offsetX > this.pageWidth / 2) {
         this.pageWidth = this.pageWidth + deltaX;
       }
     },
     loadInitialImage() {
+      this.lastScroll = { x: window.scrollX, y: window.scrollY };
       this.currentInsertionState = 1;
       this.centralImageIndex = 0;
       this.imageBlocks = [];
@@ -436,8 +424,9 @@ export default {
         )
       );
 
-      this.currentXPosition = firstBlockCentralImageLeftPosition;
-      this.currentYPosition = firstBlockCentralImageTopPosition;
+      this.currentXPosition = this.pageWidth / 2 - this.windowWidth / 2;
+      this.currentYPosition = this.pageHeight / 2 - this.windowHeight / 2;
+      window.scrollTo(this.currentXPosition, this.currentYPosition);
     },
     insertBlock(
       imageToAnalyze,
@@ -480,7 +469,11 @@ export default {
     this.pageWidth = 2 * this.windowWidth;
   },
   activated() {
+    window.addEventListener("scroll", this.scrollMove);
     window.scrollTo(this.currentXPosition, this.currentYPosition);
+  },
+  deactivated() {
+    window.removeEventListener("scroll", this.scrollMove);
   },
 };
 </script>
