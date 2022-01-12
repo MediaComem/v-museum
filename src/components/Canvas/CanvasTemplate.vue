@@ -470,8 +470,8 @@ export default {
     this.windowWidth = width;
 
     // Default page size set. The values have selected randomly but seems to be a good compromise
-    this.pageHeight = 5000;
-    this.pageWidth = 5000;
+    this.pageHeight = this.windowHeight * 4;
+    this.pageWidth = this.windowWidth * 4;
   },
   activated() {
     window.addEventListener("scroll", this.scrollMove);
