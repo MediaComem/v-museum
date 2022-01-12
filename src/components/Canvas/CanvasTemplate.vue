@@ -160,12 +160,14 @@ export default {
       this.updateCurrentPosition(currentScrollX, currentScrollY);
       const diffScrollX = currentScrollX - this.lastScroll.x;
       const diffScrollY = currentScrollY - this.lastScroll.y;
+
       this.updatePageSize(
         diffScrollX,
         diffScrollY,
         currentScrollX,
         currentScrollY
       );
+
       this.lastScroll.x = currentScrollX;
       this.lastScroll.y = currentScrollY;
       this.checkCollision();
@@ -360,25 +362,28 @@ export default {
       // The four next block discovered the movement direction and modify the page size if necessary and also the position
       // of the image if necessary
       if (deltaY < 0 && offsetY < this.windowHeight) {
-        this.pageHeight = this.pageHeight - deltaY;
+        this.pageHeight = this.pageHeight + this.windowHeight;
         this.imageBlocks.forEach((imageBlock) => {
           imageBlock.centralImagePosition.top =
-            imageBlock.centralImagePosition.top - deltaY;
+            imageBlock.centralImagePosition.top + this.windowHeight;
         });
+        this.currentYPosition = this.currentYPosition + this.windowHeight;
       }
       if (deltaY > 0 && offsetY > this.pageHeight / 2) {
-        this.pageHeight = this.pageHeight + deltaY;
+        this.pageHeight = this.pageHeight + this.windowHeight;
       }
       if (deltaX < 0 && offsetX < this.windowWidth) {
-        this.pageWidth = this.pageWidth - deltaX;
+        this.pageWidth = this.pageWidth + this.windowWidth;
         this.imageBlocks.forEach((imageBlock) => {
           imageBlock.centralImagePosition.left =
-            imageBlock.centralImagePosition.left - deltaX;
+            imageBlock.centralImagePosition.left + this.windowWidth;
         });
+        this.currentXPosition = this.currentXPosition + this.windowWidth;
       }
       if (deltaX > 0 && offsetX > this.pageWidth / 2) {
-        this.pageWidth = this.pageWidth + deltaX;
+        this.pageWidth = this.pageWidth + this.windowWidth;
       }
+      window.scrollTo(this.currentXPosition, this.currentYPosition);
     },
     loadInitialImage() {
       this.lastScroll = { x: window.scrollX, y: window.scrollY };
@@ -408,6 +413,7 @@ export default {
         new RelatedImage(
           { imageId: this.centralImageId, tag: this.initialCentralTag },
           0,
+          true,
           true
         )
       );
@@ -423,7 +429,6 @@ export default {
           this.relatedImages[this.centralImageId]
         )
       );
-
       this.currentXPosition = this.pageWidth / 2 - this.windowWidth / 2;
       this.currentYPosition = this.pageHeight / 2 - this.windowHeight / 2;
       window.scrollTo(this.currentXPosition, this.currentYPosition);
@@ -464,9 +469,9 @@ export default {
     this.windowHeight = height;
     this.windowWidth = width;
 
-    // Default page size set to two times the current windows size
-    this.pageHeight = 2 * this.windowHeight;
-    this.pageWidth = 2 * this.windowWidth;
+    // Default page size set. The values have selected randomly but seems to be a good compromise
+    this.pageHeight = 5000;
+    this.pageWidth = 5000;
   },
   activated() {
     window.addEventListener("scroll", this.scrollMove);
