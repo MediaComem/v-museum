@@ -63,6 +63,7 @@ import {
   isChangeSelectedImage,
   getNextIndexBaseOnState,
   getPreviousIndexBaseOnState,
+  resetBlockFocus,
 } from "./service/image_management_service";
 
 import { generatePosition } from "./service/positions_management_service";
@@ -247,6 +248,7 @@ export default {
         currentImagePosition.top + relatedThumbnailHeight(factor) >=
           this.currentCenterTopPosition
       ) {
+        resetBlockFocus(this.imageBlocks, imageToAnalyze.imageId);
         focusElement.wasSelected = true;
         focusElement.hasFocus = true;
         this.imageHasFocus = true;
