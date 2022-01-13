@@ -383,7 +383,9 @@ export default {
       if (deltaX > 0 && offsetX > this.pageWidth / 2) {
         this.pageWidth = this.pageWidth + this.windowWidth;
       }
-      window.scrollTo(this.currentXPosition, this.currentYPosition);
+      setTimeout(() => {
+        window.scrollTo(this.currentXPosition, this.currentYPosition);
+      }, 200);
     },
     loadInitialImage() {
       this.lastScroll = { x: window.scrollX, y: window.scrollY };
