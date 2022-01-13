@@ -72,14 +72,28 @@ const getNextIndexBaseOnState = (currentState) => {
 const getPreviousIndexBaseOnState = (currentState) => {
   if (currentState === 0) {
     return 2;
-  }
-  else if (currentState === 1) {
+  } else if (currentState === 1) {
     return 0;
-  }
-  else {
+  } else {
     return 1;
   }
-}
+};
+
+const resetBlockFocus = (imageBlocks, imageId) => {
+  imageBlocks.forEach((block) => {
+    let shouldReset = false;
+    block.relatedImages.find((element) => {
+      if (element.imageId === imageId) {
+        shouldReset = true;
+      }
+    });
+    if (shouldReset) {
+      block.relatedImages.forEach((element) => {
+        element.wasSelected = false;
+      });
+    }
+  });
+};
 
 export {
   getFactor,
@@ -93,4 +107,5 @@ export {
   isChangeSelectedImage,
   getNextIndexBaseOnState,
   getPreviousIndexBaseOnState,
+  resetBlockFocus,
 };

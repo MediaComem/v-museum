@@ -7,7 +7,7 @@
 
   <div
     v-if="imageData"
-    class="information information-padding"
+    class="information information-padding hide-scrollbar"
     :style="collapse"
   >
     <data-information ref="information" @loadImage="loadImage" :imageData="imageData" :tags="tags" :storyCollection="storyCollection"/>
@@ -295,5 +295,9 @@ export default {
 .viewer {
   width: 100%;
   height: 100vh;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
 }
 </style>

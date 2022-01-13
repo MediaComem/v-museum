@@ -63,6 +63,7 @@ import {
   isChangeSelectedImage,
   getNextIndexBaseOnState,
   getPreviousIndexBaseOnState,
+  resetBlockFocus,
 } from "./service/image_management_service";
 
 import { generatePosition } from "./service/positions_management_service";
@@ -157,10 +158,11 @@ export default {
     scrollMove() {
       const currentScrollX = window.scrollX;
       const currentScrollY = window.scrollY;
-      this.updateCurrentPosition(currentScrollX, currentScrollY);
+      if (!this.isDrag) {
+        this.updateCurrentPosition(currentScrollX, currentScrollY);
+      }
       const diffScrollX = currentScrollX - this.lastScroll.x;
       const diffScrollY = currentScrollY - this.lastScroll.y;
-
       this.updatePageSize(
         diffScrollX,
         diffScrollY,
@@ -247,6 +249,7 @@ export default {
         currentImagePosition.top + relatedThumbnailHeight(factor) >=
           this.currentCenterTopPosition
       ) {
+        resetBlockFocus(this.imageBlocks, imageToAnalyze.imageId);
         focusElement.wasSelected = true;
         focusElement.hasFocus = true;
         this.imageHasFocus = true;
@@ -359,31 +362,37 @@ export default {
       }
     },
     updatePageSize(deltaX, deltaY, offsetX, offsetY) {
+      let shouldScroll = false;
       // The four next block discovered the movement direction and modify the page size if necessary and also the position
       // of the image if necessary
       if (deltaY < 0 && offsetY < this.windowHeight) {
+        this.currentYPosition = this.currentYPosition + this.windowHeight;
         this.pageHeight = this.pageHeight + this.windowHeight;
         this.imageBlocks.forEach((imageBlock) => {
           imageBlock.centralImagePosition.top =
             imageBlock.centralImagePosition.top + this.windowHeight;
         });
-        this.currentYPosition = this.currentYPosition + this.windowHeight;
+        shouldScroll = true;
       }
       if (deltaY > 0 && offsetY > this.pageHeight / 2) {
         this.pageHeight = this.pageHeight + this.windowHeight;
       }
       if (deltaX < 0 && offsetX < this.windowWidth) {
+        this.currentXPosition = this.currentXPosition + this.windowWidth;
         this.pageWidth = this.pageWidth + this.windowWidth;
         this.imageBlocks.forEach((imageBlock) => {
           imageBlock.centralImagePosition.left =
             imageBlock.centralImagePosition.left + this.windowWidth;
         });
-        this.currentXPosition = this.currentXPosition + this.windowWidth;
+        shouldScroll = true;
       }
       if (deltaX > 0 && offsetX > this.pageWidth / 2) {
         this.pageWidth = this.pageWidth + this.windowWidth;
       }
-      window.scrollTo(this.currentXPosition, this.currentYPosition);
+
+      if (shouldScroll) {
+        window.scrollTo(this.currentXPosition, this.currentYPosition);
+      }
     },
     loadInitialImage() {
       this.lastScroll = { x: window.scrollX, y: window.scrollY };
@@ -470,8 +479,8 @@ export default {
     this.windowWidth = width;
 
     // Default page size set. The values have selected randomly but seems to be a good compromise
-    this.pageHeight = 5000;
-    this.pageWidth = 5000;
+    this.pageHeight = this.windowHeight * 4;
+    this.pageWidth = this.windowWidth * 4;
   },
   activated() {
     window.addEventListener("scroll", this.scrollMove);
