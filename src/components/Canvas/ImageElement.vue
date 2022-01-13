@@ -1,5 +1,5 @@
 <template>
-  <div :style="position" v-if="imageData">
+  <div :style="position" v-if="imageData" class="block-selection">
     <p
       v-if="isTop && !focus"
       class="related-text"
