@@ -158,10 +158,11 @@ export default {
     scrollMove() {
       const currentScrollX = window.scrollX;
       const currentScrollY = window.scrollY;
-      this.updateCurrentPosition(currentScrollX, currentScrollY);
+      if (!this.isDrag) {
+        this.updateCurrentPosition(currentScrollX, currentScrollY);
+      }
       const diffScrollX = currentScrollX - this.lastScroll.x;
       const diffScrollY = currentScrollY - this.lastScroll.y;
-
       this.updatePageSize(
         diffScrollX,
         diffScrollY,
@@ -361,33 +362,37 @@ export default {
       }
     },
     updatePageSize(deltaX, deltaY, offsetX, offsetY) {
+      let shouldScroll = false;
       // The four next block discovered the movement direction and modify the page size if necessary and also the position
       // of the image if necessary
       if (deltaY < 0 && offsetY < this.windowHeight) {
+        this.currentYPosition = this.currentYPosition + this.windowHeight;
         this.pageHeight = this.pageHeight + this.windowHeight;
         this.imageBlocks.forEach((imageBlock) => {
           imageBlock.centralImagePosition.top =
             imageBlock.centralImagePosition.top + this.windowHeight;
         });
-        this.currentYPosition = this.currentYPosition + this.windowHeight;
+        shouldScroll = true;
       }
       if (deltaY > 0 && offsetY > this.pageHeight / 2) {
         this.pageHeight = this.pageHeight + this.windowHeight;
       }
       if (deltaX < 0 && offsetX < this.windowWidth) {
+        this.currentXPosition = this.currentXPosition + this.windowWidth;
         this.pageWidth = this.pageWidth + this.windowWidth;
         this.imageBlocks.forEach((imageBlock) => {
           imageBlock.centralImagePosition.left =
             imageBlock.centralImagePosition.left + this.windowWidth;
         });
-        this.currentXPosition = this.currentXPosition + this.windowWidth;
+        shouldScroll = true;
       }
       if (deltaX > 0 && offsetX > this.pageWidth / 2) {
         this.pageWidth = this.pageWidth + this.windowWidth;
       }
-      setTimeout(() => {
+
+      if (shouldScroll) {
         window.scrollTo(this.currentXPosition, this.currentYPosition);
-      }, 200);
+      }
     },
     loadInitialImage() {
       this.lastScroll = { x: window.scrollX, y: window.scrollY };
