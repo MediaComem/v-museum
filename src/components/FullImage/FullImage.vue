@@ -298,6 +298,9 @@ export default {
 }
 
 .hide-scrollbar {
+  overflow: auto;
   scrollbar-width: none;
 }
+
+
 </style>
