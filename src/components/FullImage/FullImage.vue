@@ -68,9 +68,6 @@ export default {
       dataFetching.getOriginalImage(this.imageData.media).then((image) => {
         this.viewer.destroy();
         this.openImage(image);
-        this.$store.dispatch("loadTotalImageByDecade", {
-          decade: this.imageData.decade.slice(0, 3),
-        });
       });
     },
     loadImagesByTitle() {
@@ -88,9 +85,6 @@ export default {
             });
           }
           this.$refs.information.setupCurrentIndex(this.currentIndex);
-          this.$store.dispatch("loadTotalImageByDecade", {
-            decade: this.imageData.decade.slice(0, 3),
-          });
         })
         .catch((err) => console.log(err));
     },

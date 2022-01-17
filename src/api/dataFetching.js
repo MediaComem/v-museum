@@ -20,14 +20,6 @@ const parseElement = (element) => {
   );
 };
 
-const parseImagesByTag = (data) => {
-  const images = [];
-  data.forEach((element) => {
-    images.push({id: element["dcterms:identifier"][0]["@value"], url: element["thumbnail_display_urls"]["square"]})
-  })
-  return images;
-};
-
 const parseImages = (data) => {
   const images = [];
   data.forEach((element) => {
@@ -37,57 +29,6 @@ const parseImages = (data) => {
 };
 
 export default {
-  async getHeadersByDecade(decade) {
-    const params = {
-      params: {
-        sort_by: "dcterms=identifier",
-        sort_order: "asc",
-        per_page: 1,
-        "property[0][property]": 14,
-        "property[0][type]": "ex",
-        "property[1][joiner]": "and",
-        "property[1][property]": 20,
-        "property[1][type]": "in",
-        "property[1][text]": decade,
-      },
-    };
-    const { headers } = await axios.get(process.env.VUE_APP_FETCH_BASE, params);
-    return headers["omeka-s-total-results"];
-  },
-
-  async getImages(decade, offset, skipIds) {
-    const params = {
-      params: {
-        sort_by: "dcterms=identifier",
-        sort_order: "asc",
-        per_page: 100,
-        "property[0][property]": 14,
-        "property[0][type]": "ex",
-        "property[1][joiner]": "and",
-        "property[1][property]": 20,
-        "property[1][type]": "in",
-        "property[1][text]": decade,
-        page: offset,
-      },
-    };
-    const { headers, data } = await axios.get(
-      process.env.VUE_APP_FETCH_BASE,
-      params
-    );
-
-    let dataResult = parseImages(data);
-
-    skipIds.forEach((id) => {
-      let result = dataResult.filter(d => d.id !== id);
-      dataResult = result;
-    });
-
-    return {
-      totalImages: headers["omeka-s-total-results"],
-      images: dataResult,
-    };
-  },
-
   async getImageById(id) {
     const params = {
       params: {
@@ -99,57 +40,6 @@ export default {
     };
     const { data } = await axios.get(process.env.VUE_APP_FETCH_BASE, params);
     return parseImages(data);
-  },
-
-  // Voir si en utilisant le full text search avec l'id c'est mieux
-  async getRelatedImages(tag, id) {
-    const params = {
-      params: {
-        fulltext_search: `"${tag["@value"]}"`,
-        per_page: 1000
-      },
-    };
-
-    const { data } = await axios.get(process.env.VUE_APP_FETCH_BASE, params);
-    if (data.length > 1) {
-      // take random image among 1000 with same tag
-      let idx = Math.floor(Math.random() * data.length);
-      let image = parseElement(data[idx]);
-      if (image.id !== id) {
-        return image
-      }
-      // bad luck we pick the current one, let's take next one
-      idx = (idx+1 % data.length);
-      return parseElement(data[idx]);
-    }
-    return undefined;
-  },
-
-  async getNbPagePerTag(tag) {
-    const params = {
-      params: {
-        "property[0][joiner]": "and",
-        "property[0][property]": 14,
-        "property[0][type]": "eq",
-        "property[0][text]": tag,
-      }
-    }
-    const { headers } = await axios.get(process.env.VUE_APP_FETCH_BASE, params);
-    return headers["omeka-s-total-results"];
-  },
-
-  async getImagesByTag(tag, step) {
-    const params = {
-      params: {
-        "property[0][joiner]": "and",
-        "property[0][property]": 14,
-        "property[0][type]": "eq",
-        "property[0][text]": tag,
-        page: step
-      }
-    }
-    const { data } = await axios.get(process.env.VUE_APP_FETCH_BASE, params);
-    return parseImagesByTag(data);
   },
 
   async getImagesByTitle(title) {
