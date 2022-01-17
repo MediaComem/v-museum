@@ -12,7 +12,8 @@
       :ref="'image'"
       draggable="false"
       style="object-fit: cover"
-      class="relatedImageBase clickable"
+      class="clickable"
+      :class="imageAppearAnimation"
       :style="imageHover"
       :src="imageData.imagePaths.large"
       :height="imageHeight"
@@ -23,7 +24,7 @@
     <p
       v-if="!isTop && !focus"
       class="related-text"
-      :class="[textJustification, imageAppearAnimation]"
+      :class="[textJustification]"
       :style="textWidth"
     >
       {{ tag }}
@@ -120,7 +121,7 @@ export default {
     },
     imageAppearAnimation() {
       return {
-        "related-text": this.shouldRunAnimation,
+        "relatedImageBase": this.shouldRunAnimation,
       };
     },
     imageHover() {
@@ -153,6 +154,7 @@ export default {
     dataFetch.getImageById(this.imageId).then((data) => {
       if (data.length > 0) {
         this.imageData = data[0];
+        setTimeout(() => this.shouldRunAnimation = false, 3000);
       }
     });
   },
