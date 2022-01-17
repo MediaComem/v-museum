@@ -11,7 +11,9 @@
     <img
       :ref="'image'"
       draggable="false"
+      style="object-fit: cover"
       class="relatedImageBase clickable"
+      :style="imageHover"
       :src="imageData.imagePaths.large"
       :height="imageHeight"
       :width="imageWidth"
@@ -31,15 +33,15 @@
         <p class="font-size-information">
           Illustration: &nbsp;
         </p>
-        <p class="font-size-information">
+        <p class="font-size-information-text">
           {{ imageData.author }}
         </p>
       </div>
       <div class="text_left">
-        <p class="font-size-information">
+        <p class="font-size-information margin-story">
           Story: &nbsp;
         </p>
-        <p class="font-size-information">
+        <p class="font-size-information-text margin-story">
           {{ imageData.title }}
         </p>
       </div>
@@ -119,6 +121,11 @@ export default {
     imageAppearAnimation() {
       return {
         "related-text": this.shouldRunAnimation,
+      };
+    },
+    imageHover() {
+      return {
+        transition: "height 0.2s",
       };
     },
     position() {

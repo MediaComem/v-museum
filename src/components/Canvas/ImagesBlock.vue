@@ -8,7 +8,7 @@
       :wasSelected="relatedImage.wasSelected"
       :tag="relatedImage.tag"
       :imageId="relatedImage.imageId"
-      :imageFactor="imageFactor"
+      :imageFactor="imageFactor.sizeFactor"
       :blockPosition="relatedImage.position"
       :class="{
         last_block: blockInsertionState && !relatedImage.hasFocus,
@@ -31,7 +31,7 @@ export default {
   components: { ImageElement },
   props: {
     imageBlock: ImageBlock,
-    imageFactor: Number,
+    imageFactor: Object,
     currentGlobalPosition: Number,
     blockInsertionState: Boolean,
   },
@@ -39,7 +39,7 @@ export default {
     return {
       newImagePositions: [],
       // Small factor uses to simulate a small shift in the related alignement.
-      smallShiftFactor: Math.random() * (1 - 0.75) + 0.75,
+      smallShiftFactor: Math.random() * (1 - 0.8) + 0.8,
     };
   },
   methods: {
@@ -49,51 +49,51 @@ export default {
           return {
             top:
               this.imageBlock.centralImagePosition.top -
-              1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
+              this.imageFactor.moveTopHeightFactor * thumbnailHeight(this.imageFactor.sizeFactor) * this.smallShiftFactor,
             left:
               this.imageBlock.centralImagePosition.left -
-              1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+              this.imageFactor.moveWidthFactor * thumbnailWidth(this.imageFactor.sizeFactor) * this.smallShiftFactor,
           };
         case 2:
           return {
-            top: this.imageBlock.centralImagePosition.top,
+            top: this.imageBlock.centralImagePosition.top + (thumbnailHeight(this.imageFactor.sizeFactor) / 8) * this.smallShiftFactor,
             left:
               this.imageBlock.centralImagePosition.left -
-              1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+              this.imageFactor.moveWidthFactor * thumbnailWidth(this.imageFactor.sizeFactor) * this.smallShiftFactor,
           };
         case 3:
           return {
             top:
               this.imageBlock.centralImagePosition.top +
-              1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
+              this.imageFactor.moveBottomHeightFactor * thumbnailHeight(this.imageFactor.sizeFactor) * this.smallShiftFactor,
             left:
               this.imageBlock.centralImagePosition.left -
-              1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+              this.imageFactor.moveWidthFactor * thumbnailWidth(this.imageFactor.sizeFactor) * this.smallShiftFactor,
           };
         case 4:
           return {
             top:
               this.imageBlock.centralImagePosition.top -
-              1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
+              this.imageFactor.moveTopHeightFactor * thumbnailHeight(this.imageFactor.sizeFactor) * this.smallShiftFactor,
             left:
               this.imageBlock.centralImagePosition.left +
-              1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+              this.imageFactor.moveWidthFactor * thumbnailWidth(this.imageFactor.sizeFactor) * this.smallShiftFactor,
           };
         case 5:
           return {
-            top: this.imageBlock.centralImagePosition.top,
+            top: this.imageBlock.centralImagePosition.top + (thumbnailHeight(this.imageFactor.sizeFactor) / 8) * this.smallShiftFactor,
             left:
               this.imageBlock.centralImagePosition.left +
-              1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+              this.imageFactor.moveWidthFactor * thumbnailWidth(this.imageFactor.sizeFactor) * this.smallShiftFactor,
           };
         case 6:
           return {
             top:
               this.imageBlock.centralImagePosition.top +
-              1.5 * thumbnailHeight(this.imageFactor) * this.smallShiftFactor,
+              this.imageFactor.moveBottomHeightFactor * thumbnailHeight(this.imageFactor.sizeFactor) * this.smallShiftFactor,
             left:
               this.imageBlock.centralImagePosition.left +
-              1.5 * thumbnailWidth(this.imageFactor) * this.smallShiftFactor,
+              this.imageFactor.moveWidthFactor * thumbnailWidth(this.imageFactor.sizeFactor) * this.smallShiftFactor,
           };
         default:
           return {

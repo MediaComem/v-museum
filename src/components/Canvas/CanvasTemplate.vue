@@ -243,10 +243,10 @@ export default {
       // center of the image.
       if (
         currentImagePosition.left <= this.currentCenterLeftPosition &&
-        currentImagePosition.left + relatedThumbnailWidth(factor) >=
+        currentImagePosition.left + relatedThumbnailWidth(factor.sizeFactor) >=
           this.currentCenterLeftPosition &&
         currentImagePosition.top <= this.currentCenterTopPosition &&
-        currentImagePosition.top + relatedThumbnailHeight(factor) >=
+        currentImagePosition.top + relatedThumbnailHeight(factor.sizeFactor) >=
           this.currentCenterTopPosition
       ) {
         resetBlockFocus(this.imageBlocks, imageToAnalyze.imageId);
@@ -261,12 +261,12 @@ export default {
         const newLeftPosition =
           currentImagePosition.left -
           this.windowWidth / 2 +
-          thumbnailWidth(factor) / 2 -
+          thumbnailWidth(factor.sizeFactor) / 2 -
           10;
         const newTopPosition =
           currentImagePosition.top -
           this.windowHeight / 2 +
-          thumbnailHeight(factor) / 2 -
+          thumbnailHeight(factor.sizeFactor) / 2 -
           10;
         this.focusMoveTimeout = setTimeout(() => {
           window.scrollTo({
@@ -402,9 +402,9 @@ export default {
       const factor = getFactor(this.windowHeight, this.windowWidth);
       // Find the middle of the page to insert the first image
       const firstBlockCentralImageTopPosition =
-        this.pageHeight / 2 - thumbnailHeight(factor) / 2;
+        this.pageHeight / 2 - thumbnailHeight(factor.sizeFactor) / 2;
       const firstBlockCentralImageLeftPosition =
-        this.pageWidth / 2 - thumbnailWidth(factor) / 2;
+        this.pageWidth / 2 - thumbnailWidth(factor.sizeFactor) / 2;
 
       this.imageBlocks.push(
         new ImageBlock(
