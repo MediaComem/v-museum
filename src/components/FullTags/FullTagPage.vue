@@ -141,7 +141,7 @@ ul {
   .image-size {
     width: 150px;
     height: 150px;
-    object-fit: cover;
+    object-fit: fill;
   }
 }
 
@@ -157,7 +157,7 @@ ul {
   .image-size {
     width: 300px;
     height: 300px;
-    object-fit: cover;
+    object-fit: fill;
   }
 }
 
