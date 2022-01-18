@@ -62,11 +62,13 @@ import {
 export default {
   watch: {
     imageId: function(newVal) {
-      this.shouldRunAnimation = false;
+      clearTimeout(this.timeoutEvent);
+      this.shouldRunAnimation = true;
       this.imageData = undefined;
       dataFetch.getImageById(newVal).then((data) => {
         if (data.length > 0) {
           this.imageData = data[0];
+          this.timeoutEvent = setTimeout(() => this.shouldRunAnimation = false, 3000);
         }
       });
     },
@@ -85,6 +87,7 @@ export default {
       imageData: undefined,
       shouldRunAnimation: true,
       clickDuration: 0,
+      timeoutEvent: undefined,
     };
   },
   methods: {
