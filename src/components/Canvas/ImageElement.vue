@@ -88,7 +88,6 @@ export default {
     return {
       imageData: undefined,
       shouldRunAnimation: true,
-      shouldDisapear: false,
       clickDuration: 0,
       timeoutEvent: undefined,
     };
@@ -128,7 +127,7 @@ export default {
     imageAppearAnimation() {
       return {
         "relatedImageBase": this.shouldRunAnimation,
-        "relatedImageDisapearBase": this.shouldDisapear || this.runDisapearAnimation,
+        "relatedImageDisapearBase": this.runDisapearAnimation,
       };
     },
     imageHover() {

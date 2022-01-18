@@ -117,13 +117,12 @@ export default {
       currentYPosition: 0,
       currentCenterLeftPosition: 0,
       currentCenterTopPosition: 0,
+      lastScroll: { x: 0, y: 0 },
       // Focus management part
       rectangleFocus: true,
-      imageHasFocus: false,
+      imageHasFocus: true,
       // Variable used to stop the centering of an image in case of moving in the page
       focusMoveTimeout: undefined,
-      lastScroll: { x: 0, y: 0 },
-      blockManagementTimeout: undefined,
     };
   },
   methods: {
@@ -207,12 +206,11 @@ export default {
           }
         }
       }
-
       // Manage size of the focus rectangle
       this.rectangleFocus = this.imageHasFocus;
     },
     imageCollisionAnalyzis(imageToAnalyze, focusElement) {
-      if (imageToAnalyze) {
+      if (imageToAnalyze && imageToAnalyze.imageData !== undefined) {
         const imageToAnalyzeLeftPositionWithPixel =
           imageToAnalyze.position.left;
         // Remove px chars and convert to number
@@ -298,14 +296,13 @@ export default {
           ) &&
           this.imageBlocks.length > 1
         ) {
-          clearTimeout(this.blockManagementTimeout);
           // Replace the needed block
           this.imageBlocks[this.currentInsertionState].relatedImages.forEach(
             (element) => {
               element.shouldDisapear = true;
             }
           );
-          this.blockManagementTimeout = setTimeout(() => {
+          setTimeout(() => {
             this.imageBlocks[this.currentInsertionState] = this.insertBlock(
               imageToAnalyze,
               currentImagePosition,
@@ -457,6 +454,7 @@ export default {
       this.currentXPosition = this.pageWidth / 2 - this.windowWidth / 2;
       this.currentYPosition = this.pageHeight / 2 - this.windowHeight / 2;
       window.scrollTo(this.currentXPosition, this.currentYPosition);
+      
     },
     insertBlock(
       imageToAnalyze,
