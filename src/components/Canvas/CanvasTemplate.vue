@@ -291,7 +291,6 @@ export default {
       if (isNewSelectedImage(imageToAnalyze.imageId, this.imageBlocks)) {
         // Second, check if it's a image of another block or the current one
         // If it is another one, replace the current block by the new one
-        console.log("D")
         if (
           isChangeSelectedImage(
             imageToAnalyze.imageId,
@@ -307,7 +306,6 @@ export default {
             }
           );
           this.blockManagementTimeout = setTimeout(() => {
-            console.log("A");
             this.imageBlocks[this.currentInsertionState] = this.insertBlock(
               imageToAnalyze,
               currentImagePosition,
@@ -329,7 +327,6 @@ export default {
               }
             );
             setTimeout(() => {
-              console.log("B");
               this.imageBlocks[this.currentInsertionState] = this.insertBlock(
                 imageToAnalyze,
                 currentImagePosition,
@@ -343,7 +340,6 @@ export default {
           }
           // In case of the image block is not full, just add one more block
           else {
-            console.log("C");
             this.imageBlocks.push(
               this.insertBlock(
                 imageToAnalyze,
