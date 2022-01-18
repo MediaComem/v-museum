@@ -24,7 +24,7 @@
     <p
       v-if="!isTop && !focus"
       class="related-text"
-      :class="[textJustification]"
+      :class="[textJustification, imageAppearAnimation]"
       :style="textWidth"
     >
       {{ tag }}
@@ -63,6 +63,7 @@ export default {
   watch: {
     imageId: function(newVal) {
       clearTimeout(this.timeoutEvent);
+      this.shouldDisapear = false;
       this.shouldRunAnimation = true;
       this.imageData = undefined;
       dataFetch.getImageById(newVal).then((data) => {
@@ -77,6 +78,7 @@ export default {
     imagePosition: Object,
     focus: Boolean,
     wasSelected: Boolean,
+    runDisapearAnimation: Boolean,
     tag: String,
     imageId: Number,
     imageFactor: Number,
@@ -86,6 +88,7 @@ export default {
     return {
       imageData: undefined,
       shouldRunAnimation: true,
+      shouldDisapear: false,
       clickDuration: 0,
       timeoutEvent: undefined,
     };
@@ -125,6 +128,7 @@ export default {
     imageAppearAnimation() {
       return {
         "relatedImageBase": this.shouldRunAnimation,
+        "relatedImageDisapearBase": this.shouldDisapear || this.runDisapearAnimation,
       };
     },
     imageHover() {

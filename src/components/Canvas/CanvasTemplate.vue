@@ -123,6 +123,7 @@ export default {
       // Variable used to stop the centering of an image in case of moving in the page
       focusMoveTimeout: undefined,
       lastScroll: { x: 0, y: 0 },
+      blockManagementTimeout: undefined,
     };
   },
   methods: {
@@ -279,7 +280,7 @@ export default {
             currentImagePosition,
             focusElement.position
           );
-        }, 200);
+        }, 500);
       } else {
         focusElement.hasFocus = false;
       }
@@ -290,7 +291,7 @@ export default {
       if (isNewSelectedImage(imageToAnalyze.imageId, this.imageBlocks)) {
         // Second, check if it's a image of another block or the current one
         // If it is another one, replace the current block by the new one
-
+        console.log("D")
         if (
           isChangeSelectedImage(
             imageToAnalyze.imageId,
@@ -298,13 +299,22 @@ export default {
           ) &&
           this.imageBlocks.length > 1
         ) {
+          clearTimeout(this.blockManagementTimeout);
           // Replace the needed block
-          this.imageBlocks[this.currentInsertionState] = this.insertBlock(
-            imageToAnalyze,
-            currentImagePosition,
-            imagePosition,
-            this.relatedImages[imageToAnalyze.imageId]
+          this.imageBlocks[this.currentInsertionState].relatedImages.forEach(
+            (element) => {
+              element.shouldDisapear = true;
+            }
           );
+          this.blockManagementTimeout = setTimeout(() => {
+            console.log("A");
+            this.imageBlocks[this.currentInsertionState] = this.insertBlock(
+              imageToAnalyze,
+              currentImagePosition,
+              imagePosition,
+              this.relatedImages[imageToAnalyze.imageId]
+            );
+          }, 500);
         }
         // Finally, check if it's a new block is needed and load it.
         else if (isNewSelectedImage(imageToAnalyze.imageId, this.imageBlocks)) {
@@ -313,18 +323,27 @@ export default {
             this.currentInsertionState = getNextIndexBaseOnState(
               this.currentInsertionState
             );
-            this.imageBlocks[this.currentInsertionState] = this.insertBlock(
-              imageToAnalyze,
-              currentImagePosition,
-              imagePosition,
-              this.relatedImages[imageToAnalyze.imageId]
+            this.imageBlocks[this.currentInsertionState].relatedImages.forEach(
+              (element) => {
+                element.shouldDisapear = true;
+              }
             );
+            setTimeout(() => {
+              console.log("B");
+              this.imageBlocks[this.currentInsertionState] = this.insertBlock(
+                imageToAnalyze,
+                currentImagePosition,
+                imagePosition,
+                this.relatedImages[imageToAnalyze.imageId]
+              );
+            }, 500);
             this.centralImageIndex = getPreviousIndexBaseOnState(
               this.currentInsertionState
             );
           }
           // In case of the image block is not full, just add one more block
           else {
+            console.log("C");
             this.imageBlocks.push(
               this.insertBlock(
                 imageToAnalyze,
@@ -344,7 +363,8 @@ export default {
           for (let j = 0; j < nbElementsInBlock; j++) {
             const imageElement = oldestBlock.$refs["image-element-" + j];
             if (!imageElement.wasSelected) {
-              imageElement.imageData = undefined;
+              imageElement.shouldDisapear = true;
+              setTimeout(() => (imageElement.imageData = undefined), 500);
             }
           }
         }

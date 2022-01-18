@@ -11,6 +11,20 @@
   }
 }
 
+
+.relatedImageDisapearBase {
+  animation: relatedImageDisapearBaseAnimation 0.5s linear 0s normal forwards;
+}
+
+@keyframes relatedImageDisapearBaseAnimation {
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 .last_block {
   animation: lastRelatedImage 1s linear 0s normal forwards;
 }

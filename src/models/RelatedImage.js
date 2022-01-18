@@ -5,6 +5,7 @@ export default class RelatedImage {
         this.hasFocus = hasFocus;
         this.position = position;
         this.wasSelected = selected;
+        this.shouldDisapear = false;
     }
   }
   

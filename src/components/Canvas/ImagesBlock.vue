@@ -6,6 +6,7 @@
       :imagePosition="calculatePositions(relatedImage)"
       :focus="relatedImage.hasFocus"
       :wasSelected="relatedImage.wasSelected"
+      :runDisapearAnimation="relatedImage.shouldDisapear"
       :tag="relatedImage.tag"
       :imageId="relatedImage.imageId"
       :imageFactor="imageFactor.sizeFactor"
