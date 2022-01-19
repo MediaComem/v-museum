@@ -99,6 +99,7 @@ export default {
   },
   methods: {
     previousSlide() {
+      // Process only one event and wait in case of multiple events are sent in short period of time
       const currentTime = Date.now();
       const diffTime = currentTime - this.slideMoveDiffTime;
       if (diffTime > 1000) {
@@ -111,6 +112,7 @@ export default {
       }
     },
     nextSlide() {
+      // Process only one event and wait in case of multiple events are sent in short period of time
       const diffTime = Date.now() - this.slideMoveDiffTime;
       if (diffTime > 1000) {
         const animationDuration = this.isCollapse ? 300 : 0;

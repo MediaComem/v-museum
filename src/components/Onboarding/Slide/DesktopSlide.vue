@@ -108,11 +108,13 @@ export default {
       if (event.deltaY > 0 && !this.changeSlideInProgress) {
         this.changeSlideInProgress = true;
         this.$emit("nextSlide");
+        // This timeout is used to ensure that only one action is take into account when long wheel has been used.
         setTimeout(() => (this.changeSlideInProgress = false), 2000);
       }
       if (event.deltaY < 0 && !this.changeSlideInProgress) {
         this.changeSlideInProgress = true;
         this.$emit("previousSlide");
+        // This timeout is used to ensure that only one action is take into account when long wheel has been used.
         setTimeout(() => (this.changeSlideInProgress = false), 2000);
       }
     },
