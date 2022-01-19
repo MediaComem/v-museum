@@ -70,7 +70,6 @@ export default {
         if (data.length > 0) {
           this.imageData = data[0];
           this.timeoutEvent = setTimeout(() => this.shouldRunAnimation = false, 3000);
-          this
         }
       });
     },
