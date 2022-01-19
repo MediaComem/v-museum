@@ -94,24 +94,33 @@ export default {
       tag: undefined,
       windowHeight: undefined,
       windowWidth: undefined,
+      slideMoveDiffTime: 0,
     };
   },
   methods: {
     previousSlide() {
-      const animationDuration = this.isCollapse ? 300 : 0;
-      this.isCollapse = false;
-      setTimeout(() => {
-        this.$refs.slider.prev();
-        this.slide = this.slide - 1;
-      }, animationDuration);
+      const currentTime = Date.now();
+      const diffTime = currentTime - this.slideMoveDiffTime;
+      if (diffTime > 1000) {
+        const animationDuration = this.isCollapse ? 300 : 0;
+        this.isCollapse = false;
+        setTimeout(() => {
+          this.$refs.slider.prev();
+          this.slide = this.slide - 1;
+        }, animationDuration);
+      }
     },
     nextSlide() {
-      const animationDuration = this.isCollapse ? 300 : 0;
-      this.isCollapse = false;
-      setTimeout(() => {
-        this.slide = this.slide + 1;
-        this.$refs.slider.next();
-      }, animationDuration);
+      const diffTime = Date.now() - this.slideMoveDiffTime;
+      if (diffTime > 1000) {
+        const animationDuration = this.isCollapse ? 300 : 0;
+        this.isCollapse = false;
+        setTimeout(() => {
+          this.slide = this.slide + 1;
+          this.$refs.slider.next();
+          this.slideMoveDiffTime = Date.now();
+        }, animationDuration);
+      }
     },
     loadTagView(tag) {
       this.$router.push({

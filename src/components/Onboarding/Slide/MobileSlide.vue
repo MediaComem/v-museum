@@ -25,45 +25,51 @@
       </div>
     </el-row>
   </div>
-  <el-row>
-    <img
-      class="image-display-mobile"
-      :src="`/v-museum/onboarding/${item.imagePath}`"
-    />
-  </el-row>
-  <arrow-up
-    :isMobile="true"
-    :isFull="false"
-    class="arrow-up"
-    :text="index === 0 ? mainTitle : information.collection[index - 1]"
-    @previous-slide="$emit('previousSlide')"
-  />
-  <el-row>
-    <h2 class="collection-title-mobile mobile-margin">
-      {{ item.title }}
-    </h2>
-  </el-row>
-  <el-row class="completion-element-mobile mobile-margin">
-    <documents-information
-      class="completion-element clickable"
-      :tagInfos="item.tag"
-      @load-tag-view="$emit('loadTagView', item.tag)"
-    />
-  </el-row>
-  <el-row>
-    <p class="collection-text-mobile mobile-margin">
-      {{ item.text.slice(0, 180) }}
-      <a class="more-link" @click="isCollapse = !isCollapse">MORE</a>
-    </p>
-  </el-row>
-  <el-row class="arrow-down-mobile">
-    <arrow-down
+  <div @touchstart="touchStart" @touchend="changeSlide">
+    <el-row>
+      <img
+        class="image-display-mobile"
+        :src="`/v-museum/onboarding/${item.imagePath}`"
+      />
+    </el-row>
+    <arrow-up
       :isMobile="true"
       :isFull="false"
-      :text="index === information.collection.length - 1 ? allTagText : information.collection[index + 1]"
-      @next-slide="$emit('nextSlide')"
+      class="arrow-up"
+      :text="index === 0 ? mainTitle : information.collection[index - 1]"
+      @previous-slide="$emit('previousSlide')"
     />
-  </el-row>
+    <el-row>
+      <h2 class="collection-title-mobile mobile-margin">
+        {{ item.title }}
+      </h2>
+    </el-row>
+    <el-row class="completion-element-mobile mobile-margin">
+      <documents-information
+        class="completion-element clickable"
+        :tagInfos="item.tag"
+        @load-tag-view="$emit('loadTagView', item.tag)"
+      />
+    </el-row>
+    <el-row>
+      <p class="collection-text-mobile mobile-margin">
+        {{ item.text.slice(0, 180) }}
+        <a class="more-link" @click="isCollapse = !isCollapse">MORE</a>
+      </p>
+    </el-row>
+    <el-row class="arrow-down-mobile">
+      <arrow-down
+        :isMobile="true"
+        :isFull="false"
+        :text="
+          index === information.collection.length - 1
+            ? allTagText
+            : information.collection[index + 1]
+        "
+        @next-slide="$emit('nextSlide')"
+      />
+    </el-row>
+  </div>
 </template>
 
 <script>
@@ -85,7 +91,25 @@ export default {
   data() {
     return {
       isCollapse: false,
+      startPosition: 0,
+      startMoveTime: 0,
     };
+  },
+  methods: {
+    touchStart(event) {
+      this.startMoveTime = Date.now();
+      this.startPosition = event.changedTouches[0].clientY;
+    },
+    changeSlide(event) {
+      if (Date.now() - this.startMoveTime > 100) {
+        const endMove = event.changedTouches[0].clientY;
+        if (this.startPosition < endMove) {
+          this.$emit("previousSlide");
+        } else if (this.startPosition > endMove) {
+          this.$emit("nextSlide");
+        }
+      }
+    },
   },
   computed: {
     collapseMobile() {

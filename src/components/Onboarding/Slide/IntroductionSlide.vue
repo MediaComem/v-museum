@@ -1,5 +1,12 @@
 <template>
-  <div ref="intro" class="overflow" style="height: 100vh;">
+  <div
+    ref="intro"
+    class="overflow"
+    style="height: 100vh;"
+    @scroll="scrollMove"
+    @touchend="changeSlide"
+    @mousewheel="wheelMove"
+  >
     <el-row :gutter="20" style="margin: 0">
       <el-col :span="24" style="padding: 0">
         <img class="first-image" src="@/assets/onboarding/first.png" />
@@ -35,12 +42,53 @@
 </template>
 
 <script>
+import { useWindowSize } from "vue-window-size";
 import ArrowDown from "../Logo/ArrowDown.vue";
 export default {
   components: { ArrowDown },
-  emits: ['nextSlide'],
+  emits: ["nextSlide"],
   props: {
     information: Object,
+  },
+  data() {
+    return {
+      windowHeight: undefined,
+      couldLoadNextSlide: false,
+      changeSlideInProgress: false,
+      delayBeforeAction: 0,
+    };
+  },
+  methods: {
+    scrollMove() {
+      if (
+        this.$refs["intro"].scrollHeight ===
+        this.$refs["intro"].scrollTop + this.windowHeight
+      ) {
+        this.couldLoadNextSlide = true;
+        this.changeSlideInProgress = false;
+        this.delayBeforeAction = Date.now();
+      } else {
+        this.couldLoadNextSlide = false;
+      }
+    },
+    wheelMove(event) {
+      const diffTime = Date.now() - this.delayBeforeAction;
+      if (this.couldLoadNextSlide && event.deltaY > 0 && diffTime > 1000 && !this.changeSlideInProgress) {
+        this.changeSlideInProgress = true;
+        this.$emit("nextSlide");
+        setTimeout(() => this.changeSlideInProgress = false, 2000)
+      }
+    },
+    changeSlide() {
+      const diffTime = Date.now() - this.delayBeforeAction;
+      if (this.couldLoadNextSlide && diffTime > 1000) {
+        this.$emit("nextSlide");
+      }
+    },
+  },
+  mounted() {
+    const { height } = useWindowSize();
+    this.windowHeight = height;
   },
 };
 </script>

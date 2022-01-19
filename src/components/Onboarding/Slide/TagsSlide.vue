@@ -1,5 +1,10 @@
 <template>
-  <div class="title">
+  <div
+    class="title"
+    @touchstart="touchStart"
+    @touchend="changeSlide"
+    @mousewheel="wheelMove"
+  >
     <h1 class="justify-text">TAGS</h1>
     <arrow-up
       class="justify-arrow clickable"
@@ -9,7 +14,13 @@
       @previous-slide="$emit('previousSlide')"
     />
   </div>
-  <div class="canvas-display overflow">
+  <div
+    ref="tags"
+    class="canvas-display overflow"
+    @scroll="scrollMove"
+    @touchend="changeSlideScroll"
+    @mousewheel="wheelMoveScroll"
+  >
     <div
       v-for="(tag, index) in tags.tags.sort((a, b) =>
         a.tag.localeCompare(b.tag)
@@ -40,7 +51,61 @@ export default {
   data() {
     return {
       tags: tags,
+      couldLoadNextSlide: true,
+      changeSlideInProgress: false,
+      delayBeforeAction: 0,
+      startMoveTime: 0,
+      startPosition: 0,
     };
+  },
+  methods: {
+    wheelMove(event) {
+      if (event.deltaY < 0 && !this.changeSlideInProgress) {
+        this.changeSlideInProgress = true;
+        this.$emit("previousSlide");
+        setTimeout(() => (this.changeSlideInProgress = false), 2000);
+      }
+    },
+    touchStart(event) {
+      this.startMoveTime = Date.now();
+      this.startPosition = event.changedTouches[0].clientY;
+    },
+    changeSlide(event) {
+      if (Date.now() - this.startMoveTime > 100) {
+        const endMove = event.changedTouches[0].clientY;
+        if (this.startPosition < endMove) {
+          this.$emit("previousSlide");
+        }
+      }
+    },
+    scrollMove() {
+      if (this.$refs["tags"].scrollTop === 0) {
+        this.couldLoadNextSlide = true;
+        this.changeSlideInProgress = false;
+        this.delayBeforeAction = Date.now();
+      } else {
+        this.couldLoadNextSlide = false;
+      }
+    },
+    wheelMoveScroll(event) {
+      const diffTime = Date.now() - this.delayBeforeAction;
+      if (
+        this.couldLoadNextSlide &&
+        event.deltaY < 0 &&
+        diffTime > 1000 &&
+        !this.changeSlideInProgress
+      ) {
+        this.changeSlideInProgress = true;
+        this.$emit("previousSlide");
+        setTimeout(() => (this.changeSlideInProgress = false), 2000);
+      }
+    },
+    changeSlideScroll() {
+      const diffTime = Date.now() - this.delayBeforeAction;
+      if (this.couldLoadNextSlide && diffTime > 1000) {
+        this.$emit("previousSlide");
+      }
+    },
   },
   computed: {
     fontSize() {
