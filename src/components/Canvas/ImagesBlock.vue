@@ -14,6 +14,7 @@
       :class="{
         last_block: blockInsertionState && !relatedImage.hasFocus,
       }"
+      @data-loaded="$emit('dataLoaded')"
     />
   </div>
 </template>
@@ -36,6 +37,7 @@ export default {
     currentGlobalPosition: Number,
     blockInsertionState: Boolean,
   },
+  emits: ["dataLoaded"],
   data() {
     return {
       newImagePositions: [],

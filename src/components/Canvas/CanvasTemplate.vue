@@ -38,6 +38,7 @@
           :imageFactor="imageFactor"
           :currentGlobalPosition="index"
           :blockInsertionState="index !== currentInsertionState"
+          @data-loaded="checkCollision"
         />
       </div>
     </div>

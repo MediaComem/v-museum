@@ -70,6 +70,7 @@ export default {
         if (data.length > 0) {
           this.imageData = data[0];
           this.timeoutEvent = setTimeout(() => this.shouldRunAnimation = false, 3000);
+          this
         }
       });
     },
@@ -84,6 +85,7 @@ export default {
     imageFactor: Number,
     blockPosition: Number,
   },
+  emits: ["dataLoaded"],
   data() {
     return {
       imageData: undefined,
@@ -160,6 +162,7 @@ export default {
     dataFetch.getImageById(this.imageId).then((data) => {
       if (data.length > 0) {
         this.imageData = data[0];
+        this.$emit("dataLoaded");
         setTimeout(() => this.shouldRunAnimation = false, 3000);
       }
     });
