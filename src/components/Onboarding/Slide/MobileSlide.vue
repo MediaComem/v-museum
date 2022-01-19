@@ -102,10 +102,10 @@ export default {
     },
     changeSlide(event) {
       if (Date.now() - this.startMoveTime > 100) {
-        const endMove = event.changedTouches[0].clientY;
-        if (this.startPosition < endMove) {
+        const endPosition = event.changedTouches[0].clientY;
+        if (this.startPosition < endPosition) {
           this.$emit("previousSlide");
-        } else if (this.startPosition > endMove) {
+        } else if (this.startPosition > endPosition) {
           this.$emit("nextSlide");
         }
       }
