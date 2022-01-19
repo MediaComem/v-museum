@@ -1,3 +1,13 @@
+/*
+  sizeFactor:               This is a factor to calculate the size of the image.
+  moveWidthFactor:          This factor is used to calculate the distance on X axis between a related image and the central image.
+  moveTopHeightFactor:      This factor is used to calculate the distance on Y axis between related image on top of the 
+                            central image and the central image.
+  moveBottomHeightFactor:   This factor is used to calculate the distance on Y axis between related image on bottom of the 
+                            central image and the central image.
+  moveCentralHeightFactor:  This factor is used to calculate the distance on Y axis between related image on same X axis than the 
+                            central image and the central image.
+*/
 const getFactor = (height, width) => {
   switch (true) {
     case width >= 1600 && height >= 1550:

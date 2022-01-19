@@ -63,7 +63,6 @@ export default {
   watch: {
     imageId: function(newVal) {
       clearTimeout(this.timeoutEvent);
-      this.shouldDisapear = false;
       this.shouldRunAnimation = true;
       this.imageData = undefined;
       dataFetch.getImageById(newVal).then((data) => {
@@ -128,7 +127,7 @@ export default {
     imageAppearAnimation() {
       return {
         "relatedImageBase": this.shouldRunAnimation,
-        "relatedImageDisapearBase": this.runDisapearAnimation,
+        "relatedImageDisappearBase": this.runDisapearAnimation,
       };
     },
     imageHover() {

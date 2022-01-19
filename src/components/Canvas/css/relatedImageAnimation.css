@@ -12,11 +12,11 @@
 }
 
 
-.relatedImageDisapearBase {
-  animation: relatedImageDisapearBaseAnimation 0.5s linear 0s normal forwards;
+.relatedImageDisappearBase {
+  animation: relatedImageDisappearBaseAnimation 0.5s linear 0s normal forwards;
 }
 
-@keyframes relatedImageDisapearBaseAnimation {
+@keyframes relatedImageDisappearBaseAnimation {
   0% {
     opacity: 0.5;
   }
