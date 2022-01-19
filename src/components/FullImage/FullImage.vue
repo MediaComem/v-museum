@@ -101,7 +101,7 @@ export default {
         }
         this.openImage(image);
         this.$nextTick(() => {
-          this.displayImage = false;
+          setTimeout(() => this.displayImage = false, 200);
         });
       });
     },
@@ -298,6 +298,9 @@ export default {
 }
 
 .hide-scrollbar {
+  overflow: auto;
   scrollbar-width: none;
 }
+
+
 </style>

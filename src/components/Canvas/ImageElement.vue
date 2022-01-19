@@ -11,7 +11,10 @@
     <img
       :ref="'image'"
       draggable="false"
-      class="relatedImageBase clickable"
+      style="object-fit: cover"
+      class="clickable"
+      :class="imageAppearAnimation"
+      :style="imageHover"
       :src="imageData.imagePaths.large"
       :height="imageHeight"
       :width="imageWidth"
@@ -31,15 +34,15 @@
         <p class="font-size-information">
           Illustration: &nbsp;
         </p>
-        <p class="font-size-information">
+        <p class="font-size-information-text">
           {{ imageData.author }}
         </p>
       </div>
       <div class="text_left">
-        <p class="font-size-information">
+        <p class="font-size-information margin-story">
           Story: &nbsp;
         </p>
-        <p class="font-size-information">
+        <p class="font-size-information-text margin-story">
           {{ imageData.title }}
         </p>
       </div>
@@ -59,11 +62,13 @@ import {
 export default {
   watch: {
     imageId: function(newVal) {
-      this.shouldRunAnimation = false;
+      clearTimeout(this.timeoutEvent);
+      this.shouldRunAnimation = true;
       this.imageData = undefined;
       dataFetch.getImageById(newVal).then((data) => {
         if (data.length > 0) {
           this.imageData = data[0];
+          this.timeoutEvent = setTimeout(() => this.shouldRunAnimation = false, 3000);
         }
       });
     },
@@ -72,16 +77,19 @@ export default {
     imagePosition: Object,
     focus: Boolean,
     wasSelected: Boolean,
+    runDisapearAnimation: Boolean,
     tag: String,
     imageId: Number,
     imageFactor: Number,
     blockPosition: Number,
   },
+  emits: ["dataLoaded"],
   data() {
     return {
       imageData: undefined,
       shouldRunAnimation: true,
       clickDuration: 0,
+      timeoutEvent: undefined,
     };
   },
   methods: {
@@ -118,7 +126,13 @@ export default {
     },
     imageAppearAnimation() {
       return {
-        "related-text": this.shouldRunAnimation,
+        "relatedImageBase": this.shouldRunAnimation,
+        "relatedImageDisappearBase": this.runDisapearAnimation,
+      };
+    },
+    imageHover() {
+      return {
+        transition: "height 0.2s",
       };
     },
     position() {
@@ -146,6 +160,8 @@ export default {
     dataFetch.getImageById(this.imageId).then((data) => {
       if (data.length > 0) {
         this.imageData = data[0];
+        this.$emit("dataLoaded");
+        setTimeout(() => this.shouldRunAnimation = false, 3000);
       }
     });
   },

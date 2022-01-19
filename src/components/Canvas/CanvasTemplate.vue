@@ -38,6 +38,7 @@
           :imageFactor="imageFactor"
           :currentGlobalPosition="index"
           :blockInsertionState="index !== currentInsertionState"
+          @data-loaded="checkCollision"
         />
       </div>
     </div>
@@ -117,12 +118,12 @@ export default {
       currentYPosition: 0,
       currentCenterLeftPosition: 0,
       currentCenterTopPosition: 0,
+      lastScroll: { x: 0, y: 0 },
       // Focus management part
       rectangleFocus: true,
-      imageHasFocus: false,
+      imageHasFocus: true,
       // Variable used to stop the centering of an image in case of moving in the page
       focusMoveTimeout: undefined,
-      lastScroll: { x: 0, y: 0 },
     };
   },
   methods: {
@@ -206,12 +207,11 @@ export default {
           }
         }
       }
-
       // Manage size of the focus rectangle
       this.rectangleFocus = this.imageHasFocus;
     },
     imageCollisionAnalyzis(imageToAnalyze, focusElement) {
-      if (imageToAnalyze) {
+      if (imageToAnalyze && imageToAnalyze.imageData !== undefined) {
         const imageToAnalyzeLeftPositionWithPixel =
           imageToAnalyze.position.left;
         // Remove px chars and convert to number
@@ -243,10 +243,10 @@ export default {
       // center of the image.
       if (
         currentImagePosition.left <= this.currentCenterLeftPosition &&
-        currentImagePosition.left + relatedThumbnailWidth(factor) >=
+        currentImagePosition.left + relatedThumbnailWidth(factor.sizeFactor) >=
           this.currentCenterLeftPosition &&
         currentImagePosition.top <= this.currentCenterTopPosition &&
-        currentImagePosition.top + relatedThumbnailHeight(factor) >=
+        currentImagePosition.top + relatedThumbnailHeight(factor.sizeFactor) >=
           this.currentCenterTopPosition
       ) {
         resetBlockFocus(this.imageBlocks, imageToAnalyze.imageId);
@@ -261,12 +261,12 @@ export default {
         const newLeftPosition =
           currentImagePosition.left -
           this.windowWidth / 2 +
-          thumbnailWidth(factor) / 2 -
+          thumbnailWidth(factor.sizeFactor) / 2 -
           10;
         const newTopPosition =
           currentImagePosition.top -
           this.windowHeight / 2 +
-          thumbnailHeight(factor) / 2 -
+          thumbnailHeight(factor.sizeFactor) / 2 -
           10;
         this.focusMoveTimeout = setTimeout(() => {
           window.scrollTo({
@@ -279,7 +279,7 @@ export default {
             currentImagePosition,
             focusElement.position
           );
-        }, 200);
+        }, 500);
       } else {
         focusElement.hasFocus = false;
       }
@@ -290,7 +290,6 @@ export default {
       if (isNewSelectedImage(imageToAnalyze.imageId, this.imageBlocks)) {
         // Second, check if it's a image of another block or the current one
         // If it is another one, replace the current block by the new one
-
         if (
           isChangeSelectedImage(
             imageToAnalyze.imageId,
@@ -299,12 +298,19 @@ export default {
           this.imageBlocks.length > 1
         ) {
           // Replace the needed block
-          this.imageBlocks[this.currentInsertionState] = this.insertBlock(
-            imageToAnalyze,
-            currentImagePosition,
-            imagePosition,
-            this.relatedImages[imageToAnalyze.imageId]
+          this.imageBlocks[this.currentInsertionState].relatedImages.forEach(
+            (element) => {
+              element.shouldDisapear = true;
+            }
           );
+          setTimeout(() => {
+            this.imageBlocks[this.currentInsertionState] = this.insertBlock(
+              imageToAnalyze,
+              currentImagePosition,
+              imagePosition,
+              this.relatedImages[imageToAnalyze.imageId]
+            );
+          }, 500);
         }
         // Finally, check if it's a new block is needed and load it.
         else if (isNewSelectedImage(imageToAnalyze.imageId, this.imageBlocks)) {
@@ -313,12 +319,19 @@ export default {
             this.currentInsertionState = getNextIndexBaseOnState(
               this.currentInsertionState
             );
-            this.imageBlocks[this.currentInsertionState] = this.insertBlock(
-              imageToAnalyze,
-              currentImagePosition,
-              imagePosition,
-              this.relatedImages[imageToAnalyze.imageId]
+            this.imageBlocks[this.currentInsertionState].relatedImages.forEach(
+              (element) => {
+                element.shouldDisapear = true;
+              }
             );
+            setTimeout(() => {
+              this.imageBlocks[this.currentInsertionState] = this.insertBlock(
+                imageToAnalyze,
+                currentImagePosition,
+                imagePosition,
+                this.relatedImages[imageToAnalyze.imageId]
+              );
+            }, 500);
             this.centralImageIndex = getPreviousIndexBaseOnState(
               this.currentInsertionState
             );
@@ -344,7 +357,8 @@ export default {
           for (let j = 0; j < nbElementsInBlock; j++) {
             const imageElement = oldestBlock.$refs["image-element-" + j];
             if (!imageElement.wasSelected) {
-              imageElement.imageData = undefined;
+              imageElement.shouldDisapear = true;
+              setTimeout(() => (imageElement.imageData = undefined), 500);
             }
           }
         }
@@ -402,9 +416,9 @@ export default {
       const factor = getFactor(this.windowHeight, this.windowWidth);
       // Find the middle of the page to insert the first image
       const firstBlockCentralImageTopPosition =
-        this.pageHeight / 2 - thumbnailHeight(factor) / 2;
+        this.pageHeight / 2 - thumbnailHeight(factor.sizeFactor) / 2;
       const firstBlockCentralImageLeftPosition =
-        this.pageWidth / 2 - thumbnailWidth(factor) / 2;
+        this.pageWidth / 2 - thumbnailWidth(factor.sizeFactor) / 2;
 
       this.imageBlocks.push(
         new ImageBlock(
@@ -441,6 +455,7 @@ export default {
       this.currentXPosition = this.pageWidth / 2 - this.windowWidth / 2;
       this.currentYPosition = this.pageHeight / 2 - this.windowHeight / 2;
       window.scrollTo(this.currentXPosition, this.currentYPosition);
+      
     },
     insertBlock(
       imageToAnalyze,
