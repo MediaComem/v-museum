@@ -26,7 +26,7 @@
         a.tag.localeCompare(b.tag)
       )"
       :key="index"
-      class="border"
+      :class="{ 'last-element': index == tags.tags.length - 1 }"
     >
       <div class="display-element clickable" @click="$emit('loadTagView', tag)">
         <p :class="fontSize">{{ tag.tag }} • {{ tag.totalImage }}</p>
@@ -38,11 +38,11 @@
 </template>
 
 <script>
-import tags from "@/assets/onboarding/tags.json";
-import ArrowUp from "../Logo/ArrowUp.vue";
+import tags from '@/assets/onboarding/tags.json';
+import ArrowUp from '../Logo/ArrowUp.vue';
 export default {
   components: { ArrowUp },
-  emits: ["previousSlide", "loadTagView"],
+  emits: ['previousSlide', 'loadTagView'],
   props: {
     isFullSize: Boolean,
     isMobile: Boolean,
@@ -62,7 +62,7 @@ export default {
     wheelMove(event) {
       if (event.deltaY < 0 && !this.changeSlideInProgress) {
         this.changeSlideInProgress = true;
-        this.$emit("previousSlide");
+        this.$emit('previousSlide');
         // This timeout is used to ensure that only one action is take into account when long wheel has been used.
         setTimeout(() => (this.changeSlideInProgress = false), 2000);
       }
@@ -75,12 +75,12 @@ export default {
       if (Date.now() - this.startMoveTime > 100) {
         const endPosition = event.changedTouches[0].clientY;
         if (this.startPosition < endPosition) {
-          this.$emit("previousSlide");
+          this.$emit('previousSlide');
         }
       }
     },
     scrollMove() {
-      if (this.$refs["tags"].scrollTop === 0) {
+      if (this.$refs['tags'].scrollTop === 0) {
         this.couldLoadNextSlide = true;
         this.changeSlideInProgress = false;
         this.delayBeforeAction = Date.now();
@@ -97,7 +97,7 @@ export default {
         !this.changeSlideInProgress
       ) {
         this.changeSlideInProgress = true;
-        this.$emit("previousSlide");
+        this.$emit('previousSlide');
         // This timeout is used to ensure that only one action is take into account when long wheel has been used.
         setTimeout(() => (this.changeSlideInProgress = false), 2000);
       }
@@ -105,15 +105,15 @@ export default {
     changeSlideScroll() {
       const diffTime = Date.now() - this.delayBeforeAction;
       if (this.couldLoadNextSlide && diffTime > 1000) {
-        this.$emit("previousSlide");
+        this.$emit('previousSlide');
       }
     },
   },
   computed: {
     fontSize() {
       return {
-        "desktop-font": !this.isMobile,
-        "mobile-font": this.isMobile,
+        'desktop-font': !this.isMobile,
+        'mobile-font': this.isMobile,
       };
     },
   },
@@ -121,11 +121,11 @@ export default {
 </script>
 
 <style scoped>
-@import "../../shared/pointer.css";
+@import '../../shared/pointer.css';
 
 .title {
   height: 10vh;
-  width: 96vw;
+  width: 92vw;
   padding-left: 2vw;
   padding-right: 2vw;
   display: inline-flex;
@@ -146,7 +146,7 @@ export default {
 .canvas-display {
   display: inline-flex;
   flex-wrap: wrap;
-  width: 96vw;
+  width: 92vw;
   height: 90vh;
   padding-left: 4vw;
   padding-right: 2vw;
@@ -161,6 +161,10 @@ export default {
     justify-content: left;
     align-items: center;
   }
+
+  .last-element {
+    flex: 1 1 48vw;
+  }
 }
 
 @media only screen and (min-width: 437px) and (max-width: 999px) {
@@ -170,6 +174,9 @@ export default {
     justify-content: left;
     align-items: center;
   }
+  .last-element {
+    flex: 1 1 32vw;
+  }
 }
 
 @media only screen and (min-width: 800px) {
@@ -178,6 +185,23 @@ export default {
     display: flex;
     justify-content: left;
     align-items: center;
+  }
+
+  .last-element {
+    flex: 1 1 23vw;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .last-element {
+    max-width: 32vw;
+  }
+}
+
+@media only screen and (max-width: 437px) {
+  .last-element {
+    max-width: unset;
+    flex: unset;
   }
 }
 
@@ -189,7 +213,7 @@ export default {
   font-size: x-small;
 }
 
-.border {
+.canvas-display > * {
   border-top: solid 1px black;
 }
 </style>
