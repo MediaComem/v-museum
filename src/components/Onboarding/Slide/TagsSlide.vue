@@ -148,9 +148,9 @@ export default {
   flex-wrap: wrap;
   width: 96vw;
   height: 90vh;
-  padding-left: 2vw;
+  padding-left: 4vw;
   padding-right: 2vw;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
 }
 

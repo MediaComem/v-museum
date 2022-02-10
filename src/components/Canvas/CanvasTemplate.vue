@@ -46,13 +46,13 @@
 </template>
 
 <script>
-import ImagesBlock from "./ImagesBlock.vue";
-import FocusRectangle from "./FocusRectangle.vue";
-import History from "../History/History.vue";
+import ImagesBlock from './ImagesBlock.vue';
+import FocusRectangle from './FocusRectangle.vue';
+import History from '../History/History.vue';
 
-import { useWindowSize } from "vue-window-size";
+import { useWindowSize } from 'vue-window-size';
 
-import relatedImageData from "../../assets/data/process.json";
+import relatedImageData from '../../assets/data/process.json';
 
 import {
   getFactor,
@@ -65,12 +65,16 @@ import {
   getNextIndexBaseOnState,
   getPreviousIndexBaseOnState,
   resetBlockFocus,
-} from "./service/image_management_service";
+} from './service/image_management_service';
 
-import { generatePosition } from "./service/positions_management_service";
+import {
+  generatePosition,
+  isOutsideViewPort,
+  getIndicatorPosition,
+} from './service/positions_management_service';
 
-import ImageBlock from "../../models/ImageBlock";
-import RelatedImage from "../../models/RelatedImage";
+import ImageBlock from '../../models/ImageBlock';
+import RelatedImage from '../../models/RelatedImage';
 
 export default {
   components: { ImagesBlock, FocusRectangle, History },
@@ -103,7 +107,7 @@ export default {
       // Display management part
       // The two following parameters will remove when the navigation will implement
       centralImageId: 3,
-      initialCentralTag: "Fly",
+      initialCentralTag: 'Fly',
       imageBlocks: [],
       windowHeight: 0,
       windowWidth: 0,
@@ -186,22 +190,22 @@ export default {
       this.focusMoveTimeout = undefined;
       // Retrieve current center window position in the page
       this.currentCenterLeftPosition =
-        -this.$refs["page"].getBoundingClientRect().x + this.windowWidth / 2;
+        -this.$refs['page'].getBoundingClientRect().x + this.windowWidth / 2;
       this.currentCenterTopPosition =
-        -this.$refs["page"].getBoundingClientRect().y + this.windowHeight / 2;
+        -this.$refs['page'].getBoundingClientRect().y + this.windowHeight / 2;
 
       // Analysis of each related images
       // first loop to analyze each blocks
       // Second loop to analyze each images in the block
       for (let i = 0; i <= this.imageBlocks.length; i++) {
-        const currentImageBlock = this.$refs["image-block-" + i];
+        const currentImageBlock = this.$refs['image-block-' + i];
         if (currentImageBlock) {
           const nbElementsInBlock = Object.keys(currentImageBlock.$refs).length;
           for (let j = 0; j < nbElementsInBlock; j++) {
             // param 1: div to check position collistion
             // param 2: image vue element including (focus state, position)
             this.imageCollisionAnalyzis(
-              currentImageBlock.$refs["image-element-" + j],
+              currentImageBlock.$refs['image-element-' + j],
               this.imageBlocks[i].relatedImages[j]
             );
           }
@@ -212,28 +216,60 @@ export default {
     },
     imageCollisionAnalyzis(imageToAnalyze, focusElement) {
       if (imageToAnalyze && imageToAnalyze.imageData !== undefined) {
-        const imageToAnalyzeLeftPositionWithPixel =
-          imageToAnalyze.position.left;
-        // Remove px chars and convert to number
-        const imageToAnalyzeImageLeftPosition = +imageToAnalyzeLeftPositionWithPixel.substring(
-          0,
-          imageToAnalyzeLeftPositionWithPixel.length - 2
-        );
-        const imageToAnalyzeTopPositionWithPixel = imageToAnalyze.position.top;
-        // Remove px chars and convert to number
-        const imageToAnalyzeImageTopPosition = +imageToAnalyzeTopPositionWithPixel.substring(
-          0,
-          imageToAnalyzeTopPositionWithPixel.length - 2
-        );
-        // Check collision
-        this.collisionAnalysis(
-          imageToAnalyze,
-          {
-            top: imageToAnalyzeImageTopPosition,
-            left: imageToAnalyzeImageLeftPosition,
-          },
-          focusElement
-        );
+        const tag = imageToAnalyze.$refs['tag'];
+        if (tag) {
+          const imageToAnalyzeLeftPositionWithPixel =
+            imageToAnalyze.position.left;
+          // Remove px chars and convert to number
+          const imageToAnalyzeImageLeftPosition = +imageToAnalyzeLeftPositionWithPixel.substring(
+            0,
+            imageToAnalyzeLeftPositionWithPixel.length - 2
+          );
+          const imageToAnalyzeTopPositionWithPixel =
+            imageToAnalyze.position.top;
+          // Remove px chars and convert to number
+          // Add tag height + margin bottom to center have the real image position
+          const imageToAnalyzeImageTopPosition = +imageToAnalyzeTopPositionWithPixel.substring(
+            0,
+            imageToAnalyzeTopPositionWithPixel.length - 2
+          ) + tag.clientHeight + 8;
+          // Check collision
+          this.collisionAnalysis(
+            imageToAnalyze,
+            {
+              top: imageToAnalyzeImageTopPosition,
+              left: imageToAnalyzeImageLeftPosition,
+            },
+            focusElement
+          );
+          if (
+            isOutsideViewPort(
+              window,
+              {
+                top: imageToAnalyzeImageTopPosition,
+                left: imageToAnalyzeImageLeftPosition,
+              },
+              this.currentCenterLeftPosition,
+              this.currentCenterTopPosition,
+              getFactor(this.windowHeight, this.windowWidth).sizeFactor
+            )
+          ) {
+            imageToAnalyze.indicatorInformation = getIndicatorPosition(
+              {
+                top: imageToAnalyzeImageTopPosition,
+                left: imageToAnalyzeImageLeftPosition,
+              },
+              {
+                top: this.currentCenterTopPosition - this.windowHeight / 2,
+                left: this.currentCenterLeftPosition - this.windowWidth / 2,
+              },
+              this.windowHeight,
+              this.windowWidth
+            );
+          } else {
+            imageToAnalyze.indicatorInformation = { visible: false };
+          }
+        }
       }
     },
     collisionAnalysis(imageToAnalyze, currentImagePosition, focusElement) {
@@ -272,7 +308,7 @@ export default {
           window.scrollTo({
             left: newLeftPosition,
             top: newTopPosition,
-            behavior: "smooth",
+            behavior: 'smooth',
           });
           this.insertionManagement(
             imageToAnalyze,
@@ -351,11 +387,11 @@ export default {
           }
           // Take the oldest block and remove the not selected image so all the images that weren't central.
           const oldestBlock = this.$refs[
-            "image-block-" + getNextIndexBaseOnState(this.currentInsertionState)
+            'image-block-' + getNextIndexBaseOnState(this.currentInsertionState)
           ];
           const nbElementsInBlock = Object.keys(oldestBlock.$refs).length;
           for (let j = 0; j < nbElementsInBlock; j++) {
-            const imageElement = oldestBlock.$refs["image-element-" + j];
+            const imageElement = oldestBlock.$refs['image-element-' + j];
             if (!imageElement.wasSelected) {
               imageElement.shouldDisapear = true;
               setTimeout(() => (imageElement.imageData = undefined), 500);
@@ -455,7 +491,6 @@ export default {
       this.currentXPosition = this.pageWidth / 2 - this.windowWidth / 2;
       this.currentYPosition = this.pageHeight / 2 - this.windowHeight / 2;
       window.scrollTo(this.currentXPosition, this.currentYPosition);
-      
     },
     insertBlock(
       imageToAnalyze,
@@ -463,7 +498,7 @@ export default {
       currentPosition,
       relatedImages
     ) {
-      this.$store.dispatch("insertHistory", {
+      this.$store.dispatch('insertHistory', {
         imageId: imageToAnalyze.imageId,
         tag: imageToAnalyze.tag,
       });
@@ -482,9 +517,9 @@ export default {
     },
     pageSize() {
       return {
-        position: "absolute",
-        height: this.pageHeight + "px",
-        width: this.pageWidth + "px",
+        position: 'absolute',
+        height: this.pageHeight + 'px',
+        width: this.pageWidth + 'px',
       };
     },
   },
@@ -498,16 +533,16 @@ export default {
     this.pageWidth = this.windowWidth * 4;
   },
   activated() {
-    window.addEventListener("scroll", this.scrollMove);
+    window.addEventListener('scroll', this.scrollMove);
     window.scrollTo(this.currentXPosition, this.currentYPosition);
   },
   deactivated() {
-    window.removeEventListener("scroll", this.scrollMove);
+    window.removeEventListener('scroll', this.scrollMove);
   },
 };
 </script>
 
 <style scoped>
-@import "./css/canvas.css";
-@import "../shared/pointer.css";
+@import './css/canvas.css';
+@import '../shared/pointer.css';
 </style>
