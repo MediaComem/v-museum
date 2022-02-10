@@ -42,11 +42,11 @@
 </template>
 
 <script>
-import { useWindowSize } from "vue-window-size";
-import ArrowDown from "../Logo/ArrowDown.vue";
+import { useWindowSize } from 'vue-window-size';
+import ArrowDown from '../Logo/ArrowDown.vue';
 export default {
   components: { ArrowDown },
-  emits: ["nextSlide"],
+  emits: ['nextSlide'],
   props: {
     information: Object,
   },
@@ -54,38 +54,48 @@ export default {
     return {
       windowHeight: undefined,
       couldLoadNextSlide: false,
-      changeSlideInProgress: false,
-      delayBeforeAction: 0,
+      shouldMove: undefined,
     };
   },
   methods: {
     scrollMove() {
       if (
-        this.$refs["intro"].scrollHeight ===
-        this.$refs["intro"].scrollTop + this.windowHeight
+        this.$refs['intro'].scrollHeight <=
+        this.$refs['intro'].scrollTop + this.windowHeight
       ) {
         this.couldLoadNextSlide = true;
-        this.changeSlideInProgress = false;
-        this.delayBeforeAction = Date.now();
       } else {
         this.couldLoadNextSlide = false;
       }
     },
     wheelMove(event) {
-      const diffTime = Date.now() - this.delayBeforeAction;
-      if (this.couldLoadNextSlide && event.deltaY > 0 && diffTime > 1000 && !this.changeSlideInProgress) {
-        this.changeSlideInProgress = true;
-        this.$emit("nextSlide");
-        // This timeout is used to ensure that only one action is take into account when long wheel has been used.
-        setTimeout(() => this.changeSlideInProgress = false, 2000)
+      if (this.couldLoadNextSlide && event.deltaY > 0) {
+        clearTimeout(this.shouldMove);
+        this.shouldMove = setTimeout(() => {
+          this.$emit('nextSlide');
+        }, 66);
+      }
+    },
+    arrowMove(event) {
+      if (this.couldLoadNextSlide && event.code === 'ArrowDown') {
+        console.log(event); 
+        this.$emit('nextSlide');
       }
     },
     changeSlide() {
-      const diffTime = Date.now() - this.delayBeforeAction;
-      if (this.couldLoadNextSlide && diffTime > 1000) {
-        this.$emit("nextSlide");
+      if (this.couldLoadNextSlide) {
+        clearTimeout(this.shouldMove);
+        this.shouldMove = setTimeout(() => {
+          this.$emit('nextSlide');
+        }, 66);
       }
     },
+  },
+  activated() {
+    window.addEventListener('keyup', this.arrowMove);
+  },
+  deactivated() {
+    window.removeEventListener('keyup', this.arrowMove);
   },
   mounted() {
     const { height } = useWindowSize();
@@ -95,6 +105,6 @@ export default {
 </script>
 
 <style scoped>
-@import "../onboarding.css";
-@import "./introduction_slide.css";
+@import '../onboarding.css';
+@import './introduction_slide.css';
 </style>

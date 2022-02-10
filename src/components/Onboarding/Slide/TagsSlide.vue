@@ -52,19 +52,18 @@ export default {
     return {
       tags: tags,
       couldLoadNextSlide: true,
-      changeSlideInProgress: false,
-      delayBeforeAction: 0,
       startMoveTime: 0,
       startPosition: 0,
+      shouldMove: undefined,
     };
   },
   methods: {
     wheelMove(event) {
-      if (event.deltaY < 0 && !this.changeSlideInProgress) {
-        this.changeSlideInProgress = true;
-        this.$emit('previousSlide');
-        // This timeout is used to ensure that only one action is take into account when long wheel has been used.
-        setTimeout(() => (this.changeSlideInProgress = false), 2000);
+      if (event.deltaY < 0) {
+        clearTimeout(this.shouldMove);
+        this.shouldMove = setTimeout(() => {
+          this.$emit('previousSlide');
+        }, 66);
       }
     },
     touchStart(event) {
@@ -82,30 +81,31 @@ export default {
     scrollMove() {
       if (this.$refs['tags'].scrollTop === 0) {
         this.couldLoadNextSlide = true;
-        this.changeSlideInProgress = false;
-        this.delayBeforeAction = Date.now();
       } else {
         this.couldLoadNextSlide = false;
       }
     },
-    wheelMoveScroll(event) {
-      const diffTime = Date.now() - this.delayBeforeAction;
-      if (
-        this.couldLoadNextSlide &&
-        event.deltaY < 0 &&
-        diffTime > 1000 &&
-        !this.changeSlideInProgress
-      ) {
-        this.changeSlideInProgress = true;
+    arrowMove(event) {
+      if (this.couldLoadNextSlide && event.code === 'ArrowDown') {
+        this.$emit('nextSlide');
+      } else if (this.couldLoadNextSlide && event.code === 'ArrowUp') {
         this.$emit('previousSlide');
-        // This timeout is used to ensure that only one action is take into account when long wheel has been used.
-        setTimeout(() => (this.changeSlideInProgress = false), 2000);
+      }
+    },
+    wheelMoveScroll(event) {
+      if (this.couldLoadNextSlide && event.deltaY < 0) {
+        clearTimeout(this.shouldMove);
+        this.shouldMove = setTimeout(() => {
+          this.$emit('previousSlide');
+        }, 66);
       }
     },
     changeSlideScroll() {
-      const diffTime = Date.now() - this.delayBeforeAction;
-      if (this.couldLoadNextSlide && diffTime > 1000) {
-        this.$emit('previousSlide');
+      if (this.couldLoadNextSlide) {
+        clearTimeout(this.shouldMove);
+        this.shouldMove = setTimeout(() => {
+          this.$emit('previousSlide');
+        }, 66);
       }
     },
   },
@@ -117,6 +117,12 @@ export default {
       };
     },
   },
+  activated() {
+    window.addEventListener('keyup', this.arrowMove);
+  },
+  deactivated() {
+    window.removeEventListener('keyup', this.arrowMove);
+  },
 };
 </script>
 
@@ -126,7 +132,7 @@ export default {
 .title {
   height: 10vh;
   width: 92vw;
-  padding-left: 2vw;
+  padding-left: 4vw;
   padding-right: 2vw;
   display: inline-flex;
   align-items: center;

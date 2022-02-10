@@ -5,6 +5,7 @@
     @mousewheel="wheelMove"
     @touchstart="touchStart"
     @touchend="changeSlide"
+    @keyup.up="alert(1)"
   />
   <div
     class="collapse-transition"
@@ -18,6 +19,7 @@
     @mousewheel="wheelMove"
     @touchstart="touchStart"
     @touchend="changeSlide"
+    @keyup.up="alert(1)"
   />
   <arrow-up
     :isFull="isFullSize"
@@ -28,12 +30,14 @@
     @mousewheel="wheelMove"
     @touchstart="touchStart"
     @touchend="changeSlide"
+    @keyup.up="alert(1)"
   />
   <div
     class="collection-position"
     @mousewheel="wheelMove"
     @touchstart="touchStart"
     @touchend="changeSlide"
+    @keyup.up="alert(1)"
   >
     <el-row>
       <h2
@@ -79,13 +83,13 @@
 </template>
 
 <script>
-import Logo from "../Logo/Logo.vue";
-import ArrowUp from "../Logo/ArrowUp.vue";
-import ArrowDown from "../Logo/ArrowDown.vue";
-import DocumentsInformation from "../Logo/DocumentsInformation.vue";
+import Logo from '../Logo/Logo.vue';
+import ArrowUp from '../Logo/ArrowUp.vue';
+import ArrowDown from '../Logo/ArrowDown.vue';
+import DocumentsInformation from '../Logo/DocumentsInformation.vue';
 export default {
   components: { Logo, ArrowUp, ArrowDown, DocumentsInformation },
-  emits: ["loadTagView", "previousSlide", "nextSlide"],
+  emits: ['loadTagView', 'previousSlide', 'nextSlide'],
   props: {
     index: Number,
     item: Object,
@@ -97,38 +101,44 @@ export default {
   data() {
     return {
       isCollapse: false,
-      changeSlideInProgress: false,
-      delayBeforeAction: 0,
       startMoveTime: 0,
       startPosition: 0,
+      shouldMove: undefined,
     };
   },
   methods: {
     wheelMove(event) {
-      if (event.deltaY > 0 && !this.changeSlideInProgress) {
-        this.changeSlideInProgress = true;
-        this.$emit("nextSlide");
-        // This timeout is used to ensure that only one action is take into account when long wheel has been used.
-        setTimeout(() => (this.changeSlideInProgress = false), 2000);
+      if (event.deltaY > 0) {
+        clearTimeout(this.shouldMove);
+        this.shouldMove = setTimeout(() => {
+          this.$emit('nextSlide');
+        }, 66);
       }
-      if (event.deltaY < 0 && !this.changeSlideInProgress) {
-        this.changeSlideInProgress = true;
-        this.$emit("previousSlide");
-        // This timeout is used to ensure that only one action is take into account when long wheel has been used.
-        setTimeout(() => (this.changeSlideInProgress = false), 2000);
+      if (event.deltaY < 0) {
+        clearTimeout(this.shouldMove);
+        this.shouldMove = setTimeout(() => {
+          this.$emit('previousSlide');
+        }, 66);
       }
     },
     touchStart(event) {
       this.startMoveTime = Date.now();
       this.startPosition = event.changedTouches[0].clientY;
     },
+    arrowMove(event) {
+      if (this.couldLoadNextSlide && event.code === 'ArrowDown') {
+        this.$emit('nextSlide');
+      } else if (this.couldLoadNextSlide && event.code === 'ArrowUp') {
+        this.$emit('previousSlide');
+      }
+    },
     changeSlide(event) {
       if (Date.now() - this.startMoveTime > 100) {
         const endPosition = event.changedTouches[0].clientY;
         if (this.startPosition < endPosition) {
-          this.$emit("previousSlide");
+          this.$emit('previousSlide');
         } else if (this.startPosition > endPosition) {
-          this.$emit("nextSlide");
+          this.$emit('nextSlide');
         }
       }
     },
@@ -136,18 +146,24 @@ export default {
   computed: {
     collapse() {
       return {
-        "background-color": this.information.collection[this.index].color,
-        height: "100vh",
-        width: "57vw",
-        transform: this.isCollapse ? "translateX(0)" : "translate(-57vw)",
+        'background-color': this.information.collection[this.index].color,
+        height: '100vh',
+        width: '57vw',
+        transform: this.isCollapse ? 'translateX(0)' : 'translate(-57vw)',
       };
     },
+  },
+  activated() {
+    window.addEventListener('keyup', this.arrowMove);
+  },
+  deactivated() {
+    window.removeEventListener('keyup', this.arrowMove);
   },
 };
 </script>
 
 <style scoped>
-@import "../onboarding.css";
-@import "./desktop_slide.css";
-@import "../../shared/pointer.css";
+@import '../onboarding.css';
+@import './desktop_slide.css';
+@import '../../shared/pointer.css';
 </style>
