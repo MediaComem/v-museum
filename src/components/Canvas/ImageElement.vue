@@ -71,6 +71,9 @@ export default {
             () => (this.shouldRunAnimation = false),
             3000
           );
+          this.$nextTick(() => {
+            this.$emit('dataLoaded');
+          });
         }
       });
     },
@@ -154,8 +157,10 @@ export default {
     dataFetch.getImageById(this.imageId).then((data) => {
       if (data.length > 0) {
         this.imageData = data[0];
-        this.$emit('dataLoaded');
         setTimeout(() => (this.shouldRunAnimation = false), 3000);
+        this.$nextTick(() => {
+          this.$emit('dataLoaded');
+        });
       }
     });
   },

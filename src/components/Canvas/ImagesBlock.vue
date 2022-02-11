@@ -14,7 +14,7 @@
       :class="{
         last_block: blockInsertionState && !relatedImage.hasFocus,
       }"
-      @data-loaded="$emit('dataLoaded')"
+      @data-loaded="$emit('dataLoaded');"
     />
   </div>
 </template>

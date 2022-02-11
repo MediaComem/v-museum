@@ -28,7 +28,7 @@
       :offsetX="windowWidth"
       :offsetY="windowHeight"
       :imageFactor="imageFactor"
-      :focus="rectangleFocus"
+      :focus="imageHasFocus"
     />
     <div v-for="(imageBlock, index) in imageBlocks" :key="index">
       <div>
@@ -38,7 +38,7 @@
           :imageFactor="imageFactor"
           :currentGlobalPosition="index"
           :blockInsertionState="index !== currentInsertionState"
-          @data-loaded="checkCollision"
+          @data-loaded="dataIsLoaded(index)"
         />
       </div>
     </div>
@@ -84,6 +84,7 @@ export default {
       if (to.query.tag) {
         this.initialCentralTag = decodeURIComponent(to.query.tag);
       }
+      this.isInitialLoad = true;
       this.loadInitialImage();
     }
   },
@@ -95,6 +96,7 @@ export default {
         if (to.query.tag) {
           vm.initialCentralTag = decodeURIComponent(to.query.tag);
         }
+        vm.isInitialLoad = true;
         vm.loadInitialImage();
       }
     });
@@ -124,8 +126,8 @@ export default {
       currentCenterTopPosition: 0,
       lastScroll: { x: 0, y: 0 },
       // Focus management part
-      rectangleFocus: true,
       imageHasFocus: true,
+      isInitialLoad: true,
       // Variable used to stop the centering of an image in case of moving in the page
       focusMoveTimeout: undefined,
     };
@@ -179,7 +181,12 @@ export default {
       this.lastScroll.y = currentScrollY;
       this.checkCollision();
     },
-
+    dataIsLoaded(index) {
+      if (index === 0 && this.isInitialLoad) {
+        this.checkCollision();
+        this.isInitialLoad = false;
+      }
+    },
     checkCollision() {
       this.fullHistoryMode = false;
       // Reset the focus to have version of this analyzis.
@@ -211,8 +218,6 @@ export default {
           }
         }
       }
-      // Manage size of the focus rectangle
-      this.rectangleFocus = this.imageHasFocus;
     },
     imageCollisionAnalyzis(imageToAnalyze, focusElement) {
       if (imageToAnalyze && imageToAnalyze.imageData !== undefined) {
@@ -229,10 +234,13 @@ export default {
             imageToAnalyze.position.top;
           // Remove px chars and convert to number
           // Add tag height + margin bottom to center have the real image position
-          const imageToAnalyzeImageTopPosition = +imageToAnalyzeTopPositionWithPixel.substring(
-            0,
-            imageToAnalyzeTopPositionWithPixel.length - 2
-          ) + tag.clientHeight + 8;
+          const imageToAnalyzeImageTopPosition =
+            +imageToAnalyzeTopPositionWithPixel.substring(
+              0,
+              imageToAnalyzeTopPositionWithPixel.length - 2
+            ) +
+            tag.clientHeight +
+            8;
           // Check collision
           this.collisionAnalysis(
             imageToAnalyze,
@@ -287,8 +295,6 @@ export default {
       ) {
         resetBlockFocus(this.imageBlocks, imageToAnalyze.imageId);
         focusElement.wasSelected = true;
-        focusElement.hasFocus = true;
-        this.imageHasFocus = true;
         // The calculation works as following:
         // 1) Current image position (provide at the top left of the window)
         // 2) remove the half of the window size
@@ -310,11 +316,15 @@ export default {
             top: newTopPosition,
             behavior: 'smooth',
           });
-          this.insertionManagement(
-            imageToAnalyze,
-            currentImagePosition,
-            focusElement.position
-          );
+          setTimeout(() => {
+            focusElement.hasFocus = true;
+            this.imageHasFocus = true;
+            this.insertionManagement(
+              imageToAnalyze,
+              currentImagePosition,
+              focusElement.position
+            );
+          }, 200);
         }, 500);
       } else {
         focusElement.hasFocus = false;
