@@ -73,6 +73,7 @@ export default {
           );
           this.$nextTick(() => {
             this.$emit('dataLoaded');
+            this.$emit('isInScreen');
           });
         }
       });
@@ -88,7 +89,7 @@ export default {
     imageFactor: Number,
     blockPosition: Number,
   },
-  emits: ['dataLoaded'],
+  emits: ['dataLoaded', 'isInScreen'],
   data() {
     return {
       imageData: undefined,
@@ -160,6 +161,7 @@ export default {
         setTimeout(() => (this.shouldRunAnimation = false), 3000);
         this.$nextTick(() => {
           this.$emit('dataLoaded');
+          this.$emit('isInScreen');
         });
       }
     });

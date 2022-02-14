@@ -11,23 +11,23 @@
 const getFactor = (height, width) => {
   switch (true) {
     case width >= 1600 && height >= 1550:
-      return {sizeFactor: 9, moveWidthFactor: 2.8, moveTopHeightFactor: 1.2, moveBottomHeightFactor: 1.7, moveCentralHeightFactor: 15};
+      return {sizeFactor: 10, moveWidthFactor: 2.8, moveTopHeightFactor: 1.2, moveBottomHeightFactor: 1.7, moveCentralHeightFactor: 15};
     case width >= 1400 && height >= 1350:
-      return {sizeFactor: 7, moveWidthFactor: 2.7, moveTopHeightFactor: 1.3, moveBottomHeightFactor: 1.5, moveCentralHeightFactor: 10};
+      return {sizeFactor: 10, moveWidthFactor: 4, moveTopHeightFactor: 12, moveBottomHeightFactor: 8, moveCentralHeightFactor: 3};
     case width >= 1200 && height >= 1150:
-      return {sizeFactor: 6, moveWidthFactor: 2.6, moveTopHeightFactor: 1.25, moveBottomHeightFactor: 1.5, moveCentralHeightFactor: 10};
+      return {sizeFactor: 10, moveWidthFactor: 2.6, moveTopHeightFactor: 1.25, moveBottomHeightFactor: 1.5, moveCentralHeightFactor: 10};
     case width >= 1000 && height >= 920:
-      return {sizeFactor: 5.5, moveWidthFactor: 2.4, moveTopHeightFactor: 1.4, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 12};
+      return {sizeFactor: 10, moveWidthFactor: 2.4, moveTopHeightFactor: 1.4, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 12};
     case width >= 700 && height >= 716:
-      return {sizeFactor: 4, moveWidthFactor: 2.1, moveTopHeightFactor: 1.3, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 14};
+      return {sizeFactor: 7, moveWidthFactor: 2.1, moveTopHeightFactor: 1.3, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 14};
     case width >= 550 && height >= 615:
-      return {sizeFactor: 3.5, moveWidthFactor: 1.9, moveTopHeightFactor: 1.35, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 12};
+      return {sizeFactor: 5.5, moveWidthFactor: 1.9, moveTopHeightFactor: 1.35, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 12};
     case width >= 400 && height >= 514:
-      return {sizeFactor: 3, moveWidthFactor: 1.6, moveTopHeightFactor: 1.35, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 10};
+      return {sizeFactor: 4.5, moveWidthFactor: 1.6, moveTopHeightFactor: 1.35, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 10};
     case width >= 350 && height >= 480:
-      return {sizeFactor: 2.5, moveWidthFactor: 1.6, moveTopHeightFactor: 1.4, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 10};
+      return {sizeFactor: 3.5, moveWidthFactor: 1.6, moveTopHeightFactor: 1.4, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 10};
     default:
-      return {sizeFactor: 2.5, moveWidthFactor: 1.5, moveTopHeightFactor: 1.5, moveBottomHeightFactor: 1.5, moveCentralHeightFactor: 10};
+      return {sizeFactor: 3, moveWidthFactor: 1.5, moveTopHeightFactor: 1.5, moveBottomHeightFactor: 1.5, moveCentralHeightFactor: 10};
   }
 };
 

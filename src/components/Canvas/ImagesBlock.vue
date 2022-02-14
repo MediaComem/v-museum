@@ -15,6 +15,7 @@
         last_block: blockInsertionState && !relatedImage.hasFocus,
       }"
       @data-loaded="$emit('dataLoaded');"
+      @is-in-screen="$emit('isInScreen', index);"
     />
   </div>
 </template>
@@ -37,7 +38,7 @@ export default {
     currentGlobalPosition: Number,
     blockInsertionState: Boolean,
   },
-  emits: ["dataLoaded"],
+  emits: ["dataLoaded", "isInScreen"],
   data() {
     return {
       newImagePositions: [],

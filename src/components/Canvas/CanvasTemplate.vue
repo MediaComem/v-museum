@@ -39,6 +39,7 @@
           :currentGlobalPosition="index"
           :blockInsertionState="index !== currentInsertionState"
           @data-loaded="dataIsLoaded(index)"
+          @is-in-screen="checkImageOutsideScreen($event, index)"
         />
       </div>
     </div>
@@ -187,6 +188,69 @@ export default {
         this.isInitialLoad = false;
       }
     },
+    isInScreen(
+      image,
+      imageToAnalyzeImageLeftPosition,
+      imageToAnalyzeImageTopPosition,
+      tag
+    ) {
+      if (
+        isOutsideViewPort(
+          window,
+          {
+            top: imageToAnalyzeImageTopPosition,
+            left: imageToAnalyzeImageLeftPosition,
+          },
+          this.currentCenterLeftPosition,
+          this.currentCenterTopPosition,
+          getFactor(this.windowHeight, this.windowWidth).sizeFactor
+        )
+      ) {
+        image.indicatorInformation = getIndicatorPosition(
+          {
+            top: imageToAnalyzeImageTopPosition,
+            left: imageToAnalyzeImageLeftPosition,
+          },
+          {
+            top: this.currentCenterTopPosition - this.windowHeight / 2,
+            left: this.currentCenterLeftPosition - this.windowWidth / 2,
+          },
+          this.windowHeight,
+          this.windowWidth,
+          tag.childNodes[0].length * 25
+        );
+      } else {
+        image.indicatorInformation = { visible: false };
+      }
+    },
+    checkImageOutsideScreen(event, index) {
+      const image = this.$refs['image-block-' + index].$refs[
+        'image-element-' + event
+      ];
+      const tag = image.$refs['tag'];
+      const imageToAnalyzeLeftPositionWithPixel = image.position.left;
+      // Remove px chars and convert to number
+      const imageToAnalyzeImageLeftPosition = +imageToAnalyzeLeftPositionWithPixel.substring(
+        0,
+        imageToAnalyzeLeftPositionWithPixel.length - 2
+      );
+      const imageToAnalyzeTopPositionWithPixel = image.position.top;
+      // Remove px chars and convert to number
+      // Add tag height + margin bottom to center have the real image position
+      const imageToAnalyzeImageTopPosition =
+        +imageToAnalyzeTopPositionWithPixel.substring(
+          0,
+          imageToAnalyzeTopPositionWithPixel.length - 2
+        ) +
+        tag.clientHeight +
+        8;
+      this.isInScreen(
+        image,
+        imageToAnalyzeImageLeftPosition,
+        imageToAnalyzeImageTopPosition,
+        tag
+      );
+    },
     checkCollision() {
       this.fullHistoryMode = false;
       // Reset the focus to have version of this analyzis.
@@ -250,33 +314,12 @@ export default {
             },
             focusElement
           );
-          if (
-            isOutsideViewPort(
-              window,
-              {
-                top: imageToAnalyzeImageTopPosition,
-                left: imageToAnalyzeImageLeftPosition,
-              },
-              this.currentCenterLeftPosition,
-              this.currentCenterTopPosition,
-              getFactor(this.windowHeight, this.windowWidth).sizeFactor
-            )
-          ) {
-            imageToAnalyze.indicatorInformation = getIndicatorPosition(
-              {
-                top: imageToAnalyzeImageTopPosition,
-                left: imageToAnalyzeImageLeftPosition,
-              },
-              {
-                top: this.currentCenterTopPosition - this.windowHeight / 2,
-                left: this.currentCenterLeftPosition - this.windowWidth / 2,
-              },
-              this.windowHeight,
-              this.windowWidth
-            );
-          } else {
-            imageToAnalyze.indicatorInformation = { visible: false };
-          }
+          this.isInScreen(
+            imageToAnalyze,
+            imageToAnalyzeImageLeftPosition,
+            imageToAnalyzeImageTopPosition,
+            tag
+          );
         }
       }
     },

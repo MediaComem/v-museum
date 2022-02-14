@@ -32,7 +32,8 @@ const getIndicatorPosition = (
   imagePosition,
   screenPosition,
   windowHeight,
-  windowWidth
+  windowWidth,
+  textSize
 ) => {
   const cornerTopLeft = {
     left: imagePosition.left - screenPosition.left,
@@ -53,7 +54,7 @@ const getIndicatorPosition = (
 
   const padding = 30;
 
-  const padSize = {
+  let padSize = {
     width: windowWidth - padding,
     height: windowHeight - padding,
   };
@@ -67,6 +68,10 @@ const getIndicatorPosition = (
       top: -padSize.height / 2,
     };
   } else {
+    padSize = {
+      width: windowWidth - textSize,
+      height: windowHeight - textSize,
+    };
     // bottom of screen
     indicatorPos = {
       left: padSize.height / 2 / slope,
@@ -81,6 +86,10 @@ const getIndicatorPosition = (
       top: (slope * -padSize.width) / 2,
     };
   } else if (indicatorPos.left > padSize.width / 2) {
+    padSize = {
+      width: windowWidth - textSize,
+      height: windowHeight - textSize,
+    };
     //right side
     indicatorPos = {
       left: padSize.width / 2,
