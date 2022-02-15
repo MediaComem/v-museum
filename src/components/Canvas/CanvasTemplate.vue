@@ -14,6 +14,8 @@
     @mouseup="moveClickDisable"
     @mouseleave="moveClickDisable"
     @mousemove="mouseMove"
+    @touchstart="moveClickEnable"
+    @touchend="moveClickDisable"
     :ref="'page'"
     class="navigation-pointer"
   >
@@ -148,6 +150,7 @@ export default {
     },
     moveClickDisable() {
       this.isDrag = false;
+      this.checkCollision();
     },
     mouseMove(event) {
       if (this.isDrag) {
@@ -359,22 +362,24 @@ export default {
           thumbnailHeight(factor.sizeFactor) / 2 -
           10;
         this.focusMoveTimeout = setTimeout(() => {
-          window.scrollTo({
-            left: newLeftPosition,
-            top: newTopPosition,
-            behavior: 'smooth',
-          });
-          this.couldReset = false;
-          focusElement.hasFocus = true;
-          this.imageHasFocus = true;
-          setTimeout(() => (this.couldReset = true), 300);
-          setTimeout(() => {
-            this.insertionManagement(
-              imageToAnalyze,
-              currentImagePosition,
-              focusElement.position
-            );
-          }, 200);
+          if (!this.isDrag) {
+            window.scrollTo({
+              left: newLeftPosition,
+              top: newTopPosition,
+              behavior: 'smooth',
+            });
+            this.couldReset = false;
+            focusElement.hasFocus = true;
+            this.imageHasFocus = true;
+            setTimeout(() => (this.couldReset = true), 300);
+            setTimeout(() => {
+              this.insertionManagement(
+                imageToAnalyze,
+                currentImagePosition,
+                focusElement.position
+              );
+            }, 200);
+          }
         }, 500);
       } else {
         focusElement.hasFocus = false;
