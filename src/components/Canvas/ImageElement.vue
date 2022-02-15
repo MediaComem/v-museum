@@ -2,7 +2,7 @@
   <div>
     <div v-if="getVisibility" :style="getIndicator">
       <div>
-        <h2 style="font-size: 15px">{{ tag }}</h2>
+        <h2 style="font-size: 15px; user-select: none;">{{ tag }}</h2>
       </div>
     </div>
     <div :style="position" v-if="imageData" class="block-selection">
