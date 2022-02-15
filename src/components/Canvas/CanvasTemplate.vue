@@ -54,6 +54,7 @@ import FocusRectangle from './FocusRectangle.vue';
 import History from '../History/History.vue';
 
 import { useWindowSize } from 'vue-window-size';
+import smoothscroll from 'smoothscroll-polyfill';
 
 import relatedImageData from '../../assets/data/process.json';
 
@@ -602,6 +603,7 @@ export default {
     },
   },
   created() {
+    smoothscroll.polyfill();
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
