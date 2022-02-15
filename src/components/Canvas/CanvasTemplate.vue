@@ -223,7 +223,7 @@ export default {
           },
           this.windowHeight,
           this.windowWidth,
-          tag.childNodes[0].length * 25
+          tag.childNodes[0].length * 15
         );
       } else {
         image.indicatorInformation = { visible: false };
