@@ -92,7 +92,9 @@ export default {
 
   beforeRouteEnter(to, from, next) {
     next((vm) => {
+      console.log('TEST3');
       if (to.query.imageId) {
+        console.log('TEST4');
         vm.centralImageId = +decodeURIComponent(to.query.imageId);
         if (to.query.tag) {
           vm.initialCentralTag = decodeURIComponent(to.query.tag);
@@ -131,6 +133,7 @@ export default {
       isInitialLoad: true,
       // Variable used to stop the centering of an image in case of moving in the page
       focusMoveTimeout: undefined,
+      couldReset: true,
     };
   },
   methods: {
@@ -254,7 +257,9 @@ export default {
     checkCollision() {
       this.fullHistoryMode = false;
       // Reset the focus to have version of this analyzis.
-      this.imageHasFocus = false;
+      if (this.couldReset) {
+        this.imageHasFocus = false;
+      }
       // In case of a collision was detected and we continue the movement, reset the timeout that
       // enable new related images and center the screen.
       clearTimeout(this.focusMoveTimeout);
@@ -359,9 +364,11 @@ export default {
             top: newTopPosition,
             behavior: 'smooth',
           });
+          this.couldReset = false;
+          focusElement.hasFocus = true;
+          this.imageHasFocus = true;
+          setTimeout(() => (this.couldReset = true), 300);
           setTimeout(() => {
-            focusElement.hasFocus = true;
-            this.imageHasFocus = true;
             this.insertionManagement(
               imageToAnalyze,
               currentImagePosition,
@@ -447,7 +454,8 @@ export default {
             const imageElement = oldestBlock.$refs['image-element-' + j];
             if (!imageElement.wasSelected) {
               imageElement.shouldDisapear = true;
-              setTimeout(() => (imageElement.imageData = undefined), 500);
+              imageElement.imageData = undefined;
+              imageElement.indicatorInformation.visible = false;
             }
           }
         }
@@ -543,7 +551,19 @@ export default {
       );
       this.currentXPosition = this.pageWidth / 2 - this.windowWidth / 2;
       this.currentYPosition = this.pageHeight / 2 - this.windowHeight / 2;
-      window.scrollTo(this.currentXPosition, this.currentYPosition);
+
+      setTimeout(() => {
+        window.scrollTo({
+          left:
+            firstBlockCentralImageLeftPosition -
+            this.windowWidth / 2 +
+            thumbnailWidth(factor.sizeFactor) / 2,
+          top:
+            firstBlockCentralImageTopPosition -
+            this.windowHeight / 2 +
+            thumbnailHeight(factor.sizeFactor) / 2,
+        });
+      }, 100);
     },
     insertBlock(
       imageToAnalyze,
