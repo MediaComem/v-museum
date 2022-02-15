@@ -69,6 +69,7 @@ import {
   getNextIndexBaseOnState,
   getPreviousIndexBaseOnState,
   resetBlockFocus,
+  isFocusShouldHover,
 } from './service/image_management_service';
 
 import {
@@ -95,9 +96,7 @@ export default {
 
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      console.log('TEST3');
       if (to.query.imageId) {
-        console.log('TEST4');
         vm.centralImageId = +decodeURIComponent(to.query.imageId);
         if (to.query.tag) {
           vm.initialCentralTag = decodeURIComponent(to.query.tag);
@@ -136,7 +135,6 @@ export default {
       isInitialLoad: true,
       // Variable used to stop the centering of an image in case of moving in the page
       focusMoveTimeout: undefined,
-      couldReset: true,
     };
   },
   methods: {
@@ -260,10 +258,8 @@ export default {
     },
     checkCollision() {
       this.fullHistoryMode = false;
-      // Reset the focus to have version of this analyzis.
-      if (this.couldReset) {
-        this.imageHasFocus = false;
-      }
+      // Reset focus when no image is focused
+      this.imageHasFocus = isFocusShouldHover(this.imageBlocks);
       // In case of a collision was detected and we continue the movement, reset the timeout that
       // enable new related images and center the screen.
       clearTimeout(this.focusMoveTimeout);
@@ -364,15 +360,13 @@ export default {
           10;
         this.focusMoveTimeout = setTimeout(() => {
           if (!this.isDrag) {
+            focusElement.hasFocus = true;
+            this.imageHasFocus = true;
             window.scrollTo({
               left: newLeftPosition,
               top: newTopPosition,
               behavior: 'smooth',
             });
-            this.couldReset = false;
-            focusElement.hasFocus = true;
-            this.imageHasFocus = true;
-            setTimeout(() => (this.couldReset = true), 300);
             setTimeout(() => {
               this.insertionManagement(
                 imageToAnalyze,

@@ -109,6 +109,18 @@ const resetBlockFocus = (imageBlocks, imageId) => {
   });
 };
 
+const isFocusShouldHover = (imageBlocks) => {
+  let value = false;
+  imageBlocks.forEach((block) => {
+    block.relatedImages.forEach((element) => { 
+      if (element.hasFocus) {
+        value = true;
+      }
+    })
+  });
+  return value;
+};
+
 export {
   getFactor,
   thumbnailHeight,
@@ -122,4 +134,5 @@ export {
   getNextIndexBaseOnState,
   getPreviousIndexBaseOnState,
   resetBlockFocus,
+  isFocusShouldHover,
 };
