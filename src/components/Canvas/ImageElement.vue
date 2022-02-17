@@ -1,9 +1,7 @@
 <template>
   <div>
     <div v-if="getVisibility" :style="getIndicator">
-      <div>
-        <h2 style="font-size: 15px; user-select: none;">{{ tag }}</h2>
-      </div>
+      <Indicator :tag="tag"/>
     </div>
     <div :style="position" v-if="imageData" class="block-selection">
       <p
@@ -58,6 +56,8 @@ import {
   getImageHeight,
 } from './service/image_management_service';
 
+import Indicator from './Indicator.vue';
+
 export default {
   watch: {
     imageId: function(newVal) {
@@ -79,6 +79,7 @@ export default {
       });
     },
   },
+  components: { Indicator },
   props: {
     imagePosition: Object,
     focus: Boolean,

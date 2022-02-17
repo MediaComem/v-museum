@@ -32,8 +32,7 @@ const getIndicatorPosition = (
   imagePosition,
   screenPosition,
   windowHeight,
-  windowWidth,
-  textSize
+  windowWidth
 ) => {
   const cornerTopLeft = {
     left: imagePosition.left - screenPosition.left,
@@ -47,12 +46,19 @@ const getIndicatorPosition = (
 
   //find rotation
   let rotation = Math.atan2(centerImage.top, centerImage.left);
-  rotation = (rotation * 180) / Math.PI;
+  rotation = Math.round((rotation * 180) / Math.PI);
 
   //find slope
   const slope = centerImage.top / centerImage.left;
 
-  const padding = 30;
+  let padding = 0;
+
+  if (rotation > -32 && rotation < 159) {
+    padding = 130;
+  }
+  else {
+    padding = 30;
+  }
 
   let padSize = {
     width: windowWidth - padding,
@@ -68,10 +74,6 @@ const getIndicatorPosition = (
       top: -padSize.height / 2,
     };
   } else {
-    padSize = {
-      width: windowWidth - textSize,
-      height: windowHeight - textSize,
-    };
     // bottom of screen
     indicatorPos = {
       left: padSize.height / 2 / slope,
@@ -86,10 +88,6 @@ const getIndicatorPosition = (
       top: (slope * -padSize.width) / 2,
     };
   } else if (indicatorPos.left > padSize.width / 2) {
-    padSize = {
-      width: windowWidth - textSize,
-      height: windowHeight - textSize,
-    };
     //right side
     indicatorPos = {
       left: padSize.width / 2,
