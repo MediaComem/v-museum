@@ -1,5 +1,6 @@
 <template>
   <svg
+    class="transition"
     :width="imageWidth"
     :height="imageHeight"
     :style="{ top: topPosition, left: leftPosition }"
@@ -94,5 +95,9 @@ export default {
 svg {
   position: fixed;
   z-index: -11;
+}
+
+.transition {
+  transition: all 0.2s,
 }
 </style>

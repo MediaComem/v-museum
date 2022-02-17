@@ -358,10 +358,10 @@ export default {
           this.windowHeight / 2 +
           thumbnailHeight(factor.sizeFactor) / 2 -
           10;
+        this.imageHasFocus = true;
         this.focusMoveTimeout = setTimeout(() => {
           if (!this.isDrag) {
             focusElement.hasFocus = true;
-            this.imageHasFocus = true;
             window.scrollTo({
               left: newLeftPosition,
               top: newTopPosition,
