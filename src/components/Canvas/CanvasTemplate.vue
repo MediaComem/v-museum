@@ -31,6 +31,7 @@
       :offsetY="windowHeight"
       :imageFactor="imageFactor"
       :focus="imageHasFocus"
+      :border="isOnImage"
     />
     <div v-for="(imageBlock, index) in imageBlocks" :key="index">
       <div>
@@ -132,6 +133,7 @@ export default {
       lastScroll: { x: 0, y: 0 },
       // Focus management part
       imageHasFocus: true,
+      isOnImage: false,
       isInitialLoad: true,
       // Variable used to stop the centering of an image in case of moving in the page
       focusMoveTimeout: undefined,
@@ -260,6 +262,7 @@ export default {
       this.fullHistoryMode = false;
       // Reset focus when no image is focused
       this.imageHasFocus = isFocusShouldHover(this.imageBlocks);
+      this.isOnImage = isFocusShouldHover(this.imageBlocks);
       // In case of a collision was detected and we continue the movement, reset the timeout that
       // enable new related images and center the screen.
       clearTimeout(this.focusMoveTimeout);
@@ -362,6 +365,7 @@ export default {
         this.focusMoveTimeout = setTimeout(() => {
           if (!this.isDrag) {
             focusElement.hasFocus = true;
+            this.isOnImage = true;
             window.scrollTo({
               left: newLeftPosition,
               top: newTopPosition,
