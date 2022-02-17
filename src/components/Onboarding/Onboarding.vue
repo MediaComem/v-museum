@@ -1,62 +1,53 @@
 <template>
-  <el-carousel
-    :height="'100vh'"
-    direction="vertical"
-    :autoplay="false"
-    ref="slider"
-    :indicator-position="'none'"
-    :loop="false"
-  >
-    <el-carousel-item>
+  <div class="y mandatory-scroll-snapping" dir="ltr">
+    <section :ref="'Introduction'">
       <introduction-slide
         :information="information"
-        @next-slide="nextSlide()"
+        @change-slide="changeSlide"
       />
-    </el-carousel-item>
+    </section>
 
-    <el-carousel-item
+    <section
       v-for="(item, index) in information.collection"
       :key="index"
       :style="{ background: item.color }"
+      :ref="`decade-${index}`"
     >
-      <div v-if="!isMobile">
-        <desktop-slide
-          :information="information"
-          :index="index"
-          :item="item"
-          :isFullSize="isFullSize"
-          :mainTitle="mainTitle"
-          :allTagText="allTagText"
-          @load-tag-view="loadTagView"
-          @previous-slide="previousSlide()"
-          @next-slide="nextSlide()"
-        />
-      </div>
+      <desktop-slide
+        v-if="!isMobile"
+        :information="information"
+        :index="index"
+        :item="item"
+        :isFullSize="isFullSize"
+        :mainTitle="mainTitle"
+        :allTagText="allTagText"
+        @load-tag-view="loadTagView"
+        @change-slide="changeSlide"
+      />
 
-      <div v-if="isMobile">
-        <mobile-slide
-          :information="information"
-          :index="index"
-          :item="item"
-          :isFullSize="isFullSize"
-          :mainTitle="mainTitle"
-          :allTagText="allTagText"
-          @load-tag-view="loadTagView"
-          @previous-slide="previousSlide()"
-          @next-slide="nextSlide()"
-        />
-      </div>
-    </el-carousel-item>
-    <el-carousel-item>
+      <mobile-slide
+        v-if="isMobile"
+        :information="information"
+        :index="index"
+        :item="item"
+        :isFullSize="isFullSize"
+        :mainTitle="mainTitle"
+        :allTagText="allTagText"
+        @load-tag-view="loadTagView"
+        @change-slide="changeSlide"
+      />
+    </section>
+    <section :ref="'Tags'">
       <tags-slide
+        :lastId="information.collection.length - 1"
         :isFullSize="isFullSize"
         :isMobile="isMobile"
         :arrowText="information.collection[information.collection.length - 1]"
-        @previous-slide="previousSlide()"
         @load-tag-view="loadTagView"
+        @change-slide="changeSlide"
       />
-    </el-carousel-item>
-  </el-carousel>
+    </section>
+  </div>
 </template>
 
 <script>
@@ -97,43 +88,14 @@ export default {
     };
   },
   methods: {
-    previousSlide() {
-      const animationDuration = this.isCollapse ? 300 : 0;
-      this.isCollapse = false;
-      setTimeout(() => {
-        this.$refs.slider.prev();
-        this.slide = this.slide - 1;
-      }, animationDuration);
-    },
-    nextSlide() {
-      const animationDuration = this.isCollapse ? 300 : 0;
-      this.isCollapse = false;
-      setTimeout(() => {
-        this.slide = this.slide + 1;
-        this.$refs.slider.next();
-        this.slideMoveDiffTime = Date.now();
-      }, animationDuration);
+    changeSlide(event) {
+      this.$refs[event].scrollIntoView({ behavior: 'smooth', duration: 150 });
     },
     loadTagView(tag) {
       this.$router.push({
         path: `/full_tag`,
         query: { tag: encodeURIComponent(tag.tag) },
       });
-    },
-    findAndUpdateTag() {
-      if (this.tag) {
-        let index = 0;
-        index = this.information.collection.findIndex((e) => {
-          return e.tag.tag == this.tag;
-        });
-        if (index === -1) {
-          index = this.information.collection.length;
-        }
-        this.$nextTick(() => {
-          this.slide = index + 1;
-          this.$refs.slider.setActiveItem(index + 1);
-        });
-      }
     },
   },
   computed: {
@@ -144,18 +106,27 @@ export default {
       return this.windowWidth > 1200;
     },
   },
-  activated() {
-    this.findAndUpdateTag();
-  },
   mounted() {
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
-    this.findAndUpdateTag();
   },
 };
 </script>
 
 <style scoped>
 @import './onboarding.css';
+
+.y.mandatory-scroll-snapping {
+  height: 100vh;
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+}
+
+section {
+  height: 100vh;
+  width: 100vw;
+  scroll-snap-align: start;
+  position: relative;
+}
 </style>

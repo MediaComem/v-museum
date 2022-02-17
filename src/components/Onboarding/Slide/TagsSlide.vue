@@ -1,9 +1,6 @@
 <template>
   <div
     class="title"
-    @touchstart="touchStart"
-    @touchend="changeSlide"
-    @mousewheel="wheelMove"
   >
     <h1 class="justify-text">TAGS</h1>
     <arrow-up
@@ -11,15 +8,12 @@
       :isFull="isFullSize"
       :isMobile="isMobile"
       :text="arrowText"
-      @previous-slide="$emit('previousSlide')"
+      @click="$emit('changeSlide', `decade-${lastId}`)"
     />
   </div>
   <div
     ref="tags"
     class="canvas-display overflow"
-    @scroll="scrollMove"
-    @touchend="changeSlideScroll"
-    @mousewheel="wheelMoveScroll"
   >
     <div
       v-for="(tag, index) in tags.tags.sort((a, b) =>
@@ -42,72 +36,17 @@ import tags from '@/assets/onboarding/tags.json';
 import ArrowUp from '../Logo/ArrowUp.vue';
 export default {
   components: { ArrowUp },
-  emits: ['previousSlide', 'loadTagView'],
+  emits: ['changeSlide', 'loadTagView'],
   props: {
     isFullSize: Boolean,
     isMobile: Boolean,
     arrowText: Object,
+    lastId: Number,
   },
   data() {
     return {
       tags: tags,
-      couldLoadNextSlide: true,
-      startMoveTime: 0,
-      startPosition: 0,
-      shouldMove: undefined,
     };
-  },
-  methods: {
-    wheelMove(event) {
-      if (event.deltaY < 0) {
-        clearTimeout(this.shouldMove);
-        this.shouldMove = setTimeout(() => {
-          this.$emit('previousSlide');
-        }, 66);
-      }
-    },
-    touchStart(event) {
-      this.startMoveTime = Date.now();
-      this.startPosition = event.changedTouches[0].clientY;
-    },
-    changeSlide(event) {
-      if (Date.now() - this.startMoveTime > 100) {
-        const endPosition = event.changedTouches[0].clientY;
-        if (this.startPosition < endPosition) {
-          this.$emit('previousSlide');
-        }
-      }
-    },
-    scrollMove() {
-      if (this.$refs['tags'].scrollTop === 0) {
-        this.couldLoadNextSlide = true;
-      } else {
-        this.couldLoadNextSlide = false;
-      }
-    },
-    arrowMove(event) {
-      if (this.couldLoadNextSlide && event.code === 'ArrowDown') {
-        this.$emit('nextSlide');
-      } else if (this.couldLoadNextSlide && event.code === 'ArrowUp') {
-        this.$emit('previousSlide');
-      }
-    },
-    wheelMoveScroll(event) {
-      if (this.couldLoadNextSlide && event.deltaY < 0) {
-        clearTimeout(this.shouldMove);
-        this.shouldMove = setTimeout(() => {
-          this.$emit('previousSlide');
-        }, 66);
-      }
-    },
-    changeSlideScroll() {
-      if (this.couldLoadNextSlide) {
-        clearTimeout(this.shouldMove);
-        this.shouldMove = setTimeout(() => {
-          this.$emit('previousSlide');
-        }, 66);
-      }
-    },
   },
   computed: {
     fontSize() {
@@ -116,12 +55,6 @@ export default {
         'mobile-font': this.isMobile,
       };
     },
-  },
-  activated() {
-    window.addEventListener('keyup', this.arrowMove);
-  },
-  deactivated() {
-    window.removeEventListener('keyup', this.arrowMove);
   },
 };
 </script>

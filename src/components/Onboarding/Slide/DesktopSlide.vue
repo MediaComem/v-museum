@@ -2,10 +2,6 @@
   <img
     class="image-display"
     :src="`/v-museum/onboarding/${item.imagePath}`"
-    @mousewheel="wheelMove"
-    @touchstart="touchStart"
-    @touchend="changeSlide"
-    @keyup.up="alert(1)"
   />
   <div
     class="collapse-transition"
@@ -16,28 +12,16 @@
   </div>
   <logo
     style="position: absolute; left: 2vw; top: 2vh"
-    @mousewheel="wheelMove"
-    @touchstart="touchStart"
-    @touchend="changeSlide"
-    @keyup.up="alert(1)"
   />
   <arrow-up
     :isFull="isFullSize"
     :isMobile="false"
     class="arrow-up"
     :text="index === 0 ? mainTitle : information.collection[index - 1]"
-    @previous-slide="$emit('previousSlide')"
-    @mousewheel="wheelMove"
-    @touchstart="touchStart"
-    @touchend="changeSlide"
-    @keyup.up="alert(1)"
+    @click="changeSlide('UP')"
   />
   <div
     class="collection-position"
-    @mousewheel="wheelMove"
-    @touchstart="touchStart"
-    @touchend="changeSlide"
-    @keyup.up="alert(1)"
   >
     <el-row>
       <h2
@@ -75,10 +59,7 @@
         ? allTagText
         : information.collection[index + 1]
     "
-    @next-slide="$emit('nextSlide')"
-    @mousewheel="wheelMove"
-    @touchstart="touchStart"
-    @touchend="changeSlide"
+    @click="changeSlide('DOWN')"
   />
 </template>
 
@@ -87,9 +68,10 @@ import Logo from '../Logo/Logo.vue';
 import ArrowUp from '../Logo/ArrowUp.vue';
 import ArrowDown from '../Logo/ArrowDown.vue';
 import DocumentsInformation from '../Logo/DocumentsInformation.vue';
+
 export default {
   components: { Logo, ArrowUp, ArrowDown, DocumentsInformation },
-  emits: ['loadTagView', 'previousSlide', 'nextSlide'],
+  emits: ['loadTagView', 'changeSlide'],
   props: {
     index: Number,
     item: Object,
@@ -101,47 +83,30 @@ export default {
   data() {
     return {
       isCollapse: false,
-      startMoveTime: 0,
-      startPosition: 0,
-      shouldMove: undefined,
     };
   },
   methods: {
-    wheelMove(event) {
-      if (event.deltaY > 0) {
-        clearTimeout(this.shouldMove);
-        this.shouldMove = setTimeout(() => {
-          this.$emit('nextSlide');
-        }, 66);
-      }
-      if (event.deltaY < 0) {
-        clearTimeout(this.shouldMove);
-        this.shouldMove = setTimeout(() => {
-          this.$emit('previousSlide');
-        }, 66);
-      }
-    },
-    touchStart(event) {
-      this.startMoveTime = Date.now();
-      this.startPosition = event.changedTouches[0].clientY;
-    },
-    arrowMove(event) {
-      if (this.couldLoadNextSlide && event.code === 'ArrowDown') {
-        this.$emit('nextSlide');
-      } else if (this.couldLoadNextSlide && event.code === 'ArrowUp') {
-        this.$emit('previousSlide');
-      }
-    },
     changeSlide(event) {
-      if (Date.now() - this.startMoveTime > 100) {
-        const endPosition = event.changedTouches[0].clientY;
-        if (this.startPosition < endPosition) {
-          this.$emit('previousSlide');
-        } else if (this.startPosition > endPosition) {
-          this.$emit('nextSlide');
+      if (event === 'UP') {
+        if (this.index === 0) {
+          this.$emit('changeSlide', 'Introduction')
+        }
+        else {
+          this.$emit('changeSlide', `decade-${this.index - 1}`)
         }
       }
-    },
+      else {
+        if (this.index === this.information.collection.length - 1) {
+          this.$emit('changeSlide', 'Tags')
+        }
+        else {
+          this.$emit('changeSlide', `decade-${this.index + 1}`)
+        }
+      }
+    }
+  },
+  mounted() {
+    console.log(this);
   },
   computed: {
     collapse() {
@@ -152,12 +117,6 @@ export default {
         transform: this.isCollapse ? 'translateX(0)' : 'translate(-57vw)',
       };
     },
-  },
-  activated() {
-    window.addEventListener('keyup', this.arrowMove);
-  },
-  deactivated() {
-    window.removeEventListener('keyup', this.arrowMove);
   },
 };
 </script>
