@@ -72,6 +72,7 @@ export default {
     next((vm) => {
       if (from.query.tag) {
         vm.tag = decodeURIComponent(from.query.tag);
+        vm.loadSlide();
       }
     });
   },
@@ -89,13 +90,27 @@ export default {
   },
   methods: {
     changeSlide(event) {
-      this.$refs[event].scrollIntoView({ behavior: 'smooth', duration: 150 });
+      this.$refs[event].scrollIntoView({ behavior: 'smooth' });
     },
     loadTagView(tag) {
       this.$router.push({
         path: `/full_tag`,
         query: { tag: encodeURIComponent(tag.tag) },
       });
+    },
+    loadSlide() {
+      if (this.tag) {
+        let index = 0;
+        index = this.information.collection.findIndex((e) => {
+          return e.tag.tag == this.tag;
+        });
+        if (index === -1) {
+          this.$refs['Tags'].scrollIntoView();
+        }
+        else {
+          this.$refs[`decade-${index}`].scrollIntoView();
+        }
+      }
     },
   },
   computed: {
