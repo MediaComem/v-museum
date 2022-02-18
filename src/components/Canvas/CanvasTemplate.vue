@@ -43,6 +43,7 @@
           :blockInsertionState="index !== currentInsertionState"
           @data-loaded="dataIsLoaded(index)"
           @is-in-screen="checkImageOutsideScreen($event, index)"
+          @indicator-move="indicatorMove"
         />
       </div>
     </div>
@@ -194,6 +195,24 @@ export default {
         this.checkCollision();
         this.isInitialLoad = false;
       }
+    },
+    indicatorMove(event) {
+      const factor = getFactor(this.windowHeight, this.windowWidth);
+      const imageTop =
+        event.top -
+        this.windowHeight / 2 +
+        thumbnailHeight(factor.sizeFactor) / 2 -
+        10;
+      const imageLeft =
+        event.left -
+        this.windowWidth / 2 +
+        thumbnailWidth(factor.sizeFactor) / 2 -
+        10;
+      window.scrollTo({
+        left: imageLeft,
+        top: imageTop,
+        behavior: 'smooth',
+      });
     },
     isInScreen(
       image,

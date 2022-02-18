@@ -16,6 +16,7 @@
       }"
       @data-loaded="$emit('dataLoaded');"
       @is-in-screen="$emit('isInScreen', index);"
+      @indicator-move="$emit('indicatorMove', $event)"
     />
   </div>
 </template>
@@ -38,7 +39,7 @@ export default {
     currentGlobalPosition: Number,
     blockInsertionState: Boolean,
   },
-  emits: ["dataLoaded", "isInScreen"],
+  emits: ["dataLoaded", "isInScreen", "indicatorMove"],
   data() {
     return {
       newImagePositions: [],

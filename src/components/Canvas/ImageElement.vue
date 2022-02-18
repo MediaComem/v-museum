@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="getVisibility" :style="getIndicator">
+    <div v-if="getVisibility" :style="getIndicator" @click="$emit('indicatorMove', {left: imagePosition.left, top: imagePosition.top})">
       <Indicator :tag="tag"/>
     </div>
     <div :style="position" v-if="imageData" class="block-selection">
@@ -90,7 +90,7 @@ export default {
     imageFactor: Number,
     blockPosition: Number,
   },
-  emits: ['dataLoaded', 'isInScreen'],
+  emits: ['dataLoaded', 'isInScreen', 'indicatorMove'],
   data() {
     return {
       imageData: undefined,
@@ -149,7 +149,6 @@ export default {
         top: this.indicatorInformation.top + 'px',
         left: this.indicatorInformation.left + 'px',
         transform: 'rotate(' + this.indicatorInformation.rotation + 'deg)',
-        'z-index': -1,
       };
     },
     getVisibility() {
