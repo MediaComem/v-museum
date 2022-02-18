@@ -21,4 +21,5 @@
 
 .block-selection {
   user-select: none;
+  z-index: 2;
 }
