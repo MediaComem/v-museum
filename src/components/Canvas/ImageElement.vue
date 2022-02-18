@@ -149,6 +149,7 @@ export default {
         top: this.indicatorInformation.top + 'px',
         left: this.indicatorInformation.left + 'px',
         transform: 'rotate(' + this.indicatorInformation.rotation + 'deg)',
+        'z-index': -1,
       };
     },
     getVisibility() {
