@@ -1,5 +1,5 @@
 <template>
-  <div class="y mandatory-scroll-snapping" dir="ltr">
+  <div class="y mandatory-scroll-snapping" dir="ltr" @scroll="scrollSlide">
     <section :ref="'Introduction'">
       <introduction-slide
         :information="information"
@@ -14,6 +14,7 @@
       :ref="`decade-${index}`"
     >
       <desktop-slide
+        :ref="`slide-${index}`"
         v-if="!isMobile"
         :information="information"
         :index="index"
@@ -26,6 +27,7 @@
       />
 
       <mobile-slide
+        :ref="`slide-${index}`"
         v-if="isMobile"
         :information="information"
         :index="index"
@@ -86,9 +88,18 @@ export default {
       tag: undefined,
       windowHeight: undefined,
       windowWidth: undefined,
+      lastScroll: undefined,
     };
   },
   methods: {
+    scrollSlide() {
+      clearTimeout(this.lastScroll);
+      this.lastScroll = setTimeout(() => {
+        for (let i = 0; i < this.information.collection.length; i++) {
+          this.$refs[`slide-${i}`].isCollapse = false;
+        }
+      }, 50);
+    },
     changeSlide(event) {
       this.$refs[event].scrollIntoView({ behavior: 'smooth' });
     },
@@ -106,8 +117,7 @@ export default {
         });
         if (index === -1) {
           this.$refs['Tags'].scrollIntoView();
-        }
-        else {
+        } else {
           this.$refs[`decade-${index}`].scrollIntoView();
         }
       }
