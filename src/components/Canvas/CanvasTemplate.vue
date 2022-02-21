@@ -43,7 +43,7 @@
           :blockInsertionState="index !== currentInsertionState"
           @data-loaded="dataIsLoaded(index)"
           @is-in-screen="checkImageOutsideScreen($event, index)"
-          @indicator-move="indicatorMove"
+          @indicator-move="indicatorMove($event, index)"
         />
       </div>
     </div>
@@ -138,6 +138,8 @@ export default {
       isInitialLoad: true,
       // Variable used to stop the centering of an image in case of moving in the page
       focusMoveTimeout: undefined,
+      currentIndicatorMove: undefined,
+      indicatorMoveInProgress: false,
     };
   },
   methods: {
@@ -196,18 +198,34 @@ export default {
         this.isInitialLoad = false;
       }
     },
-    indicatorMove(event) {
+    indicatorMove(event, block) {
+      this.currentIndicatorMove = {
+        position: event.position,
+        block: block,
+        element: event.element,
+      };
+      let leftPosition = event.position.left;
+      let topPosition = event.position.top;
+      if (this.indicatorMoveInProgress) {
+        console.log()
+        const position = this.$refs['image-block-' + block].$refs[
+          'image-element-' + event.element
+        ].position;
+        leftPosition = +position.left.substring(0, position.left.length - 2);
+        topPosition = +position.top.substring(0, position.top.length - 2);
+      }
       const factor = getFactor(this.windowHeight, this.windowWidth);
       const imageTop =
-        event.top -
+        topPosition -
         this.windowHeight / 2 +
         thumbnailHeight(factor.sizeFactor) / 2 -
         10;
       const imageLeft =
-        event.left -
+        leftPosition -
         this.windowWidth / 2 +
         thumbnailWidth(factor.sizeFactor) / 2 -
         10;
+      this.indicatorMoveInProgress = true;
       window.scrollTo({
         left: imageLeft,
         top: imageTop,
@@ -382,6 +400,7 @@ export default {
           10;
         this.imageHasFocus = true;
         this.focusMoveTimeout = setTimeout(() => {
+          this.indicatorMoveInProgress = false;
           if (!this.isDrag) {
             focusElement.hasFocus = true;
             this.isOnImage = true;
@@ -526,6 +545,9 @@ export default {
 
       if (shouldScroll) {
         window.scrollTo(this.currentXPosition, this.currentYPosition);
+        if (this.indicatorMoveInProgress) {
+          setTimeout(() => this.indicatorMove(this.currentIndicatorMove, this.currentIndicatorMove.block), 25);
+        }
       }
     },
     loadInitialImage() {

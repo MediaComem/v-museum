@@ -16,7 +16,7 @@
       }"
       @data-loaded="$emit('dataLoaded');"
       @is-in-screen="$emit('isInScreen', index);"
-      @indicator-move="$emit('indicatorMove', $event)"
+      @indicator-move="$emit('indicatorMove', {position: $event, element: index})"
     />
   </div>
 </template>
