@@ -111,6 +111,7 @@ export default {
         'background-color': this.information.collection[this.index].color,
         height: '100vh',
         width: '57vw',
+        'z-index': 1,
         transform: this.isCollapse ? 'translateX(0)' : 'translate(-57vw)',
       };
     },

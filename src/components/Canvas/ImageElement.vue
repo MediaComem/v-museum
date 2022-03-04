@@ -1,7 +1,16 @@
 <template>
-  <div>
-    <div v-if="getVisibility" :style="getIndicator" @click="$emit('indicatorMove', {left: imagePosition.left, top: imagePosition.top})">
-      <Indicator :tag="tag"/>
+  <div :ref="'block'">
+    <div
+      v-if="getVisibility"
+      :style="getIndicator"
+      @click="
+        $emit('indicatorMove', {
+          left: imagePosition.left,
+          top: imagePosition.top,
+        })
+      "
+    >
+      <Indicator :tag="tag" />
     </div>
     <div :style="position" v-if="imageData" class="block-selection">
       <p
@@ -12,19 +21,22 @@
       >
         {{ tag }}
       </p>
-      <img
-        :ref="'image'"
-        draggable="false"
-        style="object-fit: cover"
-        class="clickable"
-        :class="imageAppearAnimation"
-        :style="imageHover"
-        :src="imageData.imagePaths.large"
-        :height="imageHeight"
-        :width="imageWidth"
-        @mousedown="clickDuration = Date.now()"
-        @mouseup="loadFullImageView()"
-      />
+      <div>
+        <img
+          :ref="'image'"
+          draggable="false"
+          style="object-fit: cover"
+          class="clickable"
+          :class="imageAppearAnimation"
+          :style="imageHover"
+          :src="imageData.imagePaths.large"
+          :height="imageHeight"
+          :width="imageWidth"
+          @mousedown="clickDuration = Date.now()"
+          @mouseup="loadFullImageView()"
+        />
+        <div :class="overlay" :style="imageOverlay"></div>
+      </div>
       <div v-if="focus" :style="textWidth">
         <div class="text_left">
           <p class="font-size-information">
@@ -61,6 +73,7 @@ import Indicator from './Indicator.vue';
 export default {
   watch: {
     imageId: function(newVal) {
+      console.log(this.$refs);
       clearTimeout(this.timeoutEvent);
       this.shouldRunAnimation = true;
       this.imageData = undefined;
@@ -98,6 +111,7 @@ export default {
       clickDuration: 0,
       timeoutEvent: undefined,
       indicatorInformation: { visible: false },
+      overlayTop: 0,
     };
   },
   methods: {
@@ -112,6 +126,11 @@ export default {
     },
   },
   computed: {
+    overlay() {
+      return {
+        overlay: !this.focus,
+      };
+    },
     imageAppearAnimation() {
       return {
         relatedImageBase: this.shouldRunAnimation,
@@ -121,6 +140,14 @@ export default {
     imageHover() {
       return {
         transition: 'height 0.2s',
+      };
+    },
+    imageOverlay() {
+      return {
+        height: `${this.imageHeight}px`,
+        width: `${this.imageWidth}px`,
+        top: `${this.overlayTop}px`,
+        position: 'absolute',
       };
     },
     position() {
@@ -161,6 +188,7 @@ export default {
         this.imageData = data[0];
         setTimeout(() => (this.shouldRunAnimation = false), 3000);
         this.$nextTick(() => {
+          this.overlayTop = this.$refs['tag'].clientHeight + 8;
           this.$emit('dataLoaded');
           this.$emit('isInScreen');
         });
@@ -175,4 +203,8 @@ export default {
 @import './css/text.css';
 @import './css/relatedImageAnimation.css';
 @import '../shared/pointer.css';
+
+.overlay {
+  background: #00000010;
+}
 </style>

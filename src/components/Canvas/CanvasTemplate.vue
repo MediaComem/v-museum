@@ -140,6 +140,7 @@ export default {
       focusMoveTimeout: undefined,
       currentIndicatorMove: undefined,
       indicatorMoveInProgress: false,
+      animationTimer: 500,
     };
   },
   methods: {
@@ -154,6 +155,7 @@ export default {
     },
     moveClickDisable() {
       this.isDrag = false;
+      this.animationTimer = 20;
       this.checkCollision();
     },
     mouseMove(event) {
@@ -190,6 +192,7 @@ export default {
 
       this.lastScroll.x = currentScrollX;
       this.lastScroll.y = currentScrollY;
+      this.animationTimer = 500;
       this.checkCollision();
     },
     dataIsLoaded(index) {
@@ -400,6 +403,7 @@ export default {
           10;
         this.imageHasFocus = true;
         this.focusMoveTimeout = setTimeout(() => {
+          this.animationTimer = 500;
           this.indicatorMoveInProgress = false;
           if (!this.isDrag) {
             focusElement.hasFocus = true;
@@ -417,7 +421,7 @@ export default {
               );
             }, 200);
           }
-        }, 500);
+        }, this.animationTimer);
       } else {
         focusElement.hasFocus = false;
       }
