@@ -35,7 +35,12 @@
           @mousedown="clickDuration = Date.now()"
           @mouseup="loadFullImageView()"
         />
-        <div :class="overlay" :style="imageOverlay"></div>
+        <div 
+          class="clickable" 
+          :class="overlay" 
+          :style="imageOverlay"
+          @mousedown="clickDuration = Date.now()"
+          @mouseup="loadFullImageView()"></div>
       </div>
       <div v-if="focus" :style="textWidth">
         <div class="text_left">
@@ -73,7 +78,6 @@ import Indicator from './Indicator.vue';
 export default {
   watch: {
     imageId: function(newVal) {
-      console.log(this.$refs);
       clearTimeout(this.timeoutEvent);
       this.shouldRunAnimation = true;
       this.imageData = undefined;
