@@ -10,7 +10,7 @@
         })
       "
     >
-      <Indicator :tag="tag" />
+      <Indicator :tag="tag" :rotation="indicatorInformation.textRotation" />
     </div>
     <div :style="position" v-if="imageData" class="block-selection">
       <p
@@ -110,7 +110,7 @@ export default {
       shouldRunAnimation: true,
       clickDuration: 0,
       timeoutEvent: undefined,
-      indicatorInformation: { visible: false },
+      indicatorInformation: { visible: false, textRotation: 0 },
       overlayTop: 0,
     };
   },

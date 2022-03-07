@@ -52,9 +52,14 @@ const getIndicatorPosition = (
   const slope = centerImage.top / centerImage.left;
 
   let padding = 0;
+  let textRotation = 0;
 
-  if (rotation > -32 && rotation < 159) {
-    padding = 130;
+  if (rotation > 0) {
+    textRotation = 180;
+  }
+
+  if (rotation > -30 && rotation < 159) {
+    padding = 180;
   }
   else {
     padding = 30;
@@ -100,6 +105,7 @@ const getIndicatorPosition = (
     top: indicatorPos.top + screenPosition.top + windowHeight / 2,
     rotation: rotation,
     visible: true,
+    textRotation: textRotation,
   };
 };
 

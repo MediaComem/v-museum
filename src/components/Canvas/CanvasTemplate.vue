@@ -267,7 +267,7 @@ export default {
           tag.childNodes[0].length * 15
         );
       } else {
-        image.indicatorInformation = { visible: false };
+        image.indicatorInformation = { visible: false, textRotation: 0 };
       }
     },
     checkImageOutsideScreen(event, index) {
