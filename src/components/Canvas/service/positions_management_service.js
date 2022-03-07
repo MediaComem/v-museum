@@ -58,45 +58,37 @@ const getIndicatorPosition = (
     textRotation = 180;
   }
 
-  if (rotation > -57 && rotation < 133) {
-    padding = 180;
-  }
-  else {
-    padding = 30;
-  }
-
-  let padSize = {
-    width: windowWidth - padding,
-    height: windowHeight - padding,
-  };
-
   //calculate indicator position
   let indicatorPos = {};
   if (centerImage.top < 0) {
+    padding = 30;
     //top of screen
     indicatorPos = {
-      left: -padSize.height / 2 / slope,
-      top: -padSize.height / 2,
+      left: -(windowHeight - padding) / 2 / slope,
+      top: -(windowHeight - padding) / 2,
     };
   } else {
+    padding = 180;
     // bottom of screen
     indicatorPos = {
-      left: padSize.height / 2 / slope,
-      top: padSize.height / 2,
+      left: (windowHeight - padding) / 2 / slope,
+      top: (windowHeight - padding) / 2,
     };
   }
 
-  if (indicatorPos.left < -padSize.width / 2) {
+  if (indicatorPos.left < -(windowWidth - 30) / 2) {
+    padding = 30;
     //left side
     indicatorPos = {
-      left: -padSize.width / 2,
-      top: (slope * -padSize.width) / 2,
+      left: -(windowWidth - padding) / 2,
+      top: (slope * -(windowWidth - padding)) / 2,
     };
-  } else if (indicatorPos.left > padSize.width / 2) {
+  } else if (indicatorPos.left > (windowWidth - 30) / 2) {
+    padding = 180;
     //right side
     indicatorPos = {
-      left: padSize.width / 2,
-      top: (slope * padSize.width) / 2,
+      left: (windowWidth - padding) / 2,
+      top: (slope * (windowWidth - padding)) / 2,
     };
   }
 
