@@ -64,13 +64,15 @@
 <script>
 import {
   getImageHeight,
-  getImageWidth
+  getImageWidth,
+  focusIntermediaryHeight,
 } from "./service/image_management_service";
 export default {
   props: {
     offsetX: Number,
     offsetY: Number,
     focus: Boolean,
+    hoverImage: Boolean,
     imageFactor: Object,
     border: Boolean,
   },
@@ -83,10 +85,14 @@ export default {
       return (this.offsetX - getImageWidth(this.focus, this.imageFactor.sizeFactor)) / 2 + "px";
     },
     imageHeight() {
-      return getImageHeight(this.focus, this.imageFactor.sizeFactor) + 20;
+      let imageHeight = getImageHeight(this.focus, this.imageFactor.sizeFactor) + 20;
+      if (!this.focus && this.hoverImage) {
+        imageHeight = focusIntermediaryHeight(this.imageFactor.sizeFactor);
+      }
+      return imageHeight;
     },
     imageWidth() {
-      return getImageWidth(this.focus, this.imageFactor.sizeFactor) + 20;
+      return this.focus ? getImageWidth(this.focus, this.imageFactor.sizeFactor) + 20 : getImageWidth(this.hoverImage, this.imageFactor.sizeFactor) + 20;
     },
     background() {
       return {

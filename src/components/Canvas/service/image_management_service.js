@@ -35,6 +35,10 @@ const thumbnailWidth = (factor) => {
   return 9 * 4 * factor;
 };
 
+const focusIntermediaryHeight = (factor) => {
+  return 11 * 4 * factor;
+};
+
 const relatedThumbnailHeight = (factor) => {
   return 9 * 4 * factor;
 };
@@ -121,6 +125,7 @@ export {
   getFactor,
   thumbnailHeight,
   thumbnailWidth,
+  focusIntermediaryHeight,
   relatedThumbnailHeight,
   relatedThumbnailWidth,
   getImageHeight,

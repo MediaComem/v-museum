@@ -30,6 +30,7 @@
       :offsetX="windowWidth"
       :offsetY="windowHeight"
       :imageFactor="imageFactor"
+      :hoverImage="focusHoverImage"
       :focus="imageHasFocus"
       :border="isOnImage"
     />
@@ -141,6 +142,7 @@ export default {
       currentIndicatorMove: undefined,
       indicatorMoveInProgress: false,
       animationTimer: 500,
+      focusHoverImage: false,
     };
   },
   methods: {
@@ -302,6 +304,7 @@ export default {
       this.fullHistoryMode = false;
       // Reset focus when no image is focused
       this.imageHasFocus = isFocusShouldHover(this.imageBlocks);
+      this.focusHoverImage = isFocusShouldHover(this.imageBlocks);
       this.isOnImage = isFocusShouldHover(this.imageBlocks);
       // In case of a collision was detected and we continue the movement, reset the timeout that
       // enable new related images and center the screen.
@@ -401,11 +404,12 @@ export default {
           this.windowHeight / 2 +
           thumbnailHeight(factor.sizeFactor) / 2 -
           10;
-        this.imageHasFocus = true;
+        this.focusHoverImage = true;
         this.focusMoveTimeout = setTimeout(() => {
           this.animationTimer = 500;
           this.indicatorMoveInProgress = false;
           if (!this.isDrag) {
+            this.imageHasFocus = true;
             focusElement.hasFocus = true;
             this.isOnImage = true;
             window.scrollTo({
