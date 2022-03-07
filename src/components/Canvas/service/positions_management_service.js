@@ -58,7 +58,7 @@ const getIndicatorPosition = (
     textRotation = 180;
   }
 
-  if (rotation > -30 && rotation < 159) {
+  if (rotation > -57 && rotation < 133) {
     padding = 180;
   }
   else {
