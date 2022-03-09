@@ -36,7 +36,7 @@ const thumbnailWidth = (factor) => {
 };
 
 const focusIntermediaryHeight = (factor) => {
-  return 11 * 4 * factor;
+  return 13 * 4 * factor;
 };
 
 const relatedThumbnailHeight = (factor) => {

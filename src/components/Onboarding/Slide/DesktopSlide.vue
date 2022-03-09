@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import Logo from '../Logo/Logo.vue';
+import Logo from '../../shared/components/Logo.vue';
 import ArrowUp from '../Logo/ArrowUp.vue';
 import ArrowDown from '../Logo/ArrowDown.vue';
 import DocumentsInformation from '../Logo/DocumentsInformation.vue';

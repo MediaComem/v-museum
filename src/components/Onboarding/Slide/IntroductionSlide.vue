@@ -1,9 +1,5 @@
 <template>
-  <div
-    ref="intro"
-    class="overflow"
-    style="height: 100vh;"
-  >
+  <div ref="intro" class="overflow" style="height: 100vh;">
     <el-row :gutter="20" style="margin: 0">
       <el-col :span="24" style="padding: 0">
         <img class="first-image" src="@/assets/onboarding/first.png" />
@@ -19,6 +15,16 @@
     </el-row>
     <el-row :gutter="20" :justify="'center'" style="margin: 5px;">
       <h2 class="page-subtitle">{{ information.subtitle }}</h2>
+    </el-row>
+    <el-row
+      :gutter="20"
+      :justify="'center'"
+      class="margin-text"
+      style="text-align: center"
+    >
+      <router-link to="/about" custom v-slot="{ navigate, href }">
+        <a :href="href" @click="navigate">About this website</a>
+      </router-link>
     </el-row>
     <el-row :gutter="20" :justify="'center'" style="margin: 5px;">
       <h3 class="text-title">{{ information.header }}</h3>

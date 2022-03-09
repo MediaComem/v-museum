@@ -33,7 +33,7 @@ export default {
 </script>
 
 <style scoped>
-@import '../shared/pointer.css';
+@import '../pointer.css';
 
 @media only screen and (min-width: 370px) and (max-width: 699px) {
   h2 {

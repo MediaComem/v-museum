@@ -79,10 +79,14 @@ export default {
   name: "FocusRectangle",
   computed: {
     topPosition() {
-      return (this.offsetY - getImageHeight(this.focus, this.imageFactor.sizeFactor)) / 2 + "px";
+      let imageHeight = getImageHeight(this.focus, this.imageFactor.sizeFactor);
+      if (!this.focus && this.hoverImage) {
+        imageHeight = focusIntermediaryHeight(this.imageFactor.sizeFactor);
+      }
+      return (this.offsetY - imageHeight) / 2 + "px";
     },
     leftPosition() {
-      return (this.offsetX - getImageWidth(this.focus, this.imageFactor.sizeFactor)) / 2 + "px";
+      return (this.offsetX - getImageWidth(this.hoverImage, this.imageFactor.sizeFactor)) / 2 + "px";
     },
     imageHeight() {
       let imageHeight = getImageHeight(this.focus, this.imageFactor.sizeFactor) + 20;
