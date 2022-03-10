@@ -143,6 +143,7 @@ export default {
       indicatorMoveInProgress: false,
       animationTimer: 500,
       focusHoverImage: false,
+      diffTime: 0,
     };
   },
   methods: {
@@ -154,10 +155,13 @@ export default {
     },
     moveClickEnable() {
       this.isDrag = true;
+      this.diffTime = Date.now();
     },
     moveClickDisable() {
       this.isDrag = false;
-      this.animationTimer = 20;
+      if (Date.now() - this.diffTime > 300) {
+        this.animationTimer = 25;
+      }
       this.checkCollision();
     },
     mouseMove(event) {
@@ -212,7 +216,6 @@ export default {
       let leftPosition = event.position.left;
       let topPosition = event.position.top;
       if (this.indicatorMoveInProgress) {
-        console.log()
         const position = this.$refs['image-block-' + block].$refs[
           'image-element-' + event.element
         ].position;
