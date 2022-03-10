@@ -11,7 +11,7 @@
     <p class="collection-text collapse-text-align overflow">{{ item.text }}</p>
   </div>
   <logo
-    style="position: absolute; left: 2vw; top: 2vh"
+    style="position: absolute; left: 2vw; top: 2vh; z-index: 1;"
   />
   <arrow-up
     :isFull="isFullSize"

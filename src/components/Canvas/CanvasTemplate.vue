@@ -199,18 +199,24 @@ export default {
       this.lastScroll.x = currentScrollX;
       this.lastScroll.y = currentScrollY;
 
+      // Setup the scroll animation only when we move with
+      // the scroll.
       if (!this.indicatorMoveInProgress) {
         this.animationTimer = 500;
       }
 
       this.checkCollision();
     },
+    // Launch collision analysis only when the data is fully loaded.
     dataIsLoaded(index) {
       if (index === 0 && this.isInitialLoad) {
         this.checkCollision();
         this.isInitialLoad = false;
       }
     },
+    // When we click on an indicator, this method is launched.
+    // First, we find the position of the image
+    // Then we scroll to it.
     indicatorMove(event, block) {
       this.currentIndicatorMove = {
         position: event.position,

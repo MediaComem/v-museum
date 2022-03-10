@@ -113,6 +113,7 @@ export default {
           url: image,
         },
       });
+      // Close the png only when an action is done on openseadragon.
       this.viewer.addHandler('viewport-change', function() {
         this.userData.displayImage = false;
       }, this);

@@ -88,6 +88,8 @@ export default {
             () => (this.shouldRunAnimation = false),
             3000
           );
+          // Inform that the element is loaded and we can check the collision
+          // And also check if the element is displayed in the viewport.
           this.$nextTick(() => {
             this.$emit('dataLoaded');
             this.$emit('isInScreen');
