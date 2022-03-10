@@ -35,7 +35,7 @@ export default {
 <style scoped>
 @import '../pointer.css';
 
-@media only screen and (min-width: 370px) and (max-width: 699px) {
+@media only screen and (min-width: 1px) and (max-width: 699px) {
   h2 {
     font-size: 16px;
   }

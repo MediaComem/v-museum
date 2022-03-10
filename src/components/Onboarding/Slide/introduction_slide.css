@@ -66,3 +66,8 @@
   text-align: left;
   max-width: 35rem;
 }
+
+.link {
+  color: black;
+  font-size: 15px;
+}

@@ -23,7 +23,7 @@
       style="text-align: center"
     >
       <router-link to="/about" custom v-slot="{ navigate, href }">
-        <a :href="href" @click="navigate">About this website</a>
+        <a class="link" :href="href" @click="navigate">About this website</a>
       </router-link>
     </el-row>
     <el-row :gutter="20" :justify="'center'" style="margin: 5px;">
