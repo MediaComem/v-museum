@@ -198,7 +198,11 @@ export default {
 
       this.lastScroll.x = currentScrollX;
       this.lastScroll.y = currentScrollY;
-      this.animationTimer = 500;
+
+      if (!this.indicatorMoveInProgress) {
+        this.animationTimer = 500;
+      }
+
       this.checkCollision();
     },
     dataIsLoaded(index) {
@@ -239,6 +243,7 @@ export default {
         top: imageTop,
         behavior: 'smooth',
       });
+      setTimeout(() => this.animationTimer = 25, 400);
     },
     isInScreen(
       image,
@@ -557,7 +562,14 @@ export default {
       if (shouldScroll) {
         window.scrollTo(this.currentXPosition, this.currentYPosition);
         if (this.indicatorMoveInProgress) {
-          setTimeout(() => this.indicatorMove(this.currentIndicatorMove, this.currentIndicatorMove.block), 25);
+          setTimeout(
+            () =>
+              this.indicatorMove(
+                this.currentIndicatorMove,
+                this.currentIndicatorMove.block
+              ),
+            25
+          );
         }
       }
     },
