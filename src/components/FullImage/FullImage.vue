@@ -94,9 +94,6 @@ export default {
           this.viewer.destroy();
         }
         this.openImage(image);
-        this.$nextTick(() => {
-          setTimeout(() => this.displayImage = false, 200);
-        });
       });
     },
     openImage(image) {
@@ -116,6 +113,9 @@ export default {
           url: image,
         },
       });
+      this.viewer.addHandler('viewport-change', function() {
+        this.userData.displayImage = false;
+      }, this);
     },
   },
   computed: {
