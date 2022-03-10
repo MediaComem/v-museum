@@ -1,16 +1,16 @@
 <template>
-  <el-row class="display-element">
-    <el-col :span="1" class="align-element justify-browser">
-      <img
-        class="return-size clickable"
-        src="@/assets/shared/Vector.svg"
-        @click="loadOnboarding()"
-      />
+  <el-row :gutter="20">
+    <el-col :span="8">
+      <div class="align-element display-element">
+        <img
+          class="return-size clickable"
+          src="@/assets/shared/Vector.svg"
+          @click="loadOnboarding()"
+        />
+        <h2 class="clickable" @click="loadOnboarding()">Home</h2>
+      </div>
     </el-col>
-    <el-col :span="3" class="align-element justify-text">
-      <h2 class="clickable" @click="loadOnboarding()">Home</h2>
-    </el-col>
-    <el-col :span="6" :offset="5" class="tag-display">
+    <el-col :span="8" class="tag-display display-element">
       <h2>{{ tag }}</h2>
     </el-col>
   </el-row>
@@ -38,6 +38,7 @@ export default {
 @media only screen and (min-width: 1px) and (max-width: 699px) {
   h2 {
     font-size: 16px;
+    margin-left: 5px;
   }
 
   .return-size {
@@ -49,6 +50,7 @@ export default {
 @media only screen and (min-width: 700px) {
   h2 {
     font-size: 24px;
+    margin-left: 5px;
   }
 
   .return-size {
@@ -59,7 +61,6 @@ export default {
 
 .display-element {
   height: 10vh;
-  width: 100vw;
 }
 
 .tag-display {
@@ -71,11 +72,8 @@ export default {
 .align-element {
   display: flex;
   align-items: center;
-}
-
-.justify-browser {
-  justify-content: flex-end;
-  margin-right: 10px;
+  flex-direction: row;
+  margin-left: 10px;
 }
 
 .justify-text {
