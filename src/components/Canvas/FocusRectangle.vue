@@ -61,11 +61,6 @@ export default {
         ? getImageWidth(this.focus, this.imageFactor.sizeFactor) + 20
         : getImageWidth(this.hoverImage, this.imageFactor.sizeFactor) + 20;
     },
-    background() {
-      return {
-        background: this.focus ? 'rgba(0, 0, 0, 0.1)' : 'unset',
-      };
-    },
   },
 };
 </script>
