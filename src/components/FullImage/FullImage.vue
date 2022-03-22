@@ -16,7 +16,7 @@
     <div id="viewer" class="viewer"></div>
   </div>
   <div class="page page-image" v-if="displayImage && imageData">
-    <img :src="imageData.imagePaths.large" />
+    <img class="image-element" :src="imageData.imagePaths.large" />
   </div>
 </template>
 
@@ -102,6 +102,7 @@ export default {
         showZoomControl: false,
         showHomeControl: false,
         showFullPageControl: false,
+        preserveImageSizeOnResize: true,
         tiles: [
           {
             scaleFactors: [1, 2, 4, 8, 16, 32],
@@ -275,9 +276,10 @@ export default {
 }
 
 .page {
-  height: 100vh;
-  width: 100vw;
-  top: 0;
+  height: 80vh;
+  width: 80vw;
+  top: 10vh;
+  left: 10vw;
   position: absolute;
 }
 
@@ -287,9 +289,14 @@ export default {
   z-index: -1;
 }
 
+.image-element {
+  height: 80vh;
+  width: 80vw;
+}
+
 .viewer {
-  width: 100%;
-  height: 100vh;
+  width: 80vw;
+  height: 80vh;
 }
 
 .hide-scrollbar {

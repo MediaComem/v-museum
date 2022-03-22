@@ -1,5 +1,6 @@
 <template>
-  <div
+<div class="pppp">
+<div
     class="title"
   >
     <h1 class="justify-text">TAGS</h1>
@@ -26,9 +27,10 @@
         <p :class="fontSize">{{ tag.tag }} • {{ tag.totalImage }}</p>
       </div>
     </div>
+    <!-- It ensures the full display in any case -->
+    <div style="height: 10vh" />
   </div>
-  <!-- It ensures the full display in any case -->
-  <div style="padding-bottom: 2vh" />
+</div>
 </template>
 
 <script>
@@ -62,6 +64,10 @@ export default {
 <style scoped>
 @import '../../shared/pointer.css';
 
+.pppp {
+  height: -webkit-fill-available;
+}
+
 .title {
   height: 10vh;
   width: 92vw;
@@ -86,23 +92,24 @@ export default {
   display: inline-flex;
   flex-wrap: wrap;
   width: 92vw;
-  height: 90vh;
+  height: -webkit-fill-available;
   padding-left: 4vw;
   padding-right: 2vw;
   justify-content: left;
   align-items: center;
+  padding-bottom: 15vh;
 }
 
 @media only screen and (min-width: 300px) and (max-width: 436px) {
   .display-element {
-    width: 48vw;
+    width: 42vw;
     display: flex;
     justify-content: left;
     align-items: center;
   }
 
   .last-element {
-    flex: 1 1 48vw;
+    flex: 1 1 42vw;
   }
 }
 
@@ -149,7 +156,7 @@ export default {
 }
 
 .mobile-font {
-  font-size: x-small;
+  font-size: small;
 }
 
 .canvas-display > * {

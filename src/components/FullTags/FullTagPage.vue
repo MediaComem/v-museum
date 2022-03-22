@@ -112,6 +112,7 @@ ul {
 
 .canvas-size {
   height: 81vh;
+  width: 100%;
   background: black;
 }
 
@@ -131,8 +132,8 @@ ul {
 
 @media only screen and (min-width: 300px) and (max-width: 799px) {
   .image-canvas {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     display: flex;
     justify-content: center;
     align-items: center;

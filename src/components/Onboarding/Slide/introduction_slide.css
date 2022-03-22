@@ -1,3 +1,17 @@
+h1 {
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+}
+
+h2 {
+  margin-top: 4vh;
+  margin-bottom: 4vh;
+}
+
+h3 {
+  margin-top: 5vh;
+}
+
 .first-image {
   width: 100vw;
   height: 75vh;
@@ -21,6 +35,10 @@
     text-align: left;
     max-width: 35rem;
   }
+
+  .end-page {
+    padding-bottom: 15vh;
+  }
 }
 
 @media only screen and (min-width: 370px) and (max-width: 699px) {
@@ -39,6 +57,10 @@
     font-size: 20px;
     text-align: left;
     max-width: 35rem;
+  }
+
+  .end-page {
+    padding-bottom: 15vh;
   }
 }
 
@@ -59,6 +81,10 @@
     text-align: left;
     max-width: 35rem;
   }
+  
+  .end-page {
+    padding-bottom: 10vh;
+  }
 }
 
 .text {
@@ -70,4 +96,5 @@
 .link {
   color: black;
   font-size: 15px;
+  margin-bottom: 4vh;
 }

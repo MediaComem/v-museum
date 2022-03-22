@@ -30,9 +30,17 @@ h3 {
 }
 
 .more-link {
-  font-weight: bold;
-  text-decoration: underline;
-}
+  font-weight:normal; 
+  text-decoration:none;
+  color: #000;
+  border-bottom: 1px solid #000;
+ }
+ 
+ .more-link:hover {
+   transition-duration: 300ms;
+   transition-property: transform;
+   transform: rotate(40deg);
+ }
 
 .padding {
   padding: 0;

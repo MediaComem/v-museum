@@ -1,7 +1,7 @@
 <template>
   <el-row :gutter="20">
     <el-col :span="8">
-      <div class="align-element display-element">
+      <div class="align-element">
         <img
           class="return-size clickable"
           src="@/assets/shared/Vector.svg"
@@ -10,7 +10,7 @@
         <h2 class="clickable" @click="loadOnboarding()">Home</h2>
       </div>
     </el-col>
-    <el-col :span="8" class="tag-display display-element">
+    <el-col :span="8" class="tag-display">
       <h2>{{ tag }}</h2>
     </el-col>
   </el-row>
@@ -57,10 +57,6 @@ export default {
     width: 24px;
     height: 21px;
   }
-}
-
-.display-element {
-  height: 10vh;
 }
 
 .tag-display {

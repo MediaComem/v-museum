@@ -15,15 +15,15 @@ const getFactor = (height, width) => {
     case width >= 1000 && height >= 920:
       return {sizeFactor: 10, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
     case width >= 700 && height >= 716:
-      return {sizeFactor: 7, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
+      return {sizeFactor: 7, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 2.1, moveCentralHeightFactor: 1.9};
     case width >= 550 && height >= 615:
-      return {sizeFactor: 5.5, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
+      return {sizeFactor: 5.5, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 2.1, moveCentralHeightFactor: 1.9};
     case width >= 400 && height >= 514:
-      return {sizeFactor: 4.5, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
+      return {sizeFactor: 4.5, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 2.1, moveCentralHeightFactor: 1.9};
     case width >= 350 && height >= 480:
-      return {sizeFactor: 3.5, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
+      return {sizeFactor: 3.5, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 2.1, moveCentralHeightFactor: 1.9};
     default:
-      return {sizeFactor: 3, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
+      return {sizeFactor: 3, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 2.1, moveCentralHeightFactor: 1.9};
   }
 };
 

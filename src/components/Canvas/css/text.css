@@ -15,7 +15,7 @@
 @media only screen and (min-width: 1200px) {
   .related-text {
     margin-top: 0;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
     font-size: 20px;
     font-weight: normal;
     text-transform: uppercase;
@@ -41,7 +41,7 @@
 @media only screen and (min-width: 900px) and (max-width: 1199px) {
   .related-text {
     margin-top: 0;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
     font-size: 20px;
     font-weight: normal;
     text-transform: uppercase;
@@ -67,7 +67,7 @@
 @media only screen and (min-width: 700px) and (max-width: 899px) {
   .related-text {
     margin-top: 0;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
     font-size: 15px;
     font-weight: normal;
     text-transform: uppercase;
@@ -93,7 +93,7 @@
 @media only screen and (min-width: 300px) and (max-width: 699px) {
   .related-text {
     margin-top: 0;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
     font-size: 10px;
     font-weight: normal;
     text-transform: uppercase;

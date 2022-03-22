@@ -38,7 +38,7 @@ export default {
       if (!this.focus && this.hoverImage) {
         imageHeight = focusIntermediaryHeight(this.imageFactor.sizeFactor);
       }
-      return (this.offsetY - imageHeight) / 2 + 'px';
+      return ((this.offsetY - imageHeight) / 2) + 8 + 'px';
     },
     leftPosition() {
       return (

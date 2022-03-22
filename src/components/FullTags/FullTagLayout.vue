@@ -28,5 +28,6 @@ export default {
 .page-size {
   height: 100vh;
   width: 100vw;
+  overflow-x: hidden;
 }
 </style>

@@ -35,14 +35,15 @@ export default {
 }
 
 .arrow-size {
-  height: 20px;
-  width: 20px;
+  height: 12px;
+  width: 12px;
 }
 
 .text {
-  font-size: clamp(12px, 1vw, 16px);
+  font-size: clamp(10px,1vw,16px);
   text-align: left;
   text-transform: uppercase;
   text-align: center;
+  margin: 0.7em 0;
 }
 </style>
