@@ -148,10 +148,21 @@ export default {
   overflow-y: scroll;
 }
 
-section {
-  height: 100vh;
-  width: 100vw;
-  scroll-snap-align: start;
-  position: relative;
+@media only screen and (max-width: 599px) {
+  section {
+    height: 90vh;
+    width: 100vw;
+    scroll-snap-align: start;
+    position: relative;
+  } 
+}
+
+@media only screen and (min-width: 600px) {
+  section {
+    height: 100vh;
+    width: 100vw;
+    scroll-snap-align: start;
+    position: relative;
+  } 
 }
 </style>

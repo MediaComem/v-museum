@@ -1,5 +1,5 @@
 <template>
-  <div ref="intro" class="overflow" style="height: 100vh;">
+  <div ref="intro" class="page-size overflow">
     <el-row :gutter="20" style="margin: 0">
       <el-col :span="24" style="padding: 0">
         <img class="first-image" src="@/assets/onboarding/first.png" />
