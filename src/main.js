@@ -64,7 +64,16 @@ const store = createStore({
   plugins: [vuexLocal.plugin],
 });
 
+const isSafari = !!navigator.userAgent.match(/Version\/[\d.]+.*Safari/);
+const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
 const app = createApp(App);
+if (isSafari && iOS) {
+  app.config.globalProperties.isSafariIphone = true;
+}
+else {
+  app.config.globalProperties.isSafariIphone = false;
+}
 app.use(ElementPlus);
 app.use(router);
 app.use(store);

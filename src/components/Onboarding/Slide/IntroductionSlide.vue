@@ -1,5 +1,5 @@
 <template>
-  <div ref="intro" class="page-size overflow">
+  <div ref="intro" class="overflow" :class="sectionHeight">
     <el-row :gutter="20" style="margin: 0">
       <el-col :span="24" style="padding: 0">
         <img class="first-image" src="@/assets/onboarding/first.png" />
@@ -53,6 +53,14 @@ export default {
     information: Object,
   },
   emits: ['changeSlide'],
+  computed: {
+    sectionHeight() {
+      return {
+        'section-standard': !this.isSafariIphone,
+        'section-safari-iphone': this.isSafariIphone,
+      }
+    },
+  },
 };
 </script>
 
