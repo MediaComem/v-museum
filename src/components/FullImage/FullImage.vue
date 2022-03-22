@@ -15,8 +15,8 @@
   <div class="page">
     <div id="viewer" class="viewer"></div>
   </div>
-  <div class="page page-image" v-if="displayImage && imageData">
-    <img class="image-element" :src="imageData.imagePaths.large" />
+  <div v-if="displayImage && imageData">
+    <img class="page page-image" :src="imageData.imagePaths.large" />
   </div>
 </template>
 
@@ -99,10 +99,11 @@ export default {
     openImage(image) {
       this.viewer = OpenSeadragon({
         id: "viewer",
+        autoresize: false,
         showZoomControl: false,
         showHomeControl: false,
         showFullPageControl: false,
-        preserveImageSizeOnResize: true,
+        preserveImageSizeOnResize: false,
         tiles: [
           {
             scaleFactors: [1, 2, 4, 8, 16, 32],
@@ -114,6 +115,7 @@ export default {
           url: image,
         },
       });
+
       // Close the png only when an action is done on openseadragon.
       this.viewer.addHandler('viewport-change', function() {
         this.userData.displayImage = false;
@@ -287,6 +289,7 @@ export default {
   justify-content: center;
   display: flex;
   z-index: -1;
+  object-fit: contain;
 }
 
 .image-element {
