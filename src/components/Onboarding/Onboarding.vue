@@ -12,7 +12,6 @@
       :key="index"
       :style="{ background: item.color }"
       :ref="`decade-${index}`"
-      :class="sectionHeight"
     >
       <desktop-slide
         :ref="`slide-${index}`"
@@ -40,7 +39,7 @@
         @change-slide="changeSlide"
       />
     </section>
-    <section :ref="'Tags'" :class="sectionHeight">
+    <section :ref="'Tags'">
       <tags-slide
         :lastId="information.collection.length - 1"
         :isFullSize="isFullSize"
@@ -131,12 +130,6 @@ export default {
     isFullSize() {
       return this.windowWidth > 1200;
     },
-    sectionHeight() {
-      return {
-        'section-standard': !this.isSafariIphone,
-        'section-safari-iphone': this.isSafariIphone,
-      }
-    },
   },
   mounted() {
     const { width, height } = useWindowSize();
@@ -157,6 +150,7 @@ export default {
 
 @media only screen and (max-width: 599px) {
   section {
+    height: 100vh;
     width: 100vw;
     scroll-snap-align: start;
     position: relative;
@@ -165,17 +159,10 @@ export default {
 
 @media only screen and (min-width: 600px) {
   section {
+    height: 100vh;
     width: 100vw;
     scroll-snap-align: start;
     position: relative;
   } 
-}
-
-.section-standard {
-  height: 100vh;
-}
-
-.section-safari-iphone {
-  height: 90vh;
 }
 </style>

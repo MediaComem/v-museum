@@ -1,36 +1,37 @@
 <template>
-<div class="pppp">
-<div
-    class="title"
-  >
-    <h1 class="justify-text">TAGS</h1>
-    <arrow-up
-      class="justify-arrow clickable"
-      :isFull="isFullSize"
-      :isMobile="isMobile"
-      :text="arrowText"
-      @click="$emit('changeSlide', `decade-${lastId}`)"
-    />
-  </div>
-  <div
-    ref="tags"
-    class="canvas-display overflow"
-  >
+  <div style="height: 100vh;">
     <div
-      v-for="(tag, index) in tags.tags.sort((a, b) =>
-        a.tag.localeCompare(b.tag)
-      )"
-      :key="index"
-      :class="{ 'last-element': index == tags.tags.length - 1 }"
+      class="title"
     >
-      <div class="display-element clickable" @click="$emit('loadTagView', tag)">
-        <p :class="fontSize">{{ tag.tag }} • {{ tag.totalImage }}</p>
+      <h1 class="justify-text">TAGS</h1>
+      <arrow-up
+        class="justify-arrow clickable"
+        :isFull="isFullSize"
+        :isMobile="isMobile"
+        :text="arrowText"
+        @click="$emit('changeSlide', `decade-${lastId}`)"
+      />
+    </div>
+    <div
+      ref="tags"
+      class="canvas-display overflow"
+      :style="padding"
+    >
+      <div
+        v-for="(tag, index) in tags.tags.sort((a, b) =>
+          a.tag.localeCompare(b.tag)
+        )"
+        :key="index"
+        :class="{ 'last-element': index == tags.tags.length - 1 }"
+      >
+        <div class="display-element clickable" @click="$emit('loadTagView', tag)">
+          <p :class="fontSize">{{ tag.tag }} • {{ tag.totalImage }}</p>
+        </div>
       </div>
     </div>
     <!-- It ensures the full display in any case -->
-    <div style="height: 10vh" />
+    <div :style="padding" />
   </div>
-</div>
 </template>
 
 <script>
@@ -57,16 +58,17 @@ export default {
         'mobile-font': this.isMobile,
       };
     },
+    padding() {
+      return {
+        'padding-bottom': this.isSafariIphone ? '180px' : '15vh',
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
 @import '../../shared/pointer.css';
-
-.pppp {
-  height: -webkit-fill-available;
-}
 
 .title {
   height: 10vh;

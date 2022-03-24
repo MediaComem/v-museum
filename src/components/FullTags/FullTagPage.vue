@@ -1,4 +1,5 @@
 <template>
+  <Footer v-if="isSafariIphone && imageUrls && data" :nbLoadImages="imageUrls.length" :nbTotalImages="data.length" :isMoreImagesLoading="isMoreImagesLoading" />
   <div class="canvas-size overflow">
     <div v-if="imageUrls.length === 0" class="loader central-loader-position" />
     <div
@@ -23,24 +24,13 @@
       </div>
     </ul>
   </div>
-  <div class="footer-canvas">
-    <div v-if="imageUrls.length > 0">
-      <div class="footer-loader-position">
-        <div
-          v-if="isMoreImagesLoading"
-          class="loader"
-          style="position: absolute"
-        />
-        <div v-if="isMoreImagesLoading" class="rotated-half-circle" />
-      </div>
-
-      <p>{{ imageUrls.length }} / {{ data.length }}</p>
-    </div>
-  </div>
+  <Footer v-if="!isSafariIphone && imageUrls && data" :nbLoadImages="imageUrls.length" :nbTotalImages="data.length" :isMoreImagesLoading="isMoreImagesLoading" />
 </template>
 
 <script>
 import axios from "axios";
+
+import Footer from "./Footer.vue";
 
 export default {
   watch: {
@@ -50,6 +40,7 @@ export default {
       this.loadInitialImages();
     },
   },
+  components: { Footer },
   methods: {
     loadImage(imageId) {
       this.$router.push({
@@ -99,25 +90,20 @@ export default {
 
 <style scoped>
 @import "../shared/pointer.css";
-
-p {
-  margin: 0;
-  margin-top: 1vh;
-  color: white;
-}
+@import "./loader.css";
 
 ul {
   padding: 0;
 }
 
 .canvas-size {
-  height: 81vh;
   width: 100%;
+  flex-grow: 1;
   background: black;
 }
 
 .footer-canvas {
-  height: 10vh;
+  height: 50px;
   background: black;
   display: flex;
   align-items: center;
@@ -167,41 +153,9 @@ ul {
   overflow-y: auto;
 }
 
-.loader {
-  border: 1px solid white;
-  border-radius: 50%;
-  width: 16px;
-  height: 16px;
-}
-
 .central-loader-position {
   position: absolute;
   top: 50vh;
   left: 50vw;
-}
-
-.footer-loader-position {
-  position: relative;
-  left: 1vw;
-}
-
-.rotated-half-circle {
-  width: 14px;
-  height: 14px;
-  border: 2px solid white;
-  border-radius: 50%;
-  border-bottom-color: transparent;
-  border-left-color: transparent;
-  border-right-color: transparent;
-  animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 </style>

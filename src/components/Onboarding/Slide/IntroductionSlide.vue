@@ -1,5 +1,5 @@
 <template>
-  <div ref="intro" class="overflow" :class="sectionHeight">
+  <div ref="intro" class="overflow" style="height: 100vh;">
     <el-row :gutter="20" style="margin: 0">
       <el-col :span="24" style="padding: 0">
         <img class="first-image" src="@/assets/onboarding/first.png" />
@@ -32,7 +32,7 @@
     <el-row :gutter="20" :justify="'center'" style="margin: 5px;">
       <p class="text">{{ information.body }}</p>
     </el-row>
-    <el-row :justify="'center'" style="padding-bottom: 5vh">
+    <el-row :justify="'center'" :style="padding">
       <arrow-down
         style="justify-content: center"
         :text="undefined"
@@ -54,10 +54,9 @@ export default {
   },
   emits: ['changeSlide'],
   computed: {
-    sectionHeight() {
+    padding() {
       return {
-        'section-standard': !this.isSafariIphone,
-        'section-safari-iphone': this.isSafariIphone,
+        'padding-bottom': this.isSafariIphone ? '100px' : '5vh',
       }
     },
   },
