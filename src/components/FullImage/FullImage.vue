@@ -181,8 +181,8 @@ export default {
     height: 53px;
     z-index: 2;
     position: relative;
-    left: 1vw;
-    top: 4vh;
+    left: 10px;
+    top: 50px;
     background: white;
   }
 }
@@ -193,8 +193,8 @@ export default {
     height: 53px;
     z-index: 2;
     position: relative;
-    left: 1vw;
-    top: 6vh;
+    left: 10px;
+    top: 50px;
     background: white;
   }
 }
@@ -205,8 +205,8 @@ export default {
     height: 53px;
     z-index: 2;
     position: relative;
-    left: 1vw;
-    top: 8vh;
+    left: 10px;
+    top: 50px;
     background: white;
   }
 }
@@ -217,8 +217,8 @@ export default {
     height: 53px;
     z-index: 2;
     position: relative;
-    left: 1vw;
-    top: 14vh;
+    left: 10px;
+    top: 50px;
     background: white;
   }
 }
@@ -228,7 +228,7 @@ export default {
     width: 20vw;
     z-index: 1;
     position: relative;
-    left: 1vw;
+    left: 10px;
     top: 0vh;
     background: white;
     overflow: scroll;
@@ -240,7 +240,7 @@ export default {
     width: 30vw;
     z-index: 1;
     position: relative;
-    left: 1vw;
+    left: 10px;
     top: 0vh;
     background: white;
     overflow: scroll;
@@ -252,7 +252,7 @@ export default {
     width: 40vw;
     z-index: 1;
     position: relative;
-    left: 1vw;
+    left: 10px;
     top: 0vh;
     background: white;
     overflow: scroll;
@@ -264,7 +264,7 @@ export default {
     width: 50vw;
     z-index: 1;
     position: relative;
-    left: 1vw;
+    left: 10px;
     top: 0vh;
     background: white;
     overflow: scroll;
