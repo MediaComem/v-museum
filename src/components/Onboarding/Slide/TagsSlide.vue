@@ -105,6 +105,7 @@ export default {
 @media only screen and (min-width: 300px) and (max-width: 436px) {
   .display-element {
     width: 42vw;
+    height: 50px;
     display: flex;
     justify-content: left;
     align-items: center;
