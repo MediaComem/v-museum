@@ -71,6 +71,7 @@ export default {
           this.data = result.data;
           this.imageUrls = this.data.slice(0, 100);
           this.disableScroll = false;
+          console.log("result", result)
         });
     },
     loadMoreImages() {

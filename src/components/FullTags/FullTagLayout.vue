@@ -1,5 +1,6 @@
 <template>
   <div class="page-size">
+  {{tagValue}}
     <full-tag-header :tag="tagValue" />
     <full-tag-page :tag="tagValue" />
   </div>
@@ -12,6 +13,7 @@ import FullTagPage from "./FullTagPage.vue";
 export default {
   components: { FullTagHeader, FullTagPage },
   beforeRouteEnter(to, from, next) {
+    console.log(to.query)
     next((vm) => {
       vm.tagValue = decodeURIComponent(to.query.tag);
     });
