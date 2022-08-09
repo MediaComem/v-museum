@@ -1,35 +1,16 @@
 <template>
-  <div
-    class="title"
-    @touchstart="touchStart"
-    @touchend="changeSlide"
-    @mousewheel="wheelMove"
-  >
+  <div class="title" @touchstart="touchStart" @touchend="changeSlide" @mousewheel="wheelMove">
     <h1 class="justify-text">TAGS</h1>
-    <arrow-up
-      class="justify-arrow clickable"
-      :isFull="isFullSize"
-      :isMobile="isMobile"
-      :text="arrowText"
-      @previous-slide="$emit('previousSlide')"
-    />
+    <arrow-up class="justify-arrow clickable" :isFull="isFullSize" :isMobile="isMobile" :text="arrowText"
+      @previous-slide="$emit('previousSlide')" />
   </div>
-  <div
-    ref="tags"
-    class="canvas-display overflow"
-    @scroll="scrollMove"
-    @touchend="changeSlideScroll"
-    @mousewheel="wheelMoveScroll"
-  >
-    <div
-      v-for="(tag, index) in tags.tags.sort((a, b) =>
-        a.tag.localeCompare(b.tag)
-      )"
-      :key="index"
-      class="border"
-    >
+  <div ref="tags" class="canvas-display overflow" @scroll="scrollMove" @touchend="changeSlideScroll"
+    @mousewheel="wheelMoveScroll">
+    <div v-for="(tag, index) in tags.tags.sort((a, b) =>
+      a.tag.localeCompare(b.tag)
+    )" :key="index" class="border">
       <div class="display-element clickable" @click="$emit('loadTagView', tag)">
-        <p :class="fontSize">{{ tag.tag }} • {{ tag.totalImage }}</p>
+        <p :class="fontSize" @mouseover="updateTagsData(tag.tag)">{{ tag.tag }} • {{ tag.totalImage }}</p>
       </div>
     </div>
   </div>
@@ -39,7 +20,9 @@
 
 <script>
 import tags from "@/assets/onboarding/tags.json";
+import images from '@/assets/data/images.json';
 import ArrowUp from "../Logo/ArrowUp.vue";
+
 export default {
   components: { ArrowUp },
   emits: ["previousSlide", "loadTagView"],
@@ -51,6 +34,9 @@ export default {
   data() {
     return {
       tags: tags,
+      images: images,
+      currentTag: '',
+      additionalTag: 'Black sky',
       couldLoadNextSlide: true,
       changeSlideInProgress: false,
       delayBeforeAction: 0,
@@ -108,7 +94,27 @@ export default {
         this.$emit("previousSlide");
       }
     },
+    getCorrespondingImages(tags) {
+      const images_with_tags = this.imagesWithTag.filter((im) => {
+        let ok = true
+        let i = 0;
+        do {
+          if (!im.tags.includes(tags[i])) {
+            ok = false
+          }
+          i++;
+        } while (ok && i < tags.length)
+        return ok
+      })
+      return images_with_tags
+    },
+    updateTagsData(tag) {
+      this.currentTag = tag
+      console.log(this.imagesForCombinaison)
+    },
   },
+
+
   computed: {
     fontSize() {
       return {
@@ -116,8 +122,50 @@ export default {
         "mobile-font": this.isMobile,
       };
     },
+    imagesWithTag() {
+      const images_with_tag = this.images.filter((img) => img.tags.includes(this.currentTag))
+      return images_with_tag
+    },
+    // combinableTags() {
+    //   //Use set for comparison and arr for storage to increase speed
+    //   const all_possible_tags = new Set()
+    //   const combinable_tags = []
+    //   this.imagesWithTag.forEach((img) => {
+    //     img.tags.forEach((tag) => {
+    //       if (!all_possible_tags.has(tag)) {
+    //         all_possible_tags.add(tag)
+    //         combinable_tags.push(tag)
+    //       }
+    //     })
+    //   })
+    //   return combinable_tags
+    // },
+    // tagCombinaisons() {
+    //   const tag_combinaisons = []
+    //   for (let i = 0; i < this.combinableTags.length; i++) {
+    //     for (let z = this.combinableTags.length - 1; z > i; z--) {
+    //       //Combination of two different years is impossible
+    //       if(!(this.combinableTags[i].includes('19') && this.combinableTags[z].includes('19'))){
+    //       const combi = [this.combinableTags[i], this.combinableTags[z]]
+    //       tag_combinaisons.push(combi)
+    //       }
+    //     }
+    //   }
+    //   return tag_combinaisons
+    // },
+    imagesForCombinaison() {
+      const tag_combinaison = [this.currentTag, this.additionalTag]
+        const images_with_tags = this.getCorrespondingImages([this.currentTag, this.additionalTag])
+        const json_combi = {
+          "tags": tag_combinaison,
+          "images": images_with_tags,
+          "nb_images": images_with_tags.length,
+        }
+      return json_combi
+    }
   },
 };
+
 </script>
 
 <style scoped>

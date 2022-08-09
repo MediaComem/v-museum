@@ -1,10 +1,8 @@
 import * as fs from 'fs';
+// import axios from "axios";
 
-export default function tagsCombinaisons(tag, file_path) {
-    const data = fs.readFileSync(file_path)
-    const buf = Buffer.from(data)
-    let images = buf.toString()
-    images = JSON.parse(images)
+export default async function tagsCombinaisons(tag, file_data) {
+    const images = file_data
     const images_with_tag = images.filter((img) => img.tags.includes(tag))
     // console.log(images_with_tag[0].tags)
     const combinable_tags = []
