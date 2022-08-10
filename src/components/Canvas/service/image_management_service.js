@@ -10,6 +10,8 @@
 */
 const getFactor = (height, width) => {
   switch (true) {
+    case width >= 2500 && height >= 2500:
+      return {sizeFactor: 20, moveWidthFactor: 2.7, moveTopHeightFactor: 2.1, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
     case width >= 1600 && height >= 1600:
       return {sizeFactor: 10, moveWidthFactor: 2.7, moveTopHeightFactor: 2.1, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
     case width >= 1000 && height >= 920:

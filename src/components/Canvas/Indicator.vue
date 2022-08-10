@@ -1,7 +1,7 @@
 <template>
   <div class="display clickable-without-hover">
-    <p class="text" :style="textRotation">{{ tag }}</p>
-    <img src="@/assets/canvas/40168.svg" alt="arrow" class="arrow-size" />
+    <p class="text" :style="text">{{ tag }}</p>
+    <img src="@/assets/canvas/40168.svg" alt="arrow" :style="arrowSize" />
   </div>
 </template>
 
@@ -10,10 +10,18 @@ export default {
   props: {
     tag: String,
     rotation: Number,
+    isSpecialDevice: Boolean,
   },
   computed: {
-    textRotation() {
+    arrowSize() {
       return {
+        height: this.isSpecialDevice ? '48px' : '12px',
+        width: this.isSpecialDevice ? '48px' : '12px',
+      };
+    },
+    text() {
+      return {
+        'font-size': this.isSpecialDevice ? '26px' : 'clamp(10px,1vw,16px)',
         'transform': `rotate(${this.rotation}deg)`,
       };
     },
@@ -34,13 +42,8 @@ export default {
   transform: rotate(90deg);
 }
 
-.arrow-size {
-  height: 12px;
-  width: 12px;
-}
 
 .text {
-  font-size: clamp(10px,1vw,16px);
   text-align: left;
   text-transform: uppercase;
   text-align: center;

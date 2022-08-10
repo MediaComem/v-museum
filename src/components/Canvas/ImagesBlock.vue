@@ -11,6 +11,7 @@
       :imageId="relatedImage.imageId"
       :imageFactor="imageFactor.sizeFactor"
       :blockPosition="relatedImage.position"
+      :isSpecialDevice="isSpecialDevice"
       :class="{
         last_block: blockInsertionState && !relatedImage.hasFocus,
       }"
@@ -38,6 +39,7 @@ export default {
     imageFactor: Object,
     currentGlobalPosition: Number,
     blockInsertionState: Boolean,
+    isSpecialDevice: Boolean,
   },
   emits: ["dataLoaded", "isInScreen", "indicatorMove"],
   data() {

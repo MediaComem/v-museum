@@ -118,6 +118,9 @@
   </div>
 
   <div v-if="isFullHistory" class="history-layout clickable-without-hover" :style="fullHistory">
+    <div class="full-history-lenght history-text" @click="displayAllHistory = false">
+      <p class="history-value-full">{{ currentHistory.length }}</p>
+    </div>
     <div class="left-arrow" @click="leftMove()" />
     <div class="full-history-display">
       <div v-for="(value, index) in currentHistory" :key="index">
@@ -149,9 +152,8 @@ export default {
     topPosition: Number,
     leftPosition: Number,
     fullWidth: Number,
-    displayAllHistory: Boolean,
+    isSpecialDevice: Boolean,
   },
-  emits: ["openFullHistory", "closeFullHistory"],
   data() {
     return {
       firstImage: undefined,
@@ -165,6 +167,7 @@ export default {
       nextPosition: 1,
       position: 0,
       isAnimated: false,
+      displayAllHistory: false,
     };
   },
   watch: {
@@ -251,7 +254,7 @@ export default {
     sendOpenFullHistory() {
       this.isAnimated = true;
       setTimeout(() => {
-        this.$emit("openFullHistory");
+        this.displayAllHistory = true;
       }, 300);
     },
     leftMove() {
@@ -275,7 +278,7 @@ export default {
           tag: encodeURIComponent(historyElement.tag),
         },
       });
-      this.$emit("closeFullHistory");
+      this.displayAllHistory = false;
     },
     loadImages(historyElement) {
       const element = historyElement.slice(-3);
@@ -310,18 +313,18 @@ export default {
     },
     displayHistory() {
       return {
-        height: "53px",
+        height: this.isSpecialDevice ? '200px' :"53px",
         width:
           this.currentHistory.length < 3
             ? (this.currentHistory.length + 1) * 45 + "px"
             : "180px",
-        top: this.topPosition + "px",
+        top: this.isSpecialDevice ? this.topPosition + "px" : this.topPosition  + "px",
         left: this.leftPosition + "px",
       };
     },
     fullHistory() {
       return {
-        height: "81px",
+        height: this.isSpecialDevice ? '300px' : "81px",
         width: "100vw",
         top: this.topPosition - 28 + "px",
         left: "0px",
@@ -431,6 +434,18 @@ export default {
   margin-left: 2px;
 }
 
+.history-value-full {
+  display: flex;
+  justify-content: center;
+  width: inherit;
+  height: inherit;
+  align-items: center;
+  color: lightgray;
+  font-size: medium;
+  position: absolute;
+  margin: 0px !important;
+}
+
 .history-image {
   object-fit: none;
   position: absolute;
@@ -494,8 +509,15 @@ export default {
     display: block;
     height: inherit;
     overflow-y: scroll;
-    left: 2.5vw;
-    width: 95vw;
+    left: calc(2.5vw + 41px);
+    width: calc(95vw - 41px);
+  }
+
+  .full-history-lenght {
+    width: 41px;
+    height: inherit;
+    position: absolute;
+    display: block;
   }
 
   .left-arrow {
@@ -508,6 +530,7 @@ export default {
     background-size: 20%;
     background-position-x: 0.5vw;
     background-position-y: 50%;
+    left: 41px;
   }
 
   .right-arrow {
@@ -530,7 +553,15 @@ export default {
     display: block;
     height: inherit;
     overflow-y: scroll;
-    width: 100vw;
+    width: calc(97.5vw - 41px);
+    left: 41px;
+  }
+
+  .full-history-lenght {
+    width: 41px;
+    height: inherit;
+    position: absolute;
+    display: block;
   }
 
   .left-arrow {
@@ -555,7 +586,15 @@ export default {
     display: block;
     height: inherit;
     overflow-y: scroll;
-    width: 100vw;
+    width: 97.5vw;
+    left: 2.5vw;
+  }
+
+  .full-history-lenght {
+    width: 2.5vw;
+    height: inherit;
+    position: absolute;
+    display: block;
   }
 
   .left-arrow {

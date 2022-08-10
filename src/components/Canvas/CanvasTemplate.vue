@@ -4,9 +4,7 @@
     :topPosition="windowHeight - 63"
     :leftPosition="10"
     :fullWidth="windowWidth"
-    :displayAllHistory="fullHistoryMode"
-    @openFullHistory="fullHistoryMode = true"
-    @closeFullHistory="fullHistoryMode = false"
+    :isSpecialDevice="isSpecialDevice"
   />
   <div
     :style="pageSize"
@@ -19,10 +17,10 @@
     :ref="'page'"
     class="navigation-pointer"
   >
-    <div class="return">
+    <div class="return" :style="backPosition">
       <div @click="loadTagView" class="return-element clickable">
-        <img src="@/assets/shared/Vector.svg" class="image-size" />
-        <h2>{{ initialCentralTag }}</h2>
+        <img src="@/assets/shared/Vector.svg" :style="imageSize" />
+        <h2 :style="fontSize">{{ initialCentralTag }}</h2>
       </div>
     </div>
     <focus-rectangle
@@ -42,6 +40,7 @@
           :imageFactor="imageFactor"
           :currentGlobalPosition="index"
           :blockInsertionState="index !== currentInsertionState"
+          :isSpecialDevice="isSpecialDevice"
           @data-loaded="dataIsLoaded(index)"
           @is-in-screen="checkImageOutsideScreen($event, index)"
           @indicator-move="indicatorMove($event, index)"
@@ -109,9 +108,11 @@ export default {
       }
     });
   },
+
   data() {
     return {
       // Data in the JSON file to find images
+      isSpecialDevice: false,
       relatedImages: relatedImageData,
       maxArraySize: 3,
       // Display management part
@@ -315,7 +316,6 @@ export default {
       );
     },
     checkCollision() {
-      this.fullHistoryMode = false;
       // Reset focus when no image is focused
       this.imageHasFocus = isFocusShouldHover(this.imageBlocks);
       this.focusHoverImage = isFocusShouldHover(this.imageBlocks);
@@ -662,6 +662,24 @@ export default {
     imageFactor() {
       return getFactor(this.windowHeight, this.windowWidth);
     },
+    backPosition() {
+      return {
+        top: this.isSpecialDevice ? '100px' : '25px',
+        left: this.isSpecialDevice ? '100px' : '29px',
+      };
+    },
+    imageSize() {
+      return {  
+        height: this.isSpecialDevice ? '100px' : '24px',
+        width: this.isSpecialDevice ? '100px' : '24px',
+        'margin-right': '5px',
+      };
+    },
+    fontSize() {
+      return {
+        'font-size': this.isSpecialDevice ? '5rem' : '1.5rem',
+      }
+    },
     pageSize() {
       return {
         position: 'absolute',
@@ -673,12 +691,28 @@ export default {
   created() {
     smoothscroll.polyfill();
     const { width, height } = useWindowSize();
-    this.windowHeight = height;
-    this.windowWidth = width;
+    this.windowHeight = height.value;
+    this.windowWidth = width.value;
 
     // Default page size set. The values have selected randomly but seems to be a good compromise
-    this.pageHeight = this.windowHeight * 4;
-    this.pageWidth = this.windowWidth * 4;
+    this.pageHeight = this.windowHeight * 20;
+    this.pageWidth = this.windowWidth * 20;
+
+    // This part of code is used to detect if we receveive CSS or Device pixels.
+    // When the page is loaded, we receive the CSS size. After few time, the real
+    // visible size is provided.
+    setInterval(() => {
+      if (this.windowHeight * 1.2 < window.innerHeight){
+        // const diff = screen.availHeight - window.outerHeight; 
+        this.windowHeight = window.innerHeight - 500;
+        this.isSpecialDevice = true;
+      }
+      if (this.windowWidth * 1.2 < window.innerWidth){
+        const diff = screen.availWidth - window.outerWidth; 
+        this.windowWidth = window.innerWidth - diff;
+        this.isSpecialDevice = true;
+      }
+    },100)
   },
   activated() {
     window.addEventListener('scroll', this.scrollMove);

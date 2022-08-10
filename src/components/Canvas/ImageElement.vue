@@ -10,7 +10,7 @@
         })
       "
     >
-      <Indicator :tag="tag" :rotation="indicatorInformation.textRotation" />
+      <Indicator :tag="tag" :rotation="indicatorInformation.textRotation" :isSpecialDevice="isSpecialDevice" />
     </div>
     <div :style="position" v-if="imageData" class="block-selection">
       <p
@@ -108,6 +108,7 @@ export default {
     imageId: Number,
     imageFactor: Number,
     blockPosition: Number,
+    isSpecialDevice: Boolean,
   },
   emits: ['dataLoaded', 'isInScreen', 'indicatorMove'],
   data() {
@@ -177,9 +178,10 @@ export default {
       return getImageWidth(this.focus, this.imageFactor);
     },
     getIndicator() {
+      const variation = this.indicatorInformation.rotation > 0 ? -70 : this.isSpecialDevice ? 150 : 50;
       return {
         position: 'absolute',
-        top: this.indicatorInformation.top + 'px',
+        top: this.indicatorInformation.top + variation + 'px',
         left: this.indicatorInformation.left + 'px',
         transform: 'rotate(' + this.indicatorInformation.rotation + 'deg)',
       };

@@ -26,5 +26,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   background-color: unset;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: none;
+  zoom: 1;
 }
 </style>

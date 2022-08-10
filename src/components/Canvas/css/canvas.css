@@ -13,10 +13,21 @@
   align-items: center;
 }
 
-.image-size {
-  height: 24px;
-  width: 24px;
-  margin-right: 5px;
+
+@media only screen and (max-width: 2000px) {
+  .image-size {
+    height: 24px;
+    width: 24px;
+    margin-right: 5px;
+  }
+}
+
+@media only screen and (min-width: 2001px) {
+  .image-size {
+    height: 60px;
+    width: 60px;
+    margin-right: 5px;
+  }
 }
 
 .block-selection {
