@@ -108,7 +108,11 @@ export default {
       }
     });
   },
-
+  watch: {
+    currentHeight: function(newVal) {
+      console.log(newVal);
+    }
+  },
   data() {
     return {
       // Data in the JSON file to find images
@@ -145,6 +149,8 @@ export default {
       animationTimer: 500,
       focusHoverImage: false,
       diffTime: 0,
+      researchInterval: null,
+      countResearch: 0,
     };
   },
   methods: {
@@ -154,7 +160,10 @@ export default {
         query: { tag: encodeURIComponent(this.initialCentralTag) },
       });
     },
-    moveClickEnable() {
+    moveClickEnable(event) {
+      if (event.touches && event.touches.length >= 2) {
+        event.preventDefault();
+      }
       this.isDrag = true;
       this.diffTime = Date.now();
     },
@@ -687,6 +696,9 @@ export default {
         width: this.pageWidth + 'px',
       };
     },
+    currentHeight() {
+      return window.innerHeight;
+    },
   },
   created() {
     smoothscroll.polyfill();
@@ -701,16 +713,24 @@ export default {
     // This part of code is used to detect if we receveive CSS or Device pixels.
     // When the page is loaded, we receive the CSS size. After few time, the real
     // visible size is provided.
-    setInterval(() => {
+    this.researchInterval = setInterval(() => {
       if (this.windowHeight * 1.2 < window.innerHeight){
-        // const diff = screen.availHeight - window.outerHeight; 
-        this.windowHeight = window.innerHeight - 500;
+        this.windowHeight = window.innerHeight - 384;
         this.isSpecialDevice = true;
+        setInterval(() => {
+          if (this.windowHeight + 384 !== window.innerHeight) {
+            this.windowHeight = window.innerHeight - 384;
+          }
+        }, 100);
       }
       if (this.windowWidth * 1.2 < window.innerWidth){
-        const diff = screen.availWidth - window.outerWidth; 
-        this.windowWidth = window.innerWidth - diff;
+        this.windowWidth = window.innerWidth;
         this.isSpecialDevice = true;
+      }
+      this.countResearch += 1;
+      if (this.countResearch === 10) {
+        clearInterval(this.researchInterval);
+        this.researchInterval = null;
       }
     },100)
   },

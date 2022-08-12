@@ -44,18 +44,18 @@
       </div>
       <div v-if="focus" :style="textWidth">
         <div class="text_left">
-          <p class="font-size-information">
+          <p class="font-size-information" :style="informationTextSize">
             Illustration: &nbsp;
           </p>
-          <p class="font-size-information-text">
+          <p class="font-size-information-text" :style="informationTextSize">
             {{ imageData.author }}
           </p>
         </div>
         <div class="text_left">
-          <p class="font-size-information margin-story">
+          <p class="font-size-information margin-story" :style="informationTextSize">
             Story: &nbsp;
           </p>
-          <p class="font-size-information-text margin-story">
+          <p class="font-size-information-text margin-story" :style="informationTextSize">
             {{ imageData.title }}
           </p>
         </div>
@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import dataFetch from '../../api/dataFetching';
 import {
   thumbnailWidth,
@@ -165,11 +166,28 @@ export default {
       };
     },
     textWidth() {
+      if (this.isSpecialDevice) {
+        return {
+          width: this.focus
+            ? thumbnailWidth(this.imageFactor) + 'px'
+            : relatedThumbnailWidth(this.imageFactor) + 'px',
+          'font-size': '40px',
+        };
+      }
       return {
-        width: this.focus
-          ? thumbnailWidth(this.imageFactor) + 'px'
-          : relatedThumbnailWidth(this.imageFactor) + 'px',
-      };
+          width: this.focus
+            ? thumbnailWidth(this.imageFactor) + 'px'
+            : relatedThumbnailWidth(this.imageFactor) + 'px',
+        };
+    },
+    informationTextSize() {
+      if (this.isSpecialDevice) {
+        return {
+          'font-size': '35px',
+          height: '40px',
+        };
+      }
+      return {};
     },
     imageHeight() {
       return getImageHeight(this.focus, this.imageFactor);
@@ -178,7 +196,7 @@ export default {
       return getImageWidth(this.focus, this.imageFactor);
     },
     getIndicator() {
-      const variation = this.indicatorInformation.rotation > 0 ? -70 : this.isSpecialDevice ? 150 : 50;
+      const variation = this.indicatorInformation.rotation > 0 ? this.getFullHistoryMode ? this.isSpecialDevice ? 72 : -80 : this.isSpecialDevice ? 100 : -50 : this.isSpecialDevice ? 150 : 50;
       return {
         position: 'absolute',
         top: this.indicatorInformation.top + variation + 'px',
@@ -189,6 +207,9 @@ export default {
     getVisibility() {
       return this.indicatorInformation.visible;
     },
+    ...mapGetters({
+      getFullHistoryMode: "getFullHistoryMode",
+    }),
   },
   mounted() {
     dataFetch.getImageById(this.imageId).then((data) => {

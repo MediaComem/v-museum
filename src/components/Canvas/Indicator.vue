@@ -21,7 +21,7 @@ export default {
     },
     text() {
       return {
-        'font-size': this.isSpecialDevice ? '26px' : 'clamp(10px,1vw,16px)',
+        'font-size': this.isSpecialDevice ? '36≤px' : 'clamp(10px,1vw,16px)',
         'transform': `rotate(${this.rotation}deg)`,
       };
     },

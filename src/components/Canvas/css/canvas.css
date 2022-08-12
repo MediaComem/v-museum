@@ -3,31 +3,12 @@
   height: 29px;
   width: auto;
   position: fixed;
-  top: 25px;
-  left: 29px;
   z-index: 11;
 }
 
 .return-element {
   display: flex;
   align-items: center;
-}
-
-
-@media only screen and (max-width: 2000px) {
-  .image-size {
-    height: 24px;
-    width: 24px;
-    margin-right: 5px;
-  }
-}
-
-@media only screen and (min-width: 2001px) {
-  .image-size {
-    height: 60px;
-    width: 60px;
-    margin-right: 5px;
-  }
 }
 
 .block-selection {

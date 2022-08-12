@@ -1,5 +1,5 @@
 <template>
-  <div class="y mandatory-scroll-snapping" dir="ltr" @scroll="scrollSlide">
+  <div class="y mandatory-scroll-snapping" dir="ltr" @scroll="scrollSlide" @touchstart="disableZoom">
     <section :ref="'Introduction'">
       <introduction-slide
         :information="information"
@@ -99,6 +99,11 @@ export default {
           this.$refs[`slide-${i}`].isCollapse = false;
         }
       }, 50);
+    },
+    disableZoom(event) {
+      if (event.touches.length >= 2) {
+        event.preventDefault();
+      }
     },
     changeSlide(event) {
       this.$refs[event].scrollIntoView({ behavior: 'smooth' });

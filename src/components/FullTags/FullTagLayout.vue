@@ -1,5 +1,5 @@
 <template>
-  <div class="page-size">
+  <div class="page-size" @touchstart="disableZoom">
     <Header :tag="tagValue" />
     <full-tag-page :tag="tagValue" />
   </div>
@@ -20,6 +20,13 @@ export default {
     return {
       tagValue: "",
     };
+  },
+  methods: {
+    disableZoom(event) {
+      if (event.touches.length >= 2) {
+        event.preventDefault();
+      }
+    },
   },
 };
 </script>

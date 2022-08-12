@@ -1,5 +1,5 @@
 <template>
-  <div class="information-manager" style="margin-left: 12px">
+  <div class="information-manager" style="margin-left: 12px" @touchstart="disableZoom">
     <el-row>
       <page-manager @changeDisplay="display = !display" :display="display" :from="from"/>
     </el-row>
@@ -59,6 +59,11 @@ export default {
     };
   },
   methods: {
+    disableZoom(event) {
+      if (event.touches.length >= 2) {
+        event.preventDefault();
+      }
+    },
     loadImage(index) {
       this.imageData = this.storyCollection[index];
       this.tags = [];
@@ -169,7 +174,7 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style>
 .information-padding {
   padding: 24px;
   padding-top: 130px;
@@ -181,8 +186,8 @@ export default {
     height: 53px;
     z-index: 2;
     position: relative;
-    left: 10px;
-    top: 50px;
+    left: 8px;
+    top: 20px;
     background: white;
   }
 }
@@ -193,8 +198,8 @@ export default {
     height: 53px;
     z-index: 2;
     position: relative;
-    left: 10px;
-    top: 50px;
+    left: 8px;
+    top: 20px;
     background: white;
   }
 }
@@ -205,8 +210,8 @@ export default {
     height: 53px;
     z-index: 2;
     position: relative;
-    left: 10px;
-    top: 50px;
+    left: 8px;
+    top: 20px;
     background: white;
   }
 }
@@ -217,8 +222,8 @@ export default {
     height: 53px;
     z-index: 2;
     position: relative;
-    left: 10px;
-    top: 50px;
+    left: 8px;
+    top: 20px;
     background: white;
   }
 }
@@ -228,7 +233,7 @@ export default {
     width: 20vw;
     z-index: 1;
     position: relative;
-    left: 10px;
+    left: 8px;
     top: 0vh;
     background: white;
     overflow: scroll;
@@ -240,7 +245,7 @@ export default {
     width: 30vw;
     z-index: 1;
     position: relative;
-    left: 10px;
+    left: 8px;
     top: 0vh;
     background: white;
     overflow: scroll;
@@ -252,7 +257,7 @@ export default {
     width: 40vw;
     z-index: 1;
     position: relative;
-    left: 10px;
+    left: 8px;
     top: 0vh;
     background: white;
     overflow: scroll;
@@ -264,7 +269,7 @@ export default {
     width: 50vw;
     z-index: 1;
     position: relative;
-    left: 10px;
+    left: 8px;
     top: 0vh;
     background: white;
     overflow: scroll;
@@ -301,6 +306,8 @@ export default {
   width: 80vw;
   height: 80vh;
 }
+
+.viewer > .openseadragon-container > .openseadragon-canvas { outline: none; }
 
 .hide-scrollbar {
   overflow: auto;
