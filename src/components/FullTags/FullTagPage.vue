@@ -1,5 +1,8 @@
 <template>
   <div class="canvas-size overflow">
+  <tags-combinaisons-form 
+  :show-images-number="true" 
+  :selected-tags="['Child', 'Castle']"></tags-combinaisons-form>
     <div v-if="imageUrls.length === 0" class="loader central-loader-position" />
     <div
       v-if="imageUrls.length === 0"
@@ -41,60 +44,59 @@
 
 <script>
 import axios from "axios";
-
+import TagsCombinaisonsForm from "./TagsCombinaisonsForm.vue";
 export default {
-  watch: {
-    tag: function() {
-      this.disableScroll = true;
-      this.imageUrls = [];
-      this.loadInitialImages();
-    },
-  },
-  methods: {
-    loadImage(imageId) {
-      this.$router.push({
-        path: `/canvas`,
-        query: {
-          imageId: encodeURIComponent(imageId),
-          tag: encodeURIComponent(this.tag),
+    watch: {
+        tag: function () {
+            this.disableScroll = true;
+            this.imageUrls = [];
+            this.loadInitialImages();
         },
-      });
     },
-    loadInitialImages() {
-      let fileName = this.tag;
-      if (fileName.includes("/")) {
-        fileName = fileName.replace("/", "");
-      }
-      axios
-        .get(window.location.origin + process.env.VUE_APP_FULLTAG_LINK + fileName + ".json")
-        .then((result) => {
-          this.data = result.data;
-          this.imageUrls = this.data.slice(0, 100);
-          this.disableScroll = false;
-          console.log("result", result)
-        });
+    methods: {
+        loadImage(imageId) {
+            this.$router.push({
+                path: `/canvas`,
+                query: {
+                    imageId: encodeURIComponent(imageId),
+                    tag: encodeURIComponent(this.tag),
+                },
+            });
+        },
+        loadInitialImages() {
+            let fileName = this.tag;
+            if (fileName.includes("/")) {
+                fileName = fileName.replace("/", "");
+            }
+            axios
+                .get(window.location.origin + process.env.VUE_APP_FULLTAG_LINK + fileName + ".json")
+                .then((result) => {
+                this.data = result.data;
+                this.imageUrls = this.data.slice(0, 100);
+                this.disableScroll = false;
+                console.log("result", result);
+            });
+        },
+        loadMoreImages() {
+            if (this.imageUrls.length < this.data.length) {
+                this.isMoreImagesLoading = true;
+                this.imageUrls = this.imageUrls.concat(this.data.slice(this.imageUrls.length, this.imageUrls.length + 100));
+                this.isMoreImagesLoading = false;
+            }
+        },
     },
-    loadMoreImages() {
-      if (this.imageUrls.length < this.data.length) {
-        this.isMoreImagesLoading = true;
-        this.imageUrls = this.imageUrls.concat(
-          this.data.slice(this.imageUrls.length, this.imageUrls.length + 100)
-        );
-        this.isMoreImagesLoading = false;
-      }
+    props: {
+        tag: String,
     },
-  },
-  props: {
-    tag: String,
-  },
-  data() {
-    return {
-      data: undefined,
-      imageUrls: [],
-      disableScroll: true,
-      isMoreImagesLoading: false,
-    };
-  },
+    data() {
+        return {
+            data: undefined,
+            imageUrls: [],
+            disableScroll: true,
+            isMoreImagesLoading: false,
+        };
+    },
+    components: { TagsCombinaisonsForm }
 };
 </script>
 

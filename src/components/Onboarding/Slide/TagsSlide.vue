@@ -4,7 +4,9 @@
     <arrow-up class="justify-arrow clickable" :isFull="isFullSize" :isMobile="isMobile" :text="arrowText"
       @previous-slide="$emit('previousSlide')" />
   </div>
-  <div ref="tags" class="canvas-display overflow" @scroll="scrollMove" @touchend="changeSlideScroll"
+  <div class="filters-management">
+  </div>
+  <div ref="tags" class="canvas-display overflow tags-list" @scroll="scrollMove" @touchend="changeSlideScroll"
     @mousewheel="wheelMoveScroll">
     <div v-for="(tag, index) in tags.tags.sort((a, b) =>
       a.tag.localeCompare(b.tag)
@@ -14,6 +16,7 @@
       </div>
     </div>
   </div>
+  <images-carousel v-if="show_carousel"  :images="this.imagesForTags.images" :isMobile="isMobile"/>
   <!-- It ensures the full display in any case -->
   <div style="padding-bottom: 2vh" />
 </template>
@@ -22,9 +25,10 @@
 import tags from "@/assets/onboarding/tags.json";
 import images from '@/assets/data/images.json';
 import ArrowUp from "../Logo/ArrowUp.vue";
+import ImagesCarousel from "../../FullImage/ImagesCarousel.vue";
 
 export default {
-  components: { ArrowUp },
+  components: { ArrowUp, ImagesCarousel},
   emits: ["previousSlide", "loadTagView"],
   props: {
     isFullSize: Boolean,
@@ -37,6 +41,7 @@ export default {
       images: images,
       currentTag: '',
       additionalTag: 'Black sky',
+      show_carousel: false,
       couldLoadNextSlide: true,
       changeSlideInProgress: false,
       delayBeforeAction: 0,
@@ -110,7 +115,8 @@ export default {
     },
     updateTagsData(tag) {
       this.currentTag = tag
-      console.log(this.imagesForCombinaison)
+      this.show_carousel = true
+      console.log(this.imagesForTags)
     },
   },
 
@@ -126,41 +132,15 @@ export default {
       const images_with_tag = this.images.filter((img) => img.tags.includes(this.currentTag))
       return images_with_tag
     },
-    // combinableTags() {
-    //   //Use set for comparison and arr for storage to increase speed
-    //   const all_possible_tags = new Set()
-    //   const combinable_tags = []
-    //   this.imagesWithTag.forEach((img) => {
-    //     img.tags.forEach((tag) => {
-    //       if (!all_possible_tags.has(tag)) {
-    //         all_possible_tags.add(tag)
-    //         combinable_tags.push(tag)
-    //       }
-    //     })
-    //   })
-    //   return combinable_tags
-    // },
-    // tagCombinaisons() {
-    //   const tag_combinaisons = []
-    //   for (let i = 0; i < this.combinableTags.length; i++) {
-    //     for (let z = this.combinableTags.length - 1; z > i; z--) {
-    //       //Combination of two different years is impossible
-    //       if(!(this.combinableTags[i].includes('19') && this.combinableTags[z].includes('19'))){
-    //       const combi = [this.combinableTags[i], this.combinableTags[z]]
-    //       tag_combinaisons.push(combi)
-    //       }
-    //     }
-    //   }
-    //   return tag_combinaisons
-    // },
-    imagesForCombinaison() {
+
+    imagesForTags() {
       const tag_combinaison = [this.currentTag, this.additionalTag]
-        const images_with_tags = this.getCorrespondingImages([this.currentTag, this.additionalTag])
-        const json_combi = {
-          "tags": tag_combinaison,
-          "images": images_with_tags,
-          "nb_images": images_with_tags.length,
-        }
+      const images_with_tags = this.getCorrespondingImages([this.currentTag, this.additionalTag])
+      const json_combi = {
+        "tags": tag_combinaison,
+        "images": images_with_tags,
+        "nb_images": images_with_tags.length,
+      }
       return json_combi
     }
   },
@@ -237,7 +217,27 @@ export default {
   font-size: x-small;
 }
 
-.border {
+
+
+
+.tags-list {
+  height: 51vh;
+  border-left: solid 1px black;
   border-top: solid 1px black;
+}
+
+.border {
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  border-bottom: solid 1px black;
+  border-right: solid 1px black;
+  height: 70px;
+}
+
+
+
+.filters-management {
+    height: 12.52vh;
 }
 </style>
