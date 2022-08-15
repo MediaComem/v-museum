@@ -1,10 +1,11 @@
 <template>
   <div class="title" @touchstart="touchStart" @touchend="changeSlide" @mousewheel="wheelMove">
-    <h1 class="justify-text">TAGS</h1>
+    <h1 class="justify-text">SREARCH WITH TAGS</h1>
     <arrow-up class="justify-arrow clickable" :isFull="isFullSize" :isMobile="isMobile" :text="arrowText"
       @previous-slide="$emit('previousSlide')" />
   </div>
   <div class="filters-management">
+    <tags-combinaisons-form/>
   </div>
   <div ref="tags" class="canvas-display overflow tags-list" @scroll="scrollMove" @touchend="changeSlideScroll"
     @mousewheel="wheelMoveScroll">
@@ -16,7 +17,8 @@
       </div>
     </div>
   </div>
-  <images-carousel v-if="show_carousel"  :images="this.imagesForTags.images" :isMobile="isMobile"/>
+  <images-carousel v-if="show_carousel" @showFullTagPage="$emit('loadTagView', this.tags.tags[0])" :images="this.imagesForTags.images"
+    :isMobile="isMobile" />
   <!-- It ensures the full display in any case -->
   <div style="padding-bottom: 2vh" />
 </template>
@@ -26,10 +28,11 @@ import tags from "@/assets/onboarding/tags.json";
 import images from '@/assets/data/images.json';
 import ArrowUp from "../Logo/ArrowUp.vue";
 import ImagesCarousel from "../../FullImage/ImagesCarousel.vue";
+import TagsCombinaisonsForm from "../../FullTags/TagsCombinaisonsForm.vue";
 
 export default {
-  components: { ArrowUp, ImagesCarousel},
-  emits: ["previousSlide", "loadTagView"],
+  components: { ArrowUp, ImagesCarousel, TagsCombinaisonsForm },
+  emits: ["previousSlide", "loadTagView", "showFullTagPage"],
   props: {
     isFullSize: Boolean,
     isMobile: Boolean,
@@ -40,8 +43,9 @@ export default {
       tags: tags,
       images: images,
       currentTag: '',
-      additionalTag: 'Black sky',
+      additional_tag: 'Black sky',
       show_carousel: false,
+      show_full_tag_page: false,
       couldLoadNextSlide: true,
       changeSlideInProgress: false,
       delayBeforeAction: 0,
@@ -118,8 +122,12 @@ export default {
       this.show_carousel = true
       console.log(this.imagesForTags)
     },
+    toggleCarouselDisplay() {
+      this.show_carousel = false;
+      this.show_full_tag_page = true;
+      console.log("on change")
+    }
   },
-
 
   computed: {
     fontSize() {
@@ -134,8 +142,8 @@ export default {
     },
 
     imagesForTags() {
-      const tag_combinaison = [this.currentTag, this.additionalTag]
-      const images_with_tags = this.getCorrespondingImages([this.currentTag, this.additionalTag])
+      const tag_combinaison = [this.currentTag, this.additional_tag]
+      const images_with_tags = this.getCorrespondingImages([this.currentTag, this.additional_tag])
       const json_combi = {
         "tags": tag_combinaison,
         "images": images_with_tags,
@@ -229,7 +237,7 @@ export default {
 .border {
   display: flex;
   align-items: center;
-  justify-content:center;
+  justify-content: center;
   border-bottom: solid 1px black;
   border-right: solid 1px black;
   height: 70px;
@@ -238,6 +246,6 @@ export default {
 
 
 .filters-management {
-    height: 12.52vh;
+  height: 12.52vh;
 }
 </style>

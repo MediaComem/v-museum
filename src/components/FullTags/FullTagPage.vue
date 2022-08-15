@@ -1,13 +1,5 @@
 <template>
   <div class="canvas-size overflow">
-  <tags-combinaisons-form 
-  :show-images-number="true" 
-  :selected-tags="['Child', 'Castle']"></tags-combinaisons-form>
-    <div v-if="imageUrls.length === 0" class="loader central-loader-position" />
-    <div
-      v-if="imageUrls.length === 0"
-      class="rotated-half-circle central-loader-position"
-    />
     <ul
       v-infinite-scroll="loadMoreImages"
       :infinite-scroll-disabled="disableScroll"
@@ -44,7 +36,6 @@
 
 <script>
 import axios from "axios";
-import TagsCombinaisonsForm from "./TagsCombinaisonsForm.vue";
 export default {
     watch: {
         tag: function () {
@@ -87,6 +78,7 @@ export default {
     },
     props: {
         tag: String,
+        origin: String,
     },
     data() {
         return {
@@ -96,8 +88,7 @@ export default {
             isMoreImagesLoading: false,
         };
     },
-    components: { TagsCombinaisonsForm }
-};
+    };
 </script>
 
 <style scoped>

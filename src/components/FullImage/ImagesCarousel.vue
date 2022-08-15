@@ -1,9 +1,9 @@
 <template>
     <div class="images-preview-carousel">
         <div class="docs-and-button">
-            <span>{{ images.length }} documents</span>
+            <span class="nb-docs">{{ images.length }} documents</span>
             <!-- Button for full screen -->
-            <svg class="full-screen-button" width="47" height="47" viewBox="0 0 47 47" fill="none"
+            <svg @click="$emit('showFullTagPage')" class="full-screen-button" width="47" height="47" viewBox="0 0 47 47" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M6.71429 30.2143H0V47H16.7857V40.2857H6.71429V30.2143ZM0 16.7857H6.71429V6.71429H16.7857V0H0V16.7857ZM40.2857 40.2857H30.2143V47H47V30.2143H40.2857V40.2857ZM30.2143 0V6.71429H40.2857V16.7857H47V0H30.2143Z"
@@ -49,6 +49,7 @@ export default {
         images: Array,
         isMobile: Boolean
     },
+    emits: ["showFullTagPage"],
     data() {
         return {
             images_index_to_display: this.baseImagesIndexToDisplay()
@@ -69,7 +70,7 @@ export default {
             if (this.isMobile) {
                 return [0, 1, 2]
             } else {
-                return [0, 1, 2, 3]
+                return [0, 1, 2, 3, 4, 5]
             }
         }
     },
@@ -133,5 +134,9 @@ export default {
 
 .full-screen-button {
     clear: none;
+}
+
+.nb-docs {
+    color: white;
 }
 </style>
