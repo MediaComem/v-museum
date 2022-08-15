@@ -32,6 +32,7 @@
       :hoverImage="focusHoverImage"
       :focus="imageHasFocus"
       :border="isOnImage"
+      :isSpecialDevice="isSpecialDevice"
     />
     <div v-for="(imageBlock, index) in imageBlocks" :key="index">
       <div>
@@ -241,7 +242,7 @@ export default {
         leftPosition = +position.left.substring(0, position.left.length - 2);
         topPosition = +position.top.substring(0, position.top.length - 2);
       }
-      const factor = getFactor(this.windowHeight, this.windowWidth);
+      const factor = getFactor(this.windowHeight, this.windowWidth, this.isSpecialDevice);
       const imageTop =
         topPosition -
         this.windowHeight / 2 +
@@ -275,7 +276,7 @@ export default {
           },
           this.currentCenterLeftPosition,
           this.currentCenterTopPosition,
-          getFactor(this.windowHeight, this.windowWidth).sizeFactor
+          getFactor(this.windowHeight, this.windowWidth, this.isSpecialDevice).sizeFactor
         )
       ) {
         image.indicatorInformation = getIndicatorPosition(
@@ -397,7 +398,7 @@ export default {
       }
     },
     collisionAnalysis(imageToAnalyze, currentImagePosition, focusElement) {
-      const factor = getFactor(this.windowHeight, this.windowWidth);
+      const factor = getFactor(this.windowHeight, this.windowWidth, this.isSpecialDevice);
       // Compare the position of an image with the current center window position
       // The number if arbitrary defined to have a margin between the center of the window and the
       // center of the image.
@@ -592,7 +593,7 @@ export default {
       this.currentInsertionState = 1;
       this.centralImageIndex = 0;
       this.imageBlocks = [];
-      const factor = getFactor(this.windowHeight, this.windowWidth);
+      const factor = getFactor(this.windowHeight, this.windowWidth, this.isSpecialDevice);
       // Find the middle of the page to insert the first image
       const firstBlockCentralImageTopPosition =
         this.pageHeight / 2 - thumbnailHeight(factor.sizeFactor) / 2;
@@ -668,7 +669,7 @@ export default {
   },
   computed: {
     imageFactor() {
-      return getFactor(this.windowHeight, this.windowWidth);
+      return getFactor(this.windowHeight, this.windowWidth, this.isSpecialDevice);
     },
     backPosition() {
       return {

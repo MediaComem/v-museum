@@ -159,6 +159,7 @@ export default {
     },
   },
   activated() {
+    this.shouldZoom = true;
     const { width } = useWindowSize();
     this.windowWidth = width;
     this.tags = [];
@@ -257,7 +258,7 @@ export default {
     z-index: 1;
     position: relative;
     left: 8px;
-    top: 0vh;
+    top: -5vh;
     background: white;
     overflow: scroll;
   }
@@ -269,7 +270,7 @@ export default {
     z-index: 1;
     position: relative;
     left: 8px;
-    top: 0vh;
+    top: -3vh;
     background: white;
     overflow: scroll;
   }
@@ -281,7 +282,7 @@ export default {
     z-index: 1;
     position: relative;
     left: 8px;
-    top: 0vh;
+    top: -3vh;
     background: white;
     overflow: scroll;
   }
@@ -293,7 +294,7 @@ export default {
     z-index: 1;
     position: relative;
     left: 8px;
-    top: 0vh;
+    top: -4vh;
     background: white;
     overflow: scroll;
   }
@@ -306,10 +307,10 @@ export default {
 }
 
 .page {
-  height: 80vh;
-  width: 80vw;
-  top: 10vh;
-  left: 10vw;
+  height: 100%;
+  width: 100%;
+  top: 0vh;
+  left: 0vw;
   position: absolute;
 }
 
@@ -326,8 +327,8 @@ export default {
 }
 
 .viewer {
-  width: 80vw;
-  height: 80vh;
+  width: 100%;
+  height: 100%;
 }
 
 .viewer > .openseadragon-container > .openseadragon-canvas { outline: none; }

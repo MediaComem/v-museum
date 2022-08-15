@@ -9,10 +9,10 @@
       width: imageWidth + 'px',
     }"
   >
-    <div class="top left"></div>
-    <div class="top right"></div>
-    <div class="bottom right"></div>
-    <div class="bottom left"></div>
+    <div class="top left" :style="angleSize"></div>
+    <div class="top right" :style="angleSize"></div>
+    <div class="bottom right" :style="angleSize"></div>
+    <div class="bottom left" :style="angleSize"></div>
   </div>
 </template>
 
@@ -30,6 +30,7 @@ export default {
     hoverImage: Boolean,
     imageFactor: Object,
     border: Boolean,
+    isSpecialDevice: Boolean,
   },
   name: 'FocusRectangle',
   computed: {
@@ -60,6 +61,16 @@ export default {
       return this.focus
         ? getImageWidth(this.focus, this.imageFactor.sizeFactor) + 20
         : getImageWidth(this.hoverImage, this.imageFactor.sizeFactor) + 20;
+    },
+    angleSize() {
+      if (this.isSpecialDevice) {
+        return {
+          height: '50px',
+          width: '50px',
+          'border-width': '4px',
+        };
+      }
+      return {};
     },
   },
 };

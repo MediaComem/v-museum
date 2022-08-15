@@ -8,10 +8,12 @@
   moveCentralHeightFactor:  This factor is used to calculate the distance on Y axis between related image on same X axis than the 
                             central image and the central image.
 */
-const getFactor = (height, width) => {
+const getFactor = (height, width, isSpecialDevice=false) => {
   switch (true) {
-    case width >= 2500 && height >= 2500:
-      return {sizeFactor: 20, moveWidthFactor: 2.7, moveTopHeightFactor: 2.1, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
+    case isSpecialDevice && height >= 3000:
+      return {sizeFactor: 32, moveWidthFactor: 1.9, moveTopHeightFactor: 1.5, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
+    case isSpecialDevice:
+      return {sizeFactor: 21, moveWidthFactor: 1.9, moveTopHeightFactor: 1.5, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
     case width >= 1600 && height >= 1600:
       return {sizeFactor: 10, moveWidthFactor: 2.7, moveTopHeightFactor: 2.1, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
     case width >= 1000 && height >= 920:

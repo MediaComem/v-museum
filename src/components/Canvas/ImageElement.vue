@@ -171,7 +171,7 @@ export default {
           width: this.focus
             ? thumbnailWidth(this.imageFactor) + 'px'
             : relatedThumbnailWidth(this.imageFactor) + 'px',
-          'font-size': '40px',
+          'font-size': '70px',
         };
       }
       return {
@@ -183,8 +183,8 @@ export default {
     informationTextSize() {
       if (this.isSpecialDevice) {
         return {
-          'font-size': '35px',
-          height: '40px',
+          'font-size': '50px',
+          height: '50px',
         };
       }
       return {};
