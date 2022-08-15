@@ -4,6 +4,7 @@
     class="history-layout open-animation clickable-without-hover"
     :style="isAnimated ? fullHistory : displayHistory"
     @touchstart="disableZoom"
+    @gesturestart="disableZoomGesture"
   >
     <div v-if="!isAnimated">
       <div
@@ -264,6 +265,9 @@ export default {
       if (event.touches.length >= 2) {
         event.preventDefault();
       }
+    },
+    disableZoomGesture(event){
+      event.preventDefault();
     },
     sendOpenFullHistory() {
       this.isAnimated = true;

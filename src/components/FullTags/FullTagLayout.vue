@@ -1,5 +1,5 @@
 <template>
-  <div class="page-size" @touchstart="disableZoom">
+  <div class="page-size" @touchstart="disableZoom" @gesturestart="disableZoomGesture">
     <Header :tag="tagValue" />
     <full-tag-page :tag="tagValue" />
   </div>
@@ -22,6 +22,9 @@ export default {
     };
   },
   methods: {
+    disableZoomGesture(event){
+      event.preventDefault();
+    },
     disableZoom(event) {
       if (event.touches.length >= 2) {
         event.preventDefault();

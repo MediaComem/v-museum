@@ -1,23 +1,26 @@
 <template>
-  <div class="information-manager" style="margin-left: 12px" @touchstart="disableZoom">
-    <el-row>
-      <page-manager @changeDisplay="display = !display" :display="display" :from="from"/>
-    </el-row>
-  </div>
+  <div style="height: 100vh; width: 100vw" @touchstart="disableZoom" @gesturestart="disableZoomGesture">
+    <div class="information-manager" style="margin-left: 12px">
+      <el-row>
+        <page-manager @changeDisplay="display = !display" :display="display" :from="from"/>
+      </el-row>
+    </div>
 
-  <div
-    v-if="imageData"
-    class="information information-padding hide-scrollbar"
-    :style="collapse"
-  >
-    <data-information ref="information" @loadImage="loadImage" :imageData="imageData" :tags="tags" :storyCollection="storyCollection"/>
+    <div
+      v-if="imageData"
+      class="information information-padding hide-scrollbar"
+      :style="collapse"
+    >
+      <data-information ref="information" @loadImage="loadImage" :imageData="imageData" :tags="tags" :storyCollection="storyCollection"/>
+    </div>
+    <div class="page">
+      <div id="viewer" class="viewer" @canvasDoubleClick="doubleClick"></div>
+    </div>
+    <div v-if="displayImage && imageData">
+      <img class="page page-image" :src="imageData.imagePaths.large" />
+    </div>
   </div>
-  <div class="page">
-    <div id="viewer" class="viewer"></div>
-  </div>
-  <div v-if="displayImage && imageData">
-    <img class="page page-image" :src="imageData.imagePaths.large" />
-  </div>
+  
 </template>
 
 <script>
@@ -56,13 +59,30 @@ export default {
       storyCollection: undefined,
       // Open sea dragon viewer element
       viewer: undefined,
+      shouldZoom: true,
     };
   },
   methods: {
+    click(event) {
+      event.preventDefaultAction = true;
+    },
+    doubleClick(event) {
+      event.preventDefaultAction = true;
+      if (this.shouldZoom) {
+        this.viewer.viewport.zoomBy(2);
+      } else {
+        this.viewer.viewport.zoomBy(0.5);
+      }
+      this.shouldZoom = !this.shouldZoom;
+    },
     disableZoom(event) {
       if (event.touches.length >= 2) {
         event.preventDefault();
       }
+    },
+    disableZoomGesture(event){
+      console.log(event);
+      event.preventDefault();
     },
     loadImage(index) {
       this.imageData = this.storyCollection[index];
@@ -125,6 +145,9 @@ export default {
       this.viewer.addHandler('viewport-change', function() {
         this.userData.displayImage = false;
       }, this);
+
+      this.viewer.addHandler('canvas-click', this.click, this);
+      this.viewer.addHandler('canvas-double-click', this.doubleClick, this);
     },
   },
   computed: {

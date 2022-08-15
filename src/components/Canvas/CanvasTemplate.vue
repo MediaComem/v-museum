@@ -14,6 +14,7 @@
     @mousemove="mouseMove"
     @touchstart="moveClickEnable"
     @touchend="moveClickDisable"
+    @gesturestart="disableZoomGesture"
     :ref="'page'"
     class="navigation-pointer"
   >
@@ -108,11 +109,6 @@ export default {
       }
     });
   },
-  watch: {
-    currentHeight: function(newVal) {
-      console.log(newVal);
-    }
-  },
   data() {
     return {
       // Data in the JSON file to find images
@@ -154,6 +150,9 @@ export default {
     };
   },
   methods: {
+    disableZoomGesture(event){
+      event.preventDefault();
+    },
     loadTagView() {
       this.$router.push({
         path: `/full_tag`,
@@ -695,9 +694,6 @@ export default {
         height: this.pageHeight + 'px',
         width: this.pageWidth + 'px',
       };
-    },
-    currentHeight() {
-      return window.innerHeight;
     },
   },
   created() {
