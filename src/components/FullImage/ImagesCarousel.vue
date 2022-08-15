@@ -82,7 +82,6 @@ export default {
             return false
         },
         showRightArrow() {
-            console.log("mobil", this.images_index_to_display)
             if (this.images_index_to_display[this.images_index_to_display.length - 1] < this.images.length - 1) {
                 return true
             }

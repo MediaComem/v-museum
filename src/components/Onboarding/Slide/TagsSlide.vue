@@ -40,7 +40,7 @@ export default {
   data() {
     return {
       tags: tags,
-      tags_to_display: ref(tags),
+      tags_to_display: ref(tags.tags),
       images: images,
       images_for_carousel: ref(images),
       selected_tags: [''],
@@ -127,7 +127,6 @@ export default {
       const images_with_tag = this.images.filter((img) => img.tags.includes(this.currentTag))
       return images_with_tag
     },
-
     imagesForTags() {
       const tag_combinaison = [this.currentTag, this.additional_tag]
       const images_with_tags = this.getCorrespondingImages([this.currentTag, this.additional_tag])
