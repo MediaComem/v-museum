@@ -16,8 +16,7 @@
         <br />
         <span v-if="this.imagesWithTags.length > 0">{{ this.imagesWithTags.length }} documents</span>
         <span v-else>It seems no document contains the tags combinaison you entered.</span>
-        <span v-for="(tag, index) in tagsForInput" :key="index" @click="addTag(tag.tag)" style="color:red">{{ tag.tag
-        }}</span>
+        <span v-for="(tag, index) in tagsForInput" :key="index" @click="addTag(tag.tag)" style="color:red">{{ tag.tag}}</span>
     </div>
     <!-- <div class="removable-tags">
         <div v-for="(tag, index) in this.selected_tags key"
@@ -31,6 +30,7 @@ import tags from "@/assets/onboarding/tags.json";
 
 
 export default {
+    emits: ["updateTagsList"],
     data() {
         return {
             selected_tags: ref(['']),
@@ -43,12 +43,18 @@ export default {
         updateSearchTag(event) {
             const formated_string = event.target.value.charAt(0).toUpperCase() + event.target.value.slice(1);
             this.selected_tags[0] = (formated_string)
-            console.log(this.selected_tags, this.imagesWithTags)
         },
         addTag(tag) {
             if (!this.selected_tags.includes(tag)) {
                 this.selected_tags.push(tag)
-                this.$emit('updateTagsList', this.images_to_return)
+                //format data to pass to parent
+                const data_to_return = {
+                    selected_tags: this.selected_tags,
+                    images: this.imagesWithTags,
+                    tags_list: this.tagsForInput
+                }
+                console.log('passé en emit:', data_to_return)
+                this.$emit('updateTagsList', data_to_return)
             }
         }
     },
@@ -71,7 +77,7 @@ export default {
                         img_lower_case_tags.push(tg.toLowerCase())
                     })
                     //create a list of clickable tags with number of images
-                    if (img_lower_case_tags.includes(this.selected_tags[i].toLocaleLowerCase())) {
+                    if (img_lower_case_tags.includes(this.selected_tags[i].toLowerCase())) {
                         img_lower_case_tags.forEach(img_tag => {
                             // Cas 1, on a le tag dans l'image donc, get + add
                             if (tags_to_return[img_tag] != undefined) {
@@ -110,7 +116,6 @@ export default {
                     tags_with_string.push(tag_data)
                 }
             })
-            console.log('tags with string', tags_with_string)
             return tags_with_string
         },
     }

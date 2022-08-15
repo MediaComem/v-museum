@@ -5,25 +5,24 @@
       @previous-slide="$emit('previousSlide')" />
   </div>
   <div class="filters-management">
-    <tags-combinaisons-form/>
+    <tags-combinaisons-form @updateTagsList="updateTagsList"/>
   </div>
-  <div ref="tags" class="canvas-display overflow tags-list" @scroll="scrollMove" @touchend="changeSlideScroll"
+  <div ref="tags_to_display" class="canvas-display overflow tags-list" @scroll="scrollMove" @touchend="changeSlideScroll"
     @mousewheel="wheelMoveScroll">
-    <div v-for="(tag, index) in tags.tags.sort((a, b) =>
-      a.tag.localeCompare(b.tag)
-    )" :key="index" class="border">
+    <div v-for="(tag, index) in this.tags_to_display" :key="index" class="border">
       <div class="display-element clickable" @click="$emit('loadTagView', tag)">
-        <p :class="fontSize" @mouseover="updateTagsData(tag.tag)">{{ tag.tag }} • {{ tag.totalImage }}</p>
+        <p :class="fontSize" @mouseover="this.show_carousel = true">{{ tag.tag }} • {{ tag.nb_images }}</p>
       </div>
     </div>
   </div>
-  <images-carousel v-if="show_carousel" @showFullTagPage="$emit('loadTagView', this.tags.tags[0])" :images="this.imagesForTags.images"
+  <images-carousel v-if="show_carousel" @showFullTagPage="$emit('loadTagView', this.tags.tags[0])" :images="this.images_for_carousel"
     :isMobile="isMobile" />
   <!-- It ensures the full display in any case -->
   <div style="padding-bottom: 2vh" />
 </template>
 
 <script>
+import { ref } from 'vue'
 import tags from "@/assets/onboarding/tags.json";
 import images from '@/assets/data/images.json';
 import ArrowUp from "../Logo/ArrowUp.vue";
@@ -32,7 +31,7 @@ import TagsCombinaisonsForm from "../../FullTags/TagsCombinaisonsForm.vue";
 
 export default {
   components: { ArrowUp, ImagesCarousel, TagsCombinaisonsForm },
-  emits: ["previousSlide", "loadTagView", "showFullTagPage"],
+  emits: ["previousSlide", "loadTagView", "showFullTagPage", "updateTagsList"],
   props: {
     isFullSize: Boolean,
     isMobile: Boolean,
@@ -41,9 +40,10 @@ export default {
   data() {
     return {
       tags: tags,
+      tags_to_display: ref(tags),
       images: images,
-      currentTag: '',
-      additional_tag: 'Black sky',
+      images_for_carousel: ref(images),
+      selected_tags: [''],
       show_carousel: false,
       show_full_tag_page: false,
       couldLoadNextSlide: true,
@@ -75,7 +75,7 @@ export default {
       }
     },
     scrollMove() {
-      if (this.$refs["tags"].scrollTop === 0) {
+      if (this.$refs["tags_to_display"].scrollTop === 0) {
         this.couldLoadNextSlide = true;
         this.changeSlideInProgress = false;
         this.delayBeforeAction = Date.now();
@@ -103,24 +103,11 @@ export default {
         this.$emit("previousSlide");
       }
     },
-    getCorrespondingImages(tags) {
-      const images_with_tags = this.imagesWithTag.filter((im) => {
-        let ok = true
-        let i = 0;
-        do {
-          if (!im.tags.includes(tags[i])) {
-            ok = false
-          }
-          i++;
-        } while (ok && i < tags.length)
-        return ok
-      })
-      return images_with_tags
-    },
-    updateTagsData(tag) {
-      this.currentTag = tag
-      this.show_carousel = true
-      console.log(this.imagesForTags)
+    updateTagsList(data) {
+      console.log("to update: ", data)
+      this.tags_to_display = data.tags_list
+      this.images_for_carousel = data.images
+      this.selected_tags = data.selected_tags
     },
     toggleCarouselDisplay() {
       this.show_carousel = false;
