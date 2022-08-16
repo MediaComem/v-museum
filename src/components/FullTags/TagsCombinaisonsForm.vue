@@ -72,6 +72,24 @@ export default {
             } while (ok && i < arr1.length)
             return ok
         },
+        sortInTwoArrays(data_obj, substr) {
+            const keys = Object.keys(data_obj)
+            console.log('keys', keys)
+            const all_tags_arr = []
+            const tags_with_substr_arr = []
+            keys.forEach(tag => {
+                const tag_obj = {
+                    tag: tag,
+                    nb_images: data_obj[tag].nb_images
+                }
+                all_tags_arr.push(tag_obj)
+                if (tag.includes(substr)) {
+                    tags_with_substr_arr.push(tag_obj)
+                }
+            })
+                this.selected_tags_with_images = all_tags_arr,
+                this.input_and_selected_tags_with_images = tags_with_substr_arr
+        }
     },
     computed: {
         imagesWithTags() {
@@ -81,7 +99,6 @@ export default {
             }
             //Reset tags with images for update
             const tags_without_input = {}
-            const tags_with_input = {}
             //Get only images including all selected tags except first (user current input) in array of selected tags
             const images_with_tags = this.images.filter((im) => {
                 let ok = true
@@ -99,26 +116,13 @@ export default {
                         img_lower_case_tags.forEach(img_tag => {
                             //Ensure all  confirmed selected tags are into the image tags before adding this image to the concerned tags possibilities.    
                             let entered_tags_ok = this.userTagsInImageTags(this.selected_tags, img_lower_case_tags)
-                            // let entered_tags_ok = true
                             // Case 1, this tag was already in a image to keep
                             if (tags_without_input[img_tag] && entered_tags_ok) {
                                 tags_without_input[img_tag].nb_images += 1
-                                //Check if the possible tags match user unconfirmed input
-                                if (img_lower_case_tags.includes(this.selected_tags[0].toLowerCase())) {
-                                    if (tags_with_input[img_tag]) {
-                                        tags_with_input[img_tag].nb_images += 1
-                                    } else {
-                                        tags_with_input[img_tag] = { nb_images: 1 }
-                                    }
-                                }
                             }
                             // Case 2, no image parcoured had the tag to add yet
                             else if (!tags_without_input[img_tag] && entered_tags_ok) {
                                 tags_without_input[img_tag] = { nb_images: 1 }
-                                //Check if possible tags matches user unconfirmed input
-                                if (img_lower_case_tags.includes(this.selected_tags[0].toLowerCase())) {
-                                    tags_with_input[img_tag] = { nb_images: 1 }
-                                }
                             }
                         })
                     } else {
@@ -127,9 +131,9 @@ export default {
                     i++;
                 } while (ok && i < this.selected_tags.length)
                 this.selected_tags_with_images = tags_without_input
-                this.input_and_selected_tags_with_images = tags_with_input
                 return ok
             })
+            this.sortInTwoArrays(this.selected_tags_with_images, this.selected_tags[0].toLowerCase())
             console.log("LES IMAGES:", this.selected_tags_with_images, "Les images + input:", this.input_and_selected_tags_with_images, "input: ", this.selected_tags[0])
             return images_with_tags
         },
