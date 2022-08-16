@@ -16,9 +16,12 @@
         <br />
         <span v-if="this.imagesWithTags.length > 0">{{ this.imagesWithTags.length }} documents</span>
         <span v-else>It seems no document contains the tags combinaison you entered.</span>
-        <!-- <span v-for="(tag, index) in tagsForSelection" :key="index" @click="addTag(tag.tag)" style="color:red">{{
-                tag.tag
-        }}</span> -->
+        <span v-for="(tag, index) in this.selected_tags_with_images" :key="index" @click="addTag(tag.tag)"
+            style="color:red">
+            {{ tag.tag }} : {{ tag.nb_images }} documents</span>
+        <span v-for="(tag, index) in this.input_and_selected_tags_with_images" :key="index" @click="addTag(tag.tag)"
+            style="color:blue">
+            {{ tag.tag }} : {{ tag.nb_images }} documents</span>
     </div>
     <!-- <div class="removable-tags">
         <div v-for="(tag, index) in this.selected_tags key"
@@ -87,14 +90,21 @@ export default {
                     tags_with_substr_arr.push(tag_obj)
                 }
             })
-                this.selected_tags_with_images = all_tags_arr,
+            this.selected_tags_with_images = all_tags_arr,
                 this.input_and_selected_tags_with_images = tags_with_substr_arr
         }
     },
     computed: {
         imagesWithTags() {
-            //If user didnt add any tag, basic image are used
+            //If user didnt add any tag, basic images are returned and all tags are kept
             if (this.selected_tags.length == 1) {
+                const formated_tags = {}
+                this.tags.tags.forEach(tag => {
+                    formated_tags[tag.tag.toLowerCase()] = {
+                        nb_images: tag.totalImage
+                    }
+                })
+                this.sortInTwoArrays(formated_tags, this.selected_tags[0].toLowerCase())
                 return this.images
             }
             //Reset tags with images for update
@@ -114,15 +124,16 @@ export default {
                     if (img_lower_case_tags.includes(this.selected_tags[i].toLowerCase())) {
                         //create a list of clickable tags with number of images
                         img_lower_case_tags.forEach(img_tag => {
-                            //Ensure all  confirmed selected tags are into the image tags before adding this image to the concerned tags possibilities.    
-                            let entered_tags_ok = this.userTagsInImageTags(this.selected_tags, img_lower_case_tags)
-                            // Case 1, this tag was already in a image to keep
-                            if (tags_without_input[img_tag] && entered_tags_ok) {
-                                tags_without_input[img_tag].nb_images += 1
-                            }
-                            // Case 2, no image parcoured had the tag to add yet
-                            else if (!tags_without_input[img_tag] && entered_tags_ok) {
-                                tags_without_input[img_tag] = { nb_images: 1 }
+                            //Ensure all  confirmed selected tags are into the image tags before adding this image to the concerned tags possibilities.
+                            if (i == this.selected_tags.length - 1) {
+                                // Case 1, this tag was already in a image to keep
+                                if (tags_without_input[img_tag]) {
+                                    tags_without_input[img_tag].nb_images += 1
+                                }
+                                // Case 2, no image parcoured had the tag to add yet
+                                else if (!tags_without_input[img_tag]) {
+                                    tags_without_input[img_tag] = { nb_images: 1 }
+                                }
                             }
                         })
                     } else {
