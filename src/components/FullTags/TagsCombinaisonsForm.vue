@@ -47,7 +47,7 @@
         <div v-for="(tag, index) in this.selected_tags_with_images" :key="index" class="border">
             <div class="display-element clickable" @click="addTag(tag.tag)">
                 <!-- <div class="display-element clickable" @click="addTag(tag.tag)" @click="$emit('loadTagView', tag)"> -->
-                <p :class="fontSize" @mouseover="this.show_carousel = true">{{ tag.tag }} • {{ tag.nb_images }}</p>
+                <p :class="fontSize" @mouseover="this.show_carousel = true">{{   tag.tag.charAt(0).toUpperCase() + tag.tag.slice(1) }} • {{ tag.nb_images }}</p>
             </div>
         </div>
     </div>
@@ -70,35 +70,43 @@ export default {
             input_and_selected_tags_with_images: {},
             tags: tags,
             show_tags_options: false,
-            last_user_input: Date.now()
+            last_user_input: Date.now(),
+            mytimeout: undefined,
         }
     },
     methods: {
         updateSearchTag(event) {
-            const formated_string = event.target.value.charAt(0).toUpperCase() + event.target.value.slice(1);
-            this.selected_tags[0] = (formated_string)
+            clearTimeout(this.mytimeout);
+            this.mytimeout = undefined;
+            this.mytimeout = setTimeout(() => {
+                const formated_string = event.target.value.charAt(0).toUpperCase() + event.target.value.slice(1);
+                this.selected_tags[0] = (formated_string);
+            }, 250);
+            //Add little interval, so if user writes fast, there is no problem
         },
         addTag(tag) {
             if (!this.selected_tags.includes(tag)) {
-                //Add little interval, so if user writes fast, there is no problem
-                if (Date.now() - this.last_user_input > 0.15) {
-                    this.last_user_input = Date.now()
-                    this.selected_tags.push(tag)
-                    const data_to_return = {
-                        selected_tags: this.confirmed_tags,
-                        images: this.imagesWithTags,
-                        tags_list: this.selected_tags_with_images,
-                        input_filter_tags_list: this.input_and_selected_tags_with_images
-                    }
-                    document.querySelector('.tag-filter-input').value = ''
-                    // console.log('passé en emit:', data_to_return)
-                    this.$emit('updateTagsList', data_to_return)
+                this.selected_tags.push(tag)
+                const data_to_return = {
+                    selected_tags: this.confirmed_tags,
+                    images: this.imagesWithTags,
+                    tags_list: this.selected_tags_with_images,
+                    input_filter_tags_list: this.input_and_selected_tags_with_images
                 }
+                document.querySelector('.tag-filter-input').value = ''
+                // console.log('passé en emit:', data_to_return)
+                this.$emit('updateTagsList', data_to_return)
             }
         },
         removeTag(index) {
-            console.log('on delete')
             this.selected_tags.splice(index)
+            const data_to_return = {
+                selected_tags: this.confirmed_tags,
+                images: this.imagesWithTags,
+                tags_list: this.selected_tags_with_images,
+                input_filter_tags_list: this.input_and_selected_tags_with_images
+            }
+            this.$emit('updateTagsList', data_to_return)
         },
         sortInTwoArrays(data_obj, substr) {
             const keys = Object.keys(data_obj)
@@ -128,6 +136,7 @@ export default {
             };
         },
         imagesWithTags() {
+            console.log('sdfhdsfdjajsfdhjasfdsdjkljh');
             //If user didnt add any tag, basic images are returned and all tags are kept
             if (this.selected_tags.length == 1) {
                 const formated_tags = {}
@@ -139,7 +148,6 @@ export default {
                 this.sortInTwoArrays(formated_tags, this.selected_tags[0].toLowerCase())
                 return this.images
             }
-            //Reset tags with images for update
             const tags_without_input = {}
             //Get only images including all selected tags except first (user current input) in array of selected tags
             const images_with_tags = this.images.filter((im) => {
@@ -154,7 +162,6 @@ export default {
                     })
                     // ensure current tag is in image tags
                     if (img_lower_case_tags.includes(this.selected_tags[i].toLowerCase())) {
-                        //create a list of clickable tags with number of images
                         img_lower_case_tags.forEach(img_tag => {
                             //Ensure all  confirmed selected tags are into the image tags before adding this image to the concerned tags possibilities.
                             if (i == this.selected_tags.length - 1) {
@@ -185,7 +192,6 @@ export default {
             for (let i = 1; i < this.selected_tags.length; i++) {
                 formated_selected_tags.push(this.selected_tags[i])
             }
-            console.log("con", formated_selected_tags)
             return formated_selected_tags
         }
     }

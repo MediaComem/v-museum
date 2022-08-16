@@ -12,7 +12,7 @@ import router from "./router";
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
   modules: [
-    "history",
+    "history", "tags"
   ],
 });
 
@@ -20,6 +20,9 @@ export const getters = {
   getHistory: (state) => {
     return state.history;
   },
+  getTags: (state) => {
+    return state.tags
+  }
 };
 
 export const mutations = {
@@ -36,6 +39,9 @@ export const mutations = {
       });
     }
   },
+  addTags (state, tags) {
+   state.tags = tags
+  }
 };
 
 export const actions = {
@@ -50,12 +56,15 @@ export const actions = {
       }
     });
   },
+  insertTags(context, tags) {
+    context.commit("addTags", tags)
+  }
 };
 
 const store = createStore({
   state() {
     return {
-      history: [],
+      history: [], tags: [],
     };
   },
   getters: getters,

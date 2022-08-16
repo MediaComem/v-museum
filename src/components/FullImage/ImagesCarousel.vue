@@ -67,7 +67,11 @@ export default {
             }
         },
         baseImagesIndexToDisplay() {
-            if (this.isMobile) {
+            if(this.images.length == 1) {
+                return [0]
+            } else if (this.images.length == 2 ) {
+                return [0, 1]
+            }else if (this.isMobile) {
                 return [0, 1, 2]
             } else {
                 return [0, 1, 2, 3, 4, 5]

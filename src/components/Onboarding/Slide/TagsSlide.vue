@@ -4,33 +4,27 @@
     <arrow-up class="justify-arrow clickable" :isFull="isFullSize" :isMobile="isMobile" :text="arrowText"
       @previous-slide="$emit('previousSlide')" />
   </div>
-  <div class="filters-management">
-    <tags-combinaisons-form @updateTagsList="updateTagsList" :isMobile="isMobile"/>
+  <div class="form-and-carousel" v-if="show_form">
+    <tags-combinaisons-form @updateTagsList="updateTagsList" :isMobile="isMobile" />
+    <images-carousel v-if="show_carousel" @showFullTagPage="showFullScreenCarousel()" :images="this.images_for_carousel"
+      :isMobile="isMobile" :key="this.carousel_key" />
   </div>
-  <!-- <div ref="tags_to_display" class="canvas-display overflow tags-list" @scroll="scrollMove" @touchend="changeSlideScroll"
-    @mousewheel="wheelMoveScroll">
-    <div v-for="(tag, index) in this.tags_to_display" :key="index" class="border">
-      <div class="display-element clickable" @click="$emit('loadTagView', tag)">
-        <p :class="fontSize" @mouseover="this.show_carousel = true">{{ tag.tag }} • {{ tag.nb_images }}</p>
-      </div>
-    </div>
-  </div> -->
-  <images-carousel v-if="show_carousel" @showFullTagPage="$emit('loadTagView', this.tags.tags[0])" :images="this.images_for_carousel"
-    :isMobile="isMobile" />
+  <full-tag-page v-if="this.show_full_tag_page" :tags="this.tags_to_display" :images="this.images_for_carousel"
+    origin="tags_slide" />
   <!-- It ensures the full display in any case -->
   <div style="padding-bottom: 2vh" />
 </template>
 
 <script>
-import { ref } from 'vue'
 import tags from "@/assets/onboarding/tags.json";
 import images from '@/assets/data/images.json';
 import ArrowUp from "../Logo/ArrowUp.vue";
 import ImagesCarousel from "../../FullImage/ImagesCarousel.vue";
 import TagsCombinaisonsForm from "../../FullTags/TagsCombinaisonsForm.vue";
+import FullTagPage from '../../FullTags/FullTagPage.vue';
 
 export default {
-  components: { ArrowUp, ImagesCarousel, TagsCombinaisonsForm },
+  components: { ArrowUp, ImagesCarousel, TagsCombinaisonsForm, FullTagPage },
   emits: ["previousSlide", "loadTagView", "showFullTagPage", "updateTagsList"],
   props: {
     isFullSize: Boolean,
@@ -40,12 +34,14 @@ export default {
   data() {
     return {
       tags: tags,
-      tags_to_display: ref(tags.tags),
-      images: images,
-      images_for_carousel: ref(images),
+      tags_to_display: tags.tags,
       selected_tags: [''],
+      images: images,
+      images_for_carousel: images,
+      carousel_key: 0,
       show_carousel: false,
       show_full_tag_page: false,
+      show_form: true,
       couldLoadNextSlide: true,
       changeSlideInProgress: false,
       delayBeforeAction: 0,
@@ -104,18 +100,19 @@ export default {
       }
     },
     updateTagsList(data) {
-      console.log("to update: ", data)
-      this.tags_to_display = data.tags_list
-      this.images_for_carousel = data.images
-      this.selected_tags = data.selected_tags
+      //rebuild the component to prevent array length problems
+      this.carousel_key = data.images.length
+      if (images.length > 0) {
+        this.show_carousel = true
+        this.images_for_carousel = data.images
+      }
     },
-    toggleCarouselDisplay() {
-      this.show_carousel = false;
+    showFullScreenCarousel() {
+      this.show_form = false;
       this.show_full_tag_page = true;
       console.log("on change")
     }
   },
-
   computed: {
     fontSize() {
       return {
@@ -123,20 +120,6 @@ export default {
         "mobile-font": this.isMobile,
       };
     },
-    imagesWithTag() {
-      const images_with_tag = this.images.filter((img) => img.tags.includes(this.currentTag))
-      return images_with_tag
-    },
-    imagesForTags() {
-      const tag_combinaison = [this.currentTag, this.additional_tag]
-      const images_with_tags = this.getCorrespondingImages([this.currentTag, this.additional_tag])
-      const json_combi = {
-        "tags": tag_combinaison,
-        "images": images_with_tags,
-        "nb_images": images_with_tags.length,
-      }
-      return json_combi
-    }
   },
 };
 
@@ -158,6 +141,7 @@ export default {
 .tags-title {
   width: 41.5vw;
 }
+
 .justify-arrow {
   width: 82vw;
   justify-content: flex-end;
@@ -166,75 +150,5 @@ export default {
 .justify-text {
   width: 10vw;
   justify-content: flex-start;
-}
-
-.canvas-display {
-  display: inline-flex;
-  flex-wrap: wrap;
-  width: 96vw;
-  height: 90vh;
-  padding-left: 2vw;
-  padding-right: 2vw;
-  justify-content: center;
-  align-items: center;
-}
-
-@media only screen and (min-width: 300px) and (max-width: 436px) {
-  .display-element {
-    width: 48vw;
-    display: flex;
-    justify-content: left;
-    align-items: center;
-  }
-}
-
-@media only screen and (min-width: 437px) and (max-width: 999px) {
-  .display-element {
-    width: 32vw;
-    display: flex;
-    justify-content: left;
-    align-items: center;
-  }
-}
-
-@media only screen and (min-width: 800px) {
-  .display-element {
-    width: 23vw;
-    display: flex;
-    justify-content: left;
-    align-items: center;
-  }
-}
-
-.desktop-font {
-  font-size: normal;
-}
-
-.mobile-font {
-  font-size: x-small;
-}
-
-
-
-
-.tags-list {
-  height: 51vh;
-  border-left: solid 1px black;
-  border-top: solid 1px black;
-}
-
-.border {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: solid 1px black;
-  border-right: solid 1px black;
-  height: 70px;
-}
-
-
-
-.filters-management {
-  height: 12.52vh;
 }
 </style>

@@ -1,18 +1,17 @@
 <template>
   <div class="canvas-size overflow">
-    <ul
-      v-infinite-scroll="loadMoreImages"
-      :infinite-scroll-disabled="disableScroll"
-      :infinite-scroll-distance="200"
-    >
-      <div class="canvas-display">
+    <ul v-infinite-scroll="loadMoreImages" :infinite-scroll-disabled="disableScroll" :infinite-scroll-distance="200">
+      <div class="canvas-display" v-if="origin == 'tags_slide'">
+        <div v-for="(image, index) in images" :key="index">
+          <div class="image-canvas">
+            <img :src="image.url" @click="loadImage(image.id)" class="image-size clickable" />
+          </div>
+        </div>
+      </div>
+      <div v-else class="canvas-display">
         <div v-for="(image, index) in imageUrls" :key="index">
           <div class="image-canvas">
-            <img
-              :src="image.url"
-              @click="loadImage(image.imageId)"
-              class="image-size clickable"
-            />
+            <img :src="image.url" @click="loadImage(image.imageId)" class="image-size clickable" />
           </div>
         </div>
       </div>
@@ -21,11 +20,7 @@
   <div class="footer-canvas">
     <div v-if="imageUrls.length > 0">
       <div class="footer-loader-position">
-        <div
-          v-if="isMoreImagesLoading"
-          class="loader"
-          style="position: absolute"
-        />
+        <div v-if="isMoreImagesLoading" class="loader" style="position: absolute" />
         <div v-if="isMoreImagesLoading" class="rotated-half-circle" />
       </div>
 
@@ -37,58 +32,73 @@
 <script>
 import axios from "axios";
 export default {
-    watch: {
-        tag: function () {
-            this.disableScroll = true;
-            this.imageUrls = [];
-            this.loadInitialImages();
-        },
+  watch: {
+    tag: function () {
+      this.disableScroll = true;
+      this.imageUrls = [];
+      this.loadInitialImages();
     },
-    methods: {
-        loadImage(imageId) {
-            this.$router.push({
-                path: `/canvas`,
-                query: {
-                    imageId: encodeURIComponent(imageId),
-                    tag: encodeURIComponent(this.tag),
-                },
-            });
-        },
-        loadInitialImages() {
-            let fileName = this.tag;
-            if (fileName.includes("/")) {
-                fileName = fileName.replace("/", "");
-            }
-            axios
-                .get(window.location.origin + process.env.VUE_APP_FULLTAG_LINK + fileName + ".json")
-                .then((result) => {
-                this.data = result.data;
-                this.imageUrls = this.data.slice(0, 100);
-                this.disableScroll = false;
-                console.log("result", result);
-            });
-        },
-        loadMoreImages() {
-            if (this.imageUrls.length < this.data.length) {
-                this.isMoreImagesLoading = true;
-                this.imageUrls = this.imageUrls.concat(this.data.slice(this.imageUrls.length, this.imageUrls.length + 100));
-                this.isMoreImagesLoading = false;
-            }
-        },
+  },
+  methods: {
+    loadImage(imageId) {
+      if (this.origin == "tags_slide") {
+        const img = this.images.filter( im => im.id == imageId)[0]
+        console.log(img)
+        this.$router.push({
+          path: `/image/${imageId}`,
+        });
+      } else {
+        this.$router.push({
+          path: `/canvas`,
+          query: {
+            imageId: encodeURIComponent(imageId),
+            tag: encodeURIComponent(this.tag),
+          },
+        });
+      }
     },
-    props: {
-        tag: String,
-        origin: String,
+    loadInitialImages() {
+      if (this.images == null) {
+        let fileName = this.tag;
+        if (fileName.includes("/")) {
+          fileName = fileName.replace("/", "");
+        }
+        axios
+          .get(window.location.origin + process.env.VUE_APP_FULLTAG_LINK + fileName + ".json")
+          .then((result) => {
+            this.data = result.data;
+            this.imageUrls = this.data.slice(0, 100);
+            this.disableScroll = false;
+            console.log("result", result);
+          });
+      } else {
+        this.imagesUrls = this.images
+        console.log("images: ", this.images)
+      }
     },
-    data() {
-        return {
-            data: undefined,
-            imageUrls: [],
-            disableScroll: true,
-            isMoreImagesLoading: false,
-        };
+    loadMoreImages() {
+      if (this.imageUrls.length < this.data.length) {
+        this.isMoreImagesLoading = true;
+        this.imageUrls = this.imageUrls.concat(this.data.slice(this.imageUrls.length, this.imageUrls.length + 100));
+        this.isMoreImagesLoading = false;
+      }
     },
+  },
+  props: {
+    tags: Array,
+    images: Array,
+    tag: String,
+    origin: String,
+  },
+  data() {
+    return {
+      data: undefined,
+      imageUrls: [],
+      disableScroll: true,
+      isMoreImagesLoading: false,
     };
+  },
+};
 </script>
 
 <style scoped>
@@ -193,6 +203,7 @@ ul {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }

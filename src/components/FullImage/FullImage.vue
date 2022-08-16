@@ -28,9 +28,12 @@ import PageManager from "./Manager/PageManager.vue";
 import DataInformation from "./DataInformation/DataInformation.vue";
 import dataFetching from "../../api/dataFetching";
 
+import { getters }  from "../../main"
+
 export default {
   components: { PageManager, DataInformation },
   beforeRouteEnter(to, from, next) {
+    console.log(getters.getHistory())
     next((vm) => {
       vm.imageId = to.params.index;
       if (to.query.image) {
@@ -127,6 +130,7 @@ export default {
     },
   },
   activated() {
+    console.log(this.imageData);
     const { width } = useWindowSize();
     this.windowWidth = width;
     this.tags = [];
