@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100vh; width: 100vw" @touchstart="disableZoom" @gesturestart="disableZoomGesture">
+  <div :style="pageSize" @touchstart="disableZoom" @gesturestart="disableZoomGesture">
     <div class="information-manager" style="margin-left: 12px">
       <el-row>
         <page-manager @changeDisplay="display = !display" :display="display" :from="from"/>
@@ -11,7 +11,7 @@
       class="information information-padding hide-scrollbar"
       :style="collapse"
     >
-      <data-information ref="information" @loadImage="loadImage" :imageData="imageData" :tags="tags" :storyCollection="storyCollection"/>
+      <data-information ref="information" @loadImage="loadImage" :imageData="imageData" :tags="tags" :storyCollection="storyCollection" :windowHeight="windowHeight" :windowWidth="windowWidth"/>
     </div>
     <div class="page">
       <div id="viewer" class="viewer" @canvasDoubleClick="doubleClick"></div>
@@ -45,6 +45,7 @@ export default {
   data() {
     return {
       windowWidth: undefined,
+      windowHeight: undefined,
       // Previous page URL
       from: undefined,
       // ID of the image, used to search index position of the storyCollection.
@@ -151,6 +152,12 @@ export default {
     },
   },
   computed: {
+    pageSize() {
+      return {
+        height: this.windowHeight + 'px',
+        width: this.windowWidth + 'px',
+      };
+    },
     collapse() {
       return {
         transform: this.display ? "translateX(0)" : "translate(-70vw)",
@@ -160,8 +167,9 @@ export default {
   },
   activated() {
     this.shouldZoom = true;
-    const { width } = useWindowSize();
+    const { width, height } = useWindowSize();
     this.windowWidth = width;
+    this.windowHeight = height;
     this.tags = [];
     this.storyCollection = undefined;
     this.currentIndex = undefined;

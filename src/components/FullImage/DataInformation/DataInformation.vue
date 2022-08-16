@@ -1,61 +1,61 @@
 <template>
   <el-row style="height: 1;"> </el-row>
   <el-row>
-    <h1>
+    <h1 :style="h1FontSize">
       {{ imageData.title }}
     </h1>
   </el-row>
   <el-row>
-    <p class="gray-text">Illustrator</p>
+    <p class="gray-text" :style="pFontSize">Illustrator</p>
   </el-row>
   <el-row>
-    <h3>
+    <h3 :style="h3FontSize">
       {{ imageData.author }}
     </h3>
   </el-row>
   <el-row>
-    <p class="gray-text">
+    <p class="gray-text" :style="pFontSize">
       Magazine Issue
     </p>
   </el-row>
   <el-row>
-    <p>
+    <p :style="pFontSize">
       {{ imageData.medium }}
     </p>
   </el-row>
   <el-row>
-    <p class="gray-text">
+    <p class="gray-text" :style="pFontSize">
       Keywords
     </p>
   </el-row>
   <el-row>
-    <p v-if="tags.length === 0" class="gray-text" style="text-align: left">
+    <p v-if="tags.length === 0" class="gray-text" style="text-align: left" :style="pFontSize">
       No related keyword
     </p>
-    <p v-if="tags.length > 0" style="text-align: left">
+    <p v-if="tags.length > 0" style="text-align: left" :style="pFontSize">
       {{ tags.join(", ") }}
     </p>
   </el-row>
   <el-row v-if="storyCollection">
-    <p>{{ currentIndex + 1 }} / {{ storyCollection.length }}</p>
+    <p :style="pFontSize">{{ currentIndex + 1 }} / {{ storyCollection.length }}</p>
   </el-row>
   <el-row v-if="storyCollection && storyCollection.length > 1">
     <div style="display: flex; cursor: pointer" @click="previousImage()">
       <div>
         <img src="@/assets/fullimage/left_arrow.svg" />
       </div>
-      <p>&nbsp; Previous &nbsp;</p>
+      <p :style="pFontSize">&nbsp; Previous &nbsp;</p>
     </div>
-    <p>|</p>
+    <p :style="pFontSize">|</p>
     <div style="display: flex; cursor: pointer" @click="nextImage()">
-      <p>&nbsp; Next &nbsp;</p>
+      <p :style="pFontSize">&nbsp; Next &nbsp;</p>
       <div>
         <img src="@/assets/fullimage/right_arrow.svg" />
       </div>
     </div>
   </el-row>
   <el-row style="height: auto; padding-bottom: 24px; max-height: 15vh">
-    <span>{{ imageData.description }}</span>
+    <span :style="spanFontSize">{{ imageData.description }}</span>
   </el-row>
 </template>
 
@@ -65,6 +65,8 @@ export default {
     imageData: Object,
     tags: Array,
     storyCollection: Array,
+    windowHeight: Number,
+    windowWidth: Number,
   },
   emits: ["loadImage"],
   data() {
@@ -94,6 +96,28 @@ export default {
       this.$emit("loadImage", this.currentIndex);
     },
   },
+  computed: {
+    h1FontSize() {
+      return {
+        'font-size': this.windowHeight > 1700 && this.windowWidth < 1000 ? '36px' : '24px',
+      }
+    },
+    h3FontSize() {
+      return {
+        'font-size': this.windowHeight > 1700 && this.windowWidth < 1000 ? '30px' : '18px',
+      }
+    },
+    pFontSize() {
+      return {
+        'font-size': this.windowHeight > 1700 && this.windowWidth < 1000 ? '26px' : '14px',
+      }
+    },
+    spanFontSize() {
+      return {
+        'font-size': this.windowHeight > 1700 && this.windowWidth < 1000 ? '28px' : '16px',
+      }
+    },
+  },
 };
 </script>
 
@@ -103,13 +127,6 @@ h1 {
   font-size: 24px;
   margin: 0;
   padding-bottom: 1vh;
-}
-
-h2 {
-  font-weight: normal;
-  font-size: 18px;
-  color: gray;
-  margin: 0;
 }
 
 h3 {

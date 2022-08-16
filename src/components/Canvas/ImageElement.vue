@@ -196,11 +196,12 @@ export default {
       return getImageWidth(this.focus, this.imageFactor);
     },
     getIndicator() {
-      const variation = this.indicatorInformation.rotation > 0 ? this.getFullHistoryMode ? this.isSpecialDevice ? 72 : -80 : this.isSpecialDevice ? 100 : -50 : this.isSpecialDevice ? 150 : 50;
+      const variationTop = this.indicatorInformation.rotation > 0 ? this.getFullHistoryMode ? this.isSpecialDevice ? 0 : -80 : this.isSpecialDevice ? 50 : -50 : this.isSpecialDevice ? 150 : 50;
+      const variationLeft = this.indicatorInformation.rotation > -68 && this.indicatorInformation.rotation < 68 ? this.isSpecialDevice ? -60 : 0 : this.isSpecialDevice ? 30 : 0;
       return {
         position: 'absolute',
-        top: this.indicatorInformation.top + variation + 'px',
-        left: this.indicatorInformation.left + 'px',
+        top: this.indicatorInformation.top + variationTop + 'px',
+        left: this.indicatorInformation.left + variationLeft + 'px',
         transform: 'rotate(' + this.indicatorInformation.rotation + 'deg)',
       };
     },
