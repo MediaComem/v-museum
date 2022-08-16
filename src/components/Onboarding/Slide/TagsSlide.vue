@@ -1,20 +1,20 @@
 <template>
   <div class="title" @touchstart="touchStart" @touchend="changeSlide" @mousewheel="wheelMove">
-    <h1 class="justify-text">SREARCH WITH TAGS</h1>
+    <h1 class="justify-text tags-title">SREARCH WITH TAGS</h1>
     <arrow-up class="justify-arrow clickable" :isFull="isFullSize" :isMobile="isMobile" :text="arrowText"
       @previous-slide="$emit('previousSlide')" />
   </div>
   <div class="filters-management">
     <tags-combinaisons-form @updateTagsList="updateTagsList"/>
   </div>
-  <div ref="tags_to_display" class="canvas-display overflow tags-list" @scroll="scrollMove" @touchend="changeSlideScroll"
+  <!-- <div ref="tags_to_display" class="canvas-display overflow tags-list" @scroll="scrollMove" @touchend="changeSlideScroll"
     @mousewheel="wheelMoveScroll">
     <div v-for="(tag, index) in this.tags_to_display" :key="index" class="border">
       <div class="display-element clickable" @click="$emit('loadTagView', tag)">
         <p :class="fontSize" @mouseover="this.show_carousel = true">{{ tag.tag }} • {{ tag.nb_images }}</p>
       </div>
     </div>
-  </div>
+  </div> -->
   <images-carousel v-if="show_carousel" @showFullTagPage="$emit('loadTagView', this.tags.tags[0])" :images="this.images_for_carousel"
     :isMobile="isMobile" />
   <!-- It ensures the full display in any case -->
@@ -155,6 +155,9 @@ export default {
   justify-content: center;
 }
 
+.tags-title {
+  width: 41.5vw;
+}
 .justify-arrow {
   width: 82vw;
   justify-content: flex-end;
