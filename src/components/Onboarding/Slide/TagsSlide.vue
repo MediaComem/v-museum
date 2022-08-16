@@ -5,7 +5,7 @@
       @previous-slide="$emit('previousSlide')" />
   </div>
   <div class="filters-management">
-    <tags-combinaisons-form @updateTagsList="updateTagsList"/>
+    <tags-combinaisons-form @updateTagsList="updateTagsList" :isMobile="isMobile"/>
   </div>
   <!-- <div ref="tags_to_display" class="canvas-display overflow tags-list" @scroll="scrollMove" @touchend="changeSlideScroll"
     @mousewheel="wheelMoveScroll">
