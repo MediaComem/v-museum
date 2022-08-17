@@ -48,12 +48,13 @@ import { mapGetters } from "vuex";
 
 export default {
     props: {
+        nbImages: Number,
         isMobile: Boolean
     },
     emits: ["showFullTagPage"],
     data() {
         return {
-            images_index_to_display: [0, 1]
+            images_index_to_display: this.baseImagesIndexToDisplay()
         }
     },
     methods: {
@@ -67,23 +68,9 @@ export default {
                 this.images_index_to_display[i] += 1
             }
         },
-    },
-    computed: {
-        showLeftArrow() {
-            if (this.images_index_to_display[0] > 0) {
-                return true
-            }
-            return false
-        },
-        showRightArrow() {
-            if (this.images_index_to_display[this.images_index_to_display.length - 1] < this.images.length - 1) {
-                return true
-            }
-            return false
-        },
-                //Create array representing number of images to display
+        //Create array representing number of images to display
         baseImagesIndexToDisplay() {
-            let max_images_number = this.images.length
+            let max_images_number = this.nbImages
             if (this.isMobile) {
                 if (max_images_number > 3) {
                     max_images_number = 3
@@ -101,6 +88,20 @@ export default {
             } while (i < max_images_number)
             console.log("base arr", arr)
             return arr
+        },
+    },
+    computed: {
+        showLeftArrow() {
+            if (this.images_index_to_display[0] > 0) {
+                return true
+            }
+            return false
+        },
+        showRightArrow() {
+            if (this.images_index_to_display[this.images_index_to_display.length - 1] < this.images.length - 1) {
+                return true
+            }
+            return false
         },
         ...mapGetters({
             images: "getImages"

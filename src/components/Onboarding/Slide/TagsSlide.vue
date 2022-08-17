@@ -7,7 +7,7 @@
   <div class="form-and-carousel" v-if="show_form">
     <tags-combinaisons-form @updateTagsList="updateTagsList" :isMobile="isMobile" />
     <images-carousel v-if="show_carousel" @showFullTagPage="showFullScreenCarousel()"
-      :isMobile="isMobile" :key="this.carousel_key" />
+      :isMobile="isMobile" :nbImages="this.images_bis.length" :key="this.carousel_key" />
   </div>
   <full-tag-page v-if="this.show_full_tag_page" origin="tags_slide" />
   <!-- It ensures the full display in any case -->
@@ -36,7 +36,7 @@ export default {
       tags: tags,
       tags_to_display: tags.tags,
       selected_tags: [''],
-      images: images,
+      images,
       images_for_carousel: images,
       carousel_key: 0,
       show_carousel: false,
@@ -103,10 +103,10 @@ export default {
       //rebuild the component to prevent array length problems
       console.log(this.images_bis)
       this.carousel_key = data.images.length
-      // if (images.length > 0) {
-      //   this.show_carousel = true
-      //   this.images_for_carousel = data.images
-      // }
+      if (this.images_bis.length > 0) {
+        this.show_carousel = true
+        this.images_for_carousel = data.images
+      }
     },
     showFullScreenCarousel() {
       this.show_form = false;
