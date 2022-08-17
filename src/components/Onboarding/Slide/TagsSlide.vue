@@ -9,7 +9,7 @@
     <images-carousel v-if="show_carousel" @showFullTagPage="showFullScreenCarousel()"
       :isMobile="isMobile" :nbImages="this.images_bis.length" :key="this.carousel_key" />
   </div>
-  <full-tag-page v-if="this.show_full_tag_page" origin="tags_slide" />
+  <full-tag-page v-if="this.show_full_tag_page"/>
   <!-- It ensures the full display in any case -->
   <div style="padding-bottom: 2vh" />
 </template>
@@ -110,6 +110,7 @@ export default {
     },
     showFullScreenCarousel() {
       this.show_form = false;
+      this.$store.dispatch('setFullTagPageOrigin', 'tags_slide')
       this.show_full_tag_page = true;
       console.log("on change")
     }

@@ -41,7 +41,18 @@ export default {
       this.loadInitialImages();
     },
   },
-  methods: {
+  props: {
+    tag: String,
+  },
+  data() {
+    return {
+      data: undefined,
+      imageUrls: [],
+      disableScroll: true,
+      isMoreImagesLoading: false,
+    };
+  },
+    methods: {
     loadImage(imageId) {
       if (this.origin == "tags_slide") {
         const img = this.images.filter( im => im.id == imageId)[0]
@@ -86,22 +97,13 @@ export default {
         this.isMoreImagesLoading = false;
       }
     },
-    ...mapGetters({
-      images: "getImages"
+  },
+  computed: {
+        ...mapGetters({
+      images: "getImages",
+      origin: "getFullTagPageOrigin",
     })
-  },
-  props: {
-    tag: String,
-    origin: String,
-  },
-  data() {
-    return {
-      data: undefined,
-      imageUrls: [],
-      disableScroll: true,
-      isMoreImagesLoading: false,
-    };
-  },
+  }
 };
 </script>
 

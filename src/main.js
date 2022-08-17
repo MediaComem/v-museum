@@ -28,6 +28,9 @@ export const getters = {
   getImages: (state) => {
     return state.images
   },
+  getFullTagPageOrigin: (state) => {
+    return state.full_tag_page_origin
+  }
 };
 
 export const mutations = {
@@ -52,6 +55,9 @@ export const mutations = {
   },
   updateImages(state, images) {
     state.images = images
+  },
+  updateFullTagPageOrigin(state, origin) {
+    state.full_tag_page_origin = origin
   }
 };
 
@@ -75,13 +81,16 @@ export const actions = {
   },
   setImages(context, images) {
     context.commit("updateImages", images)
+  },
+  setFullTagPageOrigin(context, origin) {
+    context.commit("updateFullTagPageOrigin", origin)
   }
 };
 
 const store = createStore({
   state() {
     return {
-      history: [], tags: [''], images: [images]
+      history: [], tags: [''], images: [images], full_tag_page_origin: '',
     };
   },
   getters: getters,
