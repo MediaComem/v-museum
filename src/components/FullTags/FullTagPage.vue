@@ -2,7 +2,7 @@
   <div class="canvas-size overflow">
     <ul v-infinite-scroll="loadMoreImages" :infinite-scroll-disabled="disableScroll" :infinite-scroll-distance="200">
       <div class="canvas-display" v-if="origin == 'tags_slide'">
-        <div v-for="(image, index) in images" :key="index">
+        <div v-for="(image, index) in this.images" :key="index">
           <div class="image-canvas">
             <img :src="image.url" @click="loadImage(image.id)" class="image-size clickable" />
           </div>
@@ -31,6 +31,8 @@
 
 <script>
 import axios from "axios";
+import { mapGetters } from "vuex";
+
 export default {
   watch: {
     tag: function () {
@@ -58,6 +60,7 @@ export default {
       }
     },
     loadInitialImages() {
+      console.log("images:", this.images)
       if (this.images == null) {
         let fileName = this.tag;
         if (fileName.includes("/")) {
@@ -83,10 +86,11 @@ export default {
         this.isMoreImagesLoading = false;
       }
     },
+    ...mapGetters({
+      images: "getImages"
+    })
   },
   props: {
-    tags: Array,
-    images: Array,
     tag: String,
     origin: String,
   },

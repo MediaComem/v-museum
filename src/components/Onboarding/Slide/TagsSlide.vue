@@ -6,16 +6,16 @@
   </div>
   <div class="form-and-carousel" v-if="show_form">
     <tags-combinaisons-form @updateTagsList="updateTagsList" :isMobile="isMobile" />
-    <images-carousel v-if="show_carousel" @showFullTagPage="showFullScreenCarousel()" :images="this.images_for_carousel"
+    <images-carousel v-if="show_carousel" @showFullTagPage="showFullScreenCarousel()"
       :isMobile="isMobile" :key="this.carousel_key" />
   </div>
-  <full-tag-page v-if="this.show_full_tag_page" :tags="this.tags_to_display" :images="this.images_for_carousel"
-    origin="tags_slide" />
+  <full-tag-page v-if="this.show_full_tag_page" origin="tags_slide" />
   <!-- It ensures the full display in any case -->
   <div style="padding-bottom: 2vh" />
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import tags from "@/assets/onboarding/tags.json";
 import images from '@/assets/data/images.json';
 import ArrowUp from "../Logo/ArrowUp.vue";
@@ -101,11 +101,12 @@ export default {
     },
     updateTagsList(data) {
       //rebuild the component to prevent array length problems
+      console.log(this.images_bis)
       this.carousel_key = data.images.length
-      if (images.length > 0) {
-        this.show_carousel = true
-        this.images_for_carousel = data.images
-      }
+      // if (images.length > 0) {
+      //   this.show_carousel = true
+      //   this.images_for_carousel = data.images
+      // }
     },
     showFullScreenCarousel() {
       this.show_form = false;
@@ -120,6 +121,9 @@ export default {
         "mobile-font": this.isMobile,
       };
     },
+     ...mapGetters({
+            images_bis: "getImages"
+        }),
   },
 };
 

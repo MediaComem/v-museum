@@ -56,6 +56,7 @@
 <script>
 import images from '@/assets/data/images.json';
 import tags from "@/assets/onboarding/tags.json";
+import { mapGetters } from "vuex";
 
 export default {
     emits: ["updateTagsList"],
@@ -64,7 +65,6 @@ export default {
     },
     data() {
         return {
-            selected_tags: [''],
             images: images,
             selected_tags_with_images: {},
             input_and_selected_tags_with_images: {},
@@ -86,7 +86,10 @@ export default {
         },
         addTag(tag) {
             if (!this.selected_tags.includes(tag)) {
-                this.selected_tags.push(tag)
+                this.$store.dispatch('insertTag', tag)
+                // this.selected_tags.push(tag)
+                this.$store.dispatch('setImages', this.imagesWithTags)
+                console.log(this.im_2)
                 const data_to_return = {
                     selected_tags: this.confirmed_tags,
                     images: this.imagesWithTags,
@@ -99,7 +102,14 @@ export default {
             }
         },
         removeTag(index) {
-            this.selected_tags.splice(index)
+            console.log("supression", this.selected_tags)
+            // this.selected_tags.splice(index, 1)
+            // console.log("suprimé", this.selected_tags)
+            this.$store.dispatch('removeTag', index);
+            console.log("suprimé 2", this.selected_tags)
+
+            this.$store.dispatch('setImages', this.imagesWithTags)
+
             const data_to_return = {
                 selected_tags: this.confirmed_tags,
                 images: this.imagesWithTags,
@@ -189,11 +199,15 @@ export default {
         },
         confirmed_tags() {
             const formated_selected_tags = []
-            for (let i = 1; i < this.selected_tags.length; i++) {
+            for(let i = 1; i < this.selected_tags.length; i++) {
                 formated_selected_tags.push(this.selected_tags[i])
             }
             return formated_selected_tags
-        }
+        }, 
+        ...mapGetters({
+            selected_tags: "getTags",
+            im_2: "getImages"
+        }),
     }
 }
 </script>

@@ -9,10 +9,12 @@ import App from "./App.vue";
 import dataFetch from "./api/dataFetching";
 import router from "./router";
 
+import images from "./assets/data/images.json";
+
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
   modules: [
-    "history", "tags"
+    "history",
   ],
 });
 
@@ -22,7 +24,10 @@ export const getters = {
   },
   getTags: (state) => {
     return state.tags
-  }
+  },
+  getImages: (state) => {
+    return state.images
+  },
 };
 
 export const mutations = {
@@ -39,8 +44,14 @@ export const mutations = {
       });
     }
   },
-  addTags (state, tags) {
-   state.tags = tags
+  addTag (state, tag) {
+   state.tags.push(tag)
+  },
+  removeTag(state, index) {
+    state.tags.splice(index, 1)
+  },
+  updateImages(state, images) {
+    state.images = images
   }
 };
 
@@ -56,15 +67,21 @@ export const actions = {
       }
     });
   },
-  insertTags(context, tags) {
-    context.commit("addTags", tags)
+  insertTag(context, tag) {
+    context.commit("addTag", tag)
+  },
+  removeTag(context, index) {
+    context.commit("removeTag", index)
+  },
+  setImages(context, images) {
+    context.commit("updateImages", images)
   }
 };
 
 const store = createStore({
   state() {
     return {
-      history: [], tags: [],
+      history: [], tags: [''], images: [images]
     };
   },
   getters: getters,

@@ -3,8 +3,8 @@
         <div class="docs-and-button">
             <span class="nb-docs">{{ images.length }} documents</span>
             <!-- Button for full screen -->
-            <svg @click="$emit('showFullTagPage')" class="full-screen-button" width="47" height="47" viewBox="0 0 47 47" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
+            <svg @click="$emit('showFullTagPage')" class="full-screen-button" width="47" height="47" viewBox="0 0 47 47"
+                fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M6.71429 30.2143H0V47H16.7857V40.2857H6.71429V30.2143ZM0 16.7857H6.71429V6.71429H16.7857V0H0V16.7857ZM40.2857 40.2857H30.2143V47H47V30.2143H40.2857V40.2857ZM30.2143 0V6.71429H40.2857V16.7857H47V0H30.2143Z"
                     fill="white" />
@@ -44,15 +44,16 @@
     </div>
 </template>
 <script>
+import { mapGetters } from "vuex";
+
 export default {
     props: {
-        images: Array,
         isMobile: Boolean
     },
     emits: ["showFullTagPage"],
     data() {
         return {
-            images_index_to_display: this.baseImagesIndexToDisplay()
+            images_index_to_display: [0, 1]
         }
     },
     methods: {
@@ -66,17 +67,6 @@ export default {
                 this.images_index_to_display[i] += 1
             }
         },
-        baseImagesIndexToDisplay() {
-            if(this.images.length == 1) {
-                return [0]
-            } else if (this.images.length == 2 ) {
-                return [0, 1]
-            }else if (this.isMobile) {
-                return [0, 1, 2]
-            } else {
-                return [0, 1, 2, 3, 4, 5]
-            }
-        }
     },
     computed: {
         showLeftArrow() {
@@ -91,6 +81,30 @@ export default {
             }
             return false
         },
+                //Create array representing number of images to display
+        baseImagesIndexToDisplay() {
+            let max_images_number = this.images.length
+            if (this.isMobile) {
+                if (max_images_number > 3) {
+                    max_images_number = 3
+                } 
+            } else {
+                if(max_images_number > 6) {
+                    max_images_number = 6
+                }
+            }
+            const arr = []
+            let i = 0
+            do {
+                arr.push(i)
+                i++
+            } while (i < max_images_number)
+            console.log("base arr", arr)
+            return arr
+        },
+        ...mapGetters({
+            images: "getImages"
+        })
     },
 }
 </script>
