@@ -219,16 +219,17 @@ export default {
     height: 90vh;
     padding-left: 2vw;
     padding-right: 2vw;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
 }
 
 @media only screen and (min-width: 300px) and (max-width: 436px) {
     .display-element {
-        width: 48vw;
         display: flex;
-        justify-content: left;
+        justify-content: center;
         align-items: center;
+        margin: 0 10px;
+        display: flex;
     }
 }
 
@@ -267,9 +268,13 @@ export default {
 .border {
     display: flex;
     align-items: center;
-    justify-content: center;
-    border-bottom: solid 1px black;
-    border-right: solid 1px black;
-    height: 70px;
+    justify-content: flex-start;
+    border: solid 1px rgb(44, 62, 80);
+    border-radius: 4px;
+    margin: 10px;
+    text-align: center;
+}
+.border:hover {
+    background-color: #616161;
 }
 </style>
