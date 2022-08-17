@@ -1,5 +1,10 @@
 <template>
   <div class="canvas-size overflow">
+  <div class="exit-button-wrapper">
+      <svg @click="$emit('exitFullScreen')" v-if="origin == 'tags_slide'" class="exit-button" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11.579 47.4166V36.2541H0.416504V31.2184H16.6147V47.4166H11.579ZM31.2183 47.4166V31.2184H47.4165V36.2541H36.254V47.4166H31.2183ZM0.416504 16.6148V11.5791H11.579V0.416626H16.6147V16.6148H0.416504ZM31.2183 16.6148V0.416626H36.254V11.5791H47.4165V16.6148H31.2183Z" fill="white"/>
+      </svg>
+  </div>
     <ul v-infinite-scroll="loadMoreImages" :infinite-scroll-disabled="disableScroll" :infinite-scroll-distance="200">
       <div class="canvas-display" v-if="origin == 'tags_slide'">
         <div v-for="(image, index) in this.images" :key="index">
@@ -44,6 +49,7 @@ export default {
   props: {
     tag: String,
   },
+  emits: ["exitFullScreen"],
   data() {
     return {
       data: undefined,
@@ -132,6 +138,15 @@ ul {
   flex-wrap: wrap;
   justify-content: center;
 }
+.exit-button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.exit-button {
+    margin: 20px 20px 0px 0px;
+}
+
 
 @media only screen and (min-width: 300px) and (max-width: 799px) {
   .image-canvas {

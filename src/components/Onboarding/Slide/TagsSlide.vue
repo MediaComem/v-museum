@@ -1,15 +1,23 @@
 <template>
   <div class="title" @touchstart="touchStart" @touchend="changeSlide" @mousewheel="wheelMove">
-    <h1 class="justify-text tags-title">SREARCH WITH TAGS</h1>
+    <div class="tags-title">
+      <h1 v-if="show_form" class="justify-text">SREARCH WITH TAGS</h1>
+      <h1 v-if="show_full_tag_page" class="justify-text">
+        <span v-for="(tag, index) in this.selected_tags" :key="index">
+          <span v-if="index > 0">{{ tag.toUpperCase() }}</span>
+          <span v-if="index < this.selected_tags.length - 1 && index > 0"> & </span>
+        </span>
+      </h1>
+    </div>
     <arrow-up class="justify-arrow clickable" :isFull="isFullSize" :isMobile="isMobile" :text="arrowText"
       @previous-slide="$emit('previousSlide')" />
   </div>
   <div class="form-and-carousel" v-if="show_form">
     <tags-combinaisons-form @updateTagsList="updateTagsList" :isMobile="isMobile" />
-    <images-carousel v-if="show_carousel" @showFullTagPage="showFullScreenCarousel()"
-      :isMobile="isMobile" :nbImages="this.images_bis.length" :key="this.carousel_key" />
+    <images-carousel v-if="show_carousel" @showFullTagPage="showFullScreenCarousel()" :isMobile="isMobile"
+      :nbImages="this.images_bis.length" :key="this.carousel_key" />
   </div>
-  <full-tag-page v-if="this.show_full_tag_page"/>
+  <full-tag-page v-if="this.show_full_tag_page" @exitFullScreen="exitFullScreen()" />
   <!-- It ensures the full display in any case -->
   <div style="padding-bottom: 2vh" />
 </template>
@@ -25,7 +33,7 @@ import FullTagPage from '../../FullTags/FullTagPage.vue';
 
 export default {
   components: { ArrowUp, ImagesCarousel, TagsCombinaisonsForm, FullTagPage },
-  emits: ["previousSlide", "loadTagView", "showFullTagPage", "updateTagsList"],
+  emits: ["previousSlide", "loadTagView", "showFullTagPage", "updateTagsList", "exitFullScreen"],
   props: {
     isFullSize: Boolean,
     isMobile: Boolean,
@@ -35,7 +43,6 @@ export default {
     return {
       tags: tags,
       tags_to_display: tags.tags,
-      selected_tags: [''],
       images,
       images_for_carousel: images,
       carousel_key: 0,
@@ -113,6 +120,10 @@ export default {
       this.$store.dispatch('setFullTagPageOrigin', 'tags_slide')
       this.show_full_tag_page = true;
       console.log("on change")
+    },
+    exitFullScreen() {
+      this.show_form = true
+      this.show_full_tag_page = false
     }
   },
   computed: {
@@ -122,9 +133,10 @@ export default {
         "mobile-font": this.isMobile,
       };
     },
-     ...mapGetters({
-            images_bis: "getImages"
-        }),
+    ...mapGetters({
+      images_bis: "getImages",
+      selected_tags: "getTags"
+    }),
   },
 };
 

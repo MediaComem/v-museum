@@ -125,6 +125,8 @@ export default {
       }
     },
     loadTagView(tag) {
+      this.$store.dispatch('setFullTagPageOrigin', '1900s_slide')
+      console.log("dispatch")
       this.$router.push({
         path: `/full_tag`,
         query: { tag: encodeURIComponent(tag.tag) },

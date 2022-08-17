@@ -146,7 +146,6 @@ export default {
             };
         },
         imagesWithTags() {
-            console.log('sdfhdsfdjajsfdhjasfdsdjkljh');
             //If user didnt add any tag, basic images are returned and all tags are kept
             if (this.selected_tags.length == 1) {
                 const formated_tags = {}
