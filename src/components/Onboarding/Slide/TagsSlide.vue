@@ -1,8 +1,8 @@
 <template>
   <div class="title" @touchstart="touchStart" @touchend="changeSlide" @mousewheel="wheelMove">
     <div class="tags-title">
-      <h1 v-if="show_form" class="justify-text">SREARCH WITH TAGS</h1>
-      <h1 v-if="show_full_tag_page" class="justify-text">
+      <h1 v-if="show_form" class="tags-h1">SREARCH WITH TAGS</h1>
+      <h1 v-if="show_full_tag_page" class="tags-h1">
         <span v-for="(tag, index) in this.selected_tags" :key="index">
           <span v-if="index > 0">{{ tag.toUpperCase() }}</span>
           <span v-if="index < this.selected_tags.length - 1 && index > 0"> & </span>
@@ -156,12 +156,15 @@ export default {
 }
 
 .tags-title {
-  width: 41.5vw;
+  width: 450px;
 }
 
 .justify-arrow {
   width: 82vw;
   justify-content: flex-end;
+}
+.tags-h1 {
+  width: 40vw;
 }
 
 .justify-text {

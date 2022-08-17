@@ -1,10 +1,9 @@
 <template>
-    <form @submit="prevent">
+    <form class="tag-selection-form" @submit="prevent">
         <legend>Images with tags form</legend>
         <!-- Quand l'utilisateur entre un tag avec enter, on l'ajoute, qu'il existe ou non. -->
         <input type="text" class="tag-filter-input" placeholder="SEARCH TAG TO FILTER" @focus="show_tags_options = true"
-            @blur="show_tags_options = false" @input="updateSearchTag($event)"
-            @keyup.enter="this.selected_tags.push(this.selected_tags[0])" />
+            @input="updateSearchTag($event)" @keyup.enter="this.selected_tags.push(this.selected_tags[0])" />
     </form>
 
     <div class="documents-for-search-infos">
@@ -21,24 +20,30 @@
         <span v-else>It seems no document contains the tags combinaison you entered.</span>
 
         <div class="tags-options" v-if="this.show_tags_options">
-            <span v-for="(tag, index) in this.input_and_selected_tags_with_images" :key="index" @click="addTag(tag.tag)"
-                style="color:blue">
-                {{ tag.tag }} : {{ tag.nb_images }} documents</span>
+            <ul class="tags-options-list">
+                <div class="tag-option" 
+                v-for="(tag, index) in this.input_and_selected_tags_with_images" :key="index"
+                @click="addTag(tag.tag)">
+                    <li > {{ tag.tag }} : {{ tag.nb_images }} documents</li>
+                </div>
+            </ul>
         </div>
     </div>
 
     <div class="removable-tags">
-        <div v-for="(tag, index) in confirmed_tags" :key="index">
-            <span>{{ tag }}</span>
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"
-                @click="removeTag(index + 1)">
-                <path
-                    d="M4.84371 10.9L7.49996 8.24377L10.1562 10.9L10.9 10.1563L8.24371 7.50002L10.9 4.84377L10.1562 
-            4.10002L7.49996 6.75627L4.84371 4.10002L4.09996 4.84377L6.75621 7.50002L4.09996 10.1563L4.84371 10.9ZM7.49996 
-            14.5834C6.5319 14.5834 5.61697 14.3974 4.75517 14.0255C3.89336 13.6537 3.14076 13.146 2.49736 12.5026C1.85395 
-            11.8592 1.34631 11.1066 0.974438 10.2448C0.602563 9.38301 0.416626 8.46808 0.416626 7.50002C0.416626 6.52016 0.602563 5.59933 0.974438 4.73752C1.34631 3.87572 1.85395 3.12606 2.49736 2.48856C3.14076 1.85106 3.89336 1.34637 4.75517 0.974499C5.61697 0.602624 6.5319 0.416687 7.49996 0.416687C8.47982 0.416687 9.40065 0.602624 10.2625 0.974499C11.1243 1.34637 11.8739 1.85106 12.5114 2.48856C13.1489 3.12606 13.6536 3.87572 14.0255 4.73752C14.3974 5.59933 14.5833 6.52016 14.5833 7.50002C14.5833 8.46808 14.3974 9.38301 14.0255 10.2448C13.6536 11.1066 13.1489 11.8592 12.5114 12.5026C11.8739 13.146 11.1243 13.6537 10.2625 14.0255C9.40065 14.3974 8.47982 14.5834 7.49996 14.5834ZM7.49996 13.5209C9.17635 13.5209 10.5989 12.9335 11.7677 11.7589C12.9364 10.5842 13.5208 9.1646 13.5208 7.50002C13.5208 5.82363 12.9364 4.40106 11.7677 3.23231C10.5989 2.06356 9.17635 1.47919 7.49996 1.47919C5.83538 1.47919 4.41576 2.06356 3.24111 3.23231C2.06645 4.40106 1.47913 5.82363 1.47913 7.50002C1.47913 9.1646 2.06645 10.5842 3.24111 11.7589C4.41576 12.9335 5.83538 13.5209 7.49996 13.5209Z"
+        <div class="removable-tag" v-for="(tag, index) in confirmed_tags" :key="index">
+            <svg class="remove-tag-button" width="15" height="15" viewBox="0 0 15 15" fill="none"
+                xmlns="http://www.w3.org/2000/svg" @click="removeTag(index + 1)"
+                @mouseover="changeRemoveTagButton(true, index)" @mouseleave="changeRemoveTagButton(false, index)">
+                <circle v-if="hovered.has(index)" cx="7" cy="7" r="7" fill="white" />
+                <path v-if="hovered.has(index)"
+                    d="M4.42708 10.4833L7.08333 7.82708L9.73958 10.4833L10.4833 9.73958L7.82708 7.08333L10.4833 4.42708L9.73958 3.68333L7.08333 6.33958L4.42708 3.68333L3.68333 4.42708L6.33958 7.08333L3.68333 9.73958L4.42708 10.4833ZM7.08333 14.1667C6.11528 14.1667 5.20035 13.9807 4.33854 13.6089C3.47674 13.237 2.72413 12.7293 2.08073 12.0859C1.43733 11.4425 0.929687 10.6899 0.557812 9.82813C0.185937 8.96632 0 8.05139 0 7.08333C0 6.10347 0.185937 5.18264 0.557812 4.32083C0.929687 3.45903 1.43733 2.70938 2.08073 2.07188C2.72413 1.43438 3.47674 0.929687 4.33854 0.557812C5.20035 0.185937 6.11528 0 7.08333 0C8.0632 0 8.98403 0.185937 9.84583 0.557812C10.7076 0.929687 11.4573 1.43438 12.0948 2.07188C12.7323 2.70938 13.237 3.45903 13.6089 4.32083C13.9807 5.18264 14.1667 6.10347 14.1667 7.08333C14.1667 8.05139 13.9807 8.96632 13.6089 9.82813C13.237 10.6899 12.7323 11.4425 12.0948 12.0859C11.4573 12.7293 10.7076 13.237 9.84583 13.6089C8.98403 13.9807 8.0632 14.1667 7.08333 14.1667ZM7.08333 13.1042C8.75972 13.1042 10.1823 12.5168 11.351 11.3422C12.5198 10.1675 13.1042 8.74792 13.1042 7.08333C13.1042 5.40695 12.5198 3.98438 11.351 2.81563C10.1823 1.64688 8.75972 1.0625 7.08333 1.0625C5.41875 1.0625 3.99913 1.64688 2.82448 2.81563C1.64983 3.98438 1.0625 5.40695 1.0625 7.08333C1.0625 8.74792 1.64983 10.1675 2.82448 11.3422C3.99913 12.5168 5.41875 13.1042 7.08333 13.1042Z"
                     fill="#616161" />
+                <path v-if="!hovered.has(index)"
+                    d="M4.42708 10.4833L7.08333 7.82708L9.73958 10.4833L10.4833 9.73958L7.82708 7.08333L10.4833 4.42708L9.73958 3.68333L7.08333 6.33958L4.42708 3.68333L3.68333 4.42708L6.33958 7.08333L3.68333 9.73958L4.42708 10.4833ZM7.08333 14.1667C6.11528 14.1667 5.20035 13.9807 4.33854 13.6089C3.47674 13.237 2.72413 12.7293 2.08073 12.0859C1.43733 11.4425 0.929687 10.6899 0.557812 9.82813C0.185937 8.96632 0 8.05139 0 7.08333C0 6.10347 0.185937 5.18264 0.557812 4.32083C0.929687 3.45903 1.43733 2.70938 2.08073 2.07188C2.72413 1.43438 3.47674 0.929687 4.33854 0.557812C5.20035 0.185937 6.11528 0 7.08333 0C8.0632 0 8.98403 0.185937 9.84583 0.557812C10.7076 0.929687 11.4573 1.43438 12.0948 2.07188C12.7323 2.70938 13.237 3.45903 13.6089 4.32083C13.9807 5.18264 14.1667 6.10347 14.1667 7.08333C14.1667 8.05139 13.9807 8.96632 13.6089 9.82813C13.237 10.6899 12.7323 11.4425 12.0948 12.0859C11.4573 12.7293 10.7076 13.237 9.84583 13.6089C8.98403 13.9807 8.0632 14.1667 7.08333 14.1667ZM7.08333 13.1042C8.75972 13.1042 10.1823 12.5168 11.351 11.3422C12.5198 10.1675 13.1042 8.74792 13.1042 7.08333C13.1042 5.40695 12.5198 3.98438 11.351 2.81563C10.1823 1.64688 8.75972 1.0625 7.08333 1.0625C5.41875 1.0625 3.99913 1.64688 2.82448 2.81563C1.64983 3.98438 1.0625 5.40695 1.0625 7.08333C1.0625 8.74792 1.64983 10.1675 2.82448 11.3422C3.99913 12.5168 5.41875 13.1042 7.08333 13.1042Z"
+                    fill="white" />
             </svg>
+            <span class="removable-tag-text">{{ tag }}</span>
         </div>
     </div>
 
@@ -47,7 +52,9 @@
         <div v-for="(tag, index) in this.selected_tags_with_images" :key="index" class="border">
             <div class="display-element clickable" @click="addTag(tag.tag)">
                 <!-- <div class="display-element clickable" @click="addTag(tag.tag)" @click="$emit('loadTagView', tag)"> -->
-                <p :class="fontSize" @mouseover="this.show_carousel = true">{{   tag.tag.charAt(0).toUpperCase() + tag.tag.slice(1) }} • {{ tag.nb_images }}</p>
+                <p :class="fontSize" @mouseover="this.show_carousel = true">{{ tag.tag.charAt(0).toUpperCase() +
+                        tag.tag.slice(1)
+                }} • {{ tag.nb_images }}</p>
             </div>
         </div>
     </div>
@@ -72,6 +79,7 @@ export default {
             show_tags_options: false,
             last_user_input: Date.now(),
             mytimeout: undefined,
+            hovered: new Set()
         }
     },
     methods: {
@@ -136,6 +144,13 @@ export default {
             tags_with_substr_arr.sort((a, b) => a.tag.localeCompare(b.tag))
             this.selected_tags_with_images = all_tags_arr,
                 this.input_and_selected_tags_with_images = tags_with_substr_arr
+        },
+        changeRemoveTagButton(hover, index) {
+            if (hover) {
+                this.hovered.add(index)
+            } else {
+                this.hovered.delete(index)
+            }
         }
     },
     computed: {
@@ -198,11 +213,11 @@ export default {
         },
         confirmed_tags() {
             const formated_selected_tags = []
-            for(let i = 1; i < this.selected_tags.length; i++) {
+            for (let i = 1; i < this.selected_tags.length; i++) {
                 formated_selected_tags.push(this.selected_tags[i])
             }
             return formated_selected_tags
-        }, 
+        },
         ...mapGetters({
             selected_tags: "getTags",
             im_2: "getImages"
@@ -235,19 +250,19 @@ export default {
 
 @media only screen and (min-width: 437px) and (max-width: 999px) {
     .display-element {
-        width: 32vw;
         display: flex;
         justify-content: left;
         align-items: center;
+        margin: 0 15px;
     }
 }
 
 @media only screen and (min-width: 800px) {
     .display-element {
-        width: 23vw;
         display: flex;
         justify-content: left;
         align-items: center;
+        margin: 0 20px;
     }
 }
 
@@ -259,10 +274,90 @@ export default {
     font-size: x-small;
 }
 
+.tag-selection-form {
+    margin: 0 0 0 10px;
+}
+
+.tag-filter-input {
+    margin: 5px 0 0 0;
+    z-index: 8;
+}
+
+.tags-options {
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 0 16px 0;
+    top: 15%;
+    z-index: 7;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid rgb(44, 62, 80);
+    max-height: 25vh;
+}
+
+.tags-options-list {
+    max-width: 40vw;
+    display: flex;
+    max-height: 22vh;
+    flex-wrap: wrap;
+    overflow: hidden;
+    overflow-y:scroll;
+    list-style-type: none;
+    margin: 0 0 0 0;
+}
+
+.tag-option {
+    height: 5vw;
+    width: 100%;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+}
+
+.tag-option:hover {
+    background-color: #616161;
+}
+
+.tag-option:hover li{
+    color: white;
+}
+
+.documents-for-search-infos {
+    margin: 0 0 0 10px;
+}
+
+.removable-tags {
+    display: flex;
+    padding: 0 0 10px 0;
+    margin: 10px;
+    border-bottom: 1px solid rgb(44, 62, 80);
+}
+
+.remove-tag-button {
+    margin: 0 10px 0 0;
+    cursor: pointer;
+}
+
+.removable-tag-text {
+    margin: 0 5px 0 0;
+}
+
+.removable-tag {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 30px;
+    margin: 15px 15px 0 0;
+    padding: 10px;
+    background-color: #616161;
+    color: white;
+}
+
 .tags-list {
     height: 51vh;
-    border-left: solid 1px black;
-    border-top: solid 1px black;
 }
 
 .border {
@@ -270,11 +365,14 @@ export default {
     align-items: center;
     justify-content: flex-start;
     border: solid 1px rgb(44, 62, 80);
-    border-radius: 4px;
-    margin: 10px;
+    border-radius: 30px;
+    margin: 15px 15px 0 0;
     text-align: center;
 }
+
 .border:hover {
     background-color: #616161;
+    color: white;
+    border: 1px solid white;
 }
 </style>

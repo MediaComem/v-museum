@@ -3,41 +3,31 @@
         <div class="docs-and-button">
             <span class="nb-docs">{{ images.length }} documents</span>
             <!-- Button for full screen -->
-            <svg @click="$emit('showFullTagPage')" class="full-screen-button" width="47" height="47" viewBox="0 0 47 47"
+            <svg  class="button-svg full-screen-button" @click="$emit('showFullTagPage')" @mouseover="changeButtonColor(true, '.full-screen-path')" @mouseleave="changeButtonColor(false,  '.full-screen-path')" width="47" height="47" viewBox="0 0 47 47"
                 fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
+                <path class="full-screen-path"
                     d="M6.71429 30.2143H0V47H16.7857V40.2857H6.71429V30.2143ZM0 16.7857H6.71429V6.71429H16.7857V0H0V16.7857ZM40.2857 40.2857H30.2143V47H47V30.2143H40.2857V40.2857ZM30.2143 0V6.71429H40.2857V16.7857H47V0H30.2143Z"
                     fill="white" />
             </svg>
         </div>
         <div class="images-arrows-wrapper">
             <!-- previous image arrow-->
-            <svg v-if="showLeftArrow" @click="showPreviousImage()" width="15" height="25" viewBox="0 0 15 25"
+            <svg class="button-svg" v-if="showLeftArrow" @click="showPreviousImage()" @mouseover="changeButtonColor(true, '.previous-arrow')" @mouseleave="changeButtonColor(false, '.previous-arrow')" width="15" height="25" viewBox="0 0 15 25"
                 fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
+                <path class="previous-arrow"
                     d="M12.2499 -1.90735e-06L14.3999 2.15L4.4999 12.05L14.3999 21.95L12.2499 24.1L0.199903 12.05L12.2499 -1.90735e-06Z"
                     fill="white" />
-            </svg>
-            <svg v-if="!showLeftArrow" width="15" height="25" viewBox="0 0 15 25" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M12.2499 -1.90735e-06L14.3999 2.15L4.4999 12.05L14.3999 21.95L12.2499 24.1L0.199903 12.05L12.2499 -1.90735e-06Z"
-                    fill="#A9A9A9" />
             </svg>
             <!-- Images -->
             <div v-for="index in this.images_index_to_display" :key="index">
                 <img class="image-carousel-size" :src="images[index].url" />
             </div>
             <!-- next image arrow-->
-            <svg v-if="showRightArrow" @click="showNextImage()" width="15" height="25" viewBox="0 0 15 25" fill="none"
+            <svg class="button-svg" v-if="showRightArrow" @click="showNextImage()" @mouseover="changeButtonColor(true, '.next-arrow')" @mouseleave="changeButtonColor(false, '.next-arrow')" width="15" height="25" viewBox="0 0 15 25" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
-                <path d="M2.7501 25L0.600098 22.85L10.5001 12.95L0.600098 3.05L2.7501 0.900002L14.8001 12.95L2.7501 25Z"
+                <path class="next-arrow"
+                d="M2.7501 25L0.600098 22.85L10.5001 12.95L0.600098 3.05L2.7501 0.900002L14.8001 12.95L2.7501 25Z"
                     fill="white" />
-            </svg>
-            <svg v-if="!showRightArrow" width="15" height="25" viewBox="0 0 15 25" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M2.7501 25L0.600098 22.85L10.5001 12.95L0.600098 3.05L2.7501 0.900002L14.8001 12.95L2.7501 25Z"
-                    fill="#A9A9A9" />
             </svg>
 
         </div>
@@ -70,12 +60,19 @@ export default {
         },
         //Create array representing number of images to display
         baseImagesIndexToDisplay() {
+            const client_width = window.innerWidth
             let max_images_number = this.nbImages
-            if (this.isMobile) {
+            //Mobile
+            if (client_width < 436) {
                 if (max_images_number > 3) {
                     max_images_number = 3
                 } 
-            } else {
+                //Tablet
+            } else if (client_width > 436 && client_width < 1000) {
+                if(max_images_number > 4) {
+                    max_images_number = 4
+                }
+            } else if (client_width >= 1000) {
                 if(max_images_number > 6) {
                     max_images_number = 6
                 }
@@ -89,6 +86,14 @@ export default {
             console.log("base arr", arr)
             return arr
         },
+        changeButtonColor(hover, selector) {
+            console.log()
+            if(hover) {
+                document.querySelector(selector).setAttribute('fill', 'rgb(44, 62, 80)')
+            } else {
+                document.querySelector(selector).setAttribute('fill', '#ffffff')
+            }
+        }
     },
     computed: {
         showLeftArrow() {
@@ -135,6 +140,10 @@ export default {
     justify-content: space-between;
     width: 97.35%;
     color: var(--disable-grey);
+}
+
+.button-svg {
+    cursor: pointer;
 }
 
 .images-arrows-wrapper {
