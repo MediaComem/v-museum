@@ -71,8 +71,6 @@ export default {
       }
     },
     loadInitialImages() {
-      console.log("images:", this.images)
-      if (this.images == null) {
         let fileName = this.tag;
         if (fileName.includes("/")) {
           fileName = fileName.replace("/", "");
@@ -85,10 +83,6 @@ export default {
             this.disableScroll = false;
             console.log("result", result);
           });
-      } else {
-        this.imagesUrls = this.images
-        console.log("images: ", this.images)
-      }
     },
     loadMoreImages() {
       if (this.imageUrls.length < this.data.length) {

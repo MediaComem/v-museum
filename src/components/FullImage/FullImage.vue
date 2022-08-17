@@ -33,11 +33,13 @@ export default {
   components: { PageManager, DataInformation },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      console.log(vm.getTags)
+      console.log(from)
       vm.imageId = to.params.index;
       if (to.query.image) {
         vm.imageData = JSON.parse(to.query.image);
         vm.from = from;
+      }  else {
+        vm.from = {fullPath: "/"}
       }
     });
   },
