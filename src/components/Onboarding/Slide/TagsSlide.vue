@@ -146,7 +146,7 @@ export default {
 @import "../../shared/pointer.css";
 
 .title {
-  height: 10vh;
+  min-height: 10vh;
   width: 96vw;
   padding-left: 2vw;
   padding-right: 2vw;
@@ -163,8 +163,9 @@ export default {
   width: 82vw;
   justify-content: flex-end;
 }
+
 .tags-h1 {
-  width: 40vw;
+  width: 70vw;
 }
 
 .justify-text {
