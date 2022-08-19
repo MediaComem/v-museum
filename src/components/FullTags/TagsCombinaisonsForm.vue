@@ -10,8 +10,8 @@
             </svg>
 
             <input type="text" class="tag-filter-input" placeholder="SEARCH TAG TO FILTER"
-                @focus="handleTagOptionsDisplay(true)" @blur="handleTagOptionsDisplay(false)"
-                @input="updateSearchTag($event)" @keyup.enter="this.selected_tags.push(this.selected_tags[0])" />
+                @focus="handleTagOptionsDisplay(true)" @input="updateSearchTag($event)"
+                @blur="handleTagOptionsDisplay(false)" @keyup.enter="this.selected_tags.push(this.selected_tags[0])" />
         </form>
 
         <!-- Selected tags -->
@@ -31,23 +31,25 @@
                 </div>
 
                 <!-- Other possible tags -->
-                <div class="tag-option" v-for="(tag, index) in this.input_and_selected_tags_with_images" :key="index"
-                    @click="addTag(tag.tag)">
-                    <li :class="`${fontSize} option-text`"> {{ tag.tag.charAt(0).toUpperCase() + tag.tag.slice(1) }}
-                        · {{ tag.nb_images }}</li>
-                </div>
+                <template v-for="(tag, index) in this.input_and_selected_tags_with_images" :key="index">
+                    <div v-if="!this.selected_tags.includes(tag.tag)"  @click="addTag(tag.tag)" class="tag-option">
+                        <li :class="`${fontSize} option-text`"> {{ tag.tag.charAt(0).toUpperCase() + tag.tag.slice(1) }}
+                            · {{ tag.nb_images }}</li>
+                    </div>
+                </template>
             </ul>
         </div>
     </div>
 
     <!--Hack div to ensure hight of elemnts do not cause problems-->
-    <div v-if="this.show_tags_options" style="height: 5.57vh; background-color:aqua;"></div>
+    <div v-if="this.show_tags_options" style="height: 5.57vh;"></div>
 
     <div class="documents-for-search-infos">
         <span v-if="this.imagesWithTags.length > 0">{{ this.imagesWithTags.length }} documents</span>
         <span v-else>It seems no document contains the tags combinaison you entered.</span>
     </div>
 
+    <!-- removable tags -->
     <div class="removable-tags">
         <div class="removable-tag" v-for="(tag, index) in confirmed_tags" :key="index">
             <svg class="remove-tag-button" width="15" height="15" viewBox="0 0 15 15" fill="none"
@@ -67,10 +69,14 @@
 
     <div class="canvas-display overflow clickable-tags-list" @scroll="scrollMove" @touchend="changeSlideScroll"
         @mousewheel="wheelMoveScroll">
-        <div v-for="(tag, index) in this.selected_tags_with_images" :key="index" class="clickable-tag">
-            <div class="display-element clickable" @click="addTag(tag.tag)">
-                <!-- <div class="display-element clickable" @click="addTag(tag.tag)" @click="$emit('loadTagView', tag)"> -->
-                <p :class="fontSize" @mouseover="this.show_carousel = true">{{ tag.tag.charAt(0).toUpperCase() +
+        <div v-for="(tag, index) in this.selected_tags_with_images" :key="index">
+            <div v-if="!this.selected_tags.includes(tag.tag)" class="display-element clickable clickable-tag" @click="addTag(tag.tag)">
+                <span :class="fontSize">{{ tag.tag.charAt(0).toUpperCase() +
+                        tag.tag.slice(1)
+                }} • {{ tag.nb_images }}</span>
+            </div>
+            <div v-else class="display-element clickable disabled-tag" @click="addTag(tag.tag)" >
+                <p :class="fontSize">{{ tag.tag.charAt(0).toUpperCase() +
                         tag.tag.slice(1)
                 }} • {{ tag.nb_images }}</p>
             </div>
@@ -98,6 +104,7 @@ export default {
             last_user_input: Date.now(),
             mytimeout: undefined,
             hovered: new Set(),
+            selected_tags_index: new Set()
         }
     },
     methods: {
@@ -111,10 +118,15 @@ export default {
             //Add little interval, so if user writes fast, there is no problem
         },
         addTag(tag) {
+            if(tag.includes("/")) {
+                console.log("includes")
+                 tag = tag.replace('/', '')
+            }
+           
+
             if (!this.selected_tags.includes(tag)) {
                 this.$store.dispatch('insertTag', tag)
                 this.$store.dispatch('setImages', this.imagesWithTags)
-                console.log(this.im_2)
                 const data_to_return = {
                     selected_tags: this.confirmed_tags,
                     images: this.imagesWithTags,
@@ -123,7 +135,6 @@ export default {
                 }
                 this.$emit('updateTagsList', data_to_return)
                 document.querySelector('.tag-filter-input').value = ''
-                this.handleClickableTagsDivSize()
             }
         },
         removeTag(index) {
@@ -142,7 +153,6 @@ export default {
                 input_filter_tags_list: this.input_and_selected_tags_with_images
             }
             this.$emit('updateTagsList', data_to_return)
-            this.handleClickableTagsDivSize()
         },
         sortInTwoArrays(data_obj, substr) {
             const keys = Object.keys(data_obj)
@@ -175,32 +185,14 @@ export default {
                 document.querySelector('.form-and-tag-options').classList.add('with-options')
                 this.show_tags_options = true
                 document.querySelector('.documents-for-search-infos').classList.add
-                //add pading to keep same height proportions between divs
-                //document.querySelector('.removable-tags').setAttribute('style', 'padding: 0 1.35vw 8.7vh 2.67vw;')
             } else {
-                document.querySelector('.form-and-tag-options').classList.remove('with-options')
-                this.show_tags_options = false
-                //Remove padding to keep same proportions between divs
-                //document.querySelector('.removable-tags').setAttribute('style', 'padding: 0 1.35vw 3vh 2.67vw; display:flex; flex-wrap:wrap;')
+                //Wait 200ms to avoid the blur preventing the click on the an option tag
+                setTimeout(() => {
+                    document.querySelector('.form-and-tag-options').classList.remove('with-options')
+                    this.show_tags_options = false
+                }, 200);
             }
         },
-        //Is used to let the space for the images carousel in some cases
-        handleClickableTagsDivSize() {
-           if (this.selected_tags.length > 1) {
-                document.querySelector('.clickable-tags-list').classList.add('with-carousel')
-            } else {
-                document.querySelector('.clickable-tags-list').classList.remove('with-carousel')
-            }
-
-            setTimeout( () => {
-            const removable_tags = document.querySelectorAll('.removable-tag')
-            const last_tag = removable_tags[removable_tags.length - 1]
-            if (last_tag != undefined) {
-                console.log(document.querySelector('.removable-tags'), last_tag.scrollHeight)
-                document.querySelector('.removable-tags').scrollTop += (last_tag.scrollHeight);
-            }
-                }, 200)
-        }
     },
     computed: {
         fontSize() {
@@ -389,6 +381,7 @@ export default {
     padding: 0 0 0 0;
     margin: 0 0 0 0;
     height: 100%;
+    width: 100%;
 }
 
 .selected-tag-in-option-list {
@@ -446,6 +439,7 @@ export default {
     max-height: 7.4vh;
     overflow: hidden;
     overflow-y: scroll;
+    min-height: 7.39vh;
 }
 
 .remove-tag-button {
@@ -471,19 +465,20 @@ export default {
 
 @media screen and (min-width: 475px) {
     .clickable-tags-list.with-carousel {
-        height: 50vh;
+        height: 45.3vh;
     }
 }
 
 @media screen and (max-width: 475px) {
     .clickable-tags-list.with-carousel {
-        height: 43.1vh;
+        height: 38.6vh;
     }
 }
 
 .clickable-tags-list {
     display: flex;
     align-content: flex-start;
+    padding: 2.25vh 0 2.25vh 2vw;
 }
 
 .clickable-tag {
@@ -493,6 +488,19 @@ export default {
     border: solid 1px rgb(44, 62, 80);
     border-radius: 30px;
     margin: 15px 15px 0 0;
+    padding: 2.25vh 4vw;
+    text-align: center;
+}
+
+.disabled-tag {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #A9A9A9;
+    color: white;
+    border-radius: 30px;
+    margin: 4vh 2.25vw 0 0;
+    padding: 2.25vh 4vw;
     text-align: center;
 }
 

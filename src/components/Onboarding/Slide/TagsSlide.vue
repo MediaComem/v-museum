@@ -114,16 +114,29 @@ export default {
         this.show_carousel = true
         this.images_for_carousel = data.images
       }
+      this.handleClickableTagsDivSize()
     },
     showFullScreenCarousel() {
       this.show_form = false;
       this.$store.dispatch('setFullTagPageOrigin', 'tags_slide')
       this.show_full_tag_page = true;
-      console.log("on change")
     },
     exitFullScreen() {
       this.show_form = true
+      this.show_carousel = true
       this.show_full_tag_page = false
+      // //Resize the clickable tags div to let the carousel appear
+      setTimeout(() => {
+        this.handleClickableTagsDivSize()
+      })
+    },
+    //Is used to let the space for the images carousel in some cases
+    handleClickableTagsDivSize() {
+      if (this.selected_tags.length > 1) {
+        document.querySelector('.clickable-tags-list').classList.add('with-carousel')
+      } else {
+        document.querySelector('.clickable-tags-list').classList.remove('with-carousel')
+      }
     }
   },
   computed: {
@@ -151,7 +164,7 @@ export default {
   padding-left: 2vw;
   padding-right: 2vw;
   display: inline-flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
@@ -160,6 +173,9 @@ export default {
 }
 
 .justify-arrow {
+  display: flex;
+  align-content: flex-start;
+  margin: 3.75vh 0 0 0;
   width: 82vw;
   justify-content: flex-end;
 }
