@@ -66,6 +66,7 @@ import IntroductionSlide from "./Slide/IntroductionSlide.vue";
 import DesktopSlide from "./Slide/DesktopSlide.vue";
 import MobileSlide from "./Slide/MobileSlide.vue";
 import TagsSlide from "./Slide/TagsSlide.vue";
+import { mapGetters } from "vuex";
 
 import text from "@/assets/onboarding/text.json";
 
@@ -126,7 +127,6 @@ export default {
     },
     loadTagView(tag) {
       this.$store.dispatch('setFullTagPageOrigin', '1900s_slide')
-      console.log("dispatch")
       this.$router.push({
         path: `/full_tag`,
         query: { tag: encodeURIComponent(tag.tag) },
@@ -145,7 +145,7 @@ export default {
           this.slide = index + 1;
           this.$refs.slider.setActiveItem(index + 1);
         });
-      }
+      } 
     },
   },
   computed: {
@@ -155,9 +155,19 @@ export default {
     isFullSize() {
       return this.windowWidth > 1200;
     },
+    ...mapGetters({
+      origin: "getFullTagPageOrigin",
+    }),
   },
   activated() {
-    this.findAndUpdateTag();
+    //Hack to force tags_slide return from fullImage, if it was initiated by tags_slide exploration
+    if(this.origin == 'tags_slide') {
+      this.slide =  this.information.collection.length ;
+      this.$refs.slider.setActiveItem(this.information.collection.length );
+      this.nextSlide()
+    } else {
+      this.findAndUpdateTag();
+    }
   },
   mounted() {
     const { width, height } = useWindowSize();

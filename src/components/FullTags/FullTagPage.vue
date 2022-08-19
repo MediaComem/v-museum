@@ -1,9 +1,10 @@
 <template>
   <div class="canvas-size overflow">
-
-    <div class="exit-button-wrapper">
-      <svg @mouseover="changeButtonColor(true)" @mouseleave="changeButtonColor(false)" @click="$emit('exitFullScreen')" v-if="origin == 'tags_slide'" class="exit-button" width="48" height="48"
-        viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div v-if="imageUrls.length === 0" class="loader central-loader-position" />
+    <div v-if="imageUrls.length === 0" class="rotated-half-circle central-loader-position" />
+    <div v-if="origin == 'tags_slide'" class="exit-button-wrapper">
+      <svg @mouseover="changeButtonColor(true)" @mouseleave="changeButtonColor(false)" @click="$emit('exitFullScreen')"
+        class="exit-button" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path class="exit-full-screen-path"
           d="M11.579 47.4166V36.2541H0.416504V31.2184H16.6147V47.4166H11.579ZM31.2183 47.4166V31.2184H47.4165V36.2541H36.254V47.4166H31.2183ZM0.416504 16.6148V11.5791H11.579V0.416626H16.6147V16.6148H0.416504ZM31.2183 16.6148V0.416626H36.254V11.5791H47.4165V16.6148H31.2183Z"
           fill="white" />
@@ -41,6 +42,7 @@
 
 <script>
 import axios from "axios";
+import dataFetch from "../../api/dataFetching";
 import { mapGetters } from "vuex";
 
 export default {
@@ -66,10 +68,14 @@ export default {
   methods: {
     loadImage(imageId) {
       if (this.origin == "tags_slide") {
-        const img = this.images.filter(im => im.id == imageId)[0]
-        console.log(img)
-        this.$router.push({
-          path: `/image/${imageId}`,
+        dataFetch.getImageById(imageId).then((data) => {
+          if (data.length > 0) {
+            const img_data = data[0];
+            this.$router.push({
+              path: `/image/${imageId}`,
+              query: { image: JSON.stringify(img_data) },
+            });
+          }
         });
       } else {
         this.$router.push({
@@ -92,7 +98,6 @@ export default {
           this.data = result.data;
           this.imageUrls = this.data.slice(0, 100);
           this.disableScroll = false;
-          console.log("result", result);
         });
     },
     loadMoreImages() {
@@ -103,10 +108,10 @@ export default {
       }
     },
     changeButtonColor(hover) {
-      if(hover) {
-          document.querySelector('.exit-full-screen-path').setAttribute("fill", "#616161")
+      if (hover) {
+        document.querySelector('.exit-full-screen-path').setAttribute("fill", "#616161")
       } else {
-          document.querySelector('.exit-full-screen-path').setAttribute("fill", "#ffffff")
+        document.querySelector('.exit-full-screen-path').setAttribute("fill", "#ffffff")
       }
     }
   },

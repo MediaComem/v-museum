@@ -27,13 +27,12 @@ import { useWindowSize } from "vue-window-size";
 import PageManager from "./Manager/PageManager.vue";
 import DataInformation from "./DataInformation/DataInformation.vue";
 import dataFetching from "../../api/dataFetching";
-import { mapGetters } from 'vuex'; 
+
 
 export default {
   components: { PageManager, DataInformation },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      console.log(from)
       vm.imageId = to.params.index;
       if (to.query.image) {
         vm.imageData = JSON.parse(to.query.image);
@@ -129,12 +128,8 @@ export default {
         transition: "transform 0.3s ease-in-out",
       };
     },
-    ...mapGetters({
-        getTags: "getTags",
-    }),
   },
   activated() {
-    console.log(this.imageData);
     const { width } = useWindowSize();
     this.windowWidth = width;
     this.tags = [];
@@ -171,6 +166,7 @@ export default {
       this.viewer.destroy();
     }
   },
+
 };
 </script>
 <style scoped>

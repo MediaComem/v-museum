@@ -1,5 +1,5 @@
 <template>
-  <div class="title" @touchstart="touchStart" @touchend="changeSlide" @mousewheel="wheelMove">
+  <div id="tags-slide" class="title" @touchstart="touchStart" @touchend="changeSlide" @mousewheel="wheelMove">
     <div class="tags-title">
       <h1 v-if="show_form" class="tags-h1">SREARCH WITH TAGS</h1>
       <h1 v-if="show_full_tag_page" class="tags-h1">
@@ -27,7 +27,7 @@ import { mapGetters } from "vuex";
 import tags from "@/assets/onboarding/tags.json";
 import images from '@/assets/data/images.json';
 import ArrowUp from "../Logo/ArrowUp.vue";
-import ImagesCarousel from "../../FullImage/ImagesCarousel.vue";
+import ImagesCarousel from "../ImagesCarousel.vue";
 import TagsCombinaisonsForm from "../../FullTags/TagsCombinaisonsForm.vue";
 import FullTagPage from '../../FullTags/FullTagPage.vue';
 
@@ -108,7 +108,6 @@ export default {
     },
     updateTagsList(data) {
       //rebuild the component to prevent array length problems
-      console.log(this.images_bis)
       this.carousel_key = data.images.length
       if (this.images_bis.length > 0) {
         this.show_carousel = true

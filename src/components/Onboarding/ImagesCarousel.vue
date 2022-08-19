@@ -57,14 +57,10 @@ export default {
     },
     methods: {
         showPreviousImage() {
-            for (let i = 0; i < this.images_index_to_display.length; i++) {
-                this.images_index_to_display[i] -= 1
-            }
+            this.images_index_to_display = this.images_index_to_display.map(v => v - 1)
         },
         showNextImage() {
-            for (let i = 0; i < this.images_index_to_display.length; i++) {
-                this.images_index_to_display[i] += 1
-            }
+           this.images_index_to_display = this.images_index_to_display.map(v => v + 1)
         },
         //Create array representing number of images to display
         baseImagesIndexToDisplay() {
@@ -75,7 +71,7 @@ export default {
                 if (max_images_number > 2) {
                     max_images_number = 2
                 }
-                //Tablet
+            //Tablet
             } else if (client_width > 436 && client_width < 1000) {
                 if (max_images_number > 4) {
                     max_images_number = 4
@@ -85,17 +81,9 @@ export default {
                     max_images_number = 6
                 }
             }
-            const arr = []
-            let i = 0
-            do {
-                arr.push(i)
-                i++
-            } while (i < max_images_number)
-            console.log("base arr", arr)
-            return arr
+            return Array.from(Array(max_images_number).keys()) 
         },
         changeButtonColor(hover, selector) {
-            console.log()
             if (hover) {
                 document.querySelector(selector).setAttribute('fill', '#616161')
             } else {
@@ -111,16 +99,10 @@ export default {
             };
         },
         showLeftArrow() {
-            if (this.images_index_to_display[0] > 0) {
-                return true
-            }
-            return false
+            return this.images_index_to_display[0] > 0
         },
         showRightArrow() {
-            if (this.images_index_to_display[this.images_index_to_display.length - 1] < this.images.length - 1) {
-                return true
-            }
-            return false
+            return this.images_index_to_display[this.images_index_to_display.length - 1] < this.images.length - 1
         },
         ...mapGetters({
             images: "getImages"

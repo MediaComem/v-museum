@@ -9,6 +9,7 @@ const routes = [
     {name: 'image', path: '/image/:index', component: FullImage},
     {name: 'canvas', path: '/canvas', component: CanvasTemplate},
     {name: 'full_tag', path: '/full_tag', component: FullTagLayout},
+    {name: 'tags_slide', path: '/tags_slide', component: Onboarding}
   ];
   
   const router = createRouter({

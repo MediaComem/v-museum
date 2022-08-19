@@ -90,7 +90,10 @@ export const actions = {
 const store = createStore({
   state() {
     return {
-      history: [], tags: [''], images: [images], full_tag_page_origin: '',
+      history: [],
+      tags: [''], 
+      images: [images],
+      full_tag_page_origin: '',
     };
   },
   getters: getters,

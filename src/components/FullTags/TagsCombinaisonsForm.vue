@@ -1,6 +1,6 @@
 <template>
     <div class="form-and-tag-options">
-        <form class="tag-selection-form" @submit="prevent">
+        <form class="tag-selection-form" @keyup.enter.prevent>
             <!-- Loupe -->
             <svg class="loupe" width="14" height="14" viewBox="0 0 14 14" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
@@ -32,7 +32,7 @@
 
                 <!-- Other possible tags -->
                 <template v-for="(tag, index) in this.input_and_selected_tags_with_images" :key="index">
-                    <div v-if="!this.selected_tags.includes(tag.tag)"  @click="addTag(tag.tag)" class="tag-option">
+                    <div v-if="!this.selected_tags.includes(tag.tag)" @click="addTag(tag.tag)" class="tag-option">
                         <li :class="`${fontSize} option-text`"> {{ tag.tag.charAt(0).toUpperCase() + tag.tag.slice(1) }}
                             · {{ tag.nb_images }}</li>
                     </div>
@@ -55,28 +55,31 @@
             <svg class="remove-tag-button" width="15" height="15" viewBox="0 0 15 15" fill="none"
                 xmlns="http://www.w3.org/2000/svg" @click="removeTag(index + 1)"
                 @mouseover="changeRemoveTagButton(true, index)" @mouseleave="changeRemoveTagButton(false, index)">
-                <circle v-if="hovered.has(index)" cx="7" cy="7" r="7" fill="white" />
-                <path v-if="hovered.has(index)"
+                <circle v-if="hovered_removable_tags.has(index)" cx="7" cy="7" r="7" fill="white" />
+                <path v-if="hovered_removable_tags.has(index)"
                     d="M4.42708 10.4833L7.08333 7.82708L9.73958 10.4833L10.4833 9.73958L7.82708 7.08333L10.4833 4.42708L9.73958 3.68333L7.08333 6.33958L4.42708 3.68333L3.68333 4.42708L6.33958 7.08333L3.68333 9.73958L4.42708 10.4833ZM7.08333 14.1667C6.11528 14.1667 5.20035 13.9807 4.33854 13.6089C3.47674 13.237 2.72413 12.7293 2.08073 12.0859C1.43733 11.4425 0.929687 10.6899 0.557812 9.82813C0.185937 8.96632 0 8.05139 0 7.08333C0 6.10347 0.185937 5.18264 0.557812 4.32083C0.929687 3.45903 1.43733 2.70938 2.08073 2.07188C2.72413 1.43438 3.47674 0.929687 4.33854 0.557812C5.20035 0.185937 6.11528 0 7.08333 0C8.0632 0 8.98403 0.185937 9.84583 0.557812C10.7076 0.929687 11.4573 1.43438 12.0948 2.07188C12.7323 2.70938 13.237 3.45903 13.6089 4.32083C13.9807 5.18264 14.1667 6.10347 14.1667 7.08333C14.1667 8.05139 13.9807 8.96632 13.6089 9.82813C13.237 10.6899 12.7323 11.4425 12.0948 12.0859C11.4573 12.7293 10.7076 13.237 9.84583 13.6089C8.98403 13.9807 8.0632 14.1667 7.08333 14.1667ZM7.08333 13.1042C8.75972 13.1042 10.1823 12.5168 11.351 11.3422C12.5198 10.1675 13.1042 8.74792 13.1042 7.08333C13.1042 5.40695 12.5198 3.98438 11.351 2.81563C10.1823 1.64688 8.75972 1.0625 7.08333 1.0625C5.41875 1.0625 3.99913 1.64688 2.82448 2.81563C1.64983 3.98438 1.0625 5.40695 1.0625 7.08333C1.0625 8.74792 1.64983 10.1675 2.82448 11.3422C3.99913 12.5168 5.41875 13.1042 7.08333 13.1042Z"
                     fill="#616161" />
-                <path v-if="!hovered.has(index)"
+                <path v-if="!hovered_removable_tags.has(index)"
                     d="M4.42708 10.4833L7.08333 7.82708L9.73958 10.4833L10.4833 9.73958L7.82708 7.08333L10.4833 4.42708L9.73958 3.68333L7.08333 6.33958L4.42708 3.68333L3.68333 4.42708L6.33958 7.08333L3.68333 9.73958L4.42708 10.4833ZM7.08333 14.1667C6.11528 14.1667 5.20035 13.9807 4.33854 13.6089C3.47674 13.237 2.72413 12.7293 2.08073 12.0859C1.43733 11.4425 0.929687 10.6899 0.557812 9.82813C0.185937 8.96632 0 8.05139 0 7.08333C0 6.10347 0.185937 5.18264 0.557812 4.32083C0.929687 3.45903 1.43733 2.70938 2.08073 2.07188C2.72413 1.43438 3.47674 0.929687 4.33854 0.557812C5.20035 0.185937 6.11528 0 7.08333 0C8.0632 0 8.98403 0.185937 9.84583 0.557812C10.7076 0.929687 11.4573 1.43438 12.0948 2.07188C12.7323 2.70938 13.237 3.45903 13.6089 4.32083C13.9807 5.18264 14.1667 6.10347 14.1667 7.08333C14.1667 8.05139 13.9807 8.96632 13.6089 9.82813C13.237 10.6899 12.7323 11.4425 12.0948 12.0859C11.4573 12.7293 10.7076 13.237 9.84583 13.6089C8.98403 13.9807 8.0632 14.1667 7.08333 14.1667ZM7.08333 13.1042C8.75972 13.1042 10.1823 12.5168 11.351 11.3422C12.5198 10.1675 13.1042 8.74792 13.1042 7.08333C13.1042 5.40695 12.5198 3.98438 11.351 2.81563C10.1823 1.64688 8.75972 1.0625 7.08333 1.0625C5.41875 1.0625 3.99913 1.64688 2.82448 2.81563C1.64983 3.98438 1.0625 5.40695 1.0625 7.08333C1.0625 8.74792 1.64983 10.1675 2.82448 11.3422C3.99913 12.5168 5.41875 13.1042 7.08333 13.1042Z"
                     fill="white" />
             </svg>
-            <span v-if="special_tags_to_display[tag] == undefined" class="removable-tag-text">#{{ tag.charAt(0).toUpperCase() + tag.slice(1) }}</span>
-            <span v-else class="removable-tag-text">#{{ special_tags_to_display[tag]}}</span>
+            <span v-if="special_tags_to_display[tag] == undefined" class="removable-tag-text">#{{
+                    tag.charAt(0).toUpperCase() + tag.slice(1)
+            }}</span>
+            <span v-else class="removable-tag-text">#{{ special_tags_to_display[tag] }}</span>
         </div>
     </div>
 
     <div class="canvas-display overflow clickable-tags-list" @scroll="scrollMove" @touchend="changeSlideScroll"
         @mousewheel="wheelMoveScroll">
         <div v-for="(tag, index) in this.selected_tags_with_images" :key="index">
-            <div v-if="!this.selected_tags.includes(tag.tag)" class="display-element clickable clickable-tag" @click="addTag(tag.tag)">
+            <div v-if="!this.selected_tags.includes(tag.tag)" class="display-element clickable clickable-tag"
+                @click="addTag(tag.tag)">
                 <span :class="fontSize">{{ tag.tag.charAt(0).toUpperCase() +
                         tag.tag.slice(1)
                 }} • {{ tag.nb_images }}</span>
             </div>
-            <div v-else class="display-element clickable disabled-tag" @click="addTag(tag.tag)" >
+            <div v-else class="display-element clickable disabled-tag" @click="addTag(tag.tag)">
                 <span :class="fontSize">{{ tag.tag.charAt(0).toUpperCase() +
                         tag.tag.slice(1)
                 }} • {{ tag.nb_images }}</span>
@@ -103,28 +106,27 @@ export default {
             tags: tags,
             show_tags_options: false,
             last_user_input: Date.now(),
-            mytimeout: undefined,
-            hovered: new Set(),
+            timeout_for_user_input_speed_balance: undefined,
+            hovered_removable_tags: new Set(),
             selected_tags_index: new Set(),
-            special_tags_to_display: {'bookpaper': "Book/Paper", "drivepilot": "Drive/Pilot", "hallloby": "Hall/Loby", "pathstreet": "Path/Street", "rockscliff": "Rocks/Cliff", "runflee": "Run/Flee", "sealake": "Sea/Lake", "takeofflanding": "Takeoff/Landing", "tunnelcorridor": "Tunnel/Corridor"}
+            special_tags_to_display: { 'bookpaper': "Book/Paper", "drivepilot": "Drive/Pilot", "hallloby": "Hall/Loby", "pathstreet": "Path/Street", "rockscliff": "Rocks/Cliff", "runflee": "Run/Flee", "sealake": "Sea/Lake", "takeofflanding": "Takeoff/Landing", "tunnelcorridor": "Tunnel/Corridor" }
         }
     },
     methods: {
         updateSearchTag(event) {
-            clearTimeout(this.mytimeout);
-            this.mytimeout = undefined;
-            this.mytimeout = setTimeout(() => {
+            clearTimeout(this.timeout_for_user_input_speed_balance);
+            this.timeout_for_user_input_speed_balance = undefined;
+            this.timeout_for_user_input_speed_balance = setTimeout(() => {
                 const formated_string = event.target.value.charAt(0).toUpperCase() + event.target.value.slice(1);
                 this.selected_tags[0] = (formated_string);
             }, 250);
             //Add little interval, so if user writes fast, there is no problem
         },
         addTag(tag) {
-            if(tag.includes("/")) {
-                console.log("includes")
-                 tag = tag.replace('/', '')
+            if (tag.includes("/")) {
+                tag = tag.replace('/', '')
             }
-           
+
 
             if (!this.selected_tags.includes(tag)) {
                 this.$store.dispatch('insertTag', tag)
@@ -140,14 +142,8 @@ export default {
             }
         },
         removeTag(index) {
-            console.log("supression", this.selected_tags)
-            // this.selected_tags.splice(index, 1)
-            // console.log("suprimé", this.selected_tags)
             this.$store.dispatch('removeTag', index);
-            console.log("suprimé 2", this.selected_tags)
-
             this.$store.dispatch('setImages', this.imagesWithTags)
-
             const data_to_return = {
                 selected_tags: this.confirmed_tags,
                 images: this.imagesWithTags,
@@ -177,9 +173,9 @@ export default {
         },
         changeRemoveTagButton(hover, index) {
             if (hover) {
-                this.hovered.add(index)
+                this.hovered_removable_tags.add(index)
             } else {
-                this.hovered.delete(index)
+                this.hovered_removable_tags.delete(index)
             }
         },
         handleTagOptionsDisplay(show) {
@@ -251,7 +247,6 @@ export default {
                 return ok
             })
             this.sortInTwoArrays(this.selected_tags_with_images, this.selected_tags[0].toLowerCase())
-            // console.log("LES IMAGES:", this.selected_tags_with_images, "Les images + input:", this.input_and_selected_tags_with_images, "input: ", this.selected_tags[0])
             return images_with_tags
         },
         confirmed_tags() {
@@ -263,7 +258,6 @@ export default {
         },
         ...mapGetters({
             selected_tags: "getTags",
-            im_2: "getImages"
         }),
     }
 }

@@ -29,13 +29,4 @@ export default {
   background-color: unset;
 }
 
-/*
-#app {
-  font-family: "Arial";
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  background-color: unset;
-}
-*/
 </style>
