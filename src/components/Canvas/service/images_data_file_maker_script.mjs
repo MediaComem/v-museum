@@ -12,22 +12,22 @@ for (let i = 0; i < files.length; i++) {
     const imgs_array = JSON.parse(imgs_string)
     //Put new image in imags array if not already into, otherwise only add its filename to tags
     imgs_array.forEach(img => {
-        if(!stored_image_ids.has(img.imageId)){
+        let tag_to_add = files[i].split('.json')[0]
+        if (!stored_image_ids.has(img.imageId)) {
             stored_image_ids.add(img.imageId)
             const json_img = {
                 "id": img.imageId,
                 "url": img.url,
-                "tags": [files[i].split('.json')[0]]
-            } 
+                "tags": [tag_to_add]
+            }
             images.push(json_img)
         } else {
             const stored_image = images.filter((a) => a.id == img.imageId)[0]
-            stored_image.tags.push(files[i].split('.json')[0])
+            stored_image.tags.push(tag_to_add)
         }
     })
 }
 
-// console.log(images.filter((im) => im.tags.length > 1)); 
 fs.writeFile('images.json', JSON.stringify(images), function (err) {
     if (err) { return console.log(err) };
 });

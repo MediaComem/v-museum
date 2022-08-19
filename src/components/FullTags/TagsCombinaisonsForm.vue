@@ -63,7 +63,8 @@
                     d="M4.42708 10.4833L7.08333 7.82708L9.73958 10.4833L10.4833 9.73958L7.82708 7.08333L10.4833 4.42708L9.73958 3.68333L7.08333 6.33958L4.42708 3.68333L3.68333 4.42708L6.33958 7.08333L3.68333 9.73958L4.42708 10.4833ZM7.08333 14.1667C6.11528 14.1667 5.20035 13.9807 4.33854 13.6089C3.47674 13.237 2.72413 12.7293 2.08073 12.0859C1.43733 11.4425 0.929687 10.6899 0.557812 9.82813C0.185937 8.96632 0 8.05139 0 7.08333C0 6.10347 0.185937 5.18264 0.557812 4.32083C0.929687 3.45903 1.43733 2.70938 2.08073 2.07188C2.72413 1.43438 3.47674 0.929687 4.33854 0.557812C5.20035 0.185937 6.11528 0 7.08333 0C8.0632 0 8.98403 0.185937 9.84583 0.557812C10.7076 0.929687 11.4573 1.43438 12.0948 2.07188C12.7323 2.70938 13.237 3.45903 13.6089 4.32083C13.9807 5.18264 14.1667 6.10347 14.1667 7.08333C14.1667 8.05139 13.9807 8.96632 13.6089 9.82813C13.237 10.6899 12.7323 11.4425 12.0948 12.0859C11.4573 12.7293 10.7076 13.237 9.84583 13.6089C8.98403 13.9807 8.0632 14.1667 7.08333 14.1667ZM7.08333 13.1042C8.75972 13.1042 10.1823 12.5168 11.351 11.3422C12.5198 10.1675 13.1042 8.74792 13.1042 7.08333C13.1042 5.40695 12.5198 3.98438 11.351 2.81563C10.1823 1.64688 8.75972 1.0625 7.08333 1.0625C5.41875 1.0625 3.99913 1.64688 2.82448 2.81563C1.64983 3.98438 1.0625 5.40695 1.0625 7.08333C1.0625 8.74792 1.64983 10.1675 2.82448 11.3422C3.99913 12.5168 5.41875 13.1042 7.08333 13.1042Z"
                     fill="white" />
             </svg>
-            <span class="removable-tag-text">#{{ tag.charAt(0).toUpperCase() + tag.slice(1) }}</span>
+            <span v-if="special_tags_to_display[tag] == undefined" class="removable-tag-text">#{{ tag.charAt(0).toUpperCase() + tag.slice(1) }}</span>
+            <span v-else class="removable-tag-text">#{{ special_tags_to_display[tag]}}</span>
         </div>
     </div>
 
@@ -76,9 +77,9 @@
                 }} • {{ tag.nb_images }}</span>
             </div>
             <div v-else class="display-element clickable disabled-tag" @click="addTag(tag.tag)" >
-                <p :class="fontSize">{{ tag.tag.charAt(0).toUpperCase() +
+                <span :class="fontSize">{{ tag.tag.charAt(0).toUpperCase() +
                         tag.tag.slice(1)
-                }} • {{ tag.nb_images }}</p>
+                }} • {{ tag.nb_images }}</span>
             </div>
         </div>
     </div>
@@ -104,7 +105,8 @@ export default {
             last_user_input: Date.now(),
             mytimeout: undefined,
             hovered: new Set(),
-            selected_tags_index: new Set()
+            selected_tags_index: new Set(),
+            special_tags_to_display: {'bookpaper': "Book/Paper", "drivepilot": "Drive/Pilot", "hallloby": "Hall/Loby", "pathstreet": "Path/Street", "rockscliff": "Rocks/Cliff", "runflee": "Run/Flee", "sealake": "Sea/Lake", "takeofflanding": "Takeoff/Landing", "tunnelcorridor": "Tunnel/Corridor"}
         }
     },
     methods: {
