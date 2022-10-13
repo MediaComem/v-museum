@@ -1,23 +1,26 @@
 <template>
-  <div class="information-manager" style="margin-left: 12px">
-    <el-row>
-      <page-manager @changeDisplay="display = !display" :display="display" :from="from"/>
-    </el-row>
-  </div>
+  <div :style="pageSize" @touchstart="disableZoom" @gesturestart="disableZoomGesture">
+    <div class="information-manager" style="margin-left: 12px">
+      <el-row>
+        <page-manager @changeDisplay="display = !display" :display="display" :from="from"/>
+      </el-row>
+    </div>
 
-  <div
-    v-if="imageData"
-    class="information information-padding hide-scrollbar"
-    :style="collapse"
-  >
-    <data-information ref="information" @loadImage="loadImage" :imageData="imageData" :tags="tags" :storyCollection="storyCollection"/>
+    <div
+      v-if="imageData"
+      class="information information-padding hide-scrollbar"
+      :style="collapse"
+    >
+      <data-information ref="information" @loadImage="loadImage" :imageData="imageData" :tags="tags" :storyCollection="storyCollection" :windowHeight="windowHeight" :windowWidth="windowWidth"/>
+    </div>
+    <div class="page">
+      <div id="viewer" class="viewer" @canvasDoubleClick="doubleClick"></div>
+    </div>
+    <div v-if="displayImage && imageData">
+      <img class="page page-image" :src="imageData.imagePaths.large" />
+    </div>
   </div>
-  <div class="page">
-    <div id="viewer" class="viewer"></div>
-  </div>
-  <div class="page page-image" v-if="displayImage && imageData">
-    <img :src="imageData.imagePaths.large" />
-  </div>
+  
 </template>
 
 <script>
@@ -42,6 +45,7 @@ export default {
   data() {
     return {
       windowWidth: undefined,
+      windowHeight: undefined,
       // Previous page URL
       from: undefined,
       // ID of the image, used to search index position of the storyCollection.
@@ -56,9 +60,31 @@ export default {
       storyCollection: undefined,
       // Open sea dragon viewer element
       viewer: undefined,
+      shouldZoom: true,
     };
   },
   methods: {
+    click(event) {
+      event.preventDefaultAction = true;
+    },
+    doubleClick(event) {
+      event.preventDefaultAction = true;
+      if (this.shouldZoom) {
+        this.viewer.viewport.zoomBy(2);
+      } else {
+        this.viewer.viewport.zoomBy(0.5);
+      }
+      this.shouldZoom = !this.shouldZoom;
+    },
+    disableZoom(event) {
+      if (event.touches.length >= 2) {
+        event.preventDefault();
+      }
+    },
+    disableZoomGesture(event){
+      console.log(event);
+      event.preventDefault();
+    },
     loadImage(index) {
       this.imageData = this.storyCollection[index];
       this.tags = [];
@@ -94,17 +120,16 @@ export default {
           this.viewer.destroy();
         }
         this.openImage(image);
-        this.$nextTick(() => {
-          setTimeout(() => this.displayImage = false, 200);
-        });
       });
     },
     openImage(image) {
       this.viewer = OpenSeadragon({
         id: "viewer",
+        autoresize: false,
         showZoomControl: false,
         showHomeControl: false,
         showFullPageControl: false,
+        preserveImageSizeOnResize: false,
         tiles: [
           {
             scaleFactors: [1, 2, 4, 8, 16, 32],
@@ -116,9 +141,23 @@ export default {
           url: image,
         },
       });
+
+      // Close the png only when an action is done on openseadragon.
+      this.viewer.addHandler('viewport-change', function() {
+        this.userData.displayImage = false;
+      }, this);
+
+      this.viewer.addHandler('canvas-click', this.click, this);
+      this.viewer.addHandler('canvas-double-click', this.doubleClick, this);
     },
   },
   computed: {
+    pageSize() {
+      return {
+        height: this.windowHeight + 'px',
+        width: this.windowWidth + 'px',
+      };
+    },
     collapse() {
       return {
         transform: this.display ? "translateX(0)" : "translate(-70vw)",
@@ -127,8 +166,10 @@ export default {
     },
   },
   activated() {
-    const { width } = useWindowSize();
+    this.shouldZoom = true;
+    const { width, height } = useWindowSize();
     this.windowWidth = width;
+    this.windowHeight = height;
     this.tags = [];
     this.storyCollection = undefined;
     this.currentIndex = undefined;
@@ -165,7 +206,7 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style>
 .information-padding {
   padding: 24px;
   padding-top: 130px;
@@ -177,8 +218,8 @@ export default {
     height: 53px;
     z-index: 2;
     position: relative;
-    left: 1vw;
-    top: 4vh;
+    left: 8px;
+    top: 20px;
     background: white;
   }
 }
@@ -189,8 +230,8 @@ export default {
     height: 53px;
     z-index: 2;
     position: relative;
-    left: 1vw;
-    top: 6vh;
+    left: 8px;
+    top: 20px;
     background: white;
   }
 }
@@ -201,8 +242,8 @@ export default {
     height: 53px;
     z-index: 2;
     position: relative;
-    left: 1vw;
-    top: 8vh;
+    left: 8px;
+    top: 20px;
     background: white;
   }
 }
@@ -213,8 +254,8 @@ export default {
     height: 53px;
     z-index: 2;
     position: relative;
-    left: 1vw;
-    top: 14vh;
+    left: 8px;
+    top: 20px;
     background: white;
   }
 }
@@ -224,8 +265,8 @@ export default {
     width: 20vw;
     z-index: 1;
     position: relative;
-    left: 1vw;
-    top: 0vh;
+    left: 8px;
+    top: -5vh;
     background: white;
     overflow: scroll;
   }
@@ -236,8 +277,8 @@ export default {
     width: 30vw;
     z-index: 1;
     position: relative;
-    left: 1vw;
-    top: 0vh;
+    left: 8px;
+    top: -3vh;
     background: white;
     overflow: scroll;
   }
@@ -248,8 +289,8 @@ export default {
     width: 40vw;
     z-index: 1;
     position: relative;
-    left: 1vw;
-    top: 0vh;
+    left: 8px;
+    top: -3vh;
     background: white;
     overflow: scroll;
   }
@@ -260,8 +301,8 @@ export default {
     width: 50vw;
     z-index: 1;
     position: relative;
-    left: 1vw;
-    top: 0vh;
+    left: 8px;
+    top: -4vh;
     background: white;
     overflow: scroll;
   }
@@ -274,9 +315,10 @@ export default {
 }
 
 .page {
-  height: 100vh;
-  width: 100vw;
-  top: 0;
+  height: 100%;
+  width: 100%;
+  top: 0vh;
+  left: 0vw;
   position: absolute;
 }
 
@@ -284,12 +326,20 @@ export default {
   justify-content: center;
   display: flex;
   z-index: -1;
+  object-fit: contain;
+}
+
+.image-element {
+  height: 80vh;
+  width: 80vw;
 }
 
 .viewer {
   width: 100%;
-  height: 100vh;
+  height: 100%;
 }
+
+.viewer > .openseadragon-container > .openseadragon-canvas { outline: none; }
 
 .hide-scrollbar {
   overflow: auto;

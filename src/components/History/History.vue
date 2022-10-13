@@ -3,25 +3,29 @@
     v-if="!isFullHistory"
     class="history-layout open-animation clickable-without-hover"
     :style="isAnimated ? fullHistory : displayHistory"
+    @touchstart="disableZoom"
+    @gesturestart="disableZoomGesture"
   >
     <div v-if="!isAnimated">
       <div
         class="history-text"
         style="z-index: 30"
+        :style="historyTextWidth"
         @click="sendOpenFullHistory()"
       >
-        <p class="history-value">{{ currentHistory.length }}</p>
+        <p class="history-value" :style="historyValueDisplay">{{ currentHistory.length }}</p>
       </div>
       <div v-if="currentHistory.length <= 2">
         <div>
           <div
-            style="position: absolute; left: 45px"
+            :style="{position: 'absolute', left: isSpecialDevice ? '200px' : '45px', width: isSpecialDevice ? '200px' : '45px'}"
             class="history-image-element"
           >
             <img
               v-if="firstImage"
               :class="getOpacityFirstPosition"
               class="history-image display-image"
+              :style="{height: isSpecialDevice ? '195px' : '45px', width: isSpecialDevice ? '190px' : '40px'}"
               @click="comeBackTo(firstImage)"
               :src="firstImage.data"
             />
@@ -29,13 +33,14 @@
         </div>
         <div>
           <div
-            style="position: absolute; left: 90px"
+            :style="{position: 'absolute', left: isSpecialDevice ? '400px' : '90px', width: isSpecialDevice ? '200px' : '45px'}"
             class="history-image-element"
           >
             <img
               v-if="secondImage"
               :class="getOpacitySecondPosition"
               class="history-image display-image"
+              :style="{height: isSpecialDevice ? '195px' : '45px', width: isSpecialDevice ? '190px' : '40px'}"
               @click="comeBackTo(secondImage)"
               :src="secondImage.data"
             />
@@ -43,12 +48,13 @@
         </div>
         <div>
           <div
-            style="position: absolute; left: 135px"
+            :style="{position: 'absolute', left: isSpecialDevice ? '600px' : '135px', width: isSpecialDevice ? '200px' : '45px'}"
             class="history-image-element"
           >
             <img
               v-if="thirdImage"
               class="history-image display-image third-image-opacity"
+              :style="{height: isSpecialDevice ? '195px' : '45px', width: isSpecialDevice ? '190px' : '40px'}"
               @click="comeBackTo(thirdImage)"
               :src="thirdImage.data"
             />
@@ -57,8 +63,8 @@
       </div>
       <div v-if="currentHistory.length > 2">
         <div
-          style="position: absolute; left: 135px"
-          :style="{ transform: 'translateX(' + -(45 * firstPosition) + 'px)' }"
+          style="position: absolute"
+          :style="{ transform: 'translateX(' + -((isSpecialDevice ? 200 : 45) * firstPosition) + 'px)', left: isSpecialDevice ? '600px' : '135px', width: isSpecialDevice ? '200px' : '45px' }"
           :class="{ 'move-image': firstPosition !== 0 }"
           class="history-image-element"
           @mouseover="hoverElement"
@@ -66,48 +72,52 @@
           <img
             v-if="firstImage"
             class="history-image display-image"
+            :style="{height: isSpecialDevice ? '195px' : '45px', width: isSpecialDevice ? '190px' : '40px'}"
             :class="getOpacityFullFirstPosition"
             @click="comeBackTo(firstImage)"
             :src="firstImage.data"
           />
         </div>
         <div
-          style="position: absolute; left: 135px"
-          :style="{ transform: 'translateX(' + -(45 * secondPosition) + 'px)' }"
+          style="position: absolute;"
+          :style="{ transform: 'translateX(' + -((isSpecialDevice ? 200 : 45) * secondPosition) + 'px)', left: isSpecialDevice ? '600px' : '135px', width: isSpecialDevice ? '200px' : '45px' }"
           :class="{ 'move-image': secondPosition !== 0 }"
           class="history-image-element"
         >
           <img
             v-if="secondImage"
             class="history-image display-image"
+            :style="{height: isSpecialDevice ? '195px' : '45px', width: isSpecialDevice ? '190px' : '40px'}"
             :class="getOpacityFullSecondPosition"
             @click="comeBackTo(secondImage)"
             :src="secondImage.data"
           />
         </div>
         <div
-          style="position: absolute; left: 135px"
-          :style="{ transform: 'translateX(' + -(45 * thirdPosition) + 'px)' }"
+          style="position: absolute;"
+          :style="{ transform: 'translateX(' + -((isSpecialDevice ? 200 : 45) * thirdPosition) + 'px)', left: isSpecialDevice ? '600px' : '135px', width: isSpecialDevice ? '200px' : '45px' }"
           :class="{ 'move-image': thirdPosition !== 0 }"
           class="history-image-element"
         >
           <img
             v-if="thirdImage"
             class="history-image display-image"
+            :style="{height: isSpecialDevice ? '195px' : '45px', width: isSpecialDevice ? '190px' : '40px'}"
             :class="getOpacityFullThirdPosition"
             @click="comeBackTo(thirdImage)"
             :src="thirdImage.data"
           />
         </div>
         <div
-          style="position: absolute; left: 135px"
-          :style="{ transform: 'translateX(' + -(45 * forthPosition) + 'px)' }"
+          style="position: absolute;"
+          :style="{ transform: 'translateX(' + -((isSpecialDevice ? 200 : 45) * forthPosition) + 'px)', left: isSpecialDevice ? '600px' : '135px', width: isSpecialDevice ? '200px' : '45px' }"
           :class="{ 'move-image': forthPosition !== 0 }"
           class="history-image-element"
         >
           <img
             v-if="forthImage"
             class="history-image display-image"
+            :style="{height: isSpecialDevice ? '195px' : '45px', width: isSpecialDevice ? '190px' : '40px'}"
             :class="getOpacityFullForthPosition"
             @click="comeBackTo(forthImage)"
             :src="forthImage.data"
@@ -118,19 +128,22 @@
   </div>
 
   <div v-if="isFullHistory" class="history-layout clickable-without-hover" :style="fullHistory">
+    <div class="full-history-lenght history-text" :style="historyTextWidth" @click="closeFullHistory">
+      <p class="history-value-full" :style="historyValueFullSize">{{ currentHistory.length }}</p>
+    </div>
     <div class="left-arrow" @click="leftMove()" />
-    <div class="full-history-display">
+    <div class="full-history-display" :style="fullHistoryDisplaySize">
       <div v-for="(value, index) in currentHistory" :key="index">
         <div
           style="position: absolute; width: 64; height: 81px"
           :style="{
-            left: 68 * index + 'px',
+            left: isSpecialDevice ? 204 * index + 'px': 68 * index + 'px',
             transform: 'translateX(' + -(68 * position) + 'px)',
           }"
         >
           <img
             class="history-image-full"
-            style="height: 69px; width: 60px;"
+            :style="{height: isSpecialDevice ? '292px' : '69px', width: isSpecialDevice ? '190px' : '60px', 'margin-top': isSpecialDevice ? '-10px' : '0px'}"
             @click="comeBackTo(value)"
             :src="value.data"
           />
@@ -149,9 +162,8 @@ export default {
     topPosition: Number,
     leftPosition: Number,
     fullWidth: Number,
-    displayAllHistory: Boolean,
+    isSpecialDevice: Boolean,
   },
-  emits: ["openFullHistory", "closeFullHistory"],
   data() {
     return {
       firstImage: undefined,
@@ -165,6 +177,7 @@ export default {
       nextPosition: 1,
       position: 0,
       isAnimated: false,
+      displayAllHistory: false,
     };
   },
   watch: {
@@ -248,11 +261,28 @@ export default {
     },
   },
   methods: {
+    disableZoom(event) {
+      if (event.touches.length >= 2) {
+        event.preventDefault();
+      }
+    },
+    disableZoomGesture(event){
+      event.preventDefault();
+    },
     sendOpenFullHistory() {
       this.isAnimated = true;
       setTimeout(() => {
-        this.$emit("openFullHistory");
+        this.displayAllHistory = true;
+        this.$store.dispatch('updateFullHistory', {
+          isOpen: true,
+        });
       }, 300);
+    },
+    closeFullHistory() {
+      this.displayAllHistory = false;
+      this.$store.dispatch('updateFullHistory', {
+        isOpen: false,
+      });
     },
     leftMove() {
       if (this.position > 0) {
@@ -275,7 +305,10 @@ export default {
           tag: encodeURIComponent(historyElement.tag),
         },
       });
-      this.$emit("closeFullHistory");
+      this.displayAllHistory = false;
+      this.$store.dispatch('updateFullHistory', {
+        isOpen: false,
+      });
     },
     loadImages(historyElement) {
       const element = historyElement.slice(-3);
@@ -310,22 +343,50 @@ export default {
     },
     displayHistory() {
       return {
-        height: "53px",
+        height: this.isSpecialDevice ? '200px' :"53px",
         width:
           this.currentHistory.length < 3
-            ? (this.currentHistory.length + 1) * 45 + "px"
-            : "180px",
-        top: this.topPosition + "px",
+            ? (this.currentHistory.length + 1) * (this.isSpecialDevice ? 200 : 45) + "px"
+            : this.isSpecialDevice ? '800px' : "180px",
+        top: this.isSpecialDevice ? this.topPosition + 200 + "px" : this.topPosition  + "px",
         left: this.leftPosition + "px",
       };
     },
     fullHistory() {
       return {
-        height: "81px",
-        width: "100vw",
-        top: this.topPosition - 28 + "px",
+        height: this.isSpecialDevice ? '300px' : "81px",
+        width: this.fullWidth + 'px',
+        top: this.isSpecialDevice ? this.topPosition + 172 + "px" : this.topPosition - 28 + "px",
         left: "0px",
       };
+    },
+    fullHistoryDisplaySize() {
+      if (this.isSpecialDevice) {
+        return {
+          width: this.fullWidth - 200 + 'px',
+          left: '200px',
+        };
+      }
+      return {};
+    },
+    historyTextWidth() {
+      return {
+        'width': this.isSpecialDevice ? '200px' : '45px',
+      }
+    },
+    historyValueDisplay() {
+      return {
+        width: this.isSpecialDevice ? '190px' : '41px',
+        height: this.isSpecialDevice ? '200px' : "53px",
+        'font-size': this.isSpecialDevice ? '58px' : 'medium',
+        'margin': '0px',
+        'align-items': 'center',
+      }
+    },
+    historyValueFullSize() {
+      return {
+        'font-size': this.isSpecialDevice ? '58px' : 'medium',
+      }
     },
     getOpacityFirstPosition() {
       return {
@@ -401,7 +462,6 @@ export default {
   display: block;
   position: absolute;
   background-color: black;
-  width: 45px;
   height: 100%;
 }
 
@@ -417,18 +477,26 @@ export default {
 .history-image-element {
   display: block;
   position: absolute;
-  width: 45px;
   height: 100%;
 }
 
 .history-value {
   display: flex;
   justify-content: center;
-  width: 41px;
   color: lightgray;
-  font-size: medium;
   position: absolute;
   margin-left: 2px;
+}
+
+.history-value-full {
+  display: flex;
+  justify-content: center;
+  width: inherit;
+  height: inherit;
+  align-items: center;
+  color: lightgray;
+  position: absolute;
+  margin: 0px !important;
 }
 
 .history-image {
@@ -455,8 +523,6 @@ export default {
 
 .display-image {
   animation: createBox 0.25s;
-  height: 45px;
-  width: 40px;
 }
 @keyframes createBox {
   from {
@@ -494,8 +560,15 @@ export default {
     display: block;
     height: inherit;
     overflow-y: scroll;
-    left: 2.5vw;
-    width: 95vw;
+    left: calc(2.5vw + 41px);
+    width: calc(95vw - 41px);
+  }
+
+  .full-history-lenght {
+    width: 41px;
+    height: inherit;
+    position: absolute;
+    display: block;
   }
 
   .left-arrow {
@@ -508,6 +581,7 @@ export default {
     background-size: 20%;
     background-position-x: 0.5vw;
     background-position-y: 50%;
+    left: 41px;
   }
 
   .right-arrow {
@@ -530,7 +604,15 @@ export default {
     display: block;
     height: inherit;
     overflow-y: scroll;
-    width: 100vw;
+    width: calc(97.5vw - 41px);
+    left: 41px;
+  }
+
+  .full-history-lenght {
+    width: 41px;
+    height: inherit;
+    position: absolute;
+    display: block;
   }
 
   .left-arrow {
@@ -555,7 +637,15 @@ export default {
     display: block;
     height: inherit;
     overflow-y: scroll;
-    width: 100vw;
+    width: 97.5vw;
+    left: 2.5vw;
+  }
+
+  .full-history-lenght {
+    width: 2.5vw;
+    height: inherit;
+    position: absolute;
+    display: block;
   }
 
   .left-arrow {

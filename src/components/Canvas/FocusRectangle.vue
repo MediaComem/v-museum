@@ -1,98 +1,111 @@
 <template>
-  <svg
-    :width="imageWidth"
-    :height="imageHeight"
-    :style="{ top: topPosition, left: leftPosition }"
+  <div
+    class="transition"
+    :style="{
+      position: 'fixed',
+      top: topPosition,
+      left: leftPosition,
+      height: imageHeight + 'px',
+      width: imageWidth + 'px',
+    }"
   >
-    <line x1="0" y1="0" :x2="20" y2="0" stroke="black" stroke-width="2" />
-    <line x1="0" y1="0" x2="0" y2="20" stroke="black" stroke-width="2" />
-
-    <line
-      :x1="imageWidth - 20"
-      y1="0"
-      :x2="imageWidth"
-      y2="0"
-      stroke="black"
-      stroke-width="2"
-    />
-    <line
-      :x1="imageWidth"
-      y1="0"
-      :x2="imageWidth"
-      y2="20"
-      stroke="black"
-      stroke-width="2"
-    />
-
-    <line
-      x1="0"
-      :y1="imageHeight - 20"
-      x2="0"
-      :y2="imageHeight"
-      stroke="black"
-      stroke-width="2"
-    />
-    <line
-      x1="0"
-      :y1="imageHeight"
-      x2="20"
-      :y2="imageHeight"
-      stroke="black"
-      stroke-width="2"
-    />
-
-    <line
-      :x1="imageWidth"
-      :y1="imageHeight - 20"
-      :x2="imageWidth"
-      :y2="imageHeight"
-      stroke="black"
-      stroke-width="2"
-    />
-    <line
-      :x1="imageWidth - 20"
-      :y1="imageHeight"
-      :x2="imageWidth"
-      :y2="imageHeight"
-      stroke="black"
-      stroke-width="2"
-    />
-  </svg>
+    <div class="top left" :style="angleSize"></div>
+    <div class="top right" :style="angleSize"></div>
+    <div class="bottom right" :style="angleSize"></div>
+    <div class="bottom left" :style="angleSize"></div>
+  </div>
 </template>
 
 <script>
 import {
   getImageHeight,
-  getImageWidth
-} from "./service/image_management_service";
+  getImageWidth,
+  focusIntermediaryHeight,
+} from './service/image_management_service';
 export default {
   props: {
     offsetX: Number,
     offsetY: Number,
     focus: Boolean,
+    hoverImage: Boolean,
     imageFactor: Object,
+    border: Boolean,
+    isSpecialDevice: Boolean,
   },
-  name: "FocusRectangle",
+  name: 'FocusRectangle',
   computed: {
     topPosition() {
-      return (this.offsetY - getImageHeight(this.focus, this.imageFactor.sizeFactor)) / 2 + "px";
+      let imageHeight = getImageHeight(this.focus, this.imageFactor.sizeFactor);
+      if (!this.focus && this.hoverImage) {
+        imageHeight = focusIntermediaryHeight(this.imageFactor.sizeFactor);
+      }
+      return ((this.offsetY - imageHeight) / 2) + 8 + 'px';
     },
     leftPosition() {
-      return (this.offsetX - getImageWidth(this.focus, this.imageFactor.sizeFactor)) / 2 + "px";
+      return (
+        (this.offsetX -
+          getImageWidth(this.hoverImage, this.imageFactor.sizeFactor)) /
+          2 +
+        'px'
+      );
     },
     imageHeight() {
-      return getImageHeight(this.focus, this.imageFactor.sizeFactor) + 20;
+      let imageHeight =
+        getImageHeight(this.focus, this.imageFactor.sizeFactor) + 20;
+      if (!this.focus && this.hoverImage) {
+        imageHeight = focusIntermediaryHeight(this.imageFactor.sizeFactor);
+      }
+      return imageHeight;
     },
     imageWidth() {
-      return getImageWidth(this.focus, this.imageFactor.sizeFactor) + 20;
+      return this.focus
+        ? getImageWidth(this.focus, this.imageFactor.sizeFactor) + 20
+        : getImageWidth(this.hoverImage, this.imageFactor.sizeFactor) + 20;
+    },
+    angleSize() {
+      if (this.isSpecialDevice) {
+        return {
+          height: '50px',
+          width: '50px',
+          'border-width': '4px',
+        };
+      }
+      return {};
     },
   },
 };
 </script>
 
 <style scoped>
-svg {
-  position: fixed;
-  z-index: -11;
+.top,
+.bottom {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.top {
+  top: 0;
+  border-top: 1px solid;
+}
+
+.bottom {
+  bottom: 0;
+  border-bottom: 1px solid;
+}
+
+.left {
+  left: 0;
+  border-left: 1px solid;
+}
+
+.right {
+  right: 0;
+  border-right: 1px solid;
+}
+
+.transition {
+  transition: all 0.2s;
 }
 </style>

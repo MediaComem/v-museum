@@ -1,10 +1,47 @@
+h1 {
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+}
+
+h2 {
+  margin-top: 4vh;
+  margin-bottom: 4vh;
+}
+
+h3 {
+  margin-top: 5vh;
+}
+
 .first-image {
   width: 100vw;
   height: 75vh;
   object-fit: cover;
 }
 
-@media only screen and (min-width: 300px) and (max-width: 699px) {
+@media only screen and (min-width: 300px) and (max-width: 369px) {
+  .page-title {
+    font-size: 38px;
+    max-width: 60rem;
+  }
+
+  .page-subtitle {
+    font-size: 30px;
+    max-width: 60rem;
+    text-align: center;
+  }
+
+  .text-title {
+    font-size: 20px;
+    text-align: left;
+    max-width: 35rem;
+  }
+
+  .end-page {
+    padding-bottom: 15vh;
+  }
+}
+
+@media only screen and (min-width: 370px) and (max-width: 699px) {
   .page-title {
     font-size: 40px;
     max-width: 60rem;
@@ -20,6 +57,10 @@
     font-size: 20px;
     text-align: left;
     max-width: 35rem;
+  }
+
+  .end-page {
+    padding-bottom: 15vh;
   }
 }
 
@@ -40,10 +81,20 @@
     text-align: left;
     max-width: 35rem;
   }
+  
+  .end-page {
+    padding-bottom: 10vh;
+  }
 }
 
 .text {
   font-size: 20px;
   text-align: left;
   max-width: 35rem;
+}
+
+.link {
+  color: black;
+  font-size: 15px;
+  margin-bottom: 4vh;
 }

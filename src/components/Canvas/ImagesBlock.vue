@@ -11,10 +11,13 @@
       :imageId="relatedImage.imageId"
       :imageFactor="imageFactor.sizeFactor"
       :blockPosition="relatedImage.position"
+      :isSpecialDevice="isSpecialDevice"
       :class="{
         last_block: blockInsertionState && !relatedImage.hasFocus,
       }"
-      @data-loaded="$emit('dataLoaded')"
+      @data-loaded="$emit('dataLoaded');"
+      @is-in-screen="$emit('isInScreen', index);"
+      @indicator-move="$emit('indicatorMove', {position: $event, element: index})"
     />
   </div>
 </template>
@@ -36,8 +39,9 @@ export default {
     imageFactor: Object,
     currentGlobalPosition: Number,
     blockInsertionState: Boolean,
+    isSpecialDevice: Boolean,
   },
-  emits: ["dataLoaded"],
+  emits: ["dataLoaded", "isInScreen", "indicatorMove"],
   data() {
     return {
       newImagePositions: [],

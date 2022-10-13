@@ -1,76 +1,69 @@
 <template>
-  <el-carousel
-    :height="'100vh'"
-    direction="vertical"
-    :autoplay="false"
-    ref="slider"
-    :indicator-position="'none'"
-    :loop="false"
-  >
-    <el-carousel-item>
+  <div class="y mandatory-scroll-snapping" dir="ltr" @scroll="scrollSlide" @touchstart="disableZoom" @gesturestart="disableZoomGesture">
+    <section :ref="'Introduction'">
       <introduction-slide
         :information="information"
-        @next-slide="nextSlide()"
+        @change-slide="changeSlide"
       />
-    </el-carousel-item>
+    </section>
 
-    <el-carousel-item
+    <section
       v-for="(item, index) in information.collection"
       :key="index"
       :style="{ background: item.color }"
+      :ref="`decade-${index}`"
     >
-      <div v-if="!isMobile">
-        <desktop-slide
-          :information="information"
-          :index="index"
-          :item="item"
-          :isFullSize="isFullSize"
-          :mainTitle="mainTitle"
-          :allTagText="allTagText"
-          @load-tag-view="loadTagView"
-          @previous-slide="previousSlide()"
-          @next-slide="nextSlide()"
-        />
-      </div>
+      <desktop-slide
+        :ref="`slide-${index}`"
+        v-if="!isMobile"
+        :information="information"
+        :index="index"
+        :item="item"
+        :isFullSize="isFullSize"
+        :mainTitle="mainTitle"
+        :allTagText="allTagText"
+        @load-tag-view="loadTagView"
+        @change-slide="changeSlide"
+      />
 
-      <div v-if="isMobile">
-        <mobile-slide
-          :information="information"
-          :index="index"
-          :item="item"
-          :isFullSize="isFullSize"
-          :mainTitle="mainTitle"
-          :allTagText="allTagText"
-          @load-tag-view="loadTagView"
-          @previous-slide="previousSlide()"
-          @next-slide="nextSlide()"
-        />
-      </div>
-    </el-carousel-item>
-    <el-carousel-item>
+      <mobile-slide
+        :ref="`slide-${index}`"
+        v-if="isMobile"
+        :information="information"
+        :index="index"
+        :item="item"
+        :isFullSize="isFullSize"
+        :mainTitle="mainTitle"
+        :allTagText="allTagText"
+        @load-tag-view="loadTagView"
+        @change-slide="changeSlide"
+      />
+    </section>
+    <section :ref="'Tags'">
       <tags-slide
+        :lastId="information.collection.length - 1"
         :isFullSize="isFullSize"
         :isMobile="isMobile"
         :arrowText="information.collection[information.collection.length - 1]"
-        @previous-slide="previousSlide()"
         @load-tag-view="loadTagView"
+        @change-slide="changeSlide"
       />
-    </el-carousel-item>
-  </el-carousel>
+    </section>
+  </div>
 </template>
 
 <script>
-import { useWindowSize } from "vue-window-size";
+import { useWindowSize } from 'vue-window-size';
 
-import IntroductionSlide from "./Slide/IntroductionSlide.vue";
-import DesktopSlide from "./Slide/DesktopSlide.vue";
-import MobileSlide from "./Slide/MobileSlide.vue";
-import TagsSlide from "./Slide/TagsSlide.vue";
+import IntroductionSlide from './Slide/IntroductionSlide.vue';
+import DesktopSlide from './Slide/DesktopSlide.vue';
+import MobileSlide from './Slide/MobileSlide.vue';
+import TagsSlide from './Slide/TagsSlide.vue';
 
-import text from "@/assets/onboarding/text.json";
+import text from '@/assets/onboarding/text.json';
 
 export default {
-  name: "Onboarding",
+  name: 'Onboarding',
   components: {
     IntroductionSlide,
     DesktopSlide,
@@ -81,48 +74,42 @@ export default {
     next((vm) => {
       if (from.query.tag) {
         vm.tag = decodeURIComponent(from.query.tag);
+        vm.loadSlide();
       }
     });
   },
   data() {
     return {
-      mainTitle: { title: "INTRODUCTION" },
-      allTagText: { title: "ALL TAGS" },
+      mainTitle: { title: 'INTRODUCTION' },
+      allTagText: { title: 'ALL TAGS' },
       information: text,
       isCollapse: false,
       slide: 0,
       tag: undefined,
       windowHeight: undefined,
       windowWidth: undefined,
-      slideMoveDiffTime: 0,
+      lastScroll: undefined,
     };
   },
   methods: {
-    previousSlide() {
-      // Process only one event and wait in case of multiple events are sent in short period of time
-      const currentTime = Date.now();
-      const diffTime = currentTime - this.slideMoveDiffTime;
-      if (diffTime > 1000) {
-        const animationDuration = this.isCollapse ? 300 : 0;
-        this.isCollapse = false;
-        setTimeout(() => {
-          this.$refs.slider.prev();
-          this.slide = this.slide - 1;
-        }, animationDuration);
+    scrollSlide() {
+      clearTimeout(this.lastScroll);
+      this.lastScroll = setTimeout(() => {
+        for (let i = 0; i < this.information.collection.length; i++) {
+          this.$refs[`slide-${i}`].isCollapse = false;
+        }
+      }, 50);
+    },
+    disableZoom(event) {
+      if (event.touches.length >= 2) {
+        event.preventDefault();
       }
     },
-    nextSlide() {
-      // Process only one event and wait in case of multiple events are sent in short period of time
-      const diffTime = Date.now() - this.slideMoveDiffTime;
-      if (diffTime > 1000) {
-        const animationDuration = this.isCollapse ? 300 : 0;
-        this.isCollapse = false;
-        setTimeout(() => {
-          this.slide = this.slide + 1;
-          this.$refs.slider.next();
-          this.slideMoveDiffTime = Date.now();
-        }, animationDuration);
-      }
+    disableZoomGesture(event){
+      event.preventDefault();
+    },
+    changeSlide(event) {
+      this.$refs[event].scrollIntoView({ behavior: 'smooth' });
     },
     loadTagView(tag) {
       this.$router.push({
@@ -130,19 +117,17 @@ export default {
         query: { tag: encodeURIComponent(tag.tag) },
       });
     },
-    findAndUpdateTag() {
+    loadSlide() {
       if (this.tag) {
         let index = 0;
         index = this.information.collection.findIndex((e) => {
           return e.tag.tag == this.tag;
         });
         if (index === -1) {
-          index = this.information.collection.length;
+          this.$refs['Tags'].scrollIntoView();
+        } else {
+          this.$refs[`decade-${index}`].scrollIntoView();
         }
-        this.$nextTick(() => {
-          this.slide = index + 1;
-          this.$refs.slider.setActiveItem(index + 1);
-        });
       }
     },
   },
@@ -154,18 +139,38 @@ export default {
       return this.windowWidth > 1200;
     },
   },
-  activated() {
-    this.findAndUpdateTag();
-  },
   mounted() {
     const { width, height } = useWindowSize();
     this.windowHeight = height;
     this.windowWidth = width;
-    this.findAndUpdateTag();
   },
 };
 </script>
 
 <style scoped>
-@import "./onboarding.css";
+@import './onboarding.css';
+
+.y.mandatory-scroll-snapping {
+  height: 100vh;
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+}
+
+@media only screen and (max-width: 599px) {
+  section {
+    height: 100vh;
+    width: 100vw;
+    scroll-snap-align: start;
+    position: relative;
+  } 
+}
+
+@media only screen and (min-width: 600px) {
+  section {
+    height: 100vh;
+    width: 100vw;
+    scroll-snap-align: start;
+    position: relative;
+  } 
+}
 </style>

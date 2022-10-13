@@ -2,9 +2,6 @@
   <img
     class="image-display"
     :src="`/v-museum/onboarding/${item.imagePath}`"
-    @mousewheel="wheelMove"
-    @touchstart="touchStart"
-    @touchend="changeSlide"
   />
   <div
     class="collapse-transition"
@@ -14,26 +11,17 @@
     <p class="collection-text collapse-text-align overflow">{{ item.text }}</p>
   </div>
   <logo
-    style="position: absolute; left: 2vw; top: 2vh"
-    @mousewheel="wheelMove"
-    @touchstart="touchStart"
-    @touchend="changeSlide"
+    style="position: absolute; left: 2vw; top: 2vh; z-index: 1;"
   />
   <arrow-up
     :isFull="isFullSize"
     :isMobile="false"
     class="arrow-up"
     :text="index === 0 ? mainTitle : information.collection[index - 1]"
-    @previous-slide="$emit('previousSlide')"
-    @mousewheel="wheelMove"
-    @touchstart="touchStart"
-    @touchend="changeSlide"
+    @click="changeSlide('UP')"
   />
   <div
     class="collection-position"
-    @mousewheel="wheelMove"
-    @touchstart="touchStart"
-    @touchend="changeSlide"
   >
     <el-row>
       <h2
@@ -71,21 +59,19 @@
         ? allTagText
         : information.collection[index + 1]
     "
-    @next-slide="$emit('nextSlide')"
-    @mousewheel="wheelMove"
-    @touchstart="touchStart"
-    @touchend="changeSlide"
+    @click="changeSlide('DOWN')"
   />
 </template>
 
 <script>
-import Logo from "../Logo/Logo.vue";
-import ArrowUp from "../Logo/ArrowUp.vue";
-import ArrowDown from "../Logo/ArrowDown.vue";
-import DocumentsInformation from "../Logo/DocumentsInformation.vue";
+import Logo from '../../shared/components/Logo.vue';
+import ArrowUp from '../Logo/ArrowUp.vue';
+import ArrowDown from '../Logo/ArrowDown.vue';
+import DocumentsInformation from '../Logo/DocumentsInformation.vue';
+
 export default {
   components: { Logo, ArrowUp, ArrowDown, DocumentsInformation },
-  emits: ["loadTagView", "previousSlide", "nextSlide"],
+  emits: ['loadTagView', 'changeSlide'],
   props: {
     index: Number,
     item: Object,
@@ -97,49 +83,36 @@ export default {
   data() {
     return {
       isCollapse: false,
-      changeSlideInProgress: false,
-      delayBeforeAction: 0,
-      startMoveTime: 0,
-      startPosition: 0,
     };
   },
   methods: {
-    wheelMove(event) {
-      if (event.deltaY > 0 && !this.changeSlideInProgress) {
-        this.changeSlideInProgress = true;
-        this.$emit("nextSlide");
-        // This timeout is used to ensure that only one action is take into account when long wheel has been used.
-        setTimeout(() => (this.changeSlideInProgress = false), 2000);
-      }
-      if (event.deltaY < 0 && !this.changeSlideInProgress) {
-        this.changeSlideInProgress = true;
-        this.$emit("previousSlide");
-        // This timeout is used to ensure that only one action is take into account when long wheel has been used.
-        setTimeout(() => (this.changeSlideInProgress = false), 2000);
-      }
-    },
-    touchStart(event) {
-      this.startMoveTime = Date.now();
-      this.startPosition = event.changedTouches[0].clientY;
-    },
     changeSlide(event) {
-      if (Date.now() - this.startMoveTime > 100) {
-        const endPosition = event.changedTouches[0].clientY;
-        if (this.startPosition < endPosition) {
-          this.$emit("previousSlide");
-        } else if (this.startPosition > endPosition) {
-          this.$emit("nextSlide");
+      if (event === 'UP') {
+        if (this.index === 0) {
+          this.$emit('changeSlide', 'Introduction')
+        }
+        else {
+          this.$emit('changeSlide', `decade-${this.index - 1}`)
         }
       }
-    },
+      else {
+        if (this.index === this.information.collection.length - 1) {
+          this.$emit('changeSlide', 'Tags')
+        }
+        else {
+          this.$emit('changeSlide', `decade-${this.index + 1}`)
+        }
+      }
+    }
   },
   computed: {
     collapse() {
       return {
-        "background-color": this.information.collection[this.index].color,
-        height: "100vh",
-        width: "57vw",
-        transform: this.isCollapse ? "translateX(0)" : "translate(-57vw)",
+        'background-color': this.information.collection[this.index].color,
+        height: '100vh',
+        width: '57vw',
+        'z-index': 1,
+        transform: this.isCollapse ? 'translateX(0)' : 'translate(-57vw)',
       };
     },
   },
@@ -147,7 +120,7 @@ export default {
 </script>
 
 <style scoped>
-@import "../onboarding.css";
-@import "./desktop_slide.css";
-@import "../../shared/pointer.css";
+@import '../onboarding.css';
+@import './desktop_slide.css';
+@import '../../shared/pointer.css';
 </style>

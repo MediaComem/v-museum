@@ -1,16 +1,16 @@
 <template>
-  <div class="page-size">
-    <full-tag-header :tag="tagValue" />
+  <div class="page-size" @touchstart="disableZoom" @gesturestart="disableZoomGesture">
+    <Header :tag="tagValue" />
     <full-tag-page :tag="tagValue" />
   </div>
 </template>
 
 <script>
-import FullTagHeader from "./FullTagHeader.vue";
+import Header from "../shared/components/Header.vue";
 import FullTagPage from "./FullTagPage.vue";
 
 export default {
-  components: { FullTagHeader, FullTagPage },
+  components: { Header, FullTagPage },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.tagValue = decodeURIComponent(to.query.tag);
@@ -21,6 +21,16 @@ export default {
       tagValue: "",
     };
   },
+  methods: {
+    disableZoomGesture(event){
+      event.preventDefault();
+    },
+    disableZoom(event) {
+      if (event.touches.length >= 2) {
+        event.preventDefault();
+      }
+    },
+  },
 };
 </script>
 
@@ -28,5 +38,8 @@ export default {
 .page-size {
   height: 100vh;
   width: 100vw;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 </style>

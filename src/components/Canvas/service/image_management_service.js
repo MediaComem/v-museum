@@ -8,26 +8,26 @@
   moveCentralHeightFactor:  This factor is used to calculate the distance on Y axis between related image on same X axis than the 
                             central image and the central image.
 */
-const getFactor = (height, width) => {
+const getFactor = (height, width, isSpecialDevice=false) => {
   switch (true) {
-    case width >= 1600 && height >= 1550:
-      return {sizeFactor: 9, moveWidthFactor: 2.8, moveTopHeightFactor: 1.2, moveBottomHeightFactor: 1.7, moveCentralHeightFactor: 15};
-    case width >= 1400 && height >= 1350:
-      return {sizeFactor: 7, moveWidthFactor: 2.7, moveTopHeightFactor: 1.3, moveBottomHeightFactor: 1.5, moveCentralHeightFactor: 10};
-    case width >= 1200 && height >= 1150:
-      return {sizeFactor: 6, moveWidthFactor: 2.6, moveTopHeightFactor: 1.25, moveBottomHeightFactor: 1.5, moveCentralHeightFactor: 10};
+    case isSpecialDevice && height >= 3000:
+      return {sizeFactor: 32, moveWidthFactor: 1.9, moveTopHeightFactor: 1.5, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
+    case isSpecialDevice:
+      return {sizeFactor: 21, moveWidthFactor: 1.9, moveTopHeightFactor: 1.5, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
+    case width >= 1600 && height >= 1600:
+      return {sizeFactor: 10, moveWidthFactor: 2.7, moveTopHeightFactor: 2.1, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
     case width >= 1000 && height >= 920:
-      return {sizeFactor: 5.5, moveWidthFactor: 2.4, moveTopHeightFactor: 1.4, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 12};
+      return {sizeFactor: 10, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 1.9, moveCentralHeightFactor: 1.9};
     case width >= 700 && height >= 716:
-      return {sizeFactor: 4, moveWidthFactor: 2.1, moveTopHeightFactor: 1.3, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 14};
+      return {sizeFactor: 7, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 2.1, moveCentralHeightFactor: 1.9};
     case width >= 550 && height >= 615:
-      return {sizeFactor: 3.5, moveWidthFactor: 1.9, moveTopHeightFactor: 1.35, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 12};
+      return {sizeFactor: 5.5, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 2.1, moveCentralHeightFactor: 1.9};
     case width >= 400 && height >= 514:
-      return {sizeFactor: 3, moveWidthFactor: 1.6, moveTopHeightFactor: 1.35, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 10};
+      return {sizeFactor: 4.5, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 2.1, moveCentralHeightFactor: 1.9};
     case width >= 350 && height >= 480:
-      return {sizeFactor: 2.5, moveWidthFactor: 1.6, moveTopHeightFactor: 1.4, moveBottomHeightFactor: 1.6, moveCentralHeightFactor: 10};
+      return {sizeFactor: 3.5, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 2.1, moveCentralHeightFactor: 1.9};
     default:
-      return {sizeFactor: 2.5, moveWidthFactor: 1.5, moveTopHeightFactor: 1.5, moveBottomHeightFactor: 1.5, moveCentralHeightFactor: 10};
+      return {sizeFactor: 3, moveWidthFactor: 1.9, moveTopHeightFactor: 1.9, moveBottomHeightFactor: 2.1, moveCentralHeightFactor: 1.9};
   }
 };
 
@@ -37,6 +37,10 @@ const thumbnailHeight = (factor) => {
 
 const thumbnailWidth = (factor) => {
   return 9 * 4 * factor;
+};
+
+const focusIntermediaryHeight = (factor) => {
+  return 13 * 4 * factor;
 };
 
 const relatedThumbnailHeight = (factor) => {
@@ -109,10 +113,23 @@ const resetBlockFocus = (imageBlocks, imageId) => {
   });
 };
 
+const isFocusShouldHover = (imageBlocks) => {
+  let value = false;
+  imageBlocks.forEach((block) => {
+    block.relatedImages.forEach((element) => { 
+      if (element.hasFocus) {
+        value = true;
+      }
+    })
+  });
+  return value;
+};
+
 export {
   getFactor,
   thumbnailHeight,
   thumbnailWidth,
+  focusIntermediaryHeight,
   relatedThumbnailHeight,
   relatedThumbnailWidth,
   getImageHeight,
@@ -122,4 +139,5 @@ export {
   getNextIndexBaseOnState,
   getPreviousIndexBaseOnState,
   resetBlockFocus,
+  isFocusShouldHover,
 };

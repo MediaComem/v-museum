@@ -17,12 +17,18 @@ const vuexLocal = new VuexPersistence({
 });
 
 export const getters = {
+  getFullHistoryMode: (state) => {
+    return state.fullHistory;
+  },
   getHistory: (state) => {
     return state.history;
   },
 };
 
 export const mutations = {
+  updateFullHistory(state, payload) {
+    state.fullHistory = payload.isOpen;
+  },
   addHistoryElement(state, payload) {
     const isExist = state.history.find((e) => e.imageId === payload.imageId);
     if (isExist === undefined) {
@@ -39,6 +45,9 @@ export const mutations = {
 };
 
 export const actions = {
+  updateFullHistory(context, payload) {
+    context.commit("updateFullHistory", payload)
+  },
   insertHistory(context, payload) {
     dataFetch.getImageById(payload.imageId).then((data) => {
       if (data.length > 0) {
@@ -56,6 +65,7 @@ const store = createStore({
   state() {
     return {
       history: [],
+      fullHistory: false,
     };
   },
   getters: getters,
@@ -64,7 +74,16 @@ const store = createStore({
   plugins: [vuexLocal.plugin],
 });
 
+const isSafari = !!navigator.userAgent.match(/Version\/[\d.]+.*Safari/);
+const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
 const app = createApp(App);
+if (isSafari && iOS) {
+  app.config.globalProperties.isSafariIphone = true;
+}
+else {
+  app.config.globalProperties.isSafariIphone = false;
+}
 app.use(ElementPlus);
 app.use(router);
 app.use(store);

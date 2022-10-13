@@ -25,7 +25,7 @@
       </div>
     </el-row>
   </div>
-  <div @touchstart="touchStart" @touchend="changeSlide">
+  <div>
     <el-row>
       <img
         class="image-display-mobile"
@@ -37,7 +37,7 @@
       :isFull="false"
       class="arrow-up"
       :text="index === 0 ? mainTitle : information.collection[index - 1]"
-      @previous-slide="$emit('previousSlide')"
+      @click="changeSlide('UP')"
     />
     <el-row>
       <h2 class="collection-title-mobile mobile-margin">
@@ -66,7 +66,7 @@
             ? allTagText
             : information.collection[index + 1]
         "
-        @next-slide="$emit('nextSlide')"
+        @click="changeSlide('DOWN')"
       />
     </el-row>
   </div>
@@ -79,7 +79,7 @@ import DocumentsInformation from "../Logo/DocumentsInformation.vue";
 
 export default {
   components: { ArrowUp, ArrowDown, DocumentsInformation },
-  emits: ["loadTagView", "previousSlide", "nextSlide"],
+  emits: ['loadTagView', 'changeSlide'],
   props: {
     index: Number,
     item: Object,
@@ -91,25 +91,27 @@ export default {
   data() {
     return {
       isCollapse: false,
-      startPosition: 0,
-      startMoveTime: 0,
     };
   },
   methods: {
-    touchStart(event) {
-      this.startMoveTime = Date.now();
-      this.startPosition = event.changedTouches[0].clientY;
-    },
     changeSlide(event) {
-      if (Date.now() - this.startMoveTime > 100) {
-        const endPosition = event.changedTouches[0].clientY;
-        if (this.startPosition < endPosition) {
-          this.$emit("previousSlide");
-        } else if (this.startPosition > endPosition) {
-          this.$emit("nextSlide");
+      if (event === 'UP') {
+        if (this.index === 0) {
+          this.$emit('changeSlide', 'Introduction')
+        }
+        else {
+          this.$emit('changeSlide', `decade-${this.index - 1}`)
         }
       }
-    },
+      else {
+        if (this.index === this.information.collection.length - 1) {
+          this.$emit('changeSlide', 'Tags')
+        }
+        else {
+          this.$emit('changeSlide', `decade-${this.index + 1}`)
+        }
+      }
+    }
   },
   computed: {
     collapseMobile() {

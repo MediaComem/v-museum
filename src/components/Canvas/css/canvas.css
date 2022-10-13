@@ -3,8 +3,6 @@
   height: 29px;
   width: auto;
   position: fixed;
-  top: 25px;
-  left: 29px;
   z-index: 11;
 }
 
@@ -13,12 +11,7 @@
   align-items: center;
 }
 
-.image-size {
-  height: 24px;
-  width: 24px;
-  margin-right: 5px;
-}
-
 .block-selection {
   user-select: none;
+  z-index: 2;
 }
