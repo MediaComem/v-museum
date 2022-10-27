@@ -1,7 +1,7 @@
 <template>
   <div id="tags-slide" class="title" @touchstart="touchStart" @touchend="changeSlide" @mousewheel="wheelMove">
     <div class="tags-title">
-      <h1 v-if="show_form" class="tags-h1">SREARCH WITH TAGS</h1>
+      <h1 v-if="show_form" class="tags-h1">SEARCH WITH TAGS</h1>
       <h1 v-if="show_full_tag_page" class="tags-h1">
         <span v-for="(tag, index) in this.selected_tags" :key="index">
           <span v-if="index > 0">{{ tag.toUpperCase() }}</span>
@@ -108,7 +108,7 @@ export default {
     },
     updateTagsList(data) {
       //rebuild the component to prevent array length problems
-      this.carousel_key = data.images.length
+      this.carousel_key = data.length
       if (this.images_bis.length > 0) {
         this.show_carousel = true
         this.images_for_carousel = data.images

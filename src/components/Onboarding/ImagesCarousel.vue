@@ -26,7 +26,7 @@
             </svg>
             <!-- Images -->
             <div class="image-wrapper" v-for="index in this.images_index_to_display" :key="index">
-                <img class="image-carousel-size" :src="images[index].url" />
+                <img class="image-carousel-size" :src="images[index].url" @click="loadImage(images[index].id)"/>
             </div>
             <!-- next image arrow-->
             <svg class="button-svg" v-if="showRightArrow" @click="showNextImage()"
@@ -43,6 +43,8 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
+
+import dataFetch from "../../api/dataFetching";
 
 export default {
     props: {
@@ -82,6 +84,17 @@ export default {
                 }
             }
             return Array.from(Array(max_images_number).keys()) 
+        },
+        loadImage(imageId) {
+            dataFetch.getImageById(imageId).then((data) => {
+                if (data.length > 0) {
+                    const img_data = data[0];
+                    this.$router.push({
+                    path: `/image/${imageId}`,
+                    query: { image: JSON.stringify(img_data) },
+                    });
+                }
+            });
         },
         changeButtonColor(hover, selector) {
             if (hover) {
@@ -159,6 +172,7 @@ export default {
 }
 
 .image-carousel-size {
+    cursor: pointer;
     margin: 0 2.83vw 0 3.83vh;
     height: 80%;
 }

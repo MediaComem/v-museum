@@ -8,31 +8,30 @@
                     d="M12.925 13.7312L7.99375 8.79995C7.61875 9.12495 7.18125 9.37808 6.68125 9.55933C6.18125 9.74058 5.65 9.8312 5.0875 9.8312C3.7375 9.8312 2.59375 9.36245 1.65625 8.42495C0.71875 7.48745 0.25 6.3562 0.25 5.0312C0.25 3.7062 0.71875 2.57495 1.65625 1.63745C2.59375 0.699951 3.73125 0.231201 5.06875 0.231201C6.39375 0.231201 7.52187 0.699951 8.45312 1.63745C9.38437 2.57495 9.85 3.7062 9.85 5.0312C9.85 5.5687 9.7625 6.08745 9.5875 6.58745C9.4125 7.08745 9.15 7.5562 8.8 7.9937L13.75 12.9062L12.925 13.7312ZM5.06875 8.7062C6.08125 8.7062 6.94375 8.34683 7.65625 7.62808C8.36875 6.90933 8.725 6.0437 8.725 5.0312C8.725 4.0187 8.36875 3.15308 7.65625 2.43433C6.94375 1.71558 6.08125 1.3562 5.06875 1.3562C4.04375 1.3562 3.17188 1.71558 2.45312 2.43433C1.73438 3.15308 1.375 4.0187 1.375 5.0312C1.375 6.0437 1.73438 6.90933 2.45312 7.62808C3.17188 8.34683 4.04375 8.7062 5.06875 8.7062Z"
                     fill="#2C3E50" />
             </svg>
-
             <input type="text" class="tag-filter-input" placeholder="SEARCH TAG TO FILTER"
                 @focus="handleTagOptionsDisplay(true)" @input="updateSearchTag($event)"
-                @blur="handleTagOptionsDisplay(false)" @keyup.enter="this.selected_tags.push(this.selected_tags[0])" />
+                @blur="handleTagOptionsDisplay(false)" @keyup.enter="updateTagsListFromSearch(selected_tags[0])" />
         </form>
 
         <!-- Selected tags -->
-        <div class="tags-options" v-if="this.show_tags_options">
+        <div class="tags-options" v-if="show_tags_options">
             <ul class="tags-options-list">
-                <div v-if="this.selected_tags.length > 1" class="selected-tags-in-options-list-wrapper">
-                    <div v-for="(tag, index) in this.selected_tags" :key="index">
+                <div v-if="selected_tags.length > 1" class="selected-tags-in-options-list-wrapper">
+                    <div v-for="(tag, index) in selected_tags" :key="index">
                         <div class="selected-tag-in-option-list" v-if="index > 0">
                             <li class="selected-tag-in-option-text">
                                 <span class="selected-tag-in-option-span"><b> #{{ tag.charAt(0).toUpperCase() +
                                         tag.slice(1)
                                 }}</b></span>
-                                <span class="selected-tag-in-option-span"><b>{{ this.imagesWithTags.length }}</b></span>
+                                <span class="selected-tag-in-option-span"><b>{{ imagesWithTags.length }}</b></span>
                             </li>
                         </div>
                     </div>
                 </div>
 
                 <!-- Other possible tags -->
-                <template v-for="(tag, index) in this.input_and_selected_tags_with_images" :key="index">
-                    <div v-if="!this.selected_tags.includes(tag.tag)" @click="addTag(tag.tag)" class="tag-option">
+                <template v-for="(tag, index) in input_and_selected_tags_with_images" :key="index">
+                    <div v-if="!selected_tags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase())" @click="addTag(tag.tag)" class="tag-option">
                         <li :class="`${fontSize} option-text`"> {{ tag.tag.charAt(0).toUpperCase() + tag.tag.slice(1) }}
                             · {{ tag.nb_images }}</li>
                     </div>
@@ -45,7 +44,7 @@
     <div v-if="this.show_tags_options" style="height: 5.57vh;"></div>
 
     <div class="documents-for-search-infos">
-        <span v-if="this.imagesWithTags.length > 0">{{ this.imagesWithTags.length }} documents</span>
+        <span v-if="imagesWithTags.length > 0">{{ imagesWithTags.length }} documents</span>
         <span v-else>It seems no document contains the tags combinaison you entered.</span>
     </div>
 
@@ -70,10 +69,9 @@
         </div>
     </div>
 
-    <div class="canvas-display overflow clickable-tags-list" @scroll="scrollMove" @touchend="changeSlideScroll"
-        @mousewheel="wheelMoveScroll">
-        <div v-for="(tag, index) in this.selected_tags_with_images" :key="index">
-            <div v-if="!this.selected_tags.includes(tag.tag)" class="display-element clickable clickable-tag"
+    <div class="canvas-display overflow clickable-tags-list">
+        <div v-for="(tag, index) in selected_tags_with_images" :key="index">
+            <div v-if="!selected_tags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase())" class="display-element clickable clickable-tag"
                 @click="addTag(tag.tag)">
                 <span :class="fontSize">{{ tag.tag.charAt(0).toUpperCase() +
                         tag.tag.slice(1)
@@ -122,35 +120,28 @@ export default {
             }, 250);
             //Add little interval, so if user writes fast, there is no problem
         },
+        updateTagsListFromSearch(tag) {
+            //this.selected_tags.push(tag);
+            this.$store.dispatch('insertTag', tag)
+            this.$store.dispatch('setImages', this.imagesWithTags)
+            this.$emit('updateTagsList', this.imagesWithTags)
+        },
         addTag(tag) {
             if (tag.includes("/")) {
                 tag = tag.replace('/', '')
             }
-
-
             if (!this.selected_tags.includes(tag)) {
+                console.log(tag);
                 this.$store.dispatch('insertTag', tag)
                 this.$store.dispatch('setImages', this.imagesWithTags)
-                const data_to_return = {
-                    selected_tags: this.confirmed_tags,
-                    images: this.imagesWithTags,
-                    tags_list: this.selected_tags_with_images,
-                    input_filter_tags_list: this.input_and_selected_tags_with_images
-                }
-                this.$emit('updateTagsList', data_to_return)
+                this.$emit('updateTagsList', this.imagesWithTags)
                 document.querySelector('.tag-filter-input').value = ''
             }
         },
         removeTag(index) {
             this.$store.dispatch('removeTag', index);
             this.$store.dispatch('setImages', this.imagesWithTags)
-            const data_to_return = {
-                selected_tags: this.confirmed_tags,
-                images: this.imagesWithTags,
-                tags_list: this.selected_tags_with_images,
-                input_filter_tags_list: this.input_and_selected_tags_with_images
-            }
-            this.$emit('updateTagsList', data_to_return)
+            this.$emit('updateTagsList', this.imagesWithTags)
         },
         sortInTwoArrays(data_obj, substr) {
             const keys = Object.keys(data_obj)
@@ -162,14 +153,14 @@ export default {
                     nb_images: data_obj[tag].nb_images
                 }
                 all_tags_arr.push(tag_obj)
-                if (tag.includes(substr)) {
+                if (tag.toLowerCase().includes(substr)) {
                     tags_with_substr_arr.push(tag_obj)
                 }
             })
             all_tags_arr.sort((a, b) => a.tag.localeCompare(b.tag))
             tags_with_substr_arr.sort((a, b) => a.tag.localeCompare(b.tag))
-            this.selected_tags_with_images = all_tags_arr,
-                this.input_and_selected_tags_with_images = tags_with_substr_arr
+            this.selected_tags_with_images = all_tags_arr;
+            this.input_and_selected_tags_with_images = tags_with_substr_arr;
         },
         changeRemoveTagButton(hover, index) {
             if (hover) {
@@ -212,49 +203,27 @@ export default {
                 return this.images
             }
             const tags_without_input = {}
+            const realTags = this.selected_tags.slice(1);
             //Get only images including all selected tags except first (user current input) in array of selected tags
             const images_with_tags = this.images.filter((im) => {
-                let ok = true
-                let i = 1;
-                //Check all selected tags except first (user current input) if in image tags
-                do {
-                    //Management of case sensitivity for UX
-                    const img_lower_case_tags = []
-                    im.tags.forEach(tg => {
-                        img_lower_case_tags.push(tg.toLowerCase())
+                if (realTags.every((tag) => {
+                    return im.tags.map((t) => t.toLowerCase()).includes(tag.toLowerCase())
+                })) {
+                    im.tags.forEach((tag) => {
+                        if (tags_without_input[tag]) {
+                            tags_without_input[tag].nb_images += 1
+                        } else {
+                            tags_without_input[tag] = { nb_images: 1 }
+                        }
                     })
-                    // ensure current tag is in image tags
-                    if (img_lower_case_tags.includes(this.selected_tags[i].toLowerCase())) {
-                        img_lower_case_tags.forEach(img_tag => {
-                            //Ensure all  confirmed selected tags are into the image tags before adding this image to the concerned tags possibilities.
-                            if (i == this.selected_tags.length - 1) {
-                                // Case 1, this tag was already in a image to keep
-                                if (tags_without_input[img_tag]) {
-                                    tags_without_input[img_tag].nb_images += 1
-                                }
-                                // Case 2, no image parcoured had the tag to add yet
-                                else if (!tags_without_input[img_tag]) {
-                                    tags_without_input[img_tag] = { nb_images: 1 }
-                                }
-                            }
-                        })
-                    } else {
-                        ok = false
-                    }
-                    i++;
-                } while (ok && i < this.selected_tags.length)
-                this.selected_tags_with_images = tags_without_input
-                return ok
-            })
-            this.sortInTwoArrays(this.selected_tags_with_images, this.selected_tags[0].toLowerCase())
+                    return true
+                }
+            });
+            this.sortInTwoArrays(tags_without_input, this.selected_tags[0].toLowerCase())
             return images_with_tags
         },
         confirmed_tags() {
-            const formated_selected_tags = []
-            for (let i = 1; i < this.selected_tags.length; i++) {
-                formated_selected_tags.push(this.selected_tags[i])
-            }
-            return formated_selected_tags
+            return this.selected_tags.length > 1 ? this.selected_tags.slice(1) : [];
         },
         ...mapGetters({
             selected_tags: "getTags",
@@ -268,7 +237,6 @@ export default {
     display: inline-flex;
     flex-wrap: wrap;
     width: 96vw;
-    height: 90vh;
     padding-left: 2vw;
     padding-right: 2vw;
     justify-content: flex-start;
@@ -332,7 +300,7 @@ export default {
 .tag-filter-input {
     border-radius: 30px;
     border: 0.5px solid rgb(44, 62, 80);
-    width: 55vw;
+    width: 57vw;
     padding: 0 0 0 6vw;
 }
 
@@ -460,12 +428,20 @@ export default {
 
 
 @media screen and (min-width: 475px) {
+    .canvas-display {
+         height: 68.3vh;
+    }
+
     .clickable-tags-list.with-carousel {
-        height: 45.3vh;
+        height: 47.6vh;
     }
 }
 
 @media screen and (max-width: 475px) {
+    .canvas-display {
+        height: 58.3vh;
+    }
+
     .clickable-tags-list.with-carousel {
         height: 38.6vh;
     }
