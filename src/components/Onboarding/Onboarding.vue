@@ -54,6 +54,7 @@
 
 <script>
 import { useWindowSize } from 'vue-window-size';
+import { mapGetters } from 'vuex';
 
 import IntroductionSlide from './Slide/IntroductionSlide.vue';
 import DesktopSlide from './Slide/DesktopSlide.vue';
@@ -112,6 +113,7 @@ export default {
       this.$refs[event].scrollIntoView({ behavior: 'smooth' });
     },
     loadTagView(tag) {
+      this.$store.dispatch('setFullTagPageOrigin', '')
       this.$router.push({
         path: `/full_tag`,
         query: { tag: encodeURIComponent(tag.tag) },
@@ -138,6 +140,14 @@ export default {
     isFullSize() {
       return this.windowWidth > 1200;
     },
+    ...mapGetters({
+      origin: "getFullTagPageOrigin",
+    }),
+  },
+  activated() {
+    if(this.origin == 'tags_slide') {
+      this.$refs['Tags'].scrollIntoView();
+    }
   },
   mounted() {
     const { width, height } = useWindowSize();

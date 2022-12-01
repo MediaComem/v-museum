@@ -9,6 +9,8 @@ import App from "./App.vue";
 import dataFetch from "./api/dataFetching";
 import router from "./router";
 
+import images from "./assets/data/images.json";
+
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
   modules: [
@@ -23,6 +25,15 @@ export const getters = {
   getHistory: (state) => {
     return state.history;
   },
+  getTags: (state) => {
+    return state.tags
+  },
+  getImages: (state) => {
+    return state.images
+  },
+  getFullTagPageOrigin: (state) => {
+    return state.full_tag_page_origin
+  }
 };
 
 export const mutations = {
@@ -42,6 +53,18 @@ export const mutations = {
       });
     }
   },
+  addTag (state, tag) {
+    state.tags.push(tag)
+   },
+   removeTag(state, index) {
+     state.tags.splice(index, 1)
+   },
+   updateImages(state, images) {
+     state.images = images
+   },
+   updateFullTagPageOrigin(state, origin) {
+     state.full_tag_page_origin = origin
+   }
 };
 
 export const actions = {
@@ -59,6 +82,18 @@ export const actions = {
       }
     });
   },
+  insertTag(context, tag) {
+    context.commit("addTag", tag)
+  },
+  removeTag(context, index) {
+    context.commit("removeTag", index)
+  },
+  setImages(context, images) {
+    context.commit("updateImages", images)
+  },
+  setFullTagPageOrigin(context, origin) {
+    context.commit("updateFullTagPageOrigin", origin)
+  }
 };
 
 const store = createStore({
@@ -66,6 +101,9 @@ const store = createStore({
     return {
       history: [],
       fullHistory: false,
+      tags: [''], 
+      images: [images],
+      full_tag_page_origin: '',
     };
   },
   getters: getters,

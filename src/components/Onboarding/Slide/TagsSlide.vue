@@ -3,7 +3,15 @@
     <div
       class="title"
     >
-      <h1 class="justify-text">TAGS</h1>
+      <div class="tags-title">
+      <h1 v-if="show_form" class="tags-h1">SEARCH WITH TAGS</h1>
+      <h1 v-if="show_full_tag_page" class="tags-h1">
+        <span v-for="(tag, index) in selected_tags" :key="index">
+          <span v-if="index > 0">{{ tag.toUpperCase() }}</span>
+          <span v-if="index < selected_tags.length - 1 && index > 0"> & </span>
+        </span>
+      </h1>
+    </div>
       <arrow-up
         class="justify-arrow clickable"
         :isFull="isFullSize"
@@ -12,33 +20,30 @@
         @click="$emit('changeSlide', `decade-${lastId}`)"
       />
     </div>
-    <div
-      ref="tags"
-      class="canvas-display overflow"
-      :style="padding"
-    >
-      <div
-        v-for="(tag, index) in tags.tags.sort((a, b) =>
-          a.tag.localeCompare(b.tag)
-        )"
-        :key="index"
-        :class="{ 'last-element': index == tags.tags.length - 1 }"
-      >
-        <div class="display-element clickable" @click="$emit('loadTagView', tag)">
-          <p :class="fontSize">{{ tag.tag }} • {{ tag.totalImage }}</p>
-        </div>
-      </div>
+    <div v-if="show_form">
+      <tags-combinaisons-form @updateTagsList="updateTagsList" :isMobile="isMobile" />
+      <images-carousel v-if="show_carousel" @showFullTagPage="showFullScreenCarousel()" :isMobile="isMobile"
+        :nbImages="images_bis.length" :key="carousel_key" />
     </div>
+    <full-tag-page v-if="show_full_tag_page" @exitFullScreen="exitFullScreen()" />
     <!-- It ensures the full display in any case -->
-    <div :style="padding" />
+    <!--div :style="padding" /-->
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 import tags from '@/assets/onboarding/tags.json';
+import images from '@/assets/data/images.json';
 import ArrowUp from '../Logo/ArrowUp.vue';
+
+import ImagesCarousel from "../ImagesCarousel.vue";
+import TagsCombinaisonsForm from "../../FullTags/TagCombinaisonsForm.vue";
+import FullTagPage from '../../FullTags/FullTagPage.vue';
+
 export default {
-  components: { ArrowUp },
+  components: { ArrowUp, ImagesCarousel, TagsCombinaisonsForm, FullTagPage },
   emits: ['changeSlide', 'loadTagView'],
   props: {
     isFullSize: Boolean,
@@ -49,7 +54,44 @@ export default {
   data() {
     return {
       tags: tags,
+      show_form: true,
+      show_full_tag_page: false,
+      images,
+      carousel_key: 0,
+      show_carousel: false,
+      images_for_carousel: images,
     };
+  },
+  methods: {
+    updateTagsList(data) {
+      //rebuild the component to prevent array length problems
+      this.carousel_key = data.length
+      if (this.images_bis.length > 0) {
+        this.show_carousel = true
+        this.images_for_carousel = data.images
+      }
+      this.handleClickableTagsDivSize()
+    },
+    showFullScreenCarousel() {
+      this.show_form = false;
+      this.show_full_tag_page = true;
+    },
+    exitFullScreen() {
+      this.show_form = true
+      this.show_carousel = true
+      this.show_full_tag_page = false
+      // //Resize the clickable tags div to let the carousel appear
+      setTimeout(() => {
+        this.handleClickableTagsDivSize()
+      })
+    },
+    handleClickableTagsDivSize() {
+      if (this.selected_tags.length > 1) {
+        document.querySelector('.clickable-tags-list').classList.add('with-carousel')
+      } else {
+        document.querySelector('.clickable-tags-list').classList.remove('with-carousel')
+      }
+    }
   },
   computed: {
     fontSize() {
@@ -63,6 +105,10 @@ export default {
         'padding-bottom': this.isSafariIphone ? '180px' : '15vh',
       }
     },
+    ...mapGetters({
+      images_bis: "getImages",
+      selected_tags: "getTags"
+    }),
   },
 };
 </script>
@@ -78,6 +124,10 @@ export default {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.tags-title {
+  width: 450px;
 }
 
 .justify-arrow {
@@ -164,5 +214,9 @@ export default {
 
 .canvas-display > * {
   border-top: solid 1px black;
+}
+
+.tags-h1 {
+  width: 70vw;
 }
 </style>
