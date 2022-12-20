@@ -33,6 +33,9 @@ export const getters = {
   },
   getFullTagPageOrigin: (state) => {
     return state.full_tag_page_origin
+  },
+  getImagesWithNbTags: (state) => {
+    return state.imagesWithNbTags
   }
 };
 
@@ -54,16 +57,19 @@ export const mutations = {
     }
   },
   addTag (state, tag) {
-    state.tags.push(tag)
+    state.tags.push(tag);
    },
    removeTag(state, index) {
-     state.tags.splice(index, 1)
+     state.tags.splice(index, 1);
    },
    updateImages(state, images) {
-     state.images = images
+     state.images = images;
    },
    updateFullTagPageOrigin(state, origin) {
-     state.full_tag_page_origin = origin
+     state.full_tag_page_origin = origin;
+   },
+   ImagesWithNbTags(state, images) {
+    state.imagesWithNbTags = images;
    }
 };
 
@@ -93,6 +99,9 @@ export const actions = {
   },
   setFullTagPageOrigin(context, origin) {
     context.commit("updateFullTagPageOrigin", origin)
+  },
+  setImagesWithNbTags(context, images) {
+    context.commit("ImagesWithNbTags", images)
   }
 };
 
@@ -102,8 +111,9 @@ const store = createStore({
       history: [],
       fullHistory: false,
       tags: [''], 
-      images: [images],
+      images: images,
       full_tag_page_origin: '',
+      imagesWithNbTags: [],
     };
   },
   getters: getters,

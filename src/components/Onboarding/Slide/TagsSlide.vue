@@ -1,34 +1,49 @@
 <template>
+  <div v-if="searchView" class="overlay" @click="searchView = false"></div>
   <div style="height: 100vh;">
-    <div
-      class="title"
-    >
+    <div class="title">
+      <div class="tag-header-back">
+        <img src="@/assets/shared/Vector.svg" />
+      </div>
       <div class="tags-title">
-      <h1 v-if="show_form" class="tags-h1">SEARCH WITH TAGS</h1>
-      <h1 v-if="show_full_tag_page" class="tags-h1">
-        <span v-for="(tag, index) in selected_tags" :key="index">
-          <span v-if="index > 0">{{ tag.toUpperCase() }}</span>
-          <span v-if="index < selected_tags.length - 1 && index > 0"> & </span>
-        </span>
-      </h1>
-    </div>
-      <arrow-up
-        class="justify-arrow clickable"
-        :isFull="isFullSize"
-        :isMobile="isMobile"
-        :text="arrowText"
-        @click="$emit('changeSlide', `decade-${lastId}`)"
-      />
+        <h1 v-if="show_form">TAGS</h1>
+        <h1 v-if="show_full_tag_page">
+          <span v-for="(tag, index) in selected_tags" :key="index">
+            <span v-if="index > 0">{{ tag.toUpperCase() }}</span>
+            <span v-if="index < selected_tags.length - 1 && index > 0">
+              &
+            </span>
+          </span>
+        </h1>
+      </div>
+      <div class="tag-header-search">
+        <img src="@/assets/onboarding/search.svg" @click="searchView = true" />
+      </div>
     </div>
     <div v-if="show_form">
-      <tags-combinaisons-form @updateTagsList="updateTagsList" :isMobile="isMobile" />
-      <images-carousel v-if="show_carousel" @showFullTagPage="showFullScreenCarousel()" :isMobile="isMobile"
-        :nbImages="images_bis.length" :key="carousel_key" />
+      <images-carousel
+        @showFullTagPage="showFullScreenCarousel()"
+        :is-mobile="isMobile"
+        :nbImages="images_bis.length"
+        :show-carousel="show_carousel"
+        :key="carousel_key"
+      />
+      <tags-combinaisons-form
+        @updateTagsList="updateTagsList"
+        :is-mobile="isMobile"
+        :show-carousel="show_carousel"
+      />
     </div>
-    <full-tag-page v-if="show_full_tag_page" @exitFullScreen="exitFullScreen()" />
-    <!-- It ensures the full display in any case -->
-    <!--div :style="padding" /-->
+    <full-tag-page
+      v-if="show_full_tag_page"
+      @exitFullScreen="exitFullScreen()"
+    />
   </div>
+  <search-tag
+    @close="searchView = false"
+    :is-mobile="isMobile"
+    :is-display="searchView"
+  />>
 </template>
 
 <script>
@@ -36,14 +51,14 @@ import { mapGetters } from 'vuex';
 
 import tags from '@/assets/onboarding/tags.json';
 import images from '@/assets/data/images.json';
-import ArrowUp from '../Logo/ArrowUp.vue';
 
-import ImagesCarousel from "../ImagesCarousel.vue";
-import TagsCombinaisonsForm from "../../FullTags/TagCombinaisonsForm.vue";
+import ImagesCarousel from '../ImagesCarousel.vue';
+import TagsCombinaisonsForm from '../../FullTags/TagCombinaisonsForm.vue';
+import SearchTag from './SearchTag.vue';
 import FullTagPage from '../../FullTags/FullTagPage.vue';
 
 export default {
-  components: { ArrowUp, ImagesCarousel, TagsCombinaisonsForm, FullTagPage },
+  components: { ImagesCarousel, TagsCombinaisonsForm, FullTagPage, SearchTag },
   emits: ['changeSlide', 'loadTagView'],
   props: {
     isFullSize: Boolean,
@@ -60,38 +75,27 @@ export default {
       carousel_key: 0,
       show_carousel: false,
       images_for_carousel: images,
+      searchView: false,
     };
   },
   methods: {
     updateTagsList(data) {
       //rebuild the component to prevent array length problems
-      this.carousel_key = data.length
+      this.carousel_key = data.length;
       if (this.images_bis.length > 0) {
-        this.show_carousel = true
-        this.images_for_carousel = data.images
+        this.show_carousel = this.selected_tags.length > 1;
+        this.images_for_carousel = data.images;
       }
-      this.handleClickableTagsDivSize()
     },
     showFullScreenCarousel() {
       this.show_form = false;
       this.show_full_tag_page = true;
     },
     exitFullScreen() {
-      this.show_form = true
-      this.show_carousel = true
-      this.show_full_tag_page = false
-      // //Resize the clickable tags div to let the carousel appear
-      setTimeout(() => {
-        this.handleClickableTagsDivSize()
-      })
+      this.show_form = true;
+      this.show_carousel = true;
+      this.show_full_tag_page = false;
     },
-    handleClickableTagsDivSize() {
-      if (this.selected_tags.length > 1) {
-        document.querySelector('.clickable-tags-list').classList.add('with-carousel')
-      } else {
-        document.querySelector('.clickable-tags-list').classList.remove('with-carousel')
-      }
-    }
   },
   computed: {
     fontSize() {
@@ -103,11 +107,11 @@ export default {
     padding() {
       return {
         'padding-bottom': this.isSafariIphone ? '180px' : '15vh',
-      }
+      };
     },
     ...mapGetters({
-      images_bis: "getImages",
-      selected_tags: "getTags"
+      images_bis: 'getImages',
+      selected_tags: 'getTags',
     }),
   },
 };
@@ -116,18 +120,30 @@ export default {
 <style scoped>
 @import '../../shared/pointer.css';
 
+.overlay {
+  background-color: black;
+  opacity: 0.2;
+  z-index: 2;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
 .title {
-  height: 10vh;
-  width: 92vw;
-  padding-left: 4vw;
-  padding-right: 2vw;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 33%);
+  grid-template-rows: 10vh;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
 }
 
 .tags-title {
-  width: 450px;
+  grid-area: 1 / 2 / 2 / 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .justify-arrow {
@@ -138,18 +154,6 @@ export default {
 .justify-text {
   width: 10vw;
   justify-content: flex-start;
-}
-
-.canvas-display {
-  display: inline-flex;
-  flex-wrap: wrap;
-  width: 92vw;
-  height: -webkit-fill-available;
-  padding-left: 4vw;
-  padding-right: 2vw;
-  justify-content: left;
-  align-items: center;
-  padding-bottom: 15vh;
 }
 
 @media only screen and (min-width: 300px) and (max-width: 436px) {
@@ -212,11 +216,22 @@ export default {
   font-size: small;
 }
 
-.canvas-display > * {
-  border-top: solid 1px black;
+.tag-header-back {
+  grid-area: 1 / 1 / 2 / 2;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 2%;
 }
 
-.tags-h1 {
-  width: 70vw;
+.tag-header-search {
+  grid-area: 1 / 3 / 2 / 4;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.tag-header-search > img {
+  cursor: pointer;
 }
 </style>
