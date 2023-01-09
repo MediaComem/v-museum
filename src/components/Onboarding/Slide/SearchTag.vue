@@ -6,6 +6,7 @@
   >
     <div class="header">
       <img
+        class="clickable"
         src="@/assets/shared/cross.svg"
         alt="cross"
         @click="$emit('close')"
@@ -20,7 +21,7 @@
     </div>
     <div class="display-tags">
       <div v-for="(element, index) in availableTags" :key="index">
-        <div class="tag-element" @click="addTag(element.tag)">
+        <div class="tag-element" @click="addTag(element.tag)" :style="{'background-color': currentInput.toLowerCase() === element.tag.toLowerCase() ? 'red' : 'white'}">
           <p class="tag-name">{{ element.tag }}</p> 
           <p class="tag-number">{{ element.nb_images }}</p>
         </div>
@@ -38,6 +39,11 @@ export default {
     isDisplay: Boolean,
   },
   emits: ['close'],
+  watch: {
+    isDisplay: function(newVal) {
+      if (newVal) this.availableTags = this.getImagesWithNbTags.filter((tag) => !this.getTags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase()));
+    },
+  },
   data() {
     return {
       timeout_for_user_input_speed_balance: undefined,
@@ -53,6 +59,7 @@ export default {
       this.$store.dispatch('insertTag', tag);
       this.currentInput = '';
       this.availableTags = this.getImagesWithNbTags.filter((tag) => !this.getTags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase()));
+      this.$emit('close');
     },
     updateSearchTag(event) {
       clearTimeout(this.timeout_for_user_input_speed_balance);
@@ -76,6 +83,8 @@ export default {
 </script>
 
 <style scoped>
+@import '../../shared/pointer.css';
+
 .transition {
     transition: all 0.3s ease-in-out;
 }
@@ -96,7 +105,7 @@ export default {
   position: fixed;
   right: 0px;
   top: 0px;
-  z-index: 1;
+  z-index: 3;
   background-color: white;
 }
 

@@ -1,22 +1,73 @@
 <template>
   <div v-if="showCarousel" class="images-preview-carousel">
-    <div class="tag-remover">
-      <div v-for="(tag, index) in selected_tags" :key="index">
-        <div v-if="tag.length > 0" class="tag-remove-layout">
-          <img
-            src="@/assets/onboarding/cross_white.svg"
-            alt="cross"
-            @click="removeTag(index)"
-          />
-          <p>{{ tag }}</p>
+    <div class="tag-remover"
+      @mouseover="displayTagArrow = true"
+      @mouseleave="displayTagArrow = false">
+      <div class="tag-carousel-layout">
+        <div class="left-arrow">
+          <svg
+            v-if="displayTagArrow"
+            class="button-svg"
+            @click="showPreviousTags()"
+            @mouseover="tagArrowLeftColor = '#616161'"
+            @mouseleave="tagArrowLeftColor = '#FFFFFF'"
+            width="15"
+            height="25"
+            viewBox="0 0 15 25"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              class="previous-arrow"
+              d="M12.2499 -1.90735e-06L14.3999 2.15L4.4999 12.05L14.3999 21.95L12.2499 24.1L0.199903 12.05L12.2499 -1.90735e-06Z"
+              :fill="tagArrowLeftColor"
+            />
+          </svg>
+        </div>
+        <div class="images-layout" ref="tags">
+          <div v-for="(tag, index) in selected_tags" :key="index">
+            <div v-if="tag.length > 0" class="tag-remove-layout">
+              <img
+                src="@/assets/onboarding/cross_white.svg"
+                alt="cross"
+                @click="removeTag(index)"
+              />
+              <p>{{ tag }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="right-arrow">
+          <svg
+            v-if="displayTagArrow"
+            class="button-svg"
+            @click="showNextTags()"
+            @mouseover="tagArrowRighttColor = '#616161'"
+            @mouseleave="tagArrowRighttColor = '#FFFFFF'"
+            width="15"
+            height="25"
+            viewBox="0 0 15 25"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              class="next-arrow"
+              d="M2.7501 25L0.600098 22.85L10.5001 12.95L0.600098 3.05L2.7501 0.900002L14.8001 12.95L2.7501 25Z"
+              :fill="tagArrowRighttColor"
+            />
+          </svg>
         </div>
       </div>
     </div>
-    <div class="images-arrows-wrapper">
+    <div
+      class="images-arrows-wrapper"
+      @mouseover="displayArrow = true"
+      @mouseleave="displayArrow = false"
+    >
       <div class="carousel-layout">
         <div class="left-arrow">
           <!-- previous image arrow-->
           <svg
+            v-if="displayArrow"
             class="button-svg"
             @click="showPreviousImage()"
             @mouseover="arrowLeftColor = '#616161'"
@@ -53,6 +104,7 @@
         <!-- next image arrow-->
         <div class="right-arrow">
           <svg
+            v-if="displayArrow"
             class="button-svg"
             @click="showNextImage()"
             @mouseover="arrowRighttColor = '#616161'"
@@ -81,7 +133,10 @@
       >
     </div>
     <div class="buttons">
-      <span :classe="fontSize" class="nb-docs" @click="$emit('showFullTagPage')"
+      <span
+        :classe="fontSize"
+        class="nb-docs fullscreen"
+        @click="$emit('showFullTagPage')"
         >Voir tous ></span
       >
     </div>
@@ -108,15 +163,30 @@ export default {
       images_index_to_display: Array.from(Array(this.nbImages).keys()),
       position: 0,
       arrowLeftColor: '#ffffff',
-      arrowRighttColor: '#ffffff'
+      arrowRighttColor: '#ffffff',
+      tagArrowLeftColor: '#ffffff',
+      tagArrowRighttColor: '#ffffff',
+      moveInterval: undefined,
+      displayArrow: false,
+      displayTagArrow: false,
     };
   },
   methods: {
     showPreviousImage() {
-        this.$refs.carousel.scrollLeft = this.$refs.carousel.scrollLeft - (window.innerWidth - 300);
+      this.$refs.carousel.scrollLeft =
+        this.$refs.carousel.scrollLeft - (window.innerWidth - 300);
     },
     showNextImage() {
-        this.$refs.carousel.scrollLeft = this.$refs.carousel.scrollLeft + (window.innerWidth - 300);
+      this.$refs.carousel.scrollLeft =
+        this.$refs.carousel.scrollLeft + (window.innerWidth - 300);
+    },
+    showPreviousTags() {
+      this.$refs.tags.scrollLeft =
+        this.$refs.tags.scrollLeft - (window.innerWidth - 300);
+    },
+    showNextTags() {
+      this.$refs.tags.scrollLeft =
+        this.$refs.tags.scrollLeft + (window.innerWidth - 300);
     },
     //Create array representing number of images to display
     loadImage(imageId) {
@@ -177,7 +247,6 @@ export default {
 .tag-remover {
   grid-area: 1 / 1 / 2 / 3;
   display: flex;
-  padding-left: 10px;
   border-bottom: 1px solid #808080;
   overflow-x: auto;
   height: 50px;
@@ -191,6 +260,12 @@ export default {
   display: flex;
   margin-top: 10px;
   margin-bottom: 10px;
+  width: max-content;
+}
+
+.tag-remove-layout:hover {
+  color: #808080;
+  border-color: #808080;
 }
 
 .tag-remove-layout > img {
@@ -233,6 +308,14 @@ export default {
   display: grid;
   grid-template-columns: 30px calc(100vw - 60px) 30px;
   grid-template-rows: 20vh;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+}
+
+.tag-carousel-layout {
+  display: grid;
+  grid-template-columns: 30px calc(100vw - 60px) 30px;
+  grid-template-rows: 50px;
   grid-column-gap: 0px;
   grid-row-gap: 0px;
 }
@@ -304,5 +387,13 @@ export default {
   align-items: center;
   color: #808080;
   padding-right: 10px;
+}
+
+.fullscreen {
+  cursor: pointer;
+}
+
+.fullscreen:hover {
+  color: #808080;
 }
 </style>

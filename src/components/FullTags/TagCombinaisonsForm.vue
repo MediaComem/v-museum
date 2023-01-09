@@ -131,7 +131,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .canvas-display {
     display: inline-flex;
     flex-wrap: wrap;

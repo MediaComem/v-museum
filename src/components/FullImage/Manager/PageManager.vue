@@ -3,6 +3,7 @@
     style="width: 53px; height: 53px; display: flex; justify-content: center; align-items: center;"
   >
     <img
+      class="clickable"
       src="@/assets/shared/cross.svg"
       @click="backToCanvasView()"
       style="width: 30px; height: 29px"
@@ -11,7 +12,7 @@
   <div
     style="width: 53px; height: 53px; display: flex; justify-content: center; align-items: center;"
   >
-    <infos @click="$emit('changeDisplay')" :display="display" />
+    <infos class="clickable" @click="$emit('changeDisplay')" :display="display" />
   </div>
 </template>
 
@@ -34,4 +35,6 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+@import '../../shared/pointer.css';
+</style>

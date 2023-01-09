@@ -3,7 +3,7 @@
   <div style="height: 100vh;">
     <div class="title">
       <div class="tag-header-back">
-        <img src="@/assets/shared/Vector.svg" />
+        <img class="clickable" src="@/assets/shared/Vector.svg" @click="backButton()"/>
       </div>
       <div class="tags-title">
         <h1 v-if="show_form">TAGS</h1>
@@ -16,8 +16,8 @@
           </span>
         </h1>
       </div>
-      <div class="tag-header-search">
-        <img src="@/assets/onboarding/search.svg" @click="searchView = true" />
+      <div v-if="!show_full_tag_page" class="tag-header-search">
+        <img class="clickable" src="@/assets/onboarding/search.svg" @click="searchView = true" />
       </div>
     </div>
     <div v-if="show_form">
@@ -34,10 +34,7 @@
         :show-carousel="show_carousel"
       />
     </div>
-    <full-tag-page
-      v-if="show_full_tag_page"
-      @exitFullScreen="exitFullScreen()"
-    />
+    <full-tag-page v-if="show_full_tag_page"/>
   </div>
   <search-tag
     @close="searchView = false"
@@ -79,6 +76,9 @@ export default {
     };
   },
   methods: {
+    backButton() {
+      if (this.show_full_tag_page) this.exitFullScreen();
+    },
     updateTagsList(data) {
       //rebuild the component to prevent array length problems
       this.carousel_key = data.length;
