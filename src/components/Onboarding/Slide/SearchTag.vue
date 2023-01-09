@@ -3,6 +3,8 @@
     class="transition"
     :class="{ 'search-layout': !isMobile, 'search-layout-mobile': isMobile }"
     :style="{right: isMobile ? isDisplay ? '0vw' : '-100vw' : isDisplay ? '0px' : '-375px'}"
+    @keyup.down="nextIndex"
+    @keyup.up="previousIndex"
   >
     <div class="header">
       <img
@@ -12,18 +14,22 @@
         @click="$emit('close')"
       />
       <input
+        ref="searchInput"
         type="text"
         placeholder="Search"
         v-model="currentInput"
         @input="updateSearchTag"
-        @keyup.enter="addTag(currentInput)"
+        @keyup.enter="addTag()"
       />
     </div>
-    <div class="display-tags">
+    <div ref="displayTags" class="display-tags">
       <div v-for="(element, index) in availableTags" :key="index">
-        <div class="tag-element" @click="addTag(element.tag)" :style="{'background-color': currentInput.toLowerCase() === element.tag.toLowerCase() ? 'red' : 'white'}">
-          <p class="tag-name">{{ element.tag }}</p> 
-          <p class="tag-number">{{ element.nb_images }}</p>
+        <div class="tag-element" 
+          @click="addTag(element.tag)" 
+          @mouseover="currentIndex = index"
+        >
+          <p class="tag-name" :style="{'background-color': currentInput.toLowerCase() === element.tag.toLowerCase() ? 'rgb(0,0,0,0.2)' : currentIndex === index ? 'rgb(0,0,0,0.2)' : 'white'}">{{ element.tag }}</p> 
+          <p class="tag-number" :style="{'background-color': currentInput.toLowerCase() === element.tag.toLowerCase() ? 'rgb(0,0,0,0.2)' : currentIndex === index ? 'rgb(0,0,0,0.2)' : 'white'}">{{ element.nb_images }}</p>
         </div>
       </div>
     </div>
@@ -41,13 +47,17 @@ export default {
   emits: ['close'],
   watch: {
     isDisplay: function(newVal) {
-      if (newVal) this.availableTags = this.getImagesWithNbTags.filter((tag) => !this.getTags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase()));
+      if (newVal) {
+        this.availableTags = this.getImagesWithNbTags.filter((tag) => !this.getTags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase()));
+        this.$refs.searchInput.focus();
+      }
     },
   },
   data() {
     return {
       timeout_for_user_input_speed_balance: undefined,
       currentInput: '',
+      currentIndex: 0,
       availableTags: [],
     };
   },
@@ -55,11 +65,14 @@ export default {
     ...mapGetters(['getImagesWithNbTags', 'getTags']),
   },
   methods: {
-    addTag(tag) {
-      this.$store.dispatch('insertTag', tag);
-      this.currentInput = '';
-      this.availableTags = this.getImagesWithNbTags.filter((tag) => !this.getTags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase()));
-      this.$emit('close');
+    addTag() {
+      const tag = this.availableTags[this.currentIndex];
+      if (tag) {
+        this.$store.dispatch('insertTag', tag.tag);
+        this.currentInput = '';
+        this.availableTags = this.getImagesWithNbTags.filter((tag) => !this.getTags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase()));
+        this.$emit('close');
+      }
     },
     updateSearchTag(event) {
       clearTimeout(this.timeout_for_user_input_speed_balance);
@@ -72,9 +85,21 @@ export default {
         this.availableTags = this.getImagesWithNbTags.filter((tag) =>
           tag.tag.toLowerCase().includes(formated_string) && !this.getTags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase())
         );
-
+        this.currentIndex = 0;
       }, 250);
     },
+    nextIndex() {
+      if (this.currentIndex < this.availableTags.length - 1 ) {
+        this.currentIndex = this.currentIndex + 1;
+        this.$refs.displayTags.scrollTop = this.$refs.displayTags.scrollTop + 69.5;
+      } 
+    },
+    previousIndex() {
+      if (this.currentIndex > 0 ) {
+        this.currentIndex = this.currentIndex - 1;
+        this.$refs.displayTags.scrollTop = this.$refs.displayTags.scrollTop - 69.5;
+      }
+    }
   },
   mounted() {
     this.availableTags = this.getImagesWithNbTags.filter((tag) => !this.getTags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase()));
