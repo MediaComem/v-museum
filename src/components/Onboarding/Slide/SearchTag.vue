@@ -24,7 +24,8 @@
     </div>
     <div ref="displayTags" class="display-tags">
       <div v-for="(element, index) in availableTags" :key="index">
-        <div class="tag-element" 
+        <div
+          class="tag-element" 
           @click="addTag(element.tag)" 
           @mouseover="currentIndex = index"
         >
@@ -39,6 +40,8 @@
 <script>
 import { mapGetters } from 'vuex';
 
+import { useWindowSize } from 'vue-window-size';
+
 export default {
   props: {
     isMobile: Boolean,
@@ -52,6 +55,9 @@ export default {
         this.$refs.searchInput.focus();
       }
     },
+    windowHeight: function(newVal) {
+      this.maxElementDisplay(newVal);
+    },
   },
   data() {
     return {
@@ -59,6 +65,9 @@ export default {
       currentInput: '',
       currentIndex: 0,
       availableTags: [],
+      windowHeight: 0,
+      currentMinIndex: 0,
+      currentMaxIndex: 0,
     };
   },
   computed: {
@@ -86,22 +95,40 @@ export default {
           tag.tag.toLowerCase().includes(formated_string) && !this.getTags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase())
         );
         this.currentIndex = 0;
+        this.currentMaxIndex = this.currentMaxIndex - this.currentMinIndex;
+        this.currentMinIndex = 0;
+        this.$refs.displayTags.scrollTop = 0;
       }, 250);
     },
     nextIndex() {
       if (this.currentIndex < this.availableTags.length - 1 ) {
         this.currentIndex = this.currentIndex + 1;
-        this.$refs.displayTags.scrollTop = this.$refs.displayTags.scrollTop + 69.5;
+        if (this.currentIndex > this.currentMaxIndex) {
+          this.$refs.displayTags.scrollTop = this.$refs.displayTags.scrollTop + 69.5;
+          this.currentMinIndex += 1;
+          this.currentMaxIndex += 1;
+        }
+        
       } 
     },
     previousIndex() {
       if (this.currentIndex > 0 ) {
         this.currentIndex = this.currentIndex - 1;
-        this.$refs.displayTags.scrollTop = this.$refs.displayTags.scrollTop - 69.5;
+        if (this.currentIndex < this.currentMinIndex) {
+          this.$refs.displayTags.scrollTop = this.$refs.displayTags.scrollTop - 69.5;
+          this.currentMinIndex -= 1;
+          this.currentMaxIndex -= 1;
+        }
       }
+    },
+    maxElementDisplay(height) {
+      this.currentMaxIndex = Math.floor((height - 47) / 69) - 1
     }
   },
   mounted() {
+    const { height } = useWindowSize();
+    this.windowHeight = height;
+    this.maxElementDisplay(this.windowHeight);
     this.availableTags = this.getImagesWithNbTags.filter((tag) => !this.getTags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase()));
   },
 };
