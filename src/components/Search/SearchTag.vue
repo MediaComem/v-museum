@@ -135,7 +135,7 @@ export default {
 </script>
 
 <style scoped>
-@import '../../shared/pointer.css';
+@import '../shared/pointer.css';
 
 .transition {
     transition: all 0.3s ease-in-out;

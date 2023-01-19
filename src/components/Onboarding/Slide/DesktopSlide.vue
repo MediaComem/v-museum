@@ -6,20 +6,19 @@
   <div
     class="collapse-transition"
     :style="collapse"
-    style="position: absolute; left: 0px; top: 0px; height: 100vh; overflow-y:scroll"
+    style="position: absolute; left: 0px; top: 0px; height: 100vh; overflow-y:scroll; z-index: 100"
   >
+    <div class="close-collapse-band">
+      <img class="close-collapse-cross clickable" src="@/assets/shared/cross.svg" alt="cross" @click="isCollapse = !isCollapse">
+    </div>
     <p class="collection-text collapse-text-align overflow">{{ item.text }}</p>
   </div>
   <logo
     style="position: absolute; left: 2vw; top: 2vh; z-index: 1;"
   />
-  <arrow-up
-    :isFull="isFullSize"
-    :isMobile="false"
-    class="arrow-up"
-    :text="index === 0 ? mainTitle : information.collection[index - 1]"
-    @click="changeSlide('UP')"
-  />
+  <div class="menu-item">
+    <MenuIcon @click="openMenu()"/>
+  </div>
   <div
     class="collection-position"
   >
@@ -50,59 +49,34 @@
       />
     </el-row>
   </div>
-  <arrow-down
-    class="arrow-down"
-    :isMobile="false"
-    :isFull="isFullSize"
-    :text="
-      index === information.collection.length - 1
-        ? allTagText
-        : information.collection[index + 1]
-    "
-    @click="changeSlide('DOWN')"
-  />
+  <Menu :open="isOpenMenu" @close="isOpenMenu = false" @change-slide="$emit('changeSlide', $event)"/>
 </template>
 
 <script>
 import Logo from '../../shared/components/Logo.vue';
-import ArrowUp from '../Logo/ArrowUp.vue';
-import ArrowDown from '../Logo/ArrowDown.vue';
+import MenuIcon from '../../shared/components/MenuIcon.vue';
 import DocumentsInformation from '../Logo/DocumentsInformation.vue';
+import Menu from '../../shared/components/Menu.vue';
 
 export default {
-  components: { Logo, ArrowUp, ArrowDown, DocumentsInformation },
+  components: { Logo, DocumentsInformation, MenuIcon, Menu },
   emits: ['loadTagView', 'changeSlide'],
   props: {
     index: Number,
     item: Object,
     isFullSize: Boolean,
     mainTitle: Object,
-    allTagText: Object,
     information: Object,
   },
   data() {
     return {
       isCollapse: false,
+      isOpenMenu: false,
     };
   },
   methods: {
-    changeSlide(event) {
-      if (event === 'UP') {
-        if (this.index === 0) {
-          this.$emit('changeSlide', 'Introduction')
-        }
-        else {
-          this.$emit('changeSlide', `decade-${this.index - 1}`)
-        }
-      }
-      else {
-        if (this.index === this.information.collection.length - 1) {
-          this.$emit('changeSlide', 'Tags')
-        }
-        else {
-          this.$emit('changeSlide', `decade-${this.index + 1}`)
-        }
-      }
+    openMenu() {
+      this.isOpenMenu = true;
     }
   },
   computed: {

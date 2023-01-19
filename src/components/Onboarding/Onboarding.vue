@@ -21,7 +21,6 @@
         :item="item"
         :isFullSize="isFullSize"
         :mainTitle="mainTitle"
-        :allTagText="allTagText"
         @load-tag-view="loadTagView"
         @change-slide="changeSlide"
       />
@@ -34,17 +33,6 @@
         :item="item"
         :isFullSize="isFullSize"
         :mainTitle="mainTitle"
-        :allTagText="allTagText"
-        @load-tag-view="loadTagView"
-        @change-slide="changeSlide"
-      />
-    </section>
-    <section :ref="'Tags'">
-      <tags-slide
-        :lastId="information.collection.length - 1"
-        :isFullSize="isFullSize"
-        :isMobile="isMobile"
-        :arrowText="information.collection[information.collection.length - 1]"
         @load-tag-view="loadTagView"
         @change-slide="changeSlide"
       />
@@ -59,7 +47,6 @@ import { mapGetters } from 'vuex';
 import IntroductionSlide from './Slide/IntroductionSlide.vue';
 import DesktopSlide from './Slide/DesktopSlide.vue';
 import MobileSlide from './Slide/MobileSlide.vue';
-import TagsSlide from './Slide/TagsSlide.vue';
 
 import text from '@/assets/onboarding/text.json';
 
@@ -69,7 +56,6 @@ export default {
     IntroductionSlide,
     DesktopSlide,
     MobileSlide,
-    TagsSlide,
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -82,7 +68,6 @@ export default {
   data() {
     return {
       mainTitle: { title: 'INTRODUCTION' },
-      allTagText: { title: 'ALL TAGS' },
       information: text,
       isCollapse: false,
       slide: 0,
@@ -125,9 +110,7 @@ export default {
         index = this.information.collection.findIndex((e) => {
           return e.tag.tag == this.tag;
         });
-        if (index === -1) {
-          this.$refs['Tags'].scrollIntoView();
-        } else {
+        if (index !== -1) {
           this.$refs[`decade-${index}`].scrollIntoView();
         }
       }
@@ -143,11 +126,6 @@ export default {
     ...mapGetters({
       origin: "getFullTagPageOrigin",
     }),
-  },
-  activated() {
-    if(this.origin == 'tags_slide') {
-      this.$refs['Tags'].scrollIntoView();
-    }
   },
   mounted() {
     const { width, height } = useWindowSize();

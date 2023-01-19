@@ -18,6 +18,39 @@ h3 {
   object-fit: cover;
 }
 
+.menu {
+  display: grid;
+  grid-template-columns: 115px 100px 94px;
+  grid-template-rows: 1fr;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  width: 309px; 
+  border: 2px solid black; 
+  border-radius: 24px; 
+  height: 48px
+}
+
+.menu-collection {
+  grid-area: 1 / 1 / 2 / 2;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
+.menu-search {
+  grid-area: 1 / 2 / 2 / 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-about {
+  grid-area: 1 / 3 / 2 / 4;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
 @media only screen and (min-width: 300px) and (max-width: 369px) {
   .page-title {
     font-size: 38px;
@@ -96,5 +129,6 @@ h3 {
 .link {
   color: black;
   font-size: 15px;
-  margin-bottom: 4vh;
+  text-decoration: none;
+  cursor: pointer;
 }

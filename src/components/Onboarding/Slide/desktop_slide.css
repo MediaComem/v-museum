@@ -1,7 +1,6 @@
 .collapse-text-align {
   text-align: left;
   position: absolute;
-  top: 20vh;
   margin: 3vw;
   max-width: 35em;
 }
@@ -25,13 +24,6 @@
   font-size: 18px;
   text-align: left;
   max-width: 35em;
-}
-
-.arrow-down {
-  position: absolute;
-  top: 90vh;
-  width: 98vw;
-  justify-content: flex-end;
 }
 
 .collection-title {
@@ -62,4 +54,16 @@
   left: 60vw;
   top: 10vh;
 }
- 
+
+.close-collapse-band {
+  height: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-collapse-cross {
+  width: 24px;
+  height: 24px;
+  margin-top: 10px;
+}

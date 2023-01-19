@@ -22,9 +22,22 @@
       class="margin-text"
       style="text-align: center"
     >
-      <router-link to="/about" custom v-slot="{ navigate, href }">
-        <a class="link" :href="href" @click="navigate">About this website</a>
-      </router-link>
+    <div class="menu">
+      <div class="menu-collection">
+        <p class="link" @click="$emit('changeSlide', 'decade-0')">Collection</p>
+      </div>
+      <div class="menu-search">
+        <router-link to="/search" custom v-slot="{ navigate, href }">
+          <a class="link" :href="href" @click="navigate">Search</a>
+        </router-link>
+      </div>
+      <div class="menu-about">
+        <router-link to="/about" custom v-slot="{ navigate, href }">
+          <a class="link" :href="href" @click="navigate">About</a>
+        </router-link>
+      </div>
+    </div>
+      
     </el-row>
     <el-row :gutter="20" :justify="'center'" style="margin: 5px;">
       <h3 class="text-title">{{ information.header }}</h3>
@@ -32,23 +45,11 @@
     <el-row :gutter="20" :justify="'center'" style="margin: 5px;">
       <p class="text">{{ information.body }}</p>
     </el-row>
-    <el-row :justify="'center'" :style="padding">
-      <arrow-down
-        style="justify-content: center"
-        :text="undefined"
-        :isFull="true"
-        :isMobile="false"
-        @click="$emit('changeSlide', 'decade-0')"
-      />
-    </el-row>
   </div>
 </template>
 
 <script>
-import ArrowDown from '../Logo/ArrowDown.vue';
-
 export default {
-  components: { ArrowDown },
   props: {
     information: Object,
   },

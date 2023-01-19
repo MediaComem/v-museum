@@ -49,10 +49,10 @@ import { mapGetters } from 'vuex';
 import tags from '@/assets/onboarding/tags.json';
 import images from '@/assets/data/images.json';
 
-import ImagesCarousel from '../ImagesCarousel.vue';
-import TagsCombinaisonsForm from '../../FullTags/TagCombinaisonsForm.vue';
+import ImagesCarousel from './ImagesCarousel.vue';
+import TagsCombinaisonsForm from '../FullTags/TagCombinaisonsForm.vue';
 import SearchTag from './SearchTag.vue';
-import FullTagPage from '../../FullTags/FullTagPage.vue';
+import FullTagPage from '../FullTags/FullTagPage.vue';
 
 export default {
   components: { ImagesCarousel, TagsCombinaisonsForm, FullTagPage, SearchTag },
@@ -78,6 +78,7 @@ export default {
   methods: {
     backButton() {
       if (this.show_full_tag_page) this.exitFullScreen();
+      else this.$router.push({path: `/`});
     },
     updateTagsList(data) {
       //rebuild the component to prevent array length problems
@@ -118,7 +119,7 @@ export default {
 </script>
 
 <style scoped>
-@import '../../shared/pointer.css';
+@import '../shared/pointer.css';
 
 .overlay {
   background-color: black;

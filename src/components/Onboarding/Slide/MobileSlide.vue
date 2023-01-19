@@ -32,13 +32,9 @@
         :src="`/v-museum/onboarding/${item.imagePath}`"
       />
     </el-row>
-    <arrow-up
-      :isMobile="true"
-      :isFull="false"
-      class="arrow-up"
-      :text="index === 0 ? mainTitle : information.collection[index - 1]"
-      @click="changeSlide('UP')"
-    />
+    <div class="menu-item">
+      <MenuIcon @click="openMenu()"/>
+    </div>
     <el-row>
       <h2 class="collection-title-mobile mobile-margin">
         {{ item.title }}
@@ -57,60 +53,34 @@
         <a class="more-link" @click="isCollapse = !isCollapse">MORE</a>
       </p>
     </el-row>
-    <el-row class="arrow-down-mobile">
-      <arrow-down
-        :isMobile="true"
-        :isFull="false"
-        :text="
-          index === information.collection.length - 1
-            ? allTagText
-            : information.collection[index + 1]
-        "
-        @click="changeSlide('DOWN')"
-      />
-    </el-row>
   </div>
+  <Menu :open="isOpenMenu" @close="isOpenMenu = false" @change-slide="$emit('changeSlide', $event)"/>
 </template>
 
 <script>
-import ArrowUp from "../Logo/ArrowUp.vue";
-import ArrowDown from "../Logo/ArrowDown.vue";
 import DocumentsInformation from "../Logo/DocumentsInformation.vue";
+import MenuIcon from '../../shared/components/MenuIcon.vue';
+import Menu from '../../shared/components/Menu.vue';
 
 export default {
-  components: { ArrowUp, ArrowDown, DocumentsInformation },
+  components: { DocumentsInformation, MenuIcon, Menu },
   emits: ['loadTagView', 'changeSlide'],
   props: {
     index: Number,
     item: Object,
     isFullSize: Boolean,
     mainTitle: Object,
-    allTagText: Object,
     information: Object,
   },
   data() {
     return {
       isCollapse: false,
+      isOpenMenu: false,
     };
   },
   methods: {
-    changeSlide(event) {
-      if (event === 'UP') {
-        if (this.index === 0) {
-          this.$emit('changeSlide', 'Introduction')
-        }
-        else {
-          this.$emit('changeSlide', `decade-${this.index - 1}`)
-        }
-      }
-      else {
-        if (this.index === this.information.collection.length - 1) {
-          this.$emit('changeSlide', 'Tags')
-        }
-        else {
-          this.$emit('changeSlide', `decade-${this.index + 1}`)
-        }
-      }
+    openMenu() {
+      this.isOpenMenu = true;
     }
   },
   computed: {

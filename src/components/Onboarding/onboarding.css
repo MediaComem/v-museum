@@ -22,9 +22,10 @@ h3 {
   transition-timing-function: ease-out;
 }
 
-.arrow-up {
+.menu-item {
+  display: flex;
   position: absolute;
-  top: 2vh;
+  top: 1vh;
   width: 98vw;
   justify-content: flex-end;
 }
