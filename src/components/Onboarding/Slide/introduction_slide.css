@@ -69,6 +69,14 @@ h3 {
     max-width: 35rem;
   }
 
+  .content-text {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: 18px;
+    text-align: left;
+    max-width: 35rem;
+}
+
   .end-page {
     padding-bottom: 15vh;
   }
@@ -90,6 +98,14 @@ h3 {
     font-size: 20px;
     text-align: left;
     max-width: 35rem;
+  }
+
+  .content-text {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: 18px;
+    text-align: left;
+    max-width: 35rem;  
   }
 
   .end-page {
@@ -114,24 +130,18 @@ h3 {
     text-align: left;
     max-width: 35rem;
   }
+
+  .content-text {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: 20px;
+    text-align: left;
+    max-width: 35rem;
+  }
   
   .end-page {
     padding-bottom: 10vh;
   }
-}
-
-.text {
-  font-size: 20px;
-  text-align: left;
-  max-width: 35rem;
-}
-
-.final-text {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  font-size: 20px;
-  text-align: left;
-  max-width: 35rem;
 }
 
 .link {

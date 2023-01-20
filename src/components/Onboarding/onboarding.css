@@ -25,9 +25,11 @@ h3 {
 .menu-item {
   display: flex;
   position: absolute;
-  top: 1vh;
+  height: 10vh;
+  top: 0;
   width: 98vw;
   justify-content: flex-end;
+  align-items: center;
 }
 
 .more-link {

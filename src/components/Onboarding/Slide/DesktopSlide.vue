@@ -11,7 +11,7 @@
     <div class="close-collapse-band">
       <img class="close-collapse-cross clickable" src="@/assets/shared/cross.svg" alt="cross" @click="isCollapse = !isCollapse">
     </div>
-    <p class="collection-text collapse-text-align overflow">{{ item.text }}</p>
+    <p class="collapse-text-align overflow">{{ item.text }}</p>
   </div>
   <logo
     style="position: absolute; left: 2vw; top: 2vh; z-index: 1;"

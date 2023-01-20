@@ -17,7 +17,8 @@
         </h1>
       </div>
       <div v-if="!show_full_tag_page" class="tag-header-search">
-        <img class="clickable" src="@/assets/onboarding/search.svg" @click="searchView = true" />
+        <img class="clickable" style="margin-right: 15px" src="@/assets/onboarding/search.svg" @click="searchView = true" />
+        <MenuIcon @click="openMenu()"/>
       </div>
     </div>
     <div v-if="show_form">
@@ -40,7 +41,8 @@
     @close="searchView = false"
     :is-mobile="isMobile"
     :is-display="searchView"
-  />>
+  />
+  <Menu :open="isOpenMenu" @close="isOpenMenu = false" @change-slide="openHome($event)"/>
 </template>
 
 <script>
@@ -53,9 +55,11 @@ import ImagesCarousel from './ImagesCarousel.vue';
 import TagsCombinaisonsForm from '../FullTags/TagCombinaisonsForm.vue';
 import SearchTag from './SearchTag.vue';
 import FullTagPage from '../FullTags/FullTagPage.vue';
+import MenuIcon from '../shared/components/MenuIcon.vue';
+import Menu from '../shared/components/Menu.vue';
 
 export default {
-  components: { ImagesCarousel, TagsCombinaisonsForm, FullTagPage, SearchTag },
+  components: { ImagesCarousel, TagsCombinaisonsForm, FullTagPage, SearchTag, MenuIcon, Menu },
   emits: ['changeSlide', 'loadTagView'],
   props: {
     isFullSize: Boolean,
@@ -73,9 +77,19 @@ export default {
       show_carousel: false,
       images_for_carousel: images,
       searchView: false,
+      isOpenMenu: false,
     };
   },
   methods: {
+    openMenu() {
+      this.isOpenMenu = true;
+    },
+    openHome(event) {
+      this.$router.push({
+        path: `/`,
+        query: { ref: event },
+      });
+    },
     backButton() {
       if (this.show_full_tag_page) this.exitFullScreen();
       else this.$router.push({path: `/`});
@@ -134,7 +148,7 @@ export default {
 
 .title {
   display: grid;
-  grid-template-columns: repeat(3, 33%);
+  grid-template-columns:  33% 33% 32%;;
   grid-template-rows: 10vh;
   grid-column-gap: 0px;
   grid-row-gap: 0px;

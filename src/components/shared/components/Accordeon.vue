@@ -21,7 +21,7 @@ export default {
 
 <template>
   <div>
-    <div class="title">
+    <div class="title space-between-element">
       <p style="margin-right: 5px" class="text" @click="open = !open" :style="openColor">{{ header }}</p>
       <svg
         width="12"
@@ -66,20 +66,12 @@ export default {
   width: 100%;
   display: flex;
   padding-left: 0;
-  margin: 1rem 1rem 0rem 0rem;
-  padding-bottom: 0.9rem;
   cursor: pointer;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 18px;
 }
 
-.icon-font {
-  font-size: 20px;
-}
-
-.icon-margin {
-  margin: 0px;
-  padding-right: 0px;
-  margin-top: -4px;
-}
 
 .transition {
   transition: all 0.25s ease;

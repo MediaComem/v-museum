@@ -7,6 +7,7 @@
   align-items: center;
   margin-top: -4px;
   letter-spacing: 0.02em;
+  color: black;
 }
 
 .menu-layout {
@@ -19,15 +20,15 @@
 }
 
 .menu-header {
-  height: 50px;
+  height: 10vh;
   display: flex;
-  width: 99%;
+  width: 98%;
   justify-content: flex-end;
-  margin-top: 1%;
+  align-items: center;
 }
 
 .menu-content {
-  height: calc(100vh - 50px);
+  height: calc(100vh - 10vh);
   margin-left: 32px;
   margin-right: 32px;
   overflow-y: auto;
@@ -40,9 +41,8 @@
   transition-timing-function: ease-out;
 }
 
-.last-element {
-  padding-bottom: 10px;
-  padding-top: 10px;
+.space-between-element {
+  padding-bottom: 16px;
 }
 
 .text-margin {

@@ -43,7 +43,7 @@
       <h3 class="text-title">{{ information.header }}</h3>
     </el-row>
     <el-row :gutter="20" :justify="'center'" style="margin: 5px;">
-      <p class="final-text">{{ information.body }}</p>
+      <p class="content-text end-page">{{ information.body }}</p>
     </el-row>
   </div>
 </template>

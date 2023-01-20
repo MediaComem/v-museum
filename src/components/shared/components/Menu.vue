@@ -4,7 +4,7 @@
       <MenuCloseIcon @click="$emit('close')" />
     </div>
     <div class="menu-content">
-      <div><p class="text clickable" @click="changeSlide('Introduction')">Introduction</p></div>
+      <div class="space-between-element"><p class="text clickable" @click="changeSlide('Introduction')">Introduction</p></div>
       <Accordeon
         :header="'Collection'"
         :length="information.collection.length"
@@ -14,10 +14,10 @@
           <p class="text text-margin clickable" @click="changeSlide(`decade-${index}`)">{{ item.title }}</p>
         </div>
       </Accordeon>
-      <div>
+      <div class="space-between-element">
         <div><p class="text clickable" @click="load('/search')">Search</p></div>
       </div>
-      <div class="last-element">
+      <div class="space-between-element">
         <div><p class="text clickable" @click="load('/search')">About</p></div>
       </div>
     </div>

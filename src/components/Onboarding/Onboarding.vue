@@ -59,9 +59,13 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
+      console.log(to);
       if (from.query.tag) {
         vm.tag = decodeURIComponent(from.query.tag);
         vm.loadSlide();
+      }
+      if (to.query.ref) {
+        vm.ref = decodeURIComponent(to.query.ref);
       }
     });
   },
@@ -75,6 +79,7 @@ export default {
       windowHeight: undefined,
       windowWidth: undefined,
       lastScroll: undefined,
+      ref: undefined,
     };
   },
   methods: {
@@ -83,6 +88,7 @@ export default {
       this.lastScroll = setTimeout(() => {
         for (let i = 0; i < this.information.collection.length; i++) {
           this.$refs[`slide-${i}`].isCollapse = false;
+          this.$refs[`slide-${i}`].isOpenMenu = false;
         }
       }, 50);
     },
@@ -114,6 +120,7 @@ export default {
           this.$refs[`decade-${index}`].scrollIntoView();
         }
       }
+      
     },
   },
   computed: {
@@ -126,6 +133,12 @@ export default {
     ...mapGetters({
       origin: "getFullTagPageOrigin",
     }),
+  },
+  activated() {
+    if (this.ref) {
+      this.$refs[this.ref].scrollIntoView();
+    }
+    this.ref = undefined;
   },
   mounted() {
     const { width, height } = useWindowSize();
