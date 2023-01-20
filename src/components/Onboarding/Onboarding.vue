@@ -59,7 +59,6 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      console.log(to);
       if (from.query.tag) {
         vm.tag = decodeURIComponent(from.query.tag);
         vm.loadSlide();

@@ -5,24 +5,7 @@
       @mouseleave="displayTagArrow = false">
       <div class="tag-carousel-layout">
         <div class="left-arrow">
-          <svg
-            v-if="displayTagArrow"
-            class="button-svg"
-            @click="showPreviousTags()"
-            @mouseover="tagArrowLeftColor = '#616161'"
-            @mouseleave="tagArrowLeftColor = '#FFFFFF'"
-            width="15"
-            height="25"
-            viewBox="0 0 15 25"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              class="previous-arrow"
-              d="M12.2499 -1.90735e-06L14.3999 2.15L4.4999 12.05L14.3999 21.95L12.2499 24.1L0.199903 12.05L12.2499 -1.90735e-06Z"
-              :fill="tagArrowLeftColor"
-            />
-          </svg>
+          <ArrowLeft v-if="displayTagArrow" @click="showPreviousTags()"/>
         </div>
         <div class="images-layout" ref="tags">
           <div v-for="(tag, index) in selected_tags" :key="index">
@@ -36,24 +19,7 @@
           </div>
         </div>
         <div class="right-arrow">
-          <svg
-            v-if="displayTagArrow"
-            class="button-svg"
-            @click="showNextTags()"
-            @mouseover="tagArrowRighttColor = '#616161'"
-            @mouseleave="tagArrowRighttColor = '#FFFFFF'"
-            width="15"
-            height="25"
-            viewBox="0 0 15 25"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              class="next-arrow"
-              d="M2.7501 25L0.600098 22.85L10.5001 12.95L0.600098 3.05L2.7501 0.900002L14.8001 12.95L2.7501 25Z"
-              :fill="tagArrowRighttColor"
-            />
-          </svg>
+          <ArrowRight v-if="displayTagArrow" @click="showNextTags()"/>
         </div>
       </div>
     </div>
@@ -64,25 +30,7 @@
     >
       <div class="carousel-layout">
         <div class="left-arrow">
-          <!-- previous image arrow-->
-          <svg
-            v-if="displayArrow"
-            class="button-svg"
-            @click="showPreviousImage()"
-            @mouseover="arrowLeftColor = '#616161'"
-            @mouseleave="arrowLeftColor = '#FFFFFF'"
-            width="15"
-            height="25"
-            viewBox="0 0 15 25"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              class="previous-arrow"
-              d="M12.2499 -1.90735e-06L14.3999 2.15L4.4999 12.05L14.3999 21.95L12.2499 24.1L0.199903 12.05L12.2499 -1.90735e-06Z"
-              :fill="arrowLeftColor"
-            />
-          </svg>
+          <ArrowLeft v-if="displayArrow" @click="showPreviousImage()"/>
         </div>
 
         <!-- Images -->
@@ -100,26 +48,8 @@
           </div>
         </div>
 
-        <!-- next image arrow-->
         <div class="right-arrow">
-          <svg
-            v-if="displayArrow"
-            class="button-svg"
-            @click="showNextImage()"
-            @mouseover="arrowRighttColor = '#616161'"
-            @mouseleave="arrowRighttColor = '#FFFFFF'"
-            width="15"
-            height="25"
-            viewBox="0 0 15 25"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              class="next-arrow"
-              d="M2.7501 25L0.600098 22.85L10.5001 12.95L0.600098 3.05L2.7501 0.900002L14.8001 12.95L2.7501 25Z"
-              :fill="arrowRighttColor"
-            />
-          </svg>
+          <ArrowRight v-if="displayArrow" @click="showNextImage()"/>
         </div>
       </div>
     </div>
@@ -150,19 +80,22 @@ import { mapGetters } from 'vuex';
 
 import dataFetch from '../../api/dataFetching';
 
+import ArrowLeft from './ArrowLeft.vue';
+import ArrowRight from './ArrowRight.vue';
+
 export default {
   props: {
     nbImages: Number,
     isMobile: Boolean,
     showCarousel: Boolean,
   },
+  components: { ArrowLeft, ArrowRight },
   emits: ['showFullTagPage'],
   data() {
     return {
       images_index_to_display: Array.from(Array(this.nbImages).keys()),
       position: 0,
       tagHover: '',
-      arrowLeftColor: '#ffffff',
       arrowRighttColor: '#ffffff',
       tagArrowLeftColor: '#ffffff',
       tagArrowRighttColor: '#ffffff',
