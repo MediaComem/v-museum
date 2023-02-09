@@ -1,5 +1,5 @@
 <template>
-    <div class="canvas-display overflow clickable-tags-list" :class="{'canvas-with-carousel': showCarousel}" v-if="imagesWithTags.length > 0">
+    <div class="canvas-display overflow clickable-tags-list" :class="canvasDisplay" v-if="imagesWithTags.length > 0">
         <div v-for="(tag, index) in selected_tags_with_images" :key="index">
             <div v-if="!selected_tags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase())" class="display-element clickable clickable-tag"
                 @click="addTag(tag.tag)">
@@ -92,6 +92,15 @@ export default {
                 "mobile-font": this.isMobile,
             };
         },
+        canvasDisplay() {
+            return {
+                'canvas-with-carousel': this.showCarousel && !this.isMobileDevice,
+                'canvas-display-mobile': !this.showCarousel && this.isMobileDevice && !this.isSafariBrowser && !this.isFirefoxBrowser,
+                'canvas-display-mobile-firefox': !this.showCarousel && this.isMobileDevice && this.isFirefoxBrowser,
+                'canvas-display-mobile-safari': !this.showCarousel && this.isMobileDevice && this.isSafariBrowser,
+                'canvas-with-carousel-mobile': this.showCarousel && this.isMobileDevice,
+            }
+        },
         imagesWithTags() {
             //If user didnt add any tag, basic images are returned and all tags are kept
             if (this.selected_tags.length == 1) {
@@ -180,22 +189,54 @@ export default {
 }
 
 
-@media screen and (min-width: 475px) {
+@media screen and (min-width: 750px) {
     .canvas-display {
-        height: calc(82.3vh - 80px);
+        height: calc(85.5vh - 80px);
+    }
+
+    .canvas-display-mobile {
+        height: calc(71.5vh - 80px);
+    }
+
+    .canvas-display-mobile-firefox {
+        height: calc(77.5vh - 80px);
+    }
+
+    .canvas-display-mobile-safari {
+        height: calc(75.5vh - 80px);
     }
 
     .canvas-with-carousel {
-        height: 47.6vh;
+        height: 50.5vh;
+    }
+
+    .canvas-with-carousel-mobile {
+        height: 42.3vh;
     }
 }
 
-@media screen and (max-width: 475px) {
+@media screen and (max-width: 750px) {
     .canvas-display {
-        height: calc(82.3vh - 80px);
+        height: calc(79.3vh - 80px);
+    }
+
+    .canvas-display-mobile {
+        height: calc(79.3vh - 80px);
+    }
+
+    .canvas-display-mobile-firefox {
+        height: calc(79.3vh - 80px);
+    }
+
+    .canvas-display-mobile-safari {
+        height: calc(79.3vh - 80px);
     }
 
     .canvas-with-carousel {
+        height: 45.6vh;
+    }
+
+    .canvas-with-carousel-mobile {
         height: 45.6vh;
     }
 }

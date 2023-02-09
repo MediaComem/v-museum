@@ -124,14 +124,17 @@ const store = createStore({
 
 const isSafari = !!navigator.userAgent.match(/Version\/[\d.]+.*Safari/);
 const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isAndroid = navigator.userAgent.toLowerCase().indexOf("android") > -1;
+const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
 const app = createApp(App);
-if (isSafari && iOS) {
-  app.config.globalProperties.isSafariIphone = true;
-}
-else {
-  app.config.globalProperties.isSafariIphone = false;
-}
+app.config.globalProperties.isSafariBrowser = isSafari;
+app.config.globalProperties.isFirefoxBrowser = isFirefox;
+app.config.globalProperties.isSafariIphone = isSafari && iOS;
+app.config.globalProperties.isMobileDevice = isAndroid || iOS;
+
+console.log(navigator)
+
 app.use(ElementPlus);
 app.use(router);
 app.use(store);

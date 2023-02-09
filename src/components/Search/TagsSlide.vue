@@ -22,18 +22,34 @@
       </div>
     </div>
     <div v-if="show_form">
-      <images-carousel
-        @showFullTagPage="showFullScreenCarousel()"
-        :is-mobile="isMobile"
-        :nbImages="images_bis.length"
-        :show-carousel="show_carousel"
-        :key="carousel_key"
-      />
-      <tags-combinaisons-form
-        @updateTagsList="updateTagsList"
-        :is-mobile="isMobile"
-        :show-carousel="show_carousel"
-      />
+      <div v-if="getImageBannerPosition">
+        <images-carousel
+          @showFullTagPage="showFullScreenCarousel()"
+          :is-mobile="isMobile"
+          :nbImages="images_bis.length"
+          :show-carousel="show_carousel"
+          :key="carousel_key"
+        />
+        <tags-combinaisons-form
+          @updateTagsList="updateTagsList"
+          :is-mobile="isMobile"
+          :show-carousel="show_carousel"
+        />
+      </div>
+      <div v-else>
+        <tags-combinaisons-form
+          @updateTagsList="updateTagsList"
+          :is-mobile="isMobile"
+          :show-carousel="show_carousel"
+        />
+        <images-carousel
+          @showFullTagPage="showFullScreenCarousel()"
+          :is-mobile="isMobile"
+          :nbImages="images_bis.length"
+          :show-carousel="show_carousel"
+          :key="carousel_key"
+        />
+      </div>
     </div>
     <full-tag-page v-if="show_full_tag_page"/>
   </div>
@@ -46,6 +62,7 @@
 </template>
 
 <script>
+import { useWindowSize } from 'vue-window-size';
 import { mapGetters } from 'vuex';
 
 import tags from '@/assets/onboarding/tags.json';
@@ -78,6 +95,7 @@ export default {
       images_for_carousel: images,
       searchView: false,
       isOpenMenu: false,
+      windowWidth: 0,
     };
   },
   methods: {
@@ -124,11 +142,18 @@ export default {
         'padding-bottom': this.isSafariIphone ? '180px' : '15vh',
       };
     },
+    getImageBannerPosition() {
+      return this.windowWidth < 750;
+    },
     ...mapGetters({
       images_bis: 'getImages',
       selected_tags: 'getTags',
     }),
   },
+  mounted() {
+    const { width } = useWindowSize();
+    this.windowWidth = width;
+  }
 };
 </script>
 
