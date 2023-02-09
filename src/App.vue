@@ -21,7 +21,7 @@ export default {
 }
 
 #app {
-  font-family: "Certeau";
+  font-family: Certeau, Futura, Sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
@@ -35,6 +35,6 @@ body {
   height: 100%;
   position: fixed;
   overflow-y: scroll;
--webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
 }
 </style>
