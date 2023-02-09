@@ -9,10 +9,10 @@
         </div>
         <div class="images-layout" ref="tags">
           <div v-for="(tag, index) in selected_tags" :key="index">
-            <div v-if="tag.length > 0" class="tag-remove-layout" @mouseover="tagHover = tag" @mouseleave="tagHover = ''">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" @click="removeTag(index)">
-                <path d="M1 1L11 11" :stroke="tagHover === tag ? '#616161' : 'white'"/>
-                <path d="M11 1L1 11" :stroke="tagHover === tag ? '#616161' : 'white'"/>
+            <div v-if="tag.length > 0" class="tag-remove-layout" @click="removeTag(index)">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L11 11" :stroke="'white'"/>
+                <path d="M11 1L1 11" :stroke="'white'"/>
               </svg>
               <p>{{ tag }}</p>
             </div>
@@ -95,7 +95,6 @@ export default {
     return {
       images_index_to_display: Array.from(Array(this.nbImages).keys()),
       position: 0,
-      tagHover: '',
       arrowRighttColor: '#ffffff',
       tagArrowLeftColor: '#ffffff',
       tagArrowRighttColor: '#ffffff',
@@ -194,6 +193,7 @@ export default {
   margin-top: 10px;
   margin-bottom: 10px;
   width: max-content;
+  cursor: pointer;
 }
 
 .tag-remove-layout:hover {
@@ -205,7 +205,6 @@ export default {
   margin-left: 5px;
   margin-right: 5px;
   margin-top: 9px;
-  cursor: pointer;
 }
 
 .tag-remove-layout > p {
