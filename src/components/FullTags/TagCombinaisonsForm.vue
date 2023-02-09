@@ -270,9 +270,11 @@ export default {
     text-align: center;
 }
 
-.clickable-tag:hover {
-    background-color: #616161;
-    color: white;
-    border: 1px solid white;
+@media (hover: hover) {
+    .clickable-tag:hover {
+        background-color: #616161;
+        color: white;
+        border: 1px solid white;
+    }
 }
 </style>
