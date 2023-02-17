@@ -133,8 +133,6 @@ app.config.globalProperties.isFirefoxBrowser = isFirefox;
 app.config.globalProperties.isSafariIphone = isSafari && iOS;
 app.config.globalProperties.isMobileDevice = isAndroid || iOS;
 
-console.log(navigator)
-
 app.use(ElementPlus);
 app.use(router);
 app.use(store);
