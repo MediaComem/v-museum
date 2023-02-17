@@ -101,6 +101,7 @@ export default {
       moveInterval: undefined,
       displayArrow: false,
       displayTagArrow: false,
+      currentScroll: 0,
     };
   },
   methods: {
@@ -122,6 +123,7 @@ export default {
     },
     //Create array representing number of images to display
     loadImage(imageId) {
+      this.currentScroll = this.$refs.carousel.scrollLeft;
       dataFetch.getImageById(imageId).then((data) => {
         if (data.length > 0) {
           const img_data = data[0];
@@ -147,6 +149,9 @@ export default {
       images: 'getImages',
       selected_tags: 'getTags',
     }),
+  },
+  activated() {
+    if (this.$refs.carousel) this.$refs.carousel.scrollLeft = this.currentScroll;
   },
   mounted() {
     this.$store.dispatch('setFullTagPageOrigin', 'tags_slide');

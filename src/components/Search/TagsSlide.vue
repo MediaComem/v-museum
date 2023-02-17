@@ -82,7 +82,6 @@ export default {
     isFullSize: Boolean,
     isMobile: Boolean,
     arrowText: Object,
-    lastId: Number,
   },
   data() {
     return {
@@ -204,10 +203,6 @@ export default {
     justify-content: left;
     align-items: center;
   }
-
-  .last-element {
-    flex: 1 1 42vw;
-  }
 }
 
 @media only screen and (min-width: 437px) and (max-width: 999px) {
@@ -216,9 +211,6 @@ export default {
     display: flex;
     justify-content: left;
     align-items: center;
-  }
-  .last-element {
-    flex: 1 1 32vw;
   }
 }
 
@@ -230,22 +222,6 @@ export default {
     align-items: center;
   }
 
-  .last-element {
-    flex: 1 1 23vw;
-  }
-}
-
-@media only screen and (max-width: 800px) {
-  .last-element {
-    max-width: 32vw;
-  }
-}
-
-@media only screen and (max-width: 437px) {
-  .last-element {
-    max-width: unset;
-    flex: unset;
-  }
 }
 
 .desktop-font {

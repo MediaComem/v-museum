@@ -1,6 +1,6 @@
 <template>
   <Footer v-if="isSafariIphone && imageUrls && data" :nbLoadImages="imageUrls.length" :nbTotalImages="data.length" :isMoreImagesLoading="isMoreImagesLoading" />
-  <div class="canvas-size overflow">
+  <div ref="carousel" class="canvas-size overflow">
     <div v-if="imageUrls.length === 0 && origin != 'tags_slide'" class="loader central-loader-position" />
     <div
       v-if="imageUrls.length === 0  && origin != 'tags_slide'"
@@ -52,6 +52,7 @@ export default {
   components: { Footer },
   methods: {
     loadImage(imageId) {
+      this.currentScroll = this.$refs.carousel.scrollTop;
       if (this.origin == "tags_slide") {
         dataFetch.getImageById(imageId).then((data) => {
           if (data.length > 0) {
@@ -104,6 +105,7 @@ export default {
       imageUrls: [],
       disableScroll: true,
       isMoreImagesLoading: false,
+      currentScroll: 0,
     };
   },
   computed: {
@@ -111,6 +113,9 @@ export default {
       images: "getImages",
       origin: "getFullTagPageOrigin",
     })
+  },
+  activated() {
+    if (this.$refs.carousel) this.$refs.carousel.scrollTop = this.currentScroll;
   }
 };
 </script>
