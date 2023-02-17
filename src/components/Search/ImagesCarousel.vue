@@ -4,7 +4,7 @@
       @mouseover="displayTagArrow = true"
       @mouseleave="displayTagArrow = false">
       <div class="tag-carousel-layout">
-        <div class="left-arrow">
+        <div v-if="!isMobile" class="left-arrow">
           <ArrowLeft v-if="displayTagArrow" @click="showPreviousTags()"/>
         </div>
         <div class="images-layout" ref="tags">
@@ -18,7 +18,7 @@
             </div>
           </div>
         </div>
-        <div class="right-arrow">
+        <div v-if="!isMobile" class="right-arrow">
           <ArrowRight v-if="displayTagArrow" @click="showNextTags()"/>
         </div>
       </div>
@@ -29,7 +29,7 @@
       @mouseleave="displayArrow = false"
     >
       <div class="carousel-layout">
-        <div class="left-arrow">
+        <div v-if="!isMobile" class="left-arrow">
           <ArrowLeft v-if="displayArrow" @click="showPreviousImage()"/>
         </div>
 
@@ -48,7 +48,7 @@
           </div>
         </div>
 
-        <div class="right-arrow">
+        <div v-if="!isMobile" class="right-arrow">
           <ArrowRight v-if="displayArrow" @click="showNextImage()"/>
         </div>
       </div>
