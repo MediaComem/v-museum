@@ -11,14 +11,14 @@
         :should-be-open="true"
       >
         <div v-for="(item, index) in information.collection" :key="index">
-          <p class="text text-margin clickable" @click="changeSlide(`decade-${index}`)">{{ item.title }}</p>
+          <p class="text space-between-element text-margin clickable" @click="changeSlide(`decade-${index}`)">{{ item.title }}</p>
         </div>
       </Accordeon>
       <div class="space-between-element">
         <div><p class="text clickable" @click="load('/search')">Search</p></div>
       </div>
       <div class="space-between-element">
-        <div><p class="text clickable" @click="load('/search')">About</p></div>
+        <div><p class="text clickable" @click="load('/about')">About</p></div>
       </div>
     </div>
   </div>

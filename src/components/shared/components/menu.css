@@ -32,7 +32,7 @@
   margin-left: 32px;
   margin-right: 32px;
   overflow-y: auto;
-  margin-bottom: 10px;
+  padding-bottom: 10px;
 }
 
 .menu-transition {
@@ -42,9 +42,10 @@
 }
 
 .space-between-element {
-  padding-bottom: 16px;
+  padding-top: 17px;
+  padding-bottom: 17px;
 }
 
 .text-margin {
-  margin: 0 1rem 1rem 1rem;
+  margin-left: 20px
 }
