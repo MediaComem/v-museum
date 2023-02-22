@@ -150,7 +150,6 @@ export default {
       });
     },
     removeTag(index) {
-      alert('ddd')
       this.$store.dispatch('removeTag', index);
     },
   },
