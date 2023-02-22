@@ -1,36 +1,39 @@
 <template>
   <div v-if="showCarousel" class="images-preview-carousel">
     <div class="tag-remover"
-      @mouseover="displayTagArrow = true"
-      @mouseleave="displayTagArrow = false">
+      @mouseover="handleMouseTagArrow(true)"
+      @mouseleave="handleMouseTagArrow(false)"
+    >
       <div class="tag-carousel-layout">
-        <div v-if="!isMobile" class="left-arrow">
-          <ArrowLeft v-if="displayTagArrow" @click="showPreviousTags()"/>
+        <div v-if="!isMobileDevice" class="left-arrow">
+          <ArrowLeft v-show="displayTagArrow" @click="showPreviousTags()"/>
         </div>
         <div class="images-layout" ref="tags">
           <div v-for="(tag, index) in selected_tags" :key="index">
-            <div v-if="tag.length > 0" class="tag-remove-layout" @click="removeTag(index)">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 1L11 11" :stroke="'white'"/>
-                <path d="M11 1L1 11" :stroke="'white'"/>
-              </svg>
-              <p>{{ tag }}</p>
-            </div>
+            <div @click="removeTag(index)">
+              <div v-if="tag.length > 0" class="tag-remove-layout" >
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L11 11" :stroke="'white'"/>
+                  <path d="M11 1L1 11" :stroke="'white'"/>
+                </svg>
+                <p>{{ tag }}</p>
+              </div>
+              </div>
           </div>
         </div>
-        <div v-if="!isMobile" class="right-arrow">
-          <ArrowRight v-if="displayTagArrow" @click="showNextTags()"/>
+        <div v-if="!isMobileDevice" class="right-arrow">
+          <ArrowRight v-show="displayTagArrow" @click="showNextTags()"/>
         </div>
       </div>
     </div>
     <div
       class="images-arrows-wrapper"
-      @mouseover="displayArrow = true"
-      @mouseleave="displayArrow = false"
+      @mouseover="handleMouseArrow(true)"
+      @mouseleave="handleMouseArrow(false)"
     >
       <div class="carousel-layout">
-        <div v-if="!isMobile" class="left-arrow">
-          <ArrowLeft v-if="displayArrow" @click="showPreviousImage()"/>
+        <div v-if="!isMobileDevice" class="left-arrow">
+          <ArrowLeft v-show="displayArrow" @click="showPreviousImage()"/>
         </div>
 
         <!-- Images -->
@@ -48,8 +51,8 @@
           </div>
         </div>
 
-        <div v-if="!isMobile" class="right-arrow">
-          <ArrowRight v-if="displayArrow" @click="showNextImage()"/>
+        <div v-if="!isMobileDevice" class="right-arrow">
+          <ArrowRight v-show="displayArrow" @click="showNextImage()"/>
         </div>
       </div>
     </div>
@@ -105,6 +108,17 @@ export default {
     };
   },
   methods: {
+    // For a safari mobile propagation problem https://github.com/vuejs/vue/issues/9859
+    handleMouseArrow(boolean) {
+      setTimeout(() => {
+        this.displayArrow = boolean;
+      }, 0);
+    },
+    handleMouseTagArrow(boolean) {
+      setTimeout(() => {
+        this.displayTagArrow = boolean;
+      }, 0);
+    },
     showPreviousImage() {
       this.$refs.carousel.scrollLeft =
         this.$refs.carousel.scrollLeft - (window.innerWidth - 300);
@@ -135,6 +149,7 @@ export default {
       });
     },
     removeTag(index) {
+      alert('ddd')
       this.$store.dispatch('removeTag', index);
     },
   },

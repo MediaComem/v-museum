@@ -99,7 +99,7 @@ export default {
                 'canvas-display-mobile-firefox': !this.showCarousel && this.isMobileDevice && this.isFirefoxBrowser,
                 'canvas-display-mobile-safari': !this.showCarousel && this.isMobileDevice && this.isSafariBrowser,
                 'canvas-display-mobile-safari-carousel': this.showCarousel && this.isMobileDevice && this.isSafariBrowser,
-                'canvas-with-carousel-mobile': this.showCarousel && this.isMobileDevice,
+                'canvas-with-carousel-mobile': this.showCarousel && this.isMobileDevice && !this.isSafariBrowser,
             }
         },
         imagesWithTags() {
@@ -204,11 +204,11 @@ export default {
     }
 
     .canvas-display-mobile-safari {
-        height: calc(75.5vh - 80px);
+        height: calc(81.5vh - 80px);
     }
 
     .canvas-display-mobile-safari-carousel {
-        height: calc(75.5vh - 80px);
+        height: calc(51.7vh - 80px);
     }
 
     .canvas-with-carousel {
