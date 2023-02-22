@@ -1,16 +1,18 @@
 <template>
-    <div class="canvas-display overflow clickable-tags-list" :class="canvasDisplay" v-if="imagesWithTags.length > 0">
-        <div v-for="(tag, index) in selected_tags_with_images" :key="index">
-            <div v-if="!selected_tags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase())" class="display-element clickable clickable-tag"
-                @click="addTag(tag.tag)">
-                <span :class="fontSize">{{ tag.tag.charAt(0).toUpperCase() +
-                        tag.tag.slice(1)
-                }} • {{ tag.nb_images }}</span>
-            </div>
-            <div v-else class="display-element clickable disabled-tag" @click="removeTag(tag.tag)">
-                <span :class="fontSize">{{ tag.tag.charAt(0).toUpperCase() +
-                        tag.tag.slice(1)
-                }} • {{ tag.nb_images }}</span>
+    <div class="canvas-display overflow canvas-display-bottom" :style="canvasHeight" v-if="imagesWithTags.length > 0">
+        <div class="clickable-tags-list">
+            <div v-for="(tag, index) in selected_tags_with_images" :key="index" class="tag-item">
+                <div v-if="!selected_tags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase())" class="display-element clickable clickable-tag"
+                    @click="addTag(tag.tag)">
+                    <span :class="fontSize">{{ tag.tag.charAt(0).toUpperCase() +
+                            tag.tag.slice(1)
+                    }} • {{ tag.nb_images }}</span>
+                </div>
+                <div v-else class="display-element clickable disabled-tag" @click="removeTag(tag.tag)">
+                    <span :class="fontSize">{{ tag.tag.charAt(0).toUpperCase() +
+                            tag.tag.slice(1)
+                    }} • {{ tag.nb_images }}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -92,14 +94,9 @@ export default {
                 "mobile-font": this.isMobile,
             };
         },
-        canvasDisplay() {
+        canvasHeight() {
             return {
-                'canvas-with-carousel': this.showCarousel && !this.isMobileDevice,
-                'canvas-display-mobile': !this.showCarousel && this.isMobileDevice && !this.isSafariBrowser && !this.isFirefoxBrowser,
-                'canvas-display-mobile-firefox': !this.showCarousel && this.isMobileDevice && this.isFirefoxBrowser,
-                'canvas-display-mobile-safari': !this.showCarousel && this.isMobileDevice && this.isSafariBrowser,
-                'canvas-display-mobile-safari-carousel': this.showCarousel && this.isMobileDevice && this.isSafariBrowser,
-                'canvas-with-carousel-mobile': this.showCarousel && this.isMobileDevice && !this.isSafariBrowser,
+                height: `calc(${screen.availHeight}px - ${this.isIpad ? '102px' : '79px'} - 10vh - ${this.showCarousel ? '35vh' : '80px'})`,
             }
         },
         imagesWithTags() {
@@ -138,18 +135,18 @@ export default {
             selected_tags: "getTags",
         }),
     }
+ 
 }
 </script>
 
 <style scoped>
 .canvas-display {
+    width: 96vw;
     display: inline-flex;
-    flex-wrap: wrap;
     padding-left: 2vw;
     padding-right: 2vw;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    max-width: 1000px;
     margin: auto;
 }
 
@@ -189,71 +186,13 @@ export default {
     font-size: small;
 }
 
-
-@media screen and (min-width: 750px) {
-    .canvas-display {
-        height: calc(85.5vh - 80px);
-    }
-
-    .canvas-display-mobile {
-        height: calc(71.5vh - 80px);
-    }
-
-    .canvas-display-mobile-firefox {
-        height: calc(77.5vh - 80px);
-    }
-
-    .canvas-display-mobile-safari {
-        height: calc(81.5vh - 80px);
-    }
-
-    .canvas-display-mobile-safari-carousel {
-        height: calc(51.7vh - 80px);
-    }
-
-    .canvas-with-carousel {
-        height: 50.5vh;
-    }
-
-    .canvas-with-carousel-mobile {
-        height: 42.3vh;
-    }
-}
-
-@media screen and (max-width: 750px) {
-    .canvas-display {
-        height: calc(79.3vh - 80px);
-    }
-
-    .canvas-display-mobile {
-        height: calc(79.3vh - 80px);
-    }
-
-    .canvas-display-mobile-firefox {
-        height: calc(79.3vh - 80px);
-    }
-
-    .canvas-display-mobile-safari {
-        height: calc(75.5vh - 80px);
-    }
-
-    .canvas-display-mobile-safari-carousel {
-        height: calc(50.5vh - 80px) !important;
-    }
-
-    .canvas-with-carousel {
-        height: 45.6vh;
-    }
-
-    .canvas-with-carousel-mobile {
-        height: 45.6vh;
-    }
-}
-
 .clickable-tags-list {
     display: flex;
     align-content: flex-start;
     padding: 2.25vh 0 2.25vh 2vw;
+    max-width: 1000px; 
+    height: inherit;
+    flex-wrap: wrap;
 }
 
 .clickable-tag {
@@ -285,5 +224,9 @@ export default {
         color: white;
         border: 1px solid white;
     }
+}
+
+.tag-item:last-child {
+    padding-bottom: 200px;
 }
 </style>

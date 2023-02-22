@@ -21,7 +21,7 @@
         <MenuIcon @click="openMenu()"/>
       </div>
     </div>
-    <div v-if="show_form">
+    <div v-show="show_form">
       <div v-if="getImageBannerPosition">
         <images-carousel
           @showFullTagPage="showFullScreenCarousel()"

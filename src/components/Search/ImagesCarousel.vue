@@ -8,7 +8,7 @@
         <div v-if="!isMobileDevice" class="left-arrow">
           <ArrowLeft v-show="displayTagArrow" @click="showPreviousTags()"/>
         </div>
-        <div class="images-layout" ref="tags">
+        <div class="images-layout image-layout-padding" ref="tags">
           <div v-for="(tag, index) in selected_tags" :key="index">
             <div @click="removeTag(index)">
               <div v-if="tag.length > 0" class="tag-remove-layout" >
@@ -259,7 +259,7 @@ export default {
 
 .carousel-layout {
   display: grid;
-  grid-template-columns: 30px calc(100vw - 60px) 30px;
+  grid-template-columns: 60px calc(100vw - 120px) 60px;
   grid-template-rows: 20vh;
   grid-column-gap: 0px;
   grid-row-gap: 0px;
@@ -279,22 +279,30 @@ export default {
   align-items: center;
 }
 
+.image-layout-padding {
+  padding-left: 30px;
+}
+
 .left-arrow {
   grid-area: 1 / 1 / 2 / 2;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  z-index: 1;
+  position: relative;
 }
 
 .right-arrow {
   grid-area: 1 / 3 / 2 / 4;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
+  z-index: 1;
+  position: relative;
 }
 
 .images-layout {
-  grid-area: 1 / 2 / 2 / 3;
+  grid-area: 1 / 1 / 2 / 4;
   overflow-x: auto;
   display: flex;
 }
@@ -323,6 +331,19 @@ export default {
   grid-template-rows: 80px;
   grid-column-gap: 0px;
   grid-row-gap: 0px;
+}
+
+@media screen and (min-width: 750px) {
+
+  .images-preview-carousel {
+    position:absolute;
+    bottom:0px;
+  }
+
+  .no-image-information {
+    position:absolute;
+    bottom:0px;
+  }
 }
 
 .no-image-information > .documents {

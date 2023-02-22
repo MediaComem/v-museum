@@ -4,21 +4,23 @@
       <MenuCloseIcon @click="$emit('close')" />
     </div>
     <div class="menu-content">
-      <div class="space-between-element"><p class="text clickable" @click="changeSlide('Introduction')">Introduction</p></div>
-      <Accordeon
-        :header="'Collection'"
-        :length="information.collection.length"
-        :should-be-open="true"
-      >
-        <div v-for="(item, index) in information.collection" :key="index">
-          <p class="text space-between-element text-margin clickable" @click="changeSlide(`decade-${index}`)">{{ item.title }}</p>
+      <div class="menu-container">
+        <div class="space-between-element"><p class="text clickable" @click="changeSlide('Introduction')">Introduction</p></div>
+        <Accordeon
+          :header="'Collection'"
+          :length="information.collection.length"
+          :should-be-open="true"
+        >
+          <div v-for="(item, index) in information.collection" :key="index">
+            <p class="text space-between-element text-margin clickable" @click="changeSlide(`decade-${index}`)">{{ item.title }}</p>
+          </div>
+        </Accordeon>
+        <div class="space-between-element">
+          <div><p class="text clickable" @click="load('/search')">Search</p></div>
         </div>
-      </Accordeon>
-      <div class="space-between-element">
-        <div><p class="text clickable" @click="load('/search')">Search</p></div>
-      </div>
-      <div class="space-between-element">
-        <div><p class="text clickable" @click="load('/about')">About</p></div>
+        <div class="space-between-element">
+          <div><p class="text clickable" @click="load('/about')">About</p></div>
+        </div>
       </div>
     </div>
   </div>

@@ -19,6 +19,10 @@
   z-index: 100;
 }
 
+.menu-container {
+  max-height: 100%;
+}
+
 .menu-header {
   height: 10vh;
   display: flex;
@@ -33,6 +37,8 @@
   margin-right: 32px;
   overflow-y: auto;
   padding-bottom: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .menu-transition {

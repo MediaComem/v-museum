@@ -122,16 +122,13 @@ const store = createStore({
   plugins: [vuexLocal.plugin],
 });
 
-const isSafari = !!navigator.userAgent.match(/Version\/[\d.]+.*Safari/);
+const isIpad = /iPad/.test(navigator.userAgent) && !window.MSStream;
 const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const isAndroid = navigator.userAgent.toLowerCase().indexOf("android") > -1;
-const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
 const app = createApp(App);
-app.config.globalProperties.isSafariBrowser = isSafari;
-app.config.globalProperties.isFirefoxBrowser = isFirefox;
-app.config.globalProperties.isSafariIphone = isSafari && iOS;
 app.config.globalProperties.isMobileDevice = isAndroid || iOS;
+app.config.globalProperties.isIpad = isIpad
 
 app.use(ElementPlus);
 app.use(router);

@@ -1,13 +1,17 @@
+.collapse-text-container {
+  margin: 80px 0 0 0;
+  display: flex;
+  height: calc(100vh - 200px);
+  align-items: center;
+  justify-content: center;
+}
+
 .collapse-text-align {
   text-align: left;
-  position: absolute;
-  margin: 3vw;
   font-size: 22px;
-  display: flex;
-  width: calc(100% - 6vw);
-  justify-content: center;
-  align-items: center;
-  height: calc(100vh - 50px - 10vh);
+  margin: 0px;
+  max-height: 100%;
+  max-width: 571px;
 }
 
 .image-display {
@@ -60,15 +64,10 @@
   top: 10vh;
 }
 
-.close-collapse-band {
-  height: 50px;
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-}
-
 .close-collapse-cross {
   width: 24px;
   height: 24px;
-  margin-top: 10px;
+  top: 40px;
+  right: 40px;
+  position: absolute;
 }

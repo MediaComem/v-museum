@@ -6,12 +6,12 @@
   <div
     class="collapse-transition"
     :style="collapse"
-    style="position: absolute; left: 0px; top: 0px; height: 100vh; overflow-y:scroll; z-index: 100"
+    style="position: absolute; left: 0px; top: 0px; height: calc(100vh - 40px); overflow-y:scroll; z-index: 100; margin: 20px; background-color: white;"
   >
-    <div class="close-collapse-band">
-      <img class="close-collapse-cross clickable" src="@/assets/shared/cross.svg" alt="cross" @click="isCollapse = !isCollapse">
+    <img class="close-collapse-cross clickable" src="@/assets/shared/cross.svg" alt="cross" @click="isCollapse = !isCollapse">
+    <div class="collapse-text-container overflow">
+      <p class="collapse-text-align">{{ item.text }}</p>
     </div>
-    <p class="collapse-text-align overflow">{{ item.text }}</p>
   </div>
   <logo
     style="position: absolute; left: 2vw; top: 2vh; z-index: 1;"
@@ -84,7 +84,7 @@ export default {
       return {
         'background-color': this.information.collection[this.index].color,
         height: '100vh',
-        width: '57vw',
+        width: 'calc(57vw - 40px)',
         'z-index': 1,
         transform: this.isCollapse ? 'translateX(0)' : 'translate(-57vw)',
       };
