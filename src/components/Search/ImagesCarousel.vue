@@ -114,6 +114,7 @@ export default {
         this.displayArrow = boolean;
       }, 0);
     },
+    // For a safari mobile propagation problem https://github.com/vuejs/vue/issues/9859
     handleMouseTagArrow(boolean) {
       setTimeout(() => {
         this.displayTagArrow = boolean;
