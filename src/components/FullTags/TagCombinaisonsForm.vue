@@ -98,6 +98,7 @@ export default {
                 'canvas-display-mobile': !this.showCarousel && this.isMobileDevice && !this.isSafariBrowser && !this.isFirefoxBrowser,
                 'canvas-display-mobile-firefox': !this.showCarousel && this.isMobileDevice && this.isFirefoxBrowser,
                 'canvas-display-mobile-safari': !this.showCarousel && this.isMobileDevice && this.isSafariBrowser,
+                'canvas-display-mobile-safari-carousel': this.showCarousel && this.isMobileDevice && this.isSafariBrowser,
                 'canvas-with-carousel-mobile': this.showCarousel && this.isMobileDevice,
             }
         },
@@ -206,6 +207,10 @@ export default {
         height: calc(75.5vh - 80px);
     }
 
+    .canvas-display-mobile-safari-carousel {
+        height: calc(75.5vh - 80px);
+    }
+
     .canvas-with-carousel {
         height: 50.5vh;
     }
@@ -229,7 +234,11 @@ export default {
     }
 
     .canvas-display-mobile-safari {
-        height: calc(79.3vh - 80px);
+        height: calc(75.5vh - 80px);
+    }
+
+    .canvas-display-mobile-safari-carousel {
+        height: calc(50.5vh - 80px) !important;
     }
 
     .canvas-with-carousel {
