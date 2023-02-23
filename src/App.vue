@@ -30,11 +30,4 @@ export default {
   -webkit-text-size-adjust: none;
   zoom: 1;
 }
-
-body {
-  height: 100%;
-  position: fixed;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-}
 </style>

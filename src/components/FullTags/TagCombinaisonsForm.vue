@@ -1,5 +1,6 @@
 <template>
-    <div class="canvas-display overflow canvas-display-bottom" :style="canvasHeight" v-if="imagesWithTags.length > 0">
+    <div class="overflow" :style="canvasHeight">
+        <div class="canvas-display canvas-display-bottom" v-if="imagesWithTags.length > 0">
         <div class="clickable-tags-list">
             <div v-for="(tag, index) in selected_tags_with_images" :key="index" class="tag-item">
                 <div v-if="!selected_tags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase())" class="display-element clickable clickable-tag"
@@ -16,6 +17,8 @@
             </div>
         </div>
     </div>
+    </div>
+   
 </template>
 
 <script>
