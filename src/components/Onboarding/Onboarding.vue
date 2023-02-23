@@ -42,7 +42,6 @@
 
 <script>
 import { useWindowSize } from 'vue-window-size';
-import { mapGetters } from 'vuex';
 
 import IntroductionSlide from './Slide/IntroductionSlide.vue';
 import DesktopSlide from './Slide/DesktopSlide.vue';
@@ -50,7 +49,17 @@ import MobileSlide from './Slide/MobileSlide.vue';
 
 import text from '@/assets/onboarding/text.json';
 
+import { mapActions, mapState } from 'pinia';
+import store from '../../store';
+
 export default {
+  setup() {
+    const { width, height } = useWindowSize();
+    return {
+      windowWidth: width,
+      windowHeight: height,
+    };
+  },
   name: 'Onboarding',
   components: {
     IntroductionSlide,
@@ -75,8 +84,6 @@ export default {
       isCollapse: false,
       slide: 0,
       tag: undefined,
-      windowHeight: undefined,
-      windowWidth: undefined,
       lastScroll: undefined,
       ref: undefined,
     };
@@ -103,7 +110,7 @@ export default {
       this.$refs[event].scrollIntoView({ behavior: 'smooth' });
     },
     loadTagView(tag) {
-      this.$store.dispatch('setFullTagPageOrigin', '')
+      this.setFullTagPageOrigin('');
       this.$router.push({
         path: `/full_tag`,
         query: { tag: encodeURIComponent(tag.tag) },
@@ -121,6 +128,9 @@ export default {
       }
       
     },
+    ...mapActions(
+      store, ["setFullTagPageOrigin"],
+    ),
   },
   computed: {
     isMobile() {
@@ -129,20 +139,15 @@ export default {
     isFullSize() {
       return this.windowWidth > 1200;
     },
-    ...mapGetters({
-      origin: "getFullTagPageOrigin",
-    }),
+    ...mapState(
+      store, ["getFullTagPageOrigin"],
+    ),
   },
   activated() {
     if (this.ref) {
       this.$refs[this.ref].scrollIntoView();
     }
     this.ref = undefined;
-  },
-  mounted() {
-    const { width, height } = useWindowSize();
-    this.windowHeight = height;
-    this.windowWidth = width;
   },
 };
 </script>

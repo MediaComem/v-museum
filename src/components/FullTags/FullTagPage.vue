@@ -1,9 +1,9 @@
 <template>
   <Footer v-if="isSafariIphone && imageUrls && data" :nbLoadImages="imageUrls.length" :nbTotalImages="data.length" :isMoreImagesLoading="isMoreImagesLoading" />
   <div ref="carousel" class="canvas-size overflow">
-    <div v-if="imageUrls.length === 0 && origin != 'tags_slide'" class="loader central-loader-position" />
+    <div v-if="imageUrls.length === 0 && getFullTagPageOrigin != 'tags_slide'" class="loader central-loader-position" />
     <div
-      v-if="imageUrls.length === 0  && origin != 'tags_slide'"
+      v-if="imageUrls.length === 0  && getFullTagPageOrigin != 'tags_slide'"
       class="rotated-half-circle central-loader-position"
     />
     <ul
@@ -11,8 +11,8 @@
       :infinite-scroll-disabled="disableScroll"
       :infinite-scroll-distance="200"
     >
-      <div class="canvas-display-tags-slide" v-if="origin == 'tags_slide'">
-        <div v-for="(image, index) in this.images" :key="index">
+      <div class="canvas-display-tags-slide" v-if="getFullTagPageOrigin == 'tags_slide'">
+        <div v-for="(image, index) in this.getImages" :key="index">
           <div class="image-canvas">
             <img :src="image.url" @click="loadImage(image.id)" class="image-size clickable" />
           </div>
@@ -36,7 +36,8 @@
 
 <script>
 import axios from "axios";
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import store from "../../store";
 
 import dataFetch from "../../api/dataFetching";
 import Footer from "./Footer.vue";
@@ -109,10 +110,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({
-      images: "getImages",
-      origin: "getFullTagPageOrigin",
-    })
+    ...mapState(store,["getImages", "getFullTagPageOrigin"])
   },
   activated() {
     if (this.$refs.carousel) this.$refs.carousel.scrollTop = this.currentScroll;

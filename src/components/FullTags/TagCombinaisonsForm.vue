@@ -2,7 +2,7 @@
     <div class="canvas-display overflow canvas-display-bottom" :style="canvasHeight" v-if="imagesWithTags.length > 0">
         <div class="clickable-tags-list">
             <div v-for="(tag, index) in selected_tags_with_images" :key="index" class="tag-item">
-                <div v-if="!selected_tags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase())" class="display-element clickable clickable-tag"
+                <div v-if="!getTags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase())" class="display-element clickable clickable-tag"
                     @click="addTag(tag.tag)">
                     <span :class="fontSize">{{ tag.tag.charAt(0).toUpperCase() +
                             tag.tag.slice(1)
@@ -21,7 +21,8 @@
 <script>
 import images from '@/assets/data/images.json';
 import tags from "@/assets/onboarding/tags.json";
-import { mapGetters } from "vuex";
+import { mapState, mapActions } from "pinia";
+import store from '../../store';
 
 export default {
     emits: ["updateTagsList"],
@@ -42,7 +43,7 @@ export default {
         }
     },
     watch: {
-        selected_tags: {
+        getTags: {
             handler() {
                 this.updateTag();
             },
@@ -54,16 +55,16 @@ export default {
             if (tag.includes("/")) {
                 tag = tag.replace('/', '')
             }
-            if (!this.selected_tags.includes(tag)) {
-                this.$store.dispatch('insertTag', tag)
+            if (!this.getTags.includes(tag)) {
+                this.insertTag(tag)
             }
         },
         removeTag(tag) {
-            const index = this.selected_tags.findIndex((t) => t.toLowerCase() === tag.toLowerCase());
-            this.$store.dispatch('removeTag', index);
+            const index = this.getTags.findIndex((t) => t.toLowerCase() === tag.toLowerCase());
+            this.removeTag(index);
         },
         updateTag() {
-            this.$store.dispatch('setImages', this.imagesWithTags)
+            this.setImages(this.imagesWithTags)
             this.$emit('updateTagsList', this.imagesWithTags)
         },
         sortInTwoArrays(data_obj, substr) {
@@ -84,8 +85,9 @@ export default {
             tags_with_substr_arr.sort((a, b) => a.tag.localeCompare(b.tag))
             this.selected_tags_with_images = all_tags_arr;
             this.input_and_selected_tags_with_images = tags_with_substr_arr;
-            this.$store.dispatch('setImagesWithNbTags', this.selected_tags_with_images)
+            this.setImagesWithNbTags(this.selected_tags_with_images)
         },
+        ...mapActions(store, ["setImagesWithNbTags", "insertTag", "removeTag", "setImages"]),
     },
     computed: {
         fontSize() {
@@ -101,18 +103,18 @@ export default {
         },
         imagesWithTags() {
             //If user didnt add any tag, basic images are returned and all tags are kept
-            if (this.selected_tags.length == 1) {
+            if (this.getTags.length == 1) {
                 const formated_tags = {}
                 this.tags.tags.forEach(tag => {
                     formated_tags[tag.tag.toLowerCase()] = {
                         nb_images: tag.totalImage
                     }
                 })
-                this.sortInTwoArrays(formated_tags, this.selected_tags[0].toLowerCase())
+                this.sortInTwoArrays(formated_tags, this.getTags[0].toLowerCase())
                 return this.images
             }
             const tags_without_input = {}
-            const realTags = this.selected_tags.slice(1);
+            const realTags = this.getTags.slice(1);
             //Get only images including all selected tags except first (user current input) in array of selected tags
             const images_with_tags = this.images.filter((im) => {
                 if (realTags.every((tag) => {
@@ -128,12 +130,10 @@ export default {
                     return true
                 }
             });
-            this.sortInTwoArrays(tags_without_input, this.selected_tags[0].toLowerCase())
+            this.sortInTwoArrays(tags_without_input, this.getTags[0].toLowerCase())
             return images_with_tags
         },
-        ...mapGetters({
-            selected_tags: "getTags",
-        }),
+        ...mapState(store, ["getTags"]),
     }
  
 }

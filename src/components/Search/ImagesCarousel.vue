@@ -9,7 +9,7 @@
           <ArrowLeft v-show="displayTagArrow" @click="showPreviousTags()"/>
         </div>
         <div class="images-layout image-layout-padding" ref="tags">
-          <div v-for="(tag, index) in selected_tags" :key="index">
+          <div v-for="(tag, index) in getTags" :key="index">
             <div @click="removeTag(index)">
               <div v-if="tag.length > 0" class="tag-remove-layout" >
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -45,8 +45,8 @@
           >
             <img
               class="image-carousel-size"
-              :src="images[index].url"
-              @click="loadImage(images[index].id)"
+              :src="getImages[index].url"
+              @click="loadImage(getImages[index].id)"
             />
           </div>
         </div>
@@ -57,11 +57,11 @@
       </div>
     </div>
     <div class="docs">
-      <span :class="fontSize" class="nb-docs" v-if="images.length > 1"
-        >{{ images.length }} documents</span
+      <span :class="fontSize" class="nb-docs" v-if="getImages.length > 1"
+        >{{ getImages.length }} documents</span
       >
       <span v-else :class="fontSize" class="nb-docs" style="cursor: pointer"
-        >{{ images.length }} document</span
+        >{{ getImages.length }} document</span
       >
     </div>
     <div class="buttons">
@@ -79,7 +79,8 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex';
+import { mapState, mapActions } from 'pinia';
+import store from '../../store';
 
 import dataFetch from '../../api/dataFetching';
 
@@ -150,8 +151,9 @@ export default {
       });
     },
     removeTag(index) {
-      this.$store.dispatch('removeTag', index);
+      this.removeTag(index);
     },
+    ...mapActions(store, ['removeTag', 'setFullTagPageOrigin']),
   },
   computed: {
     fontSize() {
@@ -160,16 +162,13 @@ export default {
         'mobile-font': this.isMobile,
       };
     },
-    ...mapGetters({
-      images: 'getImages',
-      selected_tags: 'getTags',
-    }),
+    ...mapState(store, ['getImages', 'getTags']),
   },
   activated() {
     if (this.$refs.carousel) this.$refs.carousel.scrollLeft = this.currentScroll;
   },
   mounted() {
-    this.$store.dispatch('setFullTagPageOrigin', 'tags_slide');
+    this.setFullTagPageOrigin('tags_slide');
   },
 };
 </script>

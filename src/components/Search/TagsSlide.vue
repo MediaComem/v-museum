@@ -8,9 +8,9 @@
       <div class="tags-title">
         <h1 v-if="show_form">TAGS</h1>
         <h1 v-if="show_full_tag_page">
-          <span v-for="(tag, index) in selected_tags" :key="index">
+          <span v-for="(tag, index) in getTags" :key="index">
             <span v-if="index > 0">{{ tag.toUpperCase() }}</span>
-            <span v-if="index < selected_tags.length - 1 && index > 0">
+            <span v-if="index < getTags.length - 1 && index > 0">
               &
             </span>
           </span>
@@ -26,7 +26,7 @@
         <images-carousel
           @showFullTagPage="showFullScreenCarousel()"
           :is-mobile="isMobile"
-          :nbImages="images_bis.length"
+          :nbImages="getImages.length"
           :show-carousel="show_carousel"
           :key="carousel_key"
         />
@@ -45,7 +45,7 @@
         <images-carousel
           @showFullTagPage="showFullScreenCarousel()"
           :is-mobile="isMobile"
-          :nbImages="images_bis.length"
+          :nbImages="getImages.length"
           :show-carousel="show_carousel"
           :key="carousel_key"
         />
@@ -62,8 +62,8 @@
 </template>
 
 <script>
-import { useWindowSize } from 'vue-window-size';
-import { mapGetters } from 'vuex';
+import { mapState } from 'pinia';
+import store from '../../store'
 
 import tags from '@/assets/onboarding/tags.json';
 import images from '@/assets/data/images.json';
@@ -94,7 +94,6 @@ export default {
       images_for_carousel: images,
       searchView: false,
       isOpenMenu: false,
-      windowWidth: 0,
     };
   },
   methods: {
@@ -114,8 +113,8 @@ export default {
     updateTagsList(data) {
       //rebuild the component to prevent array length problems
       this.carousel_key = data.length;
-      if (this.images_bis.length > 0) {
-        this.show_carousel = this.selected_tags.length > 1;
+      if (this.getImages.length > 0) {
+        this.show_carousel = this.getTags.length > 1;
         this.images_for_carousel = data.images;
       }
     },
@@ -144,15 +143,8 @@ export default {
     getImageBannerPosition() {
       return this.windowWidth < 750;
     },
-    ...mapGetters({
-      images_bis: 'getImages',
-      selected_tags: 'getTags',
-    }),
+    ...mapState(store,['getImages', 'getTags']),
   },
-  mounted() {
-    const { width } = useWindowSize();
-    this.windowWidth = width;
-  }
 };
 </script>
 

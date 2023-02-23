@@ -65,7 +65,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "pinia";
+import store from '../../store';
 import dataFetch from '../../api/dataFetching';
 import {
   thumbnailWidth,
@@ -208,9 +209,7 @@ export default {
     getVisibility() {
       return this.indicatorInformation.visible;
     },
-    ...mapGetters({
-      getFullHistoryMode: "getFullHistoryMode",
-    }),
+    ...mapState(store, ["getFullHistoryMode"]),
   },
   mounted() {
     dataFetch.getImageById(this.imageId).then((data) => {

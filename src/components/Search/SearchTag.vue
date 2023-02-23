@@ -38,7 +38,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState, mapActions } from 'pinia';
+import store from '../../store';
 
 import { useWindowSize } from 'vue-window-size';
 
@@ -71,13 +72,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['getImagesWithNbTags', 'getTags']),
+    ...mapState(store, ['getImagesWithNbTags', 'getTags']),
   },
   methods: {
     addTag() {
       const tag = this.availableTags[this.currentIndex];
       if (tag) {
-        this.$store.dispatch('insertTag', tag.tag);
+        this.insertTag(tag.tag);
         this.currentInput = '';
         this.availableTags = this.getImagesWithNbTags.filter((tag) => !this.getTags.map((tag) => tag.toLowerCase()).includes(tag.tag.toLowerCase()));
         this.$emit('close');
@@ -123,7 +124,8 @@ export default {
     },
     maxElementDisplay(height) {
       this.currentMaxIndex = Math.floor((height - 47) / 69) - 1
-    }
+    },
+    ...mapActions(store, ['insertTag']),
   },
   mounted() {
     const { height } = useWindowSize();

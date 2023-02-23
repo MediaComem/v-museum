@@ -62,6 +62,9 @@ import smoothscroll from 'smoothscroll-polyfill';
 
 import relatedImageData from '../../assets/data/process.json';
 
+import { mapActions } from 'pinia';
+import store from '../../store';
+
 import {
   getFactor,
   thumbnailWidth,
@@ -86,6 +89,13 @@ import ImageBlock from '../../models/ImageBlock';
 import RelatedImage from '../../models/RelatedImage';
 
 export default {
+  setup() {
+    const { width, height } = useWindowSize();
+    return {
+      windowWidth: width,
+      windowHeight: height,
+    };
+  },
   components: { ImagesBlock, FocusRectangle, History },
   beforeRouteUpdate(to) {
     if (to.query.imageId) {
@@ -121,8 +131,6 @@ export default {
       centralImageId: 3,
       initialCentralTag: 'Fly',
       imageBlocks: [],
-      windowHeight: 0,
-      windowWidth: 0,
       pageHeight: 0,
       pageWidth: 0,
       fullHistoryMode: false,
@@ -654,7 +662,7 @@ export default {
       currentPosition,
       relatedImages
     ) {
-      this.$store.dispatch('insertHistory', {
+      this.insertHistory({
         imageId: imageToAnalyze.imageId,
         tag: imageToAnalyze.tag,
       });
@@ -666,6 +674,7 @@ export default {
         relatedImages
       );
     },
+    ...mapActions(store, ['insertHistory'])
   },
   computed: {
     imageFactor() {
@@ -699,9 +708,6 @@ export default {
   },
   created() {
     smoothscroll.polyfill();
-    const { width, height } = useWindowSize();
-    this.windowHeight = height.value;
-    this.windowWidth = width.value;
 
     // Default page size set. The values have selected randomly but seems to be a good compromise
     this.pageHeight = this.windowHeight * 20;

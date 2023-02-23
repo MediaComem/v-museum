@@ -13,9 +13,9 @@
         :style="historyTextWidth"
         @click="sendOpenFullHistory()"
       >
-        <p class="history-value" :style="historyValueDisplay">{{ currentHistory.length }}</p>
+        <p class="history-value" :style="historyValueDisplay">{{ getHistory.length }}</p>
       </div>
-      <div v-if="currentHistory.length <= 2">
+      <div v-if="getHistory.length <= 2">
         <div>
           <div
             :style="{position: 'absolute', left: isSpecialDevice ? '200px' : '45px', width: isSpecialDevice ? '200px' : '45px'}"
@@ -61,7 +61,7 @@
           </div>
         </div>
       </div>
-      <div v-if="currentHistory.length > 2">
+      <div v-if="getHistory.length > 2">
         <div
           style="position: absolute"
           :style="{ transform: 'translateX(' + -((isSpecialDevice ? 200 : 45) * firstPosition) + 'px)', left: isSpecialDevice ? '600px' : '135px', width: isSpecialDevice ? '200px' : '45px' }"
@@ -129,11 +129,11 @@
 
   <div v-if="isFullHistory" class="history-layout clickable-without-hover" :style="fullHistory">
     <div class="full-history-lenght history-text" :style="historyTextWidth" @click="closeFullHistory">
-      <p class="history-value-full" :style="historyValueFullSize">{{ currentHistory.length }}</p>
+      <p class="history-value-full" :style="historyValueFullSize">{{ getHistory.length }}</p>
     </div>
     <div class="left-arrow" @click="leftMove()" />
     <div class="full-history-display" :style="fullHistoryDisplaySize">
-      <div v-for="(value, index) in currentHistory" :key="index">
+      <div v-for="(value, index) in getHistory" :key="index">
         <div
           style="position: absolute; width: 64; height: 81px"
           :style="{
@@ -155,8 +155,11 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapState, mapActions } from "pinia";
+import store from '../../store';
 export default {
+  created () {
+  },
   name: "History",
   props: {
     topPosition: Number,
@@ -273,14 +276,14 @@ export default {
       this.isAnimated = true;
       setTimeout(() => {
         this.displayAllHistory = true;
-        this.$store.dispatch('updateFullHistory', {
+        this.updateFullHistory({
           isOpen: true,
         });
       }, 300);
     },
     closeFullHistory() {
       this.displayAllHistory = false;
-      this.$store.dispatch('updateFullHistory', {
+      this.updateFullHistory({
         isOpen: false,
       });
     },
@@ -292,7 +295,7 @@ export default {
     rightMove() {
       if (
         this.position <=
-        this.currentHistory.length - (this.fullWidth / 68 - 1)
+        this.getHistory.length - (this.fullWidth / 68 - 1)
       ) {
         this.position = this.position + 1;
       }
@@ -306,7 +309,7 @@ export default {
         },
       });
       this.displayAllHistory = false;
-      this.$store.dispatch('updateFullHistory', {
+      this.updateFullHistory({
         isOpen: false,
       });
     },
@@ -336,6 +339,7 @@ export default {
           break;
       }
     },
+    ...mapActions(store, ["updateFullHistory"]),
   },
   computed: {
     isFullHistory() {
@@ -345,8 +349,8 @@ export default {
       return {
         height: this.isSpecialDevice ? '200px' :"53px",
         width:
-          this.currentHistory.length < 3
-            ? (this.currentHistory.length + 1) * (this.isSpecialDevice ? 200 : 45) + "px"
+          this.getHistory.length < 3
+            ? (this.getHistory.length + 1) * (this.isSpecialDevice ? 200 : 45) + "px"
             : this.isSpecialDevice ? '800px' : "180px",
         top: this.isSpecialDevice ? this.topPosition + 200 + "px" : this.topPosition  + "px",
         left: this.leftPosition + "px",
@@ -390,15 +394,15 @@ export default {
     },
     getOpacityFirstPosition() {
       return {
-        "third-image-opacity": this.currentHistory.length === 1,
-        "second-image-opacity": this.currentHistory.length === 2,
-        "first-image-opacity": this.currentHistory.length > 2,
+        "third-image-opacity": this.getHistory.length === 1,
+        "second-image-opacity": this.getHistory.length === 2,
+        "first-image-opacity": this.getHistory.length > 2,
       };
     },
     getOpacitySecondPosition() {
       return {
-        "third-image-opacity": this.currentHistory.length === 2,
-        "second-image-opacity": this.currentHistory.length > 2,
+        "third-image-opacity": this.getHistory.length === 2,
+        "second-image-opacity": this.getHistory.length > 2,
       };
     },
     getOpacityFullFirstPosition() {
@@ -433,13 +437,10 @@ export default {
         "final-opacity": this.forthPosition === 3,
       };
     },
-    ...mapGetters({
-      currentHistory: "getHistory",
-    }),
-    ...mapState(["history"]),
+    ...mapState(store, ["history", "getHistory"]),
   },
   mounted() {
-    this.loadImages(this.currentHistory);
+    this.loadImages(this.getHistory);
   },
 };
 </script>

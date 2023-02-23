@@ -32,6 +32,13 @@ import DataInformation from "./DataInformation/DataInformation.vue";
 import dataFetching from "../../api/dataFetching";
 
 export default {
+  setup() {
+    const { width, height } = useWindowSize();
+    return {
+      windowWidth: width,
+      windowHeight: height,
+    };
+  },
   components: { PageManager, DataInformation },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -44,8 +51,6 @@ export default {
   },
   data() {
     return {
-      windowWidth: undefined,
-      windowHeight: undefined,
       // Previous page URL
       from: undefined,
       // ID of the image, used to search index position of the storyCollection.
@@ -167,9 +172,6 @@ export default {
   },
   activated() {
     this.shouldZoom = true;
-    const { width, height } = useWindowSize();
-    this.windowWidth = width;
-    this.windowHeight = height;
     this.tags = [];
     this.storyCollection = undefined;
     this.currentIndex = undefined;
