@@ -18,7 +18,7 @@
       </el-col>
     </el-row>
     <el-row>
-      <div style="height: 85vh; overflow: scroll">
+      <div style="height: calc(85vh - 80px); overflow: scroll">
         <p class="collection-text-mobile collapse-text-align-mobile">
           {{ item.text }}
         </p>
@@ -87,7 +87,6 @@ export default {
     collapseMobile() {
       return {
         "background-color": this.information.collection[this.index].color,
-        height: "100vh",
         width: "100vw",
         transform: this.isCollapse ? "translateX(0)" : "translate(-100vw)",
       };

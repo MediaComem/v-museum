@@ -57,7 +57,7 @@ export default {
   computed: {
     padding() {
       return {
-        'padding-bottom': this.isSafariIphone ? '100px' : '5vh',
+        'padding-bottom': this.isMobileDevice ? '100px' : '5vh',
       }
     },
   },

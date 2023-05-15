@@ -14,6 +14,8 @@ export default {
 </script>
 
 <style>
+html, body { height: 100%; }
+
 @font-face {
   font-family: "Certeau";
   src: local("WOFF2"),

@@ -3,7 +3,7 @@ import { createStore } from "vuex";
 import VuexPersistence from "vuex-persist";
 
 import ElementPlus from "element-plus";
-import "element-plus/lib/theme-chalk/index.css";
+import "@element-plus/theme-chalk/dist/index.css";
 import App from "./App.vue";
 
 import dataFetch from "./api/dataFetching";
@@ -128,6 +128,7 @@ const isAndroid = navigator.userAgent.toLowerCase().indexOf("android") > -1;
 
 const app = createApp(App);
 app.config.globalProperties.isMobileDevice = isAndroid || iOS;
+app.config.globalProperties.isAndroid = isAndroid
 app.config.globalProperties.isIpad = isIpad
 
 app.use(ElementPlus);
