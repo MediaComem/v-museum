@@ -4,6 +4,12 @@
 
 Présentation des activités de Mediamaps sur la base du framework [reveal.js](https://revealjs.com) 
 
+## Déploiement
+
+Pour démarrer le serveur, exécuter la commande suivante:
+
+`npm install & npm start`
+
 ## License
 
 MIT licensed
