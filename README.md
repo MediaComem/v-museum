@@ -2,13 +2,13 @@
 
 ## Interdisciplinarité à la HEIG-VD autour de la géoinformation
 
-Présentation des activités de Mediamaps sur la base du framework [reveal.js](https://revealjs.com) 
+Présentation des activités des instituts de la HEIG-VD en lien avec la géoinformatique à la journée romande de la géoinformation 2023 sur la base du framework [reveal.js](https://revealjs.com)
 
 ## Déploiement
 
 Pour démarrer le serveur, exécuter la commande suivante:
 
-`npm install & npm start`
+`npm install; npm start`
 
 ## License
 
