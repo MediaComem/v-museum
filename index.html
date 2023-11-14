@@ -13,71 +13,190 @@
 	<body>
 		<div class="reveal">
 				<div class="slides">
-				<!-- Partie #1: Présentation de Mediamaps -->
-				<section>
-					<section class="dark" data-background-image="images/assemblage-logos-center.png">
-						<h2>Interdisciplinarité à la HEIG-VD autour de la géoinformation</h2>
+  				<!-- Partie #1: Présentation générale -->
+  				<section>
+  					<section class="dark" data-background-image="images/assemblage-logos-center.png">
+  						<h2>Interdisciplinarité à la HEIG-VD autour de la géoinformation</h2>
+  					</section>
+  					<section class="bg-white" data-background-image="images/assemblage-logos.png">
+  						<h4>Thématiques</h4>
+  						<ul class="r-fit-text">
+                <!--
+  							<li>Interopérabilité des représentations cartographiques (<a href="https://www.ogc.org/standard/se/">Symbology Encoding</a>)</li>
+  							<li>Développement des standards OGC: <a href="https://docs.ogc.org/is/18-067r3/18-067r3.html">SymCore</a> & <a href="https://www.geopose.org/">Geopose</a></li>
+  							<li>Webmapping, GeoWeb, WebGIS</li>
+  							<li>Location based AR</li>
+  							<li>Citizen science & VGI</li>
+                 -->
+
+                <li>Acquisition de géodonnées</li>
+                <li>IA et machine learning</li>
+                <li>Sciences citoyennes</li>
+                <li>Géodésie</li>
+                <li>Géovisualisation</li>
+                <li>Développement géo-soft, webmapping</li>
+                <li>Gestion de géodonnées / standardisation (OGR)</li>
+  						</ul>
+  					</section>
+            <section class="bg-white" data-background-image="images/assemblage-logos.png">
+              <h4>Personnes de contacts</h4>
+  						<ul class="r-fit-text">
+                <li>Jens Ingensand (Professeur Géoinformatique et SIG, Responsable du groupe thématique de compétence Géomatique)</li>
+                <li>Yves Deillon (Professeur Mensuration officielle)</li>
+                <li>Sébastien Guillaume (Professeur Géodésie, méthodes d'estimation et navigation)</li>
+                <li>Bertrand Cannelle (Professeur BIM et géovisualisation, Responsable de la filière Génie territorial)</li>
+                <li>Adrien Gressin (Professeur Photogrammétrie et télédétection)</li>
+                <li>Olivier Ertz (Professeur Géoinformatique) </li>
+                <li>Bertil Chapuis (Professeur, Responsable du groupe thématique de compétence Informatique logicielle)</li>
+  						</ul>
+            </section>
+            <!-- Partie #2: Présentation du Yearbook MEI
+            <section class="bg-white" data-background-image="images/yearbook-23-MEI.jpg">
+  						<h2>Yearbook 2023 MEI</h2>
+  						<h3 class="r-fit-text">Le Yearbook reflète les avancées, l'évolution et les réussites collectives du <a href="https://heig-vd.ch/rad/instituts/mei">MEI</a></h3>
+  					</section>
+  					<section class="bg-white" data-background-image="images/yearbook-23-MEI.jpg">
+  						<h4>En savoir plus</h4>
+  						<p><a href="https://www.calameo.com/read/007318482693f974ed31b" style="color: beige;">↗ Yearbook 2023 MEI</a></p>
+  					</section>
+            -->
+  				</section>
+          <!-- Partie #2: Géovisualisation -->
+  				<section>
+  					<section class="bg-white" data-background-image="images/miniplanet_heig-vdB_crop.png"  data-background-opacity="0.2">
+  						<h2>Géovisualisation</h2>
+  					</section>
+            <!-- Présentation du projet VR pour Swiss-Ski -->
+            <section class="bg-white" data-background-image="images/miniplanet_heig-vdB_crop.png"  data-background-opacity="0.2">
+  						<h4>Développement VR pour Swiss-Ski & Sunrise</h4>
+              <video src="images/ARVR_SGU.mp4" controls  width="80%" height="450"></video>
+  					</section>
+            <!-- Présentation du projet BiodivAR -->
+  					<section class="bg-white" data-background-image="images/biodivAR-1.jpeg" data-background-opacity ="0.8">
+  						<h2>BiodivAR</h2>
+  						<h3 class="r-fit-text">Education à la biodiversité grâce à la réalité augmentée géolocalisée</h3>
+  						<p class="r-fit-text">Créer, partager et visualiser des points d’intérêt sur la <b>biodiversité</b> pour explorer la nature au moyen d’une application mobile de <b>réalité augmentée</b>. C’est le défi relevé par le projet <b>BiodivAR</b>, suite du projet <a href="https://biosentiers.heig-vd.ch/landing/">BioSentiers</a>.</p>
+  					</section>
+  					<section>
+  						<h4>Screencast</h4>
+  						<div>
+  							<div style="position:relative;padding-top:56.25%;">
+  							  <iframe src="https://player.vimeo.com/video/874723997?h=8f3a9d5fe4" frameborder="0" allowfullscreen
+  								style="position:absolute;top:0;left:0;width:100%;height:100%;" data-autoplay></iframe>
+  							</div>
+  						</div>
+  					</section>
+  					<section class="bg-white" data-background-image="images/biodivAR-1.jpeg" data-background-opacity ="0.5">
+  						<h4>En savoir plus</h4>
+  						<p><a data-preview-link="false" href="https://www.nfp77.ch/fr/GVuF9QTvaGWndyoo/projet/biodiversite-et-realite-augmentee-un-avenir-de-lapprentissage">↗ Biodiversité et réalité augmentée: un avenir de l’apprentissage?</a></p>
+  						<p><a href="https://biosentiers.heig-vd.ch/landing/">↗ Projet Biosentiers</a></p>
+  					</section>
+            <!-- Présentation du projet Smapshot -->
+            <section class="bg-white" data-background-image="images/smapshot-1.png" data-background-opacity="0.5">
+              <h2>Smapshot</h2>
+                <h3 class="r-fit-text">La machine à remonter le temps participative</h3>
+                <p class="r-fit-text">Grâce à <a data-preview-link="false" href="https://smapshot.heig-vd.ch/">Smapshot</a>, il est possible de <b>géolocaliser</b> des images d’archive en <b>3D</b>.
+                  <br/>Plus de <b>250'000</b> images ont déjà été référencées, grâce aux contributions de plus de <b>1'000</b> volontaires.</p>
+            </section>
+            <section>
+              <h4>Screencast</h4>
+              <div>
+                <div style="position:relative;padding-top:56.25%;">
+                  <iframe src="https://www.youtube.com/embed/3VPBEEEZO8E" frameborder="0" allowfullscreen
+                  style="position:absolute;top:0;left:0;width:100%;height:100%;" data-autoplay></iframe>
+                </div>
+              </div>
+            </section>
+
+            <section>
+    						<h4>Smapshot Story Maps</h4>
+    						<div style="text-align: center;">
+    							<img src="images/smapshot-story-maps.png" alt="Smapshot Story Maps" height="500">
+    							<p style="display: block; text-align: center; font-size: 0.85em;"><a data-preview-link="false" href="https://smapshot-beta.heig-vd.ch/storymaps/3/0">↗ Parcourir la Story Map</a></p>
+    						</div>
+    				</section>
+
+            <section class="bg-white" data-background-image="images/smapshot-1.png" data-background-opacity="0.5">
+              <h4>Distinctions</h4>
+              <p>🏆 Prix <a href="https://awards.dinacon.ch/fr/">DINAcon</a> "Open Data" 2021</p>
+            </section>
+            <section class="bg-white" data-background-image="images/smapshot-2.png" data-background-opacity="0.5">
+              <h4>En savoir plus</h4>
+              <p><a href="https://smapshot.heig-vd.ch/">↗ Site web Smapshot</a></p>
+              <p><a href="https://blog.comem.ch/2021/11/17/smapshot-le-prix-dinacon-open-data/">↗ Prix DINAcon open-data - Blog MEI</a></p>
+            </section>
+            <!-- Présentation des maquettes pédagogiques... -->
+            <section class="bg-white" data-background-image="" data-background-opacity="0.5">
+              <h2>Maquettes pédagogiques</h2>
+              <tr >
+                <td style="border: 0px; text-align: center;">
+                  <img src="images/GeoSandBoxpng.png" style="height: 300px;" alt=''>
+                </td>
+                <td style="border: 0px; text-align: center;">
+                  <img src="images/PrototypeGTE_.jpg" style="height: 300px;" alt=''>
+                </td>
+                <td style="border: 0px; text-align: center;">
+                  <img src="images/DemonstrateurGTE_.jpg" style="height: 300px;" alt=''>
+                </td>
+              </tr>
+
+                <p class="r-fit-text">
+                  Réalisation de différentes maquettes pédagogiques, comme le Bac à sable pédagogique permettant de visualiser aussi bien les courbes de niveaux, les remblais/déblais, ou encore les techniques d’estompage pour visualiser le relief, tout cela en temps réel !
+                  <!--
+                  PrototypeGTE : Maquette permettant d’illustrer le monitoring d’une falaise par lasergrammétrie. Le logiciel permet de visualiser aussi bien les données brutes du capteurs, que la carte de déformation et le suivi ponctuel d’éléments caractéristiques. Tout cela en temps réel !
+                  Demonstrateur GTE : Borne de gaming utilisant une maquette de la Suisse comme plateau de jeux. Plusieurs jeux sont possibles : trouver les cantons, les principaux sommets, les principales villes, ou encore les principaux lacs. Le plateau a été réalisé au MakeLab de la HEIG-VD.
+                -->
+                </p>
+            </section>
+
+  				</section>
+          <!-- Partie #2: Acquisition de géodonnées  -->
+          <!-- TODO  Géomonitoring  -->
+  				<section>
+  					<section class="bg-white" data-background-image="images/10_Monsalvens.JPG"  data-background-opacity="0.2">
+  						<h2>Acquisition de géodonnées </h2>
+  					</section>
+            <section class="bg-white" data-background-image="images/navigation_1.png"   data-background-opacity="0.2" data-background-size="90%">
+              <h4>GNSS / INS Navigation pour Armasuisse</h4>
+              <img src="images/navigation.png" alt="Robot" style="width: 90%;">
+            </section>
+            <section class="bg-white" data-background-image="images/punaise5_nb_sc.png">
+  						<h4>Multidigitalis - SwissCollNet</h4>
+              <img src="images/robot.png" alt="Robot" style="width: 30%;">
+              <img src="images/light.png" alt="Light" style="width: 30%;">
+              <ul class="r-fit-text">
+                <li>En collaboration avec insit, iAi (HEIG-VD), HE-ARC et 4 musées d'histoires naturelles</li>
+                <li>Bras robotisé, Schéma d'acquisition adaptatif, Traitement et contrôle qualité temps réel</li>
+                <li>Acquisition multi-spécimens, Mesures multi-stereo, Multi-spectral, Collection en fluides</li>
+              </ul>
+  					</section>
+            <section class="bg-white" data-background-image="images/punaise5_nb_sc.png">
+  						<h4>Multidigitalis - SwissCollNet</h4>
+              En savoir plus <br>
+              <a href="https://swisscollnet.scnat.ch/fr/running_projects/multidisciplinary_projects">↗ https://swisscollnet.scnat.ch/fr/running_projects/multidisciplinary_projects</a>
+  					</section>
+  				</section>
+          <!-- Partie #3: Sciences citoyennes -->
+  				<section>
+					<section class="bg-white" data-background-image="images/modos-2.png"  data-background-opacity="0.2">
+						<h2>Sciences citoyennes</h2>
 					</section>
-					<section class="bg-white" data-background-image="images/assemblage-logos.png">
-						<h4>Thématiques</h4>
-						<ul class="r-fit-text">
-							<li>Interopérabilité des représentations cartographiques (<a href="https://www.ogc.org/standard/se/">Symbology Encoding</a>)</li>
-							<li>Développement des standards OGC: <a href="https://docs.ogc.org/is/18-067r3/18-067r3.html">SymCore</a> & <a href="https://www.geopose.org/">Geopose</a></li>
-							<li>Web mapping, Web GIS, GeoWeb</li>
-							<li>Location based AR</li>
-							<li>Citizen science & VGI</li>
-						</ul>
-					</section>
-				</section>
-				<!-- Partie #2: Présentation du Yearbook MEI -->
-				<section>
-					<section class="bg-white" data-background-image="images/yearbook-23-MEI.jpg">
-						<h2>Yearbook 2023 MEI</h2>
-						<h3 class="r-fit-text">Le Yearbook reflète les avancées, l'évolution et les réussites collectives du <a href="https://heig-vd.ch/rad/instituts/mei">MEI</a></h3>
-					</section>
-					<section class="bg-white" data-background-image="images/yearbook-23-MEI.jpg">
-						<h4>En savoir plus</h4>
-						<p><a href="https://www.calameo.com/read/007318482693f974ed31b" style="color: beige;">↗ Yearbook 2023 MEI</a></p>
-					</section>
-				</section>
-				<!-- Partie #3: Présentation du projet Smapshot -->
-				<section>
-					<section class="bg-white" data-background-image="images/smapshot-1.png" data-background-opacity="0.5">
-						<h2>Smapshot</h2>
-							<h3 class="r-fit-text">La machine à remonter le temps participative</h3>
-							<p class="r-fit-text">Grâce à <a  data-preview-link="false" href="https://smapshot.heig-vd.ch/">Smapshot</a>, il est possible de <b>géolocaliser</b> des images d’archive en <b>3D</b>.
-								<br/>Plus de <b>250'000</b> images ont déjà été référencées, grâce aux contributions de plus de <b>1'000</b> volontaires.</p>
-					</section>
-					<section>
-						<h4>Screencast</h4>
-						<div>
-							<div style="position:relative;padding-top:56.25%;">
-							  <iframe src="https://www.youtube.com/embed/3VPBEEEZO8E" frameborder="0" allowfullscreen
-								style="position:absolute;top:0;left:0;width:100%;height:100%;" data-autoplay></iframe>
-							</div>
-						</div> 
-					</section>
-					<section>
-						<h4>Smapshot Story Maps</h4>
-						<div style="text-align: center;">
-							<img src="images/smapshot-story-maps.png" alt="Smapshot Story Maps" height="500">
-							<p style="display: block; text-align: center; font-size: 0.85em;"><a data-preview-link="false" href="https://smapshot-beta.heig-vd.ch/storymaps/3/0">↗ Parcourir la Story Map</a></p>							
-						</div>
-					</section>
-					<section class="bg-white" data-background-image="images/smapshot-1.png" data-background-opacity="0.5">
-						<h4>Distinctions</h4>
-						<p>🏆 Prix <a href="https://awards.dinacon.ch/fr/">DINAcon</a> "Open Data" 2021</p>
-						<p>🏆 Prix <a href="https://www.flickr.com/photos/snsf_image_competition/52797346209/in/album-72177720307214121/">SNSF Scientific Image Competition</a> 2023</p>
-					</section>
-					<section class="bg-white" data-background-image="images/smapshot-2.png" data-background-opacity="0.5">
-						<h4>En savoir plus</h4>
-						<p><a href="https://smapshot.heig-vd.ch/">↗ Site web Smapshot</a></p>
-						<p><a href="https://blog.comem.ch/2021/11/17/smapshot-le-prix-dinacon-open-data/">↗ Prix DINAcon open-data - Blog MEI</a></p>
-					</section>
-				</section>
-				<!-- Partie #4: Présentation du projet Modos -->
-				<section>
-					<section class="bg-white" data-background-image="images/modos-2.png" data-background-opacity="0.5">
+          <section class="bg-white" data-background-image="">
+            <h4>Sciences citoyennes et IA</h4>
+            <tr style="border: 0px; text-align: center; vertical-align: top;">
+              <td style="border: 0px; text-align: center;">
+                  <img src="images/citizien_science_1.gif" style="height: 400px;" alt='NELCASSchema-v20231110'>
+              </td>
+              <td style="border: 0px; text-align: center; vertical-align: top;">
+                  <img src="images/citizien_science_2.gif" style="height: 400px;" alt='NELCASLogo-v20231110'>
+              </td>
+            </tr>
+            <p class="r-fit-text">
+              Les sciences citoyennes permettent aux citoyens de collecter des larges quantités de données. A l'aide d'intélligence artificielle des processus de validation automatique des données collectés in situ ont été implémentés et analysés. L'utilisation de la validation automatique permet également d'encourager les citoyens à collecter des informations.
+            </p>
+          </section>
+          <!-- Présentation du projet Modos -->
+          <section class="bg-white" data-background-image="images/modos-2.png" data-background-opacity="0.5">
 						<h2>modos</h2>
 						<h3 class="r-fit-text">Participation citoyenne pour la mobilité douce des seniors</h3>
 						<p class="r-fit-text">Le projet <a href="https://modos.heig-vd.ch/">modos</a> propose un framework de <b>participation citoyenne</b> pour la <b>cartographie</b> et la <b>documentation</b> des <b>obstacles</b> à la <b>mobilité piétonne</b> dans les <b>villes</b>.
@@ -90,7 +209,7 @@
 								  <iframe src="https://www.youtube.com/embed/sjdpcw2SVfg" frameborder="0" allowfullscreen
 									style="position:absolute;top:0;left:0;width:100%;height:100%;" data-autoplay></iframe>
 								</div>
-							</div> 
+							</div>
 						</section>
 					<section class="bg-white" data-background-image="images/modos-2.png" data-background-opacity="0.5">
 						<h4>Distinctions</h4>
@@ -100,108 +219,240 @@
 						<h4>En savoir plus</h4>
 						<p><a href="https://modos.heig-vd.ch/">↗ Site web modos</a></p>
 					</section>
-				</section>
-				<!-- Partie #5: Présentation du projet BiodivAR -->
-				<section>
-					<section class="bg-white" data-background-image="images/biodivAR-1.jpeg" data-background-opacity ="0.8">
-						<h2>BiodivAR</h2>
-						<h3 class="r-fit-text">Education à la biodiversité grâce à la réalité augmentée géolocalisée</h3>
-						<p class="r-fit-text">Créer, partager et visualiser des points d’intérêt sur la <b>biodiversité</b> pour explorer la nature au moyen d’une application mobile de <b>réalité augmentée</b>. C’est le défi relevé par le projet <b>BiodivAR</b>, suite du projet <a href="https://biosentiers.heig-vd.ch/landing/">BioSentiers</a>.</p>
-					</section>
-					<section class="bg-white" data-background-image="images/biodivAR-1.jpeg" data-background-opacity ="0.5">
-						<h4>Screencast</h4>
-						<div>
-							<div style="position:relative;padding-top:56.25%; display: flex; justify-content: center;">
-							  <iframe src="https://player.vimeo.com/video/874723997?h=8f3a9d5fe4" frameborder="0" allowfullscreen
-							  style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:100%;height:100%;" data-autoplay></iframe>
-							</div>
-						</div> 
-					</section>
-					<section class="bg-white" data-background-image="images/biodivAR-1.jpeg" data-background-opacity ="0.5">
-						<h4>En savoir plus</h4>
-						<p style="font-size: 0.8em;"><a data-preview-link="false" href="https://www.nfp77.ch/fr/GVuF9QTvaGWndyoo/projet/biodiversite-et-realite-augmentee-un-avenir-de-lapprentissage">↗ BiodivAR : un avenir pour l'apprentissage de la biodiversité ?</a></p>
-						<p style="font-size: 0.8em;"><a href="https://biosentiers.heig-vd.ch/landing/">↗ Projet Biosentiers</a></p>
-					</section>
-				</section>
-				<!-- Partie #6: Présentation du projet Geocity -->
-				<section>
-					<section class="bg-white" data-background-image="images/geocity.png" data-background-size="65%" data-background-opacity ="0.8">
-						<h2>Geocity MapUI</h2>
-						<h3 class="r-fit-text">Webmap components and UI design pour Geocity</h3>
-						<p class="r-fit-text">Solution d'interaction cartographique avancée et modulable</p>
-					</section>
-					<section>
-						<h4>Screenshots</h4>
-						<img src="images/geocity-scr.png" alt="Screenshots Geocity">
-					</section>
-					<section class="bg-white" data-background-image="images/geocity.png" data-background-size="65%" data-background-opacity ="0.5">
-						<h4>En savoir plus</h4>
-						<p><a data-preview-link="false"  href="https://geocity.ch/">↗ https://geocity.ch/</a></p>
-					</section>
-				</section>
-				<!-- Partie #7: Présentation du projet Symcore -->
-				<section>
-					<section class="bg-white"  data-background-image="images/symcore.jpeg" data-background-opacity="0.6">
-						<h2>Symcore</h2>
-						<h3 class="r-fit-text">Standard international pour la représentation de données géographiques</h3>
-						<p class="r-fit-text">L’interopérabilité des représentations cartographiques est un enjeu majeur à l'<a href="https://www.ogc.org/">Open Geospatial Consortium (OGC)</a>. C'est une <b>collaboration</b> de longue date entre le <a href="https://heig-vd.ch/research/mei">MEI</a> et le <a href="https://labsticc.fr/fr">Lab-STICC</a> <a data-preview-link="false" href="https://www.cnrs.fr/fr/le-cnrs">(CNRS)</a>  qui a permis de faire émerger la spécification socle <a href="https://docs.ogc.org/is/18-067r3/18-067r3.html?utm_source=phplist765&utm_medium=email&utm_content=HTML&utm_campaign=OGC+membership+approves+new+standard%3A+Symbology+Conceptual+Model%3A+Core+Part">SymCore</a> comme <b>nouveau standard international</b> de représentation de données géographiques, approuvé en <b>2020</b> par l’<a href="https://www.ogc.org/">OGC</a>.
-						<p class="r-fit-text">Aujourd'hui, les chercheurs du <a href="https://heig-vd.ch/research/mei">MEI</a> participent à l'élaboration de la <a href="https://opengeospatial.github.io/ogcna-auto-review/18-067r4.html">version 2.0</a> de ce standard au sein du SWG Styles & Symbology de l'OGC.</p>
-					</section>
-					<section class="bg-white" data-background-image="images/symcore.jpeg" data-background-opacity="0.6">
-						<h4>En savoir plus</h4>
-							<p style="font-size: 0.8em;"><a href="https://docs.ogc.org/is/18-067r3/18-067r3.html">↗ OGC Symbology Conceptual Model: Core Part</a></p>
-							<p style="font-size: 0.8em;"><a href="https://opengeospatial.github.io/ogcna-auto-review/18-067r4.html">↗ OGC Symbology Conceptual Model: Core Part (V2.0)</a></p>
-							<p style="font-size: 0.8em;"><a href="https://blog.comem.ch/2020/10/22/il-etait-une-fois-symcore/">↗ Il était une fois SymCore - Blog MEI</a></p>
-							<p style="font-size: 0.8em;"><a data-preview-link="false" href="https://lejournal.cnrs.fr/articles/nouvelle-donne-pour-les-cartes">↗ Nouvelle donne pour les cartes - Journal du CNRS</a></p>
-					</section>
-				</section>
-				<!-- Partie #8: Présentation du projet eCH-0056 -->
-				<section>
-					<section class="bg-white" data-background-image="images/eCH-0056.png" data-background-size="80%" data-background-opacity="0.8"> 
-						<h2>eCH-0056 v4: Profil d’application de géoservices</h2>
-						<h3 class="r-fit-text">Accompagnement de la révision de la norme eCH-0056</h3>						
-					</section>
-					<section class="bg-white" data-background-image="images/eCH-0056.png" data-background-size="80%" data-background-opacity="0.8">
-						<h4>En savoir plus</h4>
-						<p><a data-preview-link="false" href="https://www.ech.ch/fr/ech/ech-0056/4.0.0">↗ Version 4.0 de la norme eCH-0056</a></p>
-						<p><a href="https://ogc.heig-vd.ch">↗ Testbed platform des nouvelles API de l'OGC</a></p>
-					</section>
-				</section>
-				<!-- Partie #9: Présentation du projet Osires -->
-				<section>
-					<section class="bg-white" data-background-image="images/ord.jpg" data-background-size="70%" data-background-opacity="0.2"> 
-						<h2>Osires</h2>
-						<h3 class="r-fit-text">Open geospatial standards and reproducible research</h3>						
-						<h3 class="r-fit-text">Définition de bonnes pratiques d'interopérabilité pour des services ouverts favorisant la reproducibilité de la recherche avec des données spatio-temporelles</h3>						
-					</section>
-					<section class="bg-white" data-background-image="images/ord.jpg" data-background-size="70%" data-background-opacity="0.2">
-						<h4>En savoir plus</h4>
-						<p style="font-size: 0.75em;"><a data-preview-link="false" href="https://meetingorganizer.copernicus.org/EGU23/EGU23-14845.html">↗ EGU 2023: Abstract</a></p>
-						<p style="font-size: 0.75em;"><a data-preview-link="false" href="https://presentations.copernicus.org/EGU23/EGU23-14845_presentation.pdf">↗ EGU 2023: slide deck</a></p>
-					</section>
-				</section>
-				<!-- Partie #10: Présentation du projet FGDM4GS -->
-				<section>
-					<section class="bg-white" data-background-image="images/interlis-symcore.png" data-background-size="80%" data-background-opacity="0.2">
-						<h2>FGDM4GS</h2>
-						<h3 class="r-fit-text">Dénormalisation de MGDM pour la publication de géoservices</h3>
-						<p style="font-size: 0.75em;">Optimisation des <a data-preview-link="false" href="https://www.are.admin.ch/are/fr/home/developpement-et-amenagement-du-territoire/bases-et-donnees/modeles-de-geodonnees-minimaux.html">modèles de géodonnées minimaux</a> pour la publication de géoservices.</p>
-						<p style="font-size: 0.75em;">Comparaison des possibilités de représentation cartographique <a data-preview-link="false" href="https://www.interlis.ch/en/modelle/signatur-definition">INTERLIS2</a> avec <a href="https://opengeospatial.github.io/ogcna-auto-review/18-067r4.html">SymCore</a>.</p>
-					</section>
-					<section class="bg-white" data-background-image="images/interlis-symcore.png" data-background-size="80%" data-background-opacity="0.2">
-						<h4>En savoir plus</h4>
-						<p style="font-size: 0.75em;text-align: left;"><a data-preview-link="false" href="https://www.interlis.ch/download/interlis2/ili2-refman_2006-04-13_f.pdf">↗ INTERLIS 2 Manuel de référence</a></p>
-						<p style="font-size: 0.75em;text-align: left;"><a data-preview-link="false" href="http://www.ika.ethz.ch/studium/bachelorarbeit/2007_baertschi_bericht.pdf">↗ INTERLIS 2 Grafikmodellierung und Anforderungen der Kartografie</a></p>
-						<p style="font-size: 0.75em;"><a href="https://opengeospatial.github.io/ogcna-auto-review/18-067r4.html">↗ OGC Symbology Conceptual Model: Core Part (V2.0)</a></p>
-					</section>
-				</section>
-			</div>
-		</div>
+        </section>
+          <!-- Partie #4: IA et machine learning -->
+          <section>
+            <section class="bg-white" data-background-image="images/morat_2017_pred_crop.png"  data-background-opacity="0.2">
+              <h2>IA et machine learning</h2>
+            </section>
+            <section class="bg-white" data-background-image="">
+              <h4>MPD – cadastre pour Lausanne</h4>
+              <iframe src="https://rar-indg.heig-vd.ch/map/sgpf/potree_loz_classif.html" style="width: 80%; height: 450px" loading="lazy"></iframe>
+              <p class="r-fit-text">
+                Projet de mise à jour du cadastre de Lausanne, par utilisation d'images obliques : résultat de la classification automatique 3D sur la zone d'étude (Lausanne sous-gare). Étude réalisée pour le canton de Vaud, avec la collaboration de la ville de Lausanne.
+              </p>
+            </section>
+            <section class="bg-white" data-background-image="">
+    					<h4>Mapping Fribourg in a day</h4>
+              <div class="container">
+              <table>
+              <tr >
+                <td style="border: 0px; text-align: center;">
+                  <a href="https://rar-indg.heig-vd.ch/map/Morat.html">
+                      <img src="images/morat_2017_pred_crop.png" style="height: 300px;" alt='Morat'>
+                  </a>
+                </td>
+                <td style="border: 0px; text-align: center;">
+                  <a href="https://rar-indg.heig-vd.ch/map/Fribourg.html">
+                        <img src="images/fribourg_2022_pred_crop.png" style="height: 300px;" alt='Fribourg'><br>
+                  </a>
+                </td>
+              </tr>
+            </table>
+              <p class="r-fit-text">
+                Après avoir participé au challenge <a href="https://ignf.github.io/FLAIR/">IGN Flair #1</a>, nous avons appliqué notre modèle d'IA (classification en 12 classes) sur les orthoimages de Morat-Fribourg et Fribourg. Ces résultats ouvrent de nouvelles possibilités pour des applications de cartographie rapide.
+              </p>
+    				</section>
+            <section class="bg-white" data-background-image="" data-background-opacity="0.2">
+    					<h4>Mapping Fribourg in a day</h4>
+                En savoir plus <br>
+                <a href="https://rar-indg.heig-vd.ch/map/">↗https://rar-indg.heig-vd.ch/map/</a>
+    				</section>
+            <section class="bg-white" data-background-image="">
+    					<h4>Sécurisation des courses cyclistes</h4>
+              <iframe src=" https://rar-indg.heig-vd.ch/map/sgpf/potree_velo.html" style="width: 80%; height: 450px" ></iframe>
+              <p class="r-fit-text">
+                Projet de détection automatique d'obstacles le long des parcours des courses cyclistes en vue de leurs sécurisations. Réalisation d'un prototype de système d'acquisition stéréoscopique, géoréférencement des images et extraction sémantiques 3D automatiques.
+              </p>
+    				</section>
+    			</section>
+          <!-- Partie #5: Géodésie -->
+    			<section>
+    				<section class="bg-white" data-background-image="images/geoid.png" data-background-opacity="0.2">
+    					<h2>Géodésie</h2>
+    				</section>
+            <section class="bg-white" data-background-image="images/geoid.png" data-background-opacity="0.2">
+    					<h4>Swiss height system</h4>
+              <iframe width="80%" height="450" src="https://www.youtube.com/embed/F7RohyXL2V0?si=zNobG4rx4IiF1_5Q&amp;clip=Ugkxpfk9A4dVYUY8w6yrzlPWsKA4JetLaQtR&amp;clipt=EAAYkOQB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    					<p class="r-fit-text">
+                La HEIG-VD collabore étroitement avec swisstopo pour la définition du nouveau système altimétrique de la Suisse (altitude normale) qui sera compatible avec les systèmes supérieures globaux et intégrera la cinématique.
+                <!--La modernisation des altitudes usuelles suisses NF02 par un système de référence rigoureux est nécessaire pour éviter un fort risque de confusion et d’erreurs avec les services de géopositionnement GNSS qui atteignent progressivement une précision centimétrique.-->
+              </p>
+    				</section>
+            <section class="bg-white" data-background-image="images/geoid.png" data-background-opacity="0.2">
+    					<h4>Swiss height system</h4>
+                En savoir plus <br>
+                <img src="images/qr_swissheigt.png" alt=""> <br>
+                <a data-preview-link="false"  href=" https://swiss-height-system.heig-vd.ch/">↗  https://swiss-height-system.heig-vd.ch</a>
+    				</section>
+            <section class="bg-white" data-background-image="">
+              <h4>Détermination du géoide pour le Future Circular Collider (FCC)</h4>
+              <img src="images/geoid_1.png" alt="">
+            </section>
+            <section class="bg-white" data-background-image="">
+              <h4>Profil astro-gravimétrique de précision</h4>
+              <img src="images/geoid_3.png" alt="">
+            </section>
+            <section class="bg-white" data-background-image="">
+              <h4>Contributions HEIG-VD</h4>
+              <img src="images/geoid_4.png" alt="">
+              <p class="r-fit-text">
+                source: Dr. Daniel Willi swisstopo
+                <br><br>
+                Développement et comparaisons internationales d’instruments astrogéodésiques
+                <br>
+                Campagne de mesure GNSS / Nivellement de précision du profil astro-gravimétrique
+              </p>
+            </section>
+            <section class="bg-white" data-background-image="">
+              <h4>Résultats préliminaires => Profil de quasi géoïde &sigma;&nbsp;=&nbsp;5&nbsp;[mm]</h4>
+              <img src="images/geoid_5.png" alt="">
+              source: Dr. Daniel Willi swisstopo
+            </section>
+            <section class="bg-white" data-background-image="">
+    					<h4>Développements de logiciels géodésiques</h4>
+                <video src="images/trinet_SGU.mp4" controls  width="560" height="315"></video>
+    				</section>
+    			</section>
+          <!-- Partie #6: Développement géo-soft -->
+          <section>
+    				<section class="bg-white" data-background-image="images/dev_geosoft.jpeg" data-background-opacity="0.2">
+    					<h2>Développement géo-soft</h2>
+    				</section>
+            <!-- Présentation du projet Geocity -->
+            <section class="bg-white" data-background-image="images/geocity.png" data-background-size="65%" data-background-opacity ="0.8">
+              <h2>Geocity MapUI</h2>
+              <h3 class="r-fit-text">Webmap components and UI design pour Geocity</h3>
+              <p class="r-fit-text">Solution d'interaction cartographique avancée et modulable</p>
+            </section>
+            <section>
+              <h4>Screenshots</h4>
+              <img src="images/geocity-scr.png" alt="Screenshots Geocity">
+            </section>
+            <section class="bg-white" data-background-image="images/geocity.png" data-background-size="65%" data-background-opacity ="0.5">
+              <h4>En savoir plus</h4>
+              <p><a data-preview-link="false"  href="https://geocity.ch/">↗ https://geocity.ch/</a></p>
+            </section>
+            <!-- Présentation du projet NELCAS -->
+            <section class="bg-white" data-background-image="images/NELCASBarrage-v20231110.png">
+    					<h4>Traitement des observations et contraintes géométriques par les moindres carrés</h4>
+              <img src="images/NELCASLogo-v20231110.png" style="height: 200px;" alt='NELCASLogo-v20231110'>
+              <p class="r-fit-text">
+                <!-- Aujourd’hui, il est possible de mettre en œuvre un niveau d'abstraction plus élevé entre les méthodes d'acquisition sur le terrain et le traitement des mesures réalisées.-->
+                La HEIG-VD développe une plateforme logiciel <b>NELCAS</b> simple et modulaire pour le traitement des observations et contraintes géométriques selon les moindres carrés. Elle est adaptée aussi bien pour des mensurations techniques que pour des mensurations officielles et dispose d’outils d’analyse modernes et efficaces.
+              </p>
+    				</section>
+            <!-- Projet : Positionnement d'objets non-collaboratifs -->
+            <section class="bg-white" data-background-image="images/dev_geosoft.jpeg" data-background-opacity="0.2">
+    					<h4>Positionnement d'objets non-collaboratifs par tracking vidéo théodolite</h4>
+    					<video src="images/tracking_SGU.mp4" controls  width="560" height="315"></video>
+    				</section>
+            <!-- Projet : FlyG2 -->
+            <section class="bg-white" data-background-image="images/dev_geosoft.jpeg" data-background-opacity="0.2">
+    					<h4>FlyG2 : Photogrammétrie en temps réel</h4>
+              <tr>
+                <td style="border: 0px; text-align: center;">
+                  <img src="images/flyg2_simu.png" style="height: 300px;" alt='Morat'>
+                </td>
+                <!-- TODO : ajouter une image du calcul temps réel ? -->
+                <td style="border: 0px; text-align: center;">
+                  <img src="images/flyg2_diagram.png" style="height: 300px;" alt='Fribourg'><br>
+                </td>
+              </tr>
+              <ul class="r-fit-text">
+                <li>Choix de la meilleure configuration de drone sur données simulées</li>
+                <li>Algorithme de traitement de données photogrammétriques en quasi-temps réel</li>
+                <li>Architecture de calcul edge/cloud</li>
+              </ul>
+    				</section>
+    			</section>
+          <!-- Partie #7:  Gestion de géodonnées -->
+          <section>
+            <section class="bg-white" data-background-image="images/geodonnee.jpeg" data-background-opacity="0.2">
+              <h2> Gestion de géodonnées et standardisation</h2>
+            </section>
+            <!-- Présentation du projet Symcore -->
+            <section class="bg-white"  data-background-image="images/symcore.jpeg" data-background-opacity="0.6">
+              <h2>Symcore</h2>
+              <h3 class="r-fit-text">Standard international pour la représentation de données géographiques</h3>
+              <p class="r-fit-text">L’interopérabilité des représentations cartographiques est un enjeu majeur à l'<a href="https://www.ogc.org/">Open Geospatial Consortium (OGC)</a>. C'est une <b>collaboration</b> de longue date entre le <a href="https://heig-vd.ch/research/mei">MEI</a> et le <a href="https://labsticc.fr/fr">Lab-STICC</a> <a data-preview-link="false" href="https://www.cnrs.fr/fr/le-cnrs">(CNRS)</a>  qui a permis de faire émerger la spécification socle <a href="https://docs.ogc.org/is/18-067r3/18-067r3.html?utm_source=phplist765&utm_medium=email&utm_content=HTML&utm_campaign=OGC+membership+approves+new+standard%3A+Symbology+Conceptual+Model%3A+Core+Part">SymCore</a> comme <b>nouveau standard international</b> de représentation de données géographiques, approuvé en <b>2020</b> par l’<a href="https://www.ogc.org/">OGC</a>.
+              <p class="r-fit-text">Aujourd'hui, les chercheurs du <a href="https://heig-vd.ch/research/mei">MEI</a> participent à l'élaboration de la <a href="https://opengeospatial.github.io/ogcna-auto-review/18-067r4.html">version 2.0</a> de ce standard au sein du SWG Styles & Symbology de l'OGC.</p>
+            </section>
+            <section class="bg-white" data-background-image="images/symcore.jpeg" data-background-opacity="0.6">
+              <h4>En savoir plus</h4>
+                <p style="font-size: 0.8em;"><a href="https://docs.ogc.org/is/18-067r3/18-067r3.html">↗ OGC Symbology Conceptual Model: Core Part</a></p>
+                <p style="font-size: 0.8em;"><a href="https://opengeospatial.github.io/ogcna-auto-review/18-067r4.html">↗ OGC Symbology Conceptual Model: Core Part (V2.0)</a></p>
+                <p style="font-size: 0.8em;"><a href="https://blog.comem.ch/2020/10/22/il-etait-une-fois-symcore/">↗ Il était une fois SymCore - Blog MEI</a></p>
+                <p style="font-size: 0.8em;"><a data-preview-link="false" href="https://lejournal.cnrs.fr/articles/nouvelle-donne-pour-les-cartes">↗ Nouvelle donne pour les cartes - Journal du CNRS</a></p>
+            </section>
+            <!-- Présentation du projet eCH-0056 -->
+            <section class="bg-white" data-background-image="images/eCH-0056.png" data-background-size="80%" data-background-opacity="0.8">
+              <h2>eCH-0056 v4: Profil d’application de géoservices</h2>
+              <h3 class="r-fit-text">Accompagnement de la révision de la norme eCH-0056</h3>
+            </section>
+            <section class="bg-white" data-background-image="images/eCH-0056.png" data-background-size="80%" data-background-opacity="0.8">
+              <h4>En savoir plus</h4>
+              <p><a data-preview-link="false" href="https://www.ech.ch/fr/ech/ech-0056/4.0.0">↗ Version 4.0 de la norme eCH-0056</a></p>
+              <p><a href="https://ogc.heig-vd.ch">↗ Testbed platform des nouvelles API de l'OGC</a></p>
+            </section>
+            <!-- Présentation du projet Osires -->
+            <section class="bg-white" data-background-image="images/ord.jpg" data-background-size="70%" data-background-opacity="0.2">
+              <h2>Osires</h2>
+              <h3 class="r-fit-text">Open geospatial standards and reproducible research</h3>
+              <h3 class="r-fit-text">Définition de bonnes pratiques d'interopérabilité pour des services ouverts favorisant la reproducibilité de la recherche avec des données spatio-temporelles</h3>
+            </section>
+            <section class="bg-white" data-background-image="images/ord.jpg" data-background-size="70%" data-background-opacity="0.2">
+              <h4>En savoir plus</h4>
+              <p style="font-size: 0.75em;"><a data-preview-link="false" href="https://meetingorganizer.copernicus.org/EGU23/EGU23-14845.html">↗ EGU 2023: Abstract</a></p>
+              <p style="font-size: 0.75em;"><a data-preview-link="false" href="https://presentations.copernicus.org/EGU23/EGU23-14845_presentation.pdf">↗ EGU 2023: slide deck</a></p>
+            </section>
+            <!-- Partie #10: Présentation du projet FGDM4GS -->
+            <section class="bg-white" data-background-image="images/interlis-symcore.png" data-background-size="80%" data-background-opacity="0.2">
+              <h2>FGDM4GS</h2>
+              <h3 class="r-fit-text">Dénormalisation de MGDM pour la publication de géoservices</h3>
+              <p style="font-size: 0.75em;">Optimisation des <a data-preview-link="false" href="https://www.are.admin.ch/are/fr/home/developpement-et-amenagement-du-territoire/bases-et-donnees/modeles-de-geodonnees-minimaux.html">modèles de géodonnées minimaux</a> pour la publication de géoservices.</p>
+              <p style="font-size: 0.75em;">Comparaison des possibilités de représentation cartographique <a data-preview-link="false" href="https://www.interlis.ch/en/modelle/signatur-definition">INTERLIS2</a> avec <a href="https://opengeospatial.github.io/ogcna-auto-review/18-067r4.html">SymCore</a>.</p>
+            </section>
+            <section class="bg-white" data-background-image="images/interlis-symcore.png" data-background-size="80%" data-background-opacity="0.2">
+              <h4>En savoir plus</h4>
+              <p style="font-size: 0.75em;text-align: left;"><a data-preview-link="false" href="https://www.interlis.ch/download/interlis2/ili2-refman_2006-04-13_f.pdf">↗ INTERLIS 2 Manuel de référence</a></p>
+              <p style="font-size: 0.75em;text-align: left;"><a data-preview-link="false" href="http://www.ika.ethz.ch/studium/bachelorarbeit/2007_baertschi_bericht.pdf">↗ INTERLIS 2 Grafikmodellierung und Anforderungen der Kartografie</a></p>
+              <p style="font-size: 0.75em;"><a href="https://opengeospatial.github.io/ogcna-auto-review/18-067r4.html">↗ OGC Symbology Conceptual Model: Core Part (V2.0)</a></p>
+            </section>
+            <!-- Présentation du projet ... -->
+            <section class="bg-white" data-background-image="images/StandardisationAll.png" data-background-opacity="0.3" data-background-size="90%">
+              <h4> Standardisation d’observations de géoinformation</h2>
+                <!--
+              <tr >
+                <td style="border: 0px; text-align: center;">
+                    <img src="images/StandardisationSchema-v20231110.png" style="height: 300px;" alt='StandardisationSchema'>
+                </td>
+                <td style="border: 0px; text-align: center;">
+                    <img src="images/StandardisationNorme-v20231110.png" style="height: 300px;" alt='StandardisationNorme'>
+                </td>
+              </tr>
+              -->
+              <p class="r-fit-text">
+                La HEIG-VD propose une standardisation des formats des observations afin de faciliter leurs contrôles sémantiques et géométriques, assurer un archivage efficace et durable, favoriser la promotion du codéveloppement et de l'intelligence collective et permettre le renversement de la relation entre client et fournisseur de solutions informatiques, dans le sens où le client ne serait plus forcément dépendant de formats propriétaires.
+                Cette normalisation permet donc d’augmenter l’efficience des travaux géomatiques.
+              </p>
+            </section>
+            <section class="bg-white" data-background-image="images/PFmu6tMSubxcyV09.png" data-background-opacity="0.2">
+              <h4> Etude sur les processus de qualification des géodonnées et standardisation</h2>
+              <p class="r-fit-text">
+                Depuis longtemps la HEIG-VD est active dans les processus de géo-standardisation (OGC, eCH, SOGI). Une étude pour le canton de Genève est en cours pour analyser les processus organisationnels et techniques de qualification des géodonnées du canton de Genève. Le but de l'étude est de proposer une approche systématique qui tienne compte des bases légales, des normes actuelles et des règles de qualité nécessaires aux utilisateurs.
+              </p>
+            </section>
+          </section>
+       </div>
+     </div>
+    </div>
 		<script src="dist/reveal.js"></script>
 		<script src="plugin/notes/notes.js"></script>
 		<script src="plugin/markdown/markdown.js"></script>
 		<script src="plugin/highlight/highlight.js"></script>
 		<script src="node_modules/reveal.js-menu/menu.js"></script>
+
 		<script>
 			// More info about initialization & config:
 			// - https://revealjs.com/initialization/
