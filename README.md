@@ -2,7 +2,7 @@
 
 ## Interdisciplinarité à la HEIG-VD autour de la géoinformation
 
-Présentation des activités des instituts de la HEIG-VD en lien avec la géoinformatique à la journée romande de la géoinformation 2023 sur la base du framework [reveal.js](https://revealjs.com)
+Présentation des activités des instituts de la HEIG-VD en lien avec la géoinformatique dans le cadre du Certificat Complémentaire en Géomatique de l'UNIGE sur la base du framework [reveal.js](https://revealjs.com)
 
 ## Déploiement
 
